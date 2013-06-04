@@ -1,0 +1,362 @@
+
+  
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+  
+  
+  
+    
+      
+        image/svg+xml
+        
+        
+      
+    
+  
+  
+    
+    
+    
+    
+    
+    
+    plank_place.svg    
+    
+        
+    
+    
+    
+    
+    
+    x    y    z    
+    
+    O    
+    
+    
+    
+    
+    
+    
+    
+    
+    length    width    height    We call plank a 3D shape with a rectangular cuboid as construction base. The rectangular cuboid is defined by the three values: length, width and height with the relations:length > width > heightWith addition ad-hoc conventions, any shape can be considered as a plank.    We choose the reference frame such as:- x is the length direction- y is the width direction- z is the height direction- the origin (O) is one of the corner of the base cuboid- the main part of the plank has positive coordinates (x,y,z) in this reference frame.- (O,x,y,z) is orthonormal direct.    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    length    width    height    
+    According to this reference frame definition, there are four possibilities to place the plank within this reference frame.    
+    
+    
+    
+    
+    x    y    z    
+    
+    O    
+    
+    identity (first try)    
+    
+    
+    
+    
+    x    y    z    
+    
+    O    
+    x-flip    
+    
+    
+    
+    
+    
+    
+    
+    
+    x    y    z    O    y-flip    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    x    y    z    
+    
+    O    
+    
+    z-flip    
+    
+    Notice that z-flip is equivalent to the combination of x-flip and y-flip.    
+    1. Plank definition    2. Reference frame    3. flip possibilities    4. Orientation    Considering a simple plank (just a rectangular cuboid),the position of the plank is not influenced by flip along x, y and z.In a given reference frame, this plank has six possible orientations in a cuboid construction.An orientation is marked by the length direction axis followed by the width direction axis.With this nomenclature, the six orientations are: 'xy', 'xz', 'yx', 'yz', 'zx' and 'zy'.    
+    
+    x    y    z    O    
+    
+    x    y    z    O    
+    
+    x    y    z    O    
+    
+    
+    xy-orientation    xz-orientation    
+    
+    
+    
+    
+    x    y    z    O    
+    
+    x    y    z    O    
+    
+    x    y    z    O    
+    
+    x    y    z    O    yx-orientation    yz-orientation    zx-orientation    zy-orientation    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    5. position in a cuboid construction    
+    
+    x    y    z    O    
+    
+    
+    
+    
+    
+    
+    x    
+    
+    O    
+    
+    
+    
+    
+    
+    
+    
+    The position of a plank (or assimilated) in a cuboid construction can be defined by three operations:- flip (identity, x-flip, y-flip, z-flip)- orientation ('xy', 'xz', 'yx', 'yz', 'zx', 'zy')- translation (x,y,z)The function place_plank() realizes those operations. It also needs in the argument list the length, the width and the height of the plank.    
+    Plank with cuts    
+    Plank reference frame    
+    Flip possibility 1    
+    Flip possibility 2    
+    
+    Flip possibility 3    Flip possibility 4    
+    Orientation possibility 1    
+    Orientation possibility 2    
+    
+    
+    
+    Orientation possibility 3    Orientation possibility 4    Orientation possibility 5    Orientation possibility 6    
+    Plank positioning  

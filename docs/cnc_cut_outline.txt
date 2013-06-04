@@ -1,0 +1,223 @@
+
+  
+    
+    
+    
+    
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+  
+  
+  
+    
+      
+        image/svg+xml
+        
+        
+      
+    
+  
+  
+    
+    
+    Cnc_polygon.svg    
+    
+    
+    x    y    z    
+    
+    
+    
+    
+    
+    
+    
+    CNC lets cut material directly from computer design file (dxf, stl, g-code ...)This ensures precision, reproducibility, shape-complexity and automation.    The 3-axis CNC can process:- 2.5D : xy-path at z constant- 3D: xyz-path (if ad-hoc reamer and particular path)    Cutting technology:- laser cutter (Only 2.5D: cutting and engraving)- water jet (Only 2.5D)- reamer / mechanical (2.5D and 3D depending on shape and reamer shape)    Minimal curve radius constraint:- laser and water-jet implies no specific constraint- For mechanical cutter, inner curve must have a curve radius bigger than the reamer radius.    
+    
+    
+    
+    curve (C)    point (A) of (C)    tangent (T) of (C) in (A)    osculating circle of (C) in (A)    curve radius (r) of (C) in (A)     
+    
+    
+    
+    
+    So inner corner can not be cut with reamer.They must be replaced by inner curve.Tight inner curve must be smoothed to respect the minimal curve radius constraint.    
+    outer corner    outer curve    inner curve    inner corner    
+    
+    
+    
+    2D path    Possible 2D shape with a reamer of radius (r)    
+    
+    reamer of radius (r)    
+    
+    
+    
+    
+    
+    
+    If you want a perfect fitting between two coplanar shapes,then outer corners and outer curves must be rounded to get a minimum curve radius bigger than the reamer radius.For a perfect fitting, the coplanar shapes must be complementary.    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    If two 2D shapes are not coplanar, then outer corners can not be rounded by 2.5D cnc.    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    For fitting not coplanar shapes, we need to enlarge inner corners    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ideal shape    
+    
+    
+    
+    required shape    
+    details of smoothed corners (for fitting two coplanar shapes):    
+    
+    ideal path    
+    reamer of radius (r)    
+    
+    
+    
+    
+    
+    
+    
+    final path    
+    
+    A    E    F    O    (D1), (D2) : two straight linesA : intersection of (D1) and (D2)(C) : circle or radius (r) tangent to (D1) and (D2)E : intersection of (C) and (D1)F : intersection of (C) and (D2)O : the center of (C)(EAF)=a is the angle between (D1) and (D2)    (D1)    (D2)    (C)    
+        (C) is tangent to (D1), so (D1) is perpendicular to (EO)(C) is tangent to (D2), so (D2) is perpendicular to (FO)FO=EO=r, So O belongs to the bisector of (EAF).We have: AF=AE and (FA0)=(EAO)=a/2AEO is right triangle in E.tan(EAO) = OE/AEAE = r/tan(a/2)sin(EAO) = OE/AOAO = r/sin(a/2)    G    H    Knowing Gx,Gy,Ax,Ay,Hx,Hy, we want to calculate: a.(xAG) = atan((Gy-Ay)/(Gx-Ax))(xAH) = atan((Hy-Ay)/(Hx-Ax))a=(EAF)=(GAH)=(xAH)-(aAG)a=atan((Hy-Ay)/(Hx-Ax))-atan((Gy-Ay)/(Gx-Ax))Other method with the law of cosines c²=a²+b²-2*a*b*cos(C)In the triangle GHA:h=AG=sqrt((Gx-Ax)²+(Gy-Ay)²)g=AH=sqrt((Hx-Ax)²+(Hy-Ay)²)a=GH=sqrt((Hx-Gx)²+(Hy-Gy)²)a=(GAH)=acos((h²+g²-a²)/(2*g*h))    
+    x    Knowing Gx,Gy,Ax,Ay,Hx,Hy,a we want to calculate: Ex,Ey,Fx,Fy.Ex=Ax+(Gx-Ax)*AE/AG=Ax+(Gx-Ax)*r/(tan(a/2)*sqrt((Gx-Ax)²+(Gy-Ay)²))    
+    
+    
+    
+    
+    
+    
+    
+    A    E    F    O    G    H    
+    x    I    (C)    I is the intersection of (C) and (AO)(D3) is the straight line perpendicular to (AO) and including I.K is the intersection of (D3) and (D1)L is the intersection of (D3) and (D1)    
+    
+    L    K    
+    A    I    
+    
+    L    K    
+    (D3)    
+    
+    (D1)    (D2)    J    The triangles KAI and IAL are similar so AL=AK.(LAI)=(IAK)=a/2AI=AO-IO=r/sin(a/2)-r=r*(1-sin(a/2))/sin(a/2)AK=AI/cos(a/2)=r*(1-sin(a/2))/(sin(a/2)*cos(a/2))=r*(1-sin(a/2))*2/sin(a)AJ=AK+AL=(AI+IL)+(AI+IK)=2*AIAI=(AK+AL)/2Kx=Ax+(Gx-Ax)*AK/AG    Knowing Gx,Gy,Ax,Ay,Hx,Hy,a we want to calculate: Ix, Iy.    With E,I and F, we define the arc than can be build with a reamer of radius r.    details of enlarged corners (for fitting two not-coplanar shapes):    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    a<pi/2    A    E    F    A    E    F    A    E    F    
+    
+    a>pi/2    a=pi/2    (C1)    O    O    O    P    K    L    Let's consider three points A, G and H.(D1) is the bisector of (GAH).O is a point of (D1) such as AO=r(C1) is the circle of center O and radius rE is the intersection of (C1) and (AG)F is the intersection of (C1) and (AH)(D2) is the straight line perpendicular to (D1) and including OK and L are the intersection of (D2) with (C1)     (D1)        G    H    Let's calculate AE:OA=OE=r.We define I, the orthogonal projection of O on (AE).AI=EI because AEO is isosceles in O.AI=AO/cos(a/2)=r*cos(a/2)AE=2*r*cos(a/2)    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    M    N    (C1)    (C2)    K    L    (D2)            (D2)    (D3)    (D3) is the straight line perpendicular to (D1) and such that the length MN is equal to 2*r with M the intersection of (D3) and (AG) and N the intersection of (D3) and (AH).P is the intersection of (D3) and (D1).    (D1)        G    G    H    H    AM=r/sin(a/2)    
+    
+    
+    
+    
+    A    O    P    K    L    
+    
+    
+    
+    
+    
+    M    N    (D2)    (D3)    (D1)    G    H    
+    
+    
+    
+    
+    R    S    T    U    
+    V    
+    W    R is the middle of [AM]S is the middle of [AN]V is the intersection of (D2) and (AH)W is the intersection of (D) and (AG)    AK=AR-AS+(AV+AW)/2AR=AS=r/(2*sin(a/2))AV=AW=r/cos(a/2)    
+    
+    
+    
+    
+    3-axis CNC    
+    
+    Osculating circle    
+    
+    Coplanar fitting    
+    Not coplanar shapes    
+    Not coplanar fitting    
+    Detailed coplanar fitting    
+    Arc third point for coplanar fitting    
+    Detailed arc third point for coplanar fitting    
+    Not coplanar fitting with obtuse angle    
+    Not coplanar fitting with right angle    
+    Not coplanar fitting with acute angle    
+    Detailed not coplanar fitting with acute angle  

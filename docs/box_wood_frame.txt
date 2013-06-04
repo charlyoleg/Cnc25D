@@ -1,0 +1,722 @@
+
+  
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+  
+  
+  
+    
+      
+        image/svg+xml
+        
+        
+      
+    
+  
+  
+    
+    
+    wood_frame.svg    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    base on plank of 10x30    for shell, drawer, straw house    
+    
+    
+    
+    
+    
+    fiber direction        efficient    
+    
+    fiber direction    inefficient    
+    
+    crenel would be inefficient    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    Both parts are on the same plan    
+    
+    
+    
+    
+    
+    
+    The two parts are on different plan    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    Piece of furniture made out of pilable modules are cool because:- it lets make big pieces of furniture out of small pieces of material- the conception is also cut in several small problematics- the big pieces of furniture can be easily dismount, transport and remount    A module is made out:- a plain wood frame- an outer and inner texture    a module corresponds to one or several box.We focus on the concatenation of box along the x axis.N is the number of concatenated box (along the x axis).    
+    wood frame planks are fixed by crenel and glue    Design proposal    Wood frame:        plank list:- horizontal plank: 20x60- vertical plank: 20x30- diagonal: 15x30 (to give space for the texture)    module definition:- Box (w*d*h): 300*300*300- Module: N*1*1    
+    
+    
+    
+    
+    
+    
+    
+    Box wood frame parameters 1    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    box_width    box_depth    box_height    fitting_height    v_plank_width    plank_height    d_plank_width    d_plank_height    crenel_depth    wall_diagonal_size    tobo_diagonal_size    box_width    crenel_depth    plank_height    h_plank_width    wall_diagonal_size    h_plank_width + fitting_height    d_plank_width    plank outline description:    
+    2. plank02_xz_topQ = 2    
+    
+        
+    x    y    z    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    v_plank_width / 2    (h_plank_width - crenel_width)/3    crenel_depth    
+    
+    
+    
+    plank_height    
+    
+    wall_diagonal_size    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    d_plank_width/cos(pi/4) = d_plank_width*sqrt(2)    fitting_height    fitting_height/2        box_width/4    
+    1. plank01_xz_bottomQ = 2    
+    
+    
+    
+    
+    
+    
+    
+    
+    fitting_height    fitting_height/2    box_width/4    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    v_plank_width / 2    crenel_depth    
+    d_plank_width/cos(pi/4) = d_plank_width*sqrt(2)    
+    wall_diagonal_size    
+    
+    
+    
+    (h_plank_width + fitting_height - crenel_width)/3    
+    
+    plank_height    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    front and rear view    top and bottom view    left and right side view    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    box_depth    box_height    crenel_depth    v_plank_width    h_plank_width    fitting_height    h_plank_width + fitting_height    wall_diagonal_size    d_plank_width    
+    4. plank04_yz_topQ = 2    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    box_width/4    
+    fitting_height    
+    fitting_height/2    
+    plank_height    
+    
+    v_plank_width / 2    crenel_depth    
+    wall_diagonal_size    
+    d_plank_width/cos(pi/4) = d_plank_width*sqrt(2)    
+    (h_plank_width - crenel_width)/3    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    3. plank03_yz_bottomQ = 2    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    box_width/4    
+    fitting_height    
+    fitting_height/2    
+    plank_height    
+    
+    v_plank_width / 2    crenel_depth    
+    wall_diagonal_size    
+    d_plank_width/cos(pi/4) = d_plank_width*sqrt(2)    
+    (h_plank_width + fitting_height - crenel_width)/3    5. plank05_z_sideQ = 2*(3+N)    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    v_plank_width / 2    
+    crenel_depth    
+    wall_diagonal_size    
+    d_plank_width/cos(pi/4) = d_plank_width*sqrt(2)    box_height - 2*h_plank_width - fitting_height + 2*crenel_depth    
+    7. wall_diagonal_plankQ = 4*(1+3*N)    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    d_plank_width    d_plank_width - crenel_depth*cos(pi/4)    crenel_depth*cos(pi/4)    (wall_diagonal_size+2*crenel_depth)/cos(pi/4)    
+    
+    
+    8. tobo_diagonal_plankQ = 8*N    
+    
+    
+    tobo_diagonal_size/cos(pi/4)    
+    
+    
+    
+    
+    
+    
+    
+    
+    tobo_diag_depth*cos(pi/4)(default = plank_height/2-0.5)    
+    
+    tobo_diagonal_size/cos(pi/4) + 2*d_plank_width    
+    
+    
+    d_plank_width    
+    
+    
+    
+    
+    6. plank06_zx_middleQ = 2*(N-1)    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    v_plank_width    
+    crenel_depth    
+    wall_diagonal_size+crenel_depth    
+    d_plank_width/cos(pi/4) = d_plank_width*sqrt(2)    box_height - 2*h_plank_width - fitting_height + 2*crenel_depth    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    box_width    
+    
+    box_depth    tobo_diagonal_size + 2*plank_height    
+    
+    diagonal_lining_top_height    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    diagonal_lining_top_height    
+    diagonal_lining_top_height    
+    diagonal_lining_top_height    
+    diagonal_lining_top_height    
+        (d_plank_width/cos(pi/4)-tobo_diag_depth, d_plank_height)    
+    
+    (d_plank_width/cos(pi/4)-tobo_diag_depth, d_plank_height)    
+    
+    
+    diagonal_lining_bottom_height    
+    
+    
+    
+    Re-orienting wall_diagonal_plank and tobo_diagonal_plank for assembly    
+    
+    x    y    
+    x    y    wall_diagonal_plank for cnc    wall_diagonal_plank for assembly    
+    x    y    tobo_diagonal_plank for cnc    
+    
+    x    y    tobo_diagonal_plank for assembly    
+    
+    length = wall_diagonal_size               + d_plank_width * sqrt(2)               - crenel_depth    width = d_plank_width * sqrt(2)    
+    
+    9. hole_coverQ = 8*(N+1)    
+    width = d_plank_width * sqrt(2)    
+    length = tobo_diagonal_size               + d_plank_width * sqrt(2)               - crenel_depth    
+    
+    
+    d_plank_height    d_plank_width/cos(pi/4)-tobo_diag_depth    
+    
+    
+    
+    
+    
+    
+    
+    mostly aesthetic function    
+    Pile-up of pieces of furniture    
+    Crenel and fiber direction    
+    
+    
+    Box wood frame parameters 2    
+    Box wood frame parameters 3    
+    Plank02_xz_top outline    
+    Plank01_xz_bottom outline    
+    Plank03_yz_bottom outline    
+    Plank04_yz_top outline    
+    Plank05_z_side outline    
+    Plank07_wall_diagonal outline    
+    Plank06_zx_middle outline    
+    Planl08_tobo_diagonal outline    
+    Plank09_hole_cover outline    
+    
+    Plank07_wall_diagonal reorientation    Planl08_tobo_diagonal reorientation  
