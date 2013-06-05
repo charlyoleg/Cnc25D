@@ -1,3 +1,27 @@
+.. Cnc25D documentation master file, created by
+   sphinx-quickstart on Wed Jun  5 10:51:57 2013.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to Cnc25D's documentation!
+==================================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+
+   cnc_cut_outline
+   plank_place
+   box_wood_frame
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
 ========
 Cnc 2.5D
 ========
@@ -12,20 +36,13 @@ The Python package cnc25d proposes some generic functions and design examples re
 1. Generic functions
 --------------------
 
-Design a millable 2D outline with the cnc_cut_outline_.
+Design a millable 2D outline with the cnc_cut_outline.
 
-.. _cnc_cut_outline : cnc_cut_outline.rst
-
-Place a plank in a cuboid assembly with plank_place_.
-
-.. _plank_place : plank_place.rst
-
+Place a plank in a cuboid assembly with plank_place.
 
 2. Design examples
 ------------------
 
-The piece of furniture box_wood_frame_ to pile-up.
-
-.. _box_wood_frame : box_wood_frame.rst
+The piece of furniture box_wood_frame to pile-up.
 
 

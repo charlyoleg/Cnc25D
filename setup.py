@@ -1,4 +1,6 @@
-from distutils.core import setup
+#from distutils.core import setup
+from setuptools import setup
+#from distribute import setup
 
 setup(
   name='Cnc25D',
@@ -9,7 +11,7 @@ setup(
   scripts=['bin/cnc25d_example_generator.py'],
   url='http://pypi.python.org/pypi/Cnc25D/',
   license='LICENSE.txt',
-  description='Help-functions to create 2.5D physical parts anc cuboid assembly',
+  description='Help-functions to create 2.5D physical parts and cuboid assembly',
   long_description=open('README.rst').read(),
   install_requires=[
     #"math >= 0.6.24",

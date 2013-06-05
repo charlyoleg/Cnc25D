@@ -63,7 +63,7 @@ For fitting two coplanar shapes, the inner and outer corners must be smoothed.
 
 .. image:: images/detailed_coplanar_fitting.png
 
-.. code-block::
+::
 
   (D1), (D2) : two straight lines
   A : intersection of (D1) and (D2)
@@ -91,7 +91,7 @@ For fitting two coplanar shapes, the inner and outer corners must be smoothed.
   
 Other method with the law of cosines c²=a²+b²-2*a*b*cos(C)
 
-.. code-block::
+::
 
   In the triangle GHA:
   h=AG=sqrt((Gx-Ax)²+(Gy-Ay)²)
@@ -105,7 +105,7 @@ Other method with the law of cosines c²=a²+b²-2*a*b*cos(C)
   
 .. image:: images/arc_third_point_for_coplanar_fitting.png
 
-.. code-block::
+::
 
   I is the intersection of (C) and (AO)
   (D3) is the straight line perpendicular to (AO) and including I
@@ -127,7 +127,7 @@ Other method with the law of cosines c²=a²+b²-2*a*b*cos(C)
   
 .. image:: images/detailed_arc_third_point_for_coplanar_fitting.png
 
-.. code-block::
+::
 
   Knowing Gx,Gy,Ax,Ay,Hx,Hy,a we want to calculate: Ix, Iy
   With E,I and F, we define the arc than can be build with a reamer of radius r.
@@ -154,7 +154,7 @@ For fitting two not-coplanar shapes, the inner corners must be enlarged.
   
 .. image:: images/not_coplanar_fitting_with_obtuse_angle.png
 
-.. code-block::
+::
 
   Let's consider three points A, G and H.
   (D1) is the bisector of (GAH).
@@ -175,7 +175,7 @@ For fitting two not-coplanar shapes, the inner corners must be enlarged.
   
 .. image:: images/detailed_not_coplanar_fitting_with_acute_angle.png
 
-.. code-block::
+::
 
   (D3) is the straight line perpendicular to (D1) and such that the length MN is equal to 2*r with M the intersection of (D3) and (AG) and N the intersection of (D3) and (AH).
   P is the intersection of (D3) and (D1).
