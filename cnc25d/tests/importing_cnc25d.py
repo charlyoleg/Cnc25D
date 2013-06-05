@@ -19,4 +19,5 @@ test_script_dir=file_dir
 if(test_script_dir==''):
   test_script_dir='.'
 sys.path.append(test_script_dir+'/../..')
+#sys.path.append('./../..') # this work only if you launch the script from its own directory
 

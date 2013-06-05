@@ -13,14 +13,13 @@ Cnc25D is a Python_ Package for 2.5D part design and cuboid assembly.
 * Cnc25D helps drawing shape makable by a 3-axis CNC
 * Cnc25D helps positioning parts in a cuboid assembly
 
-Have a look at the `Cnc25D documentation`_ for more information.
+Have a look at the `Cnc25D release documentation`_ or the `Cnc25D daily built documentation`_ for more information.
 
 The source code is available at https://github.com/charlyoleg/Cnc25D under the `CC BY-SA 3.0`_ license.
 
 .. _FreeCAD : http://www.freecadweb.org
-
-.. _`Cnc25D documentation` : http://pythonhosted.org/Cnc25D/
-
+.. _`Cnc25D release documentation` : http://pythonhosted.org/Cnc25D/
+.. _`Cnc25D daily built documentation` : https://charlyoleg.readthedocs.org
 .. _`CC BY-SA 3.0` : http://creativecommons.org/licenses/by-sa/3.0/
 
 Why 2.5D ?
