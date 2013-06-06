@@ -98,6 +98,7 @@ bwf_script_name="box_wood_frame_example.py"
 
 # copy from ../cnc25d/tests/box_wood_frame_example.py without the import stuff
 bwf_script_content="""
+#include "../cnc25d/tests/box_wood_frame_example.py"
 """
 
 ### Generating the script example

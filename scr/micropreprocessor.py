@@ -33,26 +33,34 @@ def get_output_filename(ai_input_file_name):
   Deduces the output_filename from the input_filename
   """
   r_output_filename =''
-  if(re.match(r'_src\.py$',ai_input_file_name)):
+  if(re.search(r'_src\.py$', ai_input_file_name)):
     r_output_filename = re.sub(r'_src\.py$', '.py', ai_input_file_name)
   else:
     print("ERR014: Error, the input file name convention '_src.py' is not respected!")
     sys.exit(1)
-  return(r_output_filename)
+  r_input_dir = os.path.dirname(ai_input_file_name)
+  if(r_input_dir==''):
+    r_input_dir='.'
+  return(r_output_filename, r_input_dir)
 
-def process_include(ai_txt):
+def process_include(ai_txt, ai_input_dir):
   """
   Looks for include statements and replaces them by the appropriate file
   """
   r_out_txt = ''
+  txt_per_line = ai_txt.splitlines()
   line_nb = 0
-  for i_line in ai_txt:
+  for i_line in txt_per_line:
     line_nb += 1
-    if(re.match(r'include', i_line)):
-      if(re.match(r'^\s*#include ".*".*$', i_line)):
-        include_path = re.sub(r'^\s*#include "\(.*\(".*$', '\1', i_line)
-        print("dbg414: include_path:", include_path)
+    #print("dbg 101: {:d} : {:s}".format(line_nb, i_line))
+    if(re.search(r'include', i_line)):
+      if(re.search(r'^\s*#include ".*".*$', i_line)):
+        include_path = re.sub(r'^.*include\s*"', '', i_line)
+        include_path = re.sub(r'".*$', '', include_path)
+        include_path = ai_input_dir + '/' + include_path
+        #print("dbg414: include_path:", include_path)
         if(os.path.exists(include_path)):
+          print("include file {:s}".format(include_path))
           ifh = open(include_path, 'r')
           r_out_txt += ifh.read()
           ifh.close()
@@ -63,7 +71,8 @@ def process_include(ai_txt):
         print("WARN015: Warning, ambigous include statment ignore at line %d"%line_nb)
         r_out_txt += i_line
     else:
-      r_out_txt += i_line
+      r_out_txt += i_line 
+    r_out_txt += '\n'
   return(r_out_txt)
 
 ##########################################################################
@@ -79,15 +88,15 @@ def micropreprocessor(ai_args):
     print(micropreprocessor_usage)
     sys.exit(1)
   input_filename = ai_args[0]
-  if(!os.path.exists(input_filename)):
+  if(not os.path.exists(input_filename)):
     print("ERR774: Error, the input file {:s} doesn't exist!".format(input_filename))
     sys.exit(1)
-  ifh = open(include_path, 'r')
+  ifh = open(input_filename, 'r')
   input_content = ifh.read()
   ifh.close()
-  output_filename = get_output_filename(input_filename)
-  output_content = process_include(input_content)
-  ofh = open(f_txt, 'w')
+  (output_filename, input_dir) = get_output_filename(input_filename)
+  output_content = process_include(input_content, input_dir)
+  ofh = open(output_filename, 'w')
   ofh.write(output_content)
   ofh.close()
   print("The outfile {:s} has been writen :)".format(output_filename))
