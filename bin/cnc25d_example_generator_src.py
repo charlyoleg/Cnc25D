@@ -101,7 +101,7 @@ bwf_script_content="""
 #include "../cnc25d/tests/box_wood_frame_example.py"
 """
 
-### Generating the script example
+### Generating the script examples
 
 ceg_example_list={
   bwf_script_name : bwf_script_content

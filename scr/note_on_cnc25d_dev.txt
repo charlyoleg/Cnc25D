@@ -4,6 +4,7 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 
 1) Create a new release
 - regenerate bin/cnc25d_example_generator.py
+> scr/micropreprocessor.py bin/cnc25d_example_generator_src.py
 - update CHANGES.rst
 - update version number in setup.py
 - update release and version number in docs/conf.py
@@ -36,6 +37,10 @@ cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_example.
 - doc for the box_wood_frame parameters
 - additional crenel for tobo_diagonal
 - implement slab
+
+4) automation
+use Fabric or shovel ?
+
 
 
 

@@ -54,18 +54,19 @@ def process_include(ai_txt, ai_input_dir):
     line_nb += 1
     #print("dbg 101: {:d} : {:s}".format(line_nb, i_line))
     if(re.search(r'include', i_line)):
-      if(re.search(r'^\s*#include ".*".*$', i_line)):
+      if(re.search(r'^\s*#include\s+".*".*$', i_line)):
         include_path = re.sub(r'^.*include\s*"', '', i_line)
         include_path = re.sub(r'".*$', '', include_path)
         include_path = ai_input_dir + '/' + include_path
         #print("dbg414: include_path:", include_path)
-        if(os.path.exists(include_path)):
+        #if(os.path.exists(include_path)):
+        try:
           print("include file {:s}".format(include_path))
           ifh = open(include_path, 'r')
           r_out_txt += ifh.read()
           ifh.close()
-        else:
-          print("ERR701: Error, the file {:s} doesn't exist!".format(include_path))
+        except:
+          print("ERR701: Error, the file {:s} doesn't exist at line {:d}!".format(include_path, line_nb))
           sys.exit(1)
       else:
         print("WARN015: Warning, ambigous include statment ignore at line %d"%line_nb)
