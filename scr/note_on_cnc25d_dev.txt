@@ -1,0 +1,42 @@
+note_on_cnc25d_dev.txt
+
+Here, you get short notice for the dev, todo list adn other stuff ...
+
+1) Create a new release
+- regenerate bin/cnc25d_example_generator.py
+- update CHANGES.rst
+- update version number in setup.py
+- update release and version number in docs/conf.py
+- make the distribution
+> python setup.py sdist
+- test the distribution
+> cd far/away
+> virtualenv test_cnc25d_distrib
+> source test_cnc25d_distrib/bin/activate
+> pip install path/to/Cnc25D/dist/Cnc25D-0.1.1.tar.gz
+> mkdir Tmp
+> cd Tmp
+> cnc25d_example_generator.py
+> box_wood_frame_example.py
+> deactivate
+- upload distribution
+> python setup.py sdist upload
+> python setup.py upload_docs
+
+2) micropreprocessor.py
+This is a Python package and there should not preprocessing
+But two files must have the same contents and import is not the solution there. So I've created this small micropreprocessor.py that replace '#include path/to/whatever' to solve the issue.
+2.1) file dependency
+bin/cnc25d_example_generator_src.py includes cnc25d/tests/box_wood_frame_example.py to make bin/cnc25d_example_generator.py
+cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_example.py
+
+3) todo
+- test unit
+- code doc
+- doc for the box_wood_frame parameters
+- additional crenel for tobo_diagonal
+- implement slab
+
+
+
+
