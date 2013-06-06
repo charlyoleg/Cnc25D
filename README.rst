@@ -19,7 +19,7 @@ The source code is available at https://github.com/charlyoleg/Cnc25D under the `
 
 .. _FreeCAD : http://www.freecadweb.org
 .. _`Cnc25D release documentation` : http://pythonhosted.org/Cnc25D/
-.. _`Cnc25D daily built documentation` : https://charlyoleg.readthedocs.org
+.. _`Cnc25D daily built documentation` : https://cnc25d.readthedocs.org
 .. _`CC BY-SA 3.0` : http://creativecommons.org/licenses/by-sa/3.0/
 
 Why 2.5D ?

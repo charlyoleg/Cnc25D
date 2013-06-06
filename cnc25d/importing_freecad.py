@@ -39,10 +39,15 @@ def importing_freecad():
         freecad_path=p
     if(freecad_path==''):
       print("ERR070: Error, the FreeCAD library path has not been found!")
+      print("Add the path of the directory containing FreeCAD.so to the variable FREECADPATH in the file {:s}".format(__FILE__))
       sys.exit(2)
     #print("dbg101: add FREECADPATH to sys.path")
     sys.path.append(freecad_path)
-    import FreeCAD
+    try:
+      import FreeCAD
+    except:
+      print("ERR080: Error, the FreeCAD library can not be imported by cnc25d!")
+      sys.exit(2)
 
 ################################################################
 # main : only useful for debug
