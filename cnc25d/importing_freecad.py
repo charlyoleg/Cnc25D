@@ -3,10 +3,10 @@
 # created by charlyoleg on 2013/05/17
 # license: CC BY SA 3.0
 
-"""
+'''
 importing_freecad.py finds out where is located FreeCAD on a host and import it to be used in Python script.
 If FreeCAD is not found, you may want to edit this file and add the appropriate path to the FREECADPATH list.
-"""
+'''
 
 ################################################################
 # settings
@@ -27,9 +27,9 @@ import sys, os
 ################################################################
 
 def importing_freecad():
-  """ This function looks for the FreeCAD library and import it if needed
+  ''' This function looks for the FreeCAD library and import it if needed
       just call this function where you want to import FreeCAD
-  """
+  '''
   # choose your favorite test to check if you are running with FreeCAD GUI or traditional Python
   freecad_gui = True
   #if not(FREECADPATH in sys.path): # test based on PYTHONPATH
@@ -58,7 +58,7 @@ def importing_freecad():
 # main : only useful for debug
 ################################################################
 
-if __name__ == "__main__":
+if(__name__ == "__main__"):
   importing_freecad()
   print("FreeCAD.Version:", FreeCAD.Version())
   FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n")
