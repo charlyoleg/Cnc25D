@@ -3,6 +3,10 @@
 # created by charlyoleg on 2013/05/31
 # license: CC BY SA 3.0
 
+"""
+export_2d.py provides functions to create DXF file from a FreeCAD Part Oject
+"""
+
 ################################################################
 # header for Python / FreeCAD compatibility
 ################################################################
@@ -28,6 +32,8 @@ import Drawing
 ################################################################
 
 def export_to_dxf_abandoned(ai_solid, ai_vector, ai_depth, ai_output_file): # it works only the FreeCAD Gui
+  """ [Obsolete] create a DXF of a slice of FreeCAD Part Object
+  """
   l_slices = ai_solid.slice(ai_vector, ai_depth)
   l_doc = App.newDocument("tmp_doc")
   i=0
@@ -48,6 +54,8 @@ def export_to_dxf_abandoned(ai_solid, ai_vector, ai_depth, ai_output_file): # it
   return(1)
 
 def export_to_dxf(ai_solid, ai_vector, ai_depth, ai_output_file):
+  """ create a DXF of a slice of FreeCAD Part Object
+  """
   l_slice = Part.makeCompound(ai_solid.slice(ai_vector, ai_depth)) # slice the plank in the ai_vector plan at a the height ai_depth
   r_dxf = Drawing.projectToDXF(l_slice, ai_vector)
   #r_dxf = Drawing.projectToDXF(ai_solid, ai_vector) # works also :)
@@ -57,6 +65,8 @@ def export_to_dxf(ai_solid, ai_vector, ai_depth, ai_output_file):
   return(1)
     
 def export_to_svg(ai_solid, ai_vector, ai_depth, ai_output_file):
+  """ create a SVG of a slice of FreeCAD Part Object. The generated SVG is incomplete. SVG header must be added to it to be opened by Inkscape
+  """
   l_slice = Part.makeCompound(ai_solid.slice(ai_vector, ai_depth)) # slice the plank in the ai_vector plan at a the height ai_depth
   r_dxf = Drawing.projectToSVG(l_slice, ai_vector) # it generates a snippet of svg not directly usable by Inkscape. It needs the svg head and document markers.
   #r_dxf = Drawing.projectToSVG(ai_solid, ai_vector) # works also :)
@@ -87,6 +97,8 @@ def draw_gauge(ai_drawing_length, ai_drawing_height, ai_representation_max, ai_r
   return(r_gauge)
 
 def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_list, ai_xz_slice_list, ai_yz_slice_list, ai_output_file):
+  """ Cut a FreeCAD Part Object in many slices in the three directions X, Y and Z and put all those slices in a DXF file
+  """
   # calculate the space between two drawings
   l_space = max(ai_size_x/5, ai_size_y/5, ai_size_z/5)
   #

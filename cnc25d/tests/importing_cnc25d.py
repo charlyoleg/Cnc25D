@@ -3,9 +3,9 @@
 # created by charlyoleg on 2013/06/03
 # license: CC BY SA 3.0
 
-################################################################
-# add to sys.path path to the cnc25d package
-################################################################
+"""
+importing_cnc25d completes sys.path to give access to the cnc25d package
+"""
 
 import sys, os
 #getcwd_dir = os.getcwd()

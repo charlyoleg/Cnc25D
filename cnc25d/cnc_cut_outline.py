@@ -3,6 +3,10 @@
 # created by charlyoleg on 2013/05/13
 # license: CC BY SA 3.0
 
+"""
+cnc_cut_outline.py provides generic functions to design 2.5D parts and create cuboid assembly
+"""
+
 ################################################################
 # header for Python / FreeCAD compatibility
 ################################################################
@@ -23,7 +27,11 @@ import math
 import sys, argparse
 
 ################################################################
-# the function to be re-used
+# ******** the functions to be re-used ***********
+################################################################
+
+################################################################
+# outline creation
 ################################################################
 
 def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
@@ -208,6 +216,10 @@ def cnc_cut_outline(ai_corner_list):
   #print("dbg209: r_shape.Edges:",  r_shape.Edges)
   return(r_shape)
 
+################################################################
+# Positioning
+################################################################
+
 def place_plank(ai_plank_solid, ai_x_length, ai_y_width, ai_z_height, ai_flip, ai_orientation, ai_translate_x, ai_translate_y, ai_translate_z):
   """ After creating a plank, use this function to place it in a cuboid construction
   """
@@ -380,6 +392,8 @@ def make_M_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
     print("output stl file: %s"%(ai_output_file))
 
 def test_plank():
+  """ Plank example to test the place_plank function
+  """
   r_plank = Part.makeBox(20,4,2)
   r_plank = r_plank.cut(Part.makeBox(5,3,4, Base.Vector(16,-1,-1), Base.Vector(0,0,1)))
   r_plank = r_plank.cut(Part.makeBox(3,6,2, Base.Vector(18,-1,1), Base.Vector(0,0,1)))
@@ -387,7 +401,7 @@ def test_plank():
   return(r_plank)
 
 def cnc_cut_outline_main():
-  """ it is the main function of cnc_cut_outline.py when it is used in standalone
+  """ it is the command line interface of cnc_cut_outline.py when it is used in standalone
   """
   cco_parser = argparse.ArgumentParser(description='Run the function cnc_cut_outline() to check it.')
   cco_parser.add_argument('--reamer_radius','--rr', action='store', type=float, default=1.0, dest='sw_reamer_radius',
@@ -408,6 +422,7 @@ def cnc_cut_outline_main():
   cco_args = cco_parser.parse_args(sys.argv[arg_index_offset+1:])
   print("dbg111: start building the 3D part")
   if(cco_args.sw_self_test):
+    ### check the cnc_cut_outline function with several reamer diameter
     y_offset = 0
     for ir in [2.0, 1.5, 1.0, 0, -1.0, -2.0]:
       print("dbg603: test with reamer radius (ir):", ir)
@@ -416,6 +431,7 @@ def cnc_cut_outline_main():
       make_M_shape(150,  y_offset, ir, 2, "self_test_cnc_cut_outline_M_r%0.2f.stl"%ir)
       y_offset += 100
   else:
+    ### check the cnc_cut_outline and place_plank functions through examples
     ofb_H_shape = ""
     ofb_X_shape = ""
     ofb_M_shape = ""

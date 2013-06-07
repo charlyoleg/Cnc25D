@@ -6,6 +6,11 @@
 # license: CC BY SA 3.0
 # 
 
+"""
+box_wood_frame_macro_test.py lets run the script box_wood_frame_macro.py with the appropriate sys.path
+Running this script is a quick test to check that the package cnc25d code is running.
+"""
+
 # complete sys.path to access the cnc25d package
 import importing_cnc25d
 

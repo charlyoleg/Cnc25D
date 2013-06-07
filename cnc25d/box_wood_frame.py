@@ -3,6 +3,13 @@
 # created by charlyoleg on 2013/05/02
 # license: CC BY SA 3.0
 
+"""
+box_wood_frame is a parametric design for piece if furniture.
+It's actually a single function with the design parameters as input.
+The function writes STL and DXF files if an output basename is given as argument.
+The function return a FreeCAD Part object of the assembled object.
+"""
+
 ################################################################
 # header for Python / FreeCAD compatibility
 ################################################################
@@ -40,7 +47,9 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     ai_diagonal_lining_top_height, ai_diagonal_lining_bottom_height,
     ai_module_width, ai_reamer_radius, ai_cutting_extra,
     ai_slab_thickness, ai_output_file_basename):
-  """ it generates the pilable box modules according to some parameters
+  """
+  The main function of the script.
+  It generates the pilable box modules according to design parameters
   """
   ## check parameter coherence
   minimal_thickness = 5.0 # only used to check the parameter coherence
@@ -79,6 +88,9 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   plank_tobo_diagonal_in_cuboid_y_width = ai_d_plank_width*math.sqrt(2)
   ## plank dimension and count
   def plank_description(nai_module_width):
+    """
+    Depending on the module_width, provides the size (length_x, width_y, height_z) of each plank and their count in the final assembly.
+    """
     l_plank_xz_length = nai_module_width*ai_box_width
     r_plank_description = {
       'plank01_xz_bottom'     : [l_plank_xz_length, plank_xz_width,                       plank_xz_height,              2],
@@ -94,6 +106,9 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       'plank22_tobo_diag_rot' : [plank_tobo_diagonal_in_cuboid_x_length, plank_tobo_diagonal_in_cuboid_y_width, plank_tobo_diagonal_height, 0]}
     return(r_plank_description)
   def plank_per_height(nai_module_width):
+    """
+    Create a dictionary with the plank's height as entry and the according plank list for each height
+    """
     l_plank_desc = plank_description(nai_module_width)
     l_plank_list = sorted(l_plank_desc.keys())
     r_plank_per_height = {}
@@ -107,6 +122,9 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
           r_plank_per_height[l_height] = [lp]
     return(r_plank_per_height)
   def plank_per_width_and_height(nai_module_width):
+    """
+    Create a dictionary with the plank's width and height as entry and the according plank list for each width_x_height
+    """
     l_plank_desc = plank_description(nai_module_width)
     l_plank_list = sorted(l_plank_desc.keys())
     r_plank_per_height = {}
@@ -303,6 +321,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   ##
   ## plank_xz_top
   def plank_xz_top(nai_module_width, nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_xz_top
+    """
     # plank_xz_top_outline
     plank_xz_top_outline = []
     plank_xz_top_outline.append([0*ai_box_width, 0*ai_h_plank_width, 0*ai_reamer_radius]) #0
@@ -334,6 +354,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(plank_xz_top(3,0)) # works only with FreeCAD GUI, ignore otherwise
   ## plank_xz_bottom
   def plank_xz_bottom(nai_module_width, nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_xz_bottom
+    """
     # plank_xz_bottom_outline
     plank_xz_bottom_outline = []
     plank_xz_bottom_outline.append([0*ai_box_width, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius]) #0
@@ -367,6 +389,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(plank_xz_bottom(3, 0)) # works only with FreeCAD GUI, ignore otherwise
   ## plank_yz_top
   def plank_yz_top(nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_yz_top
+    """
     # plank_yz_top_outline
     plank_yz_top_outline = []
     plank_yz_top_outline.append([0*ai_box_depth+1*ai_plank_height, 0*ai_h_plank_width, 0*ai_reamer_radius]) #0
@@ -389,6 +413,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(plank_yz_top(0))
   ## plank_yz_bottom
   def plank_yz_bottom(nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_yz_bottom
+    """
     # plank_yz_bottom_outline
     plank_yz_bottom_outline = []
     plank_yz_bottom_outline.append([0*ai_box_depth+1*ai_plank_height, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius]) #0
@@ -417,6 +443,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(plank_yz_bottom(0)) # works only with FreeCAD GUI, ignore otherwise
   ## plank_z_side
   def plank_z_side(nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_z_side
+    """
     # plank_z_side_outline
     #plank_z_side_length = ai_box_height - 2*ai_h_plank_width - ai_fitting_height + 2*ai_crenel_depth
     plank_z_side_length = plank_z_length
@@ -432,6 +460,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(plank_z_side(0))
   ## plank_wall_diagonal
   def plank_wall_diagonal(nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_wall_diagonal
+    """
     #plank_wall_diagonal_length = (ai_wall_diagonal_size+2*ai_crenel_depth)*math.sqrt(2)+2*(ai_d_plank_width-ai_crenel_depth*math.sqrt(2)/2)
     #print("dbg825: plank_wall_diagonal_length:", plank_wall_diagonal_length)
     plank_wall_diagonal_outline = []
@@ -451,6 +481,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(plank_wall_diagonal_in_cuboid(0))
   ## plank_tobo_diagonal
   def plank_tobo_diagonal(nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_tobo_diagonal
+    """
     #plank_tobo_diagonal_length = ai_tobo_diagonal_size*math.sqrt(2)+2*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2
     plank_tobo_diagonal_outline = []
     plank_tobo_diagonal_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_tobo_diagonal(nai_cutting_extra), 1*plank_tobo_diagonal_length, -1))
@@ -469,6 +501,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(plank_tobo_diagonal_in_cuboid(0))
   ## plank_zx_middle
   def plank_zx_middle(nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_zx_middle
+    """
     #plank_z_side_length = ai_box_height - 2*ai_h_plank_width - ai_fitting_height + 2*ai_crenel_depth
     plank_z_side_length = plank_z_length
     plank_zx_middle_outline = []
@@ -484,6 +518,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(plank_zx_middle(0))
   ## plank_hole_cover
   def plank_hole_cover(nai_cutting_extra):
+    """ Create the FreeCAD Part Object plank_hole_cover
+    """
     hdx = plank_hole_cover_length
     hdy = plank_hole_cover_width
     hdz = plank_hole_cover_height
@@ -499,6 +535,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   ## plank_generic
   # to help some reporting function
   def plank_generic(nai_plank_name, nai_module_width, nai_cutting_extra):
+    """ Wrapper function to call any planks from a single function
+    """
     if(nai_plank_name=="plank01_xz_bottom"):
       r_plank = plank_xz_bottom(nai_module_width, nai_cutting_extra)
     elif(nai_plank_name=="plank02_xz_top"):
@@ -526,6 +564,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       sys.exit(2)
     return(r_plank)
   def place_plank_generic(nai_plank_name, nai_module_width, nai_cutting_extra, ai_flip, ai_orientation, ai_position_x, ai_position_y, ai_position_z):
+    """ Wrapper function to place any planks in a cuboid construction
+    """
     l_plank_desc = plank_description(nai_module_width)
     r_placed_plank = cnc_cut_outline.place_plank(plank_generic(nai_plank_name, nai_module_width, nai_cutting_extra),
       l_plank_desc[nai_plank_name][0], l_plank_desc[nai_plank_name][1], l_plank_desc[nai_plank_name][2],
@@ -535,6 +575,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   ## assembly
   ## optional plank_hole_cover assembly
   def hole_cover_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view):
+    """ optional sub-assembly of the hole_cover
+    """
     #print("dbg202: nai_module_width:", nai_module_width)
     # initialization of the list of plank_hole_cover
     l_assembly = []
@@ -569,6 +611,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
 
   ## module assembly
   def box_wood_frame_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view):
+    """ complete assembly of the box_wood_frame as a FreeCAD Part Object
+    """
     # cuboid assembly
     l_assembly = []
     for ly in [0, ai_box_depth-ai_plank_height+nai_exploded_view]:
@@ -671,10 +715,16 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(r_batch)
 
   def box_wood_frame_plank_definition_list(nai_module_width, nai_cutting_extra):
+    """ Generate the list of all plank designs required for the box_wood_frame
+        Each plank design appears only once
+    """
     r_batch = place_plank_list(nai_module_width, nai_cutting_extra, 0)
     return(r_batch)
   #Part.show(box_wood_frame_plank_definition_list(3,0))
   def box_wood_frame_plank_count_list(nai_module_width, nai_cutting_extra):
+    """ Generate the list of all planks required for the box_wood_frame
+        Each plank design appears as much as their required count for the box_wood_frame assembly
+    """
     r_batch = place_plank_list(nai_module_width, nai_cutting_extra, 1)
     return(r_batch)
   #Part.show(box_wood_frame_plank_count_list(1,0))
@@ -707,6 +757,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(r_batch)
 
   def box_wood_frame_plank_cutting_plan_cuboid(nai_module_width, nai_cutting_extra):
+    """ Attempt to place all planks of height plank_height in a compact way for CNC cutting
+    """
     l_plank_list = {  # set here the plank of tha batch and their wished orientation and position [orientation, increment_y]
       'plank01_xz_bottom' : ['xy', 0],
       'plank02_xz_top'    : ['xy', 0],
@@ -727,6 +779,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(r_batch)
 
   def box_wood_frame_plank_cutting_plan_diagonal(nai_module_width, nai_cutting_extra):
+    """ Attempt to place all planks of height plank_diagonal_height in a compact way for CNC cutting
+    """
     l_plank_list = {  # set here the plank of tha batch and their wished orientation and position [orientation, increment_y]
       'plank07_wall_diagonal' : ['yx', 1],
       'plank08_tobo_diagonal' : ['yx', 0]}
@@ -743,6 +797,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(r_batch)
 
   def box_wood_frame_plank_cutting_plan_hole_cover(nai_module_width, nai_cutting_extra):
+    """ Attempt to place all planks of height hole_cover_height in a compact way for CNC cutting
+    """
     l_plank_list = {  # set here the plank of tha batch and their wished orientation and position [orientation, increment_y]
       'plank09_hole_cover' : ['yx', 1]}
     # space between plank
@@ -762,6 +818,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #Part.show(box_wood_frame_plank_cutting_plan_hole_cover(2,0))
 
   def box_wood_frame_plank_cutting_plan(nai_module_width, nai_cutting_extra):
+    """ Overview of the three attempts to place all planks in a compact way for CNC cutting
+    """
     l_plank_desc = plank_description(nai_module_width)
     place_step_x = 10
     place_step_y = 10
@@ -783,6 +841,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #def box_wood_frame_construction_step_02():
 
   def box_wood_frame_text_report(nai_module_width):
+    """ Generates the text report to provide all additional information to the STL and DXF files
+    """
     r_text_report = ""
     r_text_report += """
 box_wood_frame design
@@ -1036,7 +1096,7 @@ oak tree density  :   %0.2f (kg/m3)
     return(r_fg)
 
   def box_wood_frame_file_generator(nai_output_file_basename):
-    """ this function generates the DXF and STL files if the input parameter is not empty
+    """ this function generates the DXF and STL files if the parameter output_file_basename is not empty.
         It returns a string that contains the file name list and their description.
     """
     bwf_log = box_wood_frame_text_report(ai_module_width)
@@ -1168,7 +1228,7 @@ oak tree density  :   %0.2f (kg/m3)
 ################################################################
 
 def box_wood_frame_cli():
-  """ it is the main function of box_wood_frame.py when it is used in standalone
+  """ it is the command line interface of box_wood_frame.py when it is used in standalone
   """
   bwf_parser = argparse.ArgumentParser(description='Command line interface for the function box_wood_frame().')
   bwf_parser.add_argument('--box_width','--bw', action='store', type=float, default=400.0, dest='sw_box_width',

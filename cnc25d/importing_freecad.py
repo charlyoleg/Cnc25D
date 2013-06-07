@@ -3,6 +3,11 @@
 # created by charlyoleg on 2013/05/17
 # license: CC BY SA 3.0
 
+"""
+importing_freecad.py finds out where is located FreeCAD on a host and import it to be used in Python script.
+If FreeCAD is not found, you may want to edit this file and add the appropriate path to the FREECADPATH list.
+"""
+
 ################################################################
 # settings
 ################################################################
