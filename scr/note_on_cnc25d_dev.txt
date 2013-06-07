@@ -32,15 +32,14 @@ bin/cnc25d_example_generator_src.py includes cnc25d/tests/box_wood_frame_example
 cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_example.py
 
 3) todo
-- test unit
-- code doc
+- unittest
 - doc for the box_wood_frame parameters
 - additional crenel for tobo_diagonal
 - implement slab
 
-4) automation
-use Fabric or shovel ?
-
+4) automation tool
+Fabric or shovel ?
+unittest, pytest or nose ?
 
 
 
