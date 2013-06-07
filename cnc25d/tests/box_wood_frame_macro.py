@@ -6,8 +6,8 @@
 ################################################################
 # this file intends being included in the file bin/cnc25d_example_generator.py
 # for this purpose, there is some syntaxe restrictions
-# dont' use triple inverted commas (') and return character ('\'.'n') in this file
-# but you can still use triple "
+# don't use triple single-quotes (') and return character ('\'.'n') in this file
+# but you can still use triple double-quote (")
 ################################################################
 
 """
