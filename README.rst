@@ -35,11 +35,14 @@ Cnc25D is on PyPI_.
 To install Cnc25D:
 
 * First, install FreeCAD_
-* Second, run the following commands::
+* Then, install the Cnc25D package with the following commands::
 
   > sudo pip install Cnc25D -U
   > cd directory/where/I/want/to/create/my/3D/parts
   > cnc25d_example_generator.py
+
+* Or, clone the `Cnc25D GitHub repository`_ and run the code directly from there.
+
 
 .. _PyPI : https://pypi.python.org/pypi/Cnc25D
 
