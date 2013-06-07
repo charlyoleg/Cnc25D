@@ -67,14 +67,16 @@ print("The FreeCAD version {:d}.{:d} is installed on your system.".format(freeca
 
 ### check if the FreeCAD Library can be imported
 
+print("dbg449: sys.path:", sys.path)
+
 try:
-  import importing_freecad
+  import cnc25d.importing_freecad
 except:
   print("ERR058: Error, cnc25d package is not installed!")
   print("Please, install the cnc25d package with the command 'sudo pip install Cnc25D -U'")
   sys.exit(1)
 
-importing_freecad.importing_freecad()
+cnc25d.importing_freecad.importing_freecad()
 
 try:
   FreeCAD.Console.PrintMessage("FreeCAD run from Cnc25D :)\n")
@@ -97,13 +99,20 @@ You can rename, move, copy and edit the script {:s}
 bwf_script_name="box_wood_frame_example.py"
 
 # copy from ../cnc25d/tests/box_wood_frame_example.py without the import stuff
-bwf_script_content="""
+bwf_script_content='''
 #!/usr/bin/python
 #
 # box_wood_frame_macro.py
 # the macro for a wood frame for building a shell or a straw house.
 # created by charlyoleg on 2013/05/31
 # license: CC BY SA 3.0
+
+"""
+this piece of code is an example of how to use the parametric design box_wood_frame
+You can also use this file as a FreeCAD macro from the GUI
+Don't be afraid, look at the code. It's very simple to hack
+"""
+
 
 ################################################################
 # Installation
@@ -202,9 +211,9 @@ bwf_assembly = box_wood_frame.box_wood_frame(bwf_box_width, bwf_box_depth, bwf_b
 Part.show(bwf_assembly)
 
 
-"""
+'''
 
-### Generating the script example
+### Generating the script examples
 
 ceg_example_list={
   bwf_script_name : bwf_script_content

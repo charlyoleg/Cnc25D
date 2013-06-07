@@ -5,6 +5,22 @@
 # created by charlyoleg on 2013/05/31
 # license: CC BY SA 3.0
 
+
+################################################################
+# this file intends being included in the file bin/cnc25d_example_generator.py
+# for this purpose, there is some syntaxe restrictions
+# dont' use triple inverted commas (') and return character ('\n') in this file
+# but you can still use triple "
+################################################################
+
+
+"""
+this piece of code is an example of how to use the parametric design box_wood_frame
+You can also use this file as a FreeCAD macro from the GUI
+Don't be afraid, look at the code. It's very simple to hack
+"""
+
+
 ################################################################
 # Installation
 ################################################################
@@ -44,7 +60,6 @@ from cnc25d import importing_freecad
 importing_freecad.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
-#FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
 
 ################################################################
 # import

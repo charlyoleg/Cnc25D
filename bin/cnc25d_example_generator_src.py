@@ -67,14 +67,16 @@ print("The FreeCAD version {:d}.{:d} is installed on your system.".format(freeca
 
 ### check if the FreeCAD Library can be imported
 
+#print("dbg449: sys.path:", sys.path)
+
 try:
-  import importing_freecad
+  import cnc25d.importing_freecad
 except:
   print("ERR058: Error, cnc25d package is not installed!")
   print("Please, install the cnc25d package with the command 'sudo pip install Cnc25D -U'")
   sys.exit(1)
 
-importing_freecad.importing_freecad()
+cnc25d.importing_freecad.importing_freecad()
 
 try:
   FreeCAD.Console.PrintMessage("FreeCAD run from Cnc25D :)\n")
@@ -97,9 +99,9 @@ You can rename, move, copy and edit the script {:s}
 bwf_script_name="box_wood_frame_example.py"
 
 # copy from ../cnc25d/tests/box_wood_frame_example.py without the import stuff
-bwf_script_content="""
+bwf_script_content='''
 #include "../cnc25d/tests/box_wood_frame_example.py"
-"""
+'''
 
 ### Generating the script examples
 
