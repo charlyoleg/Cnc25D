@@ -11,6 +11,7 @@
 micropreprocessor.py reads a valid python script, which name ends with '_src.py'
 it replaces each include statements looking like '#include "path/to/a/file"' by the file and warns for all lines containing the word include with an invalid syntax.
 Finally, it writes the output python script with the same basename as the input script.
+It doesn't work recursively. Included files are not checked for include statements.
 """
 
 ##########################################################################

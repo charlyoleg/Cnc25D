@@ -53,4 +53,5 @@ opencascade
 freecad
 python
 
+recommendation: keep bwf_box_depth = bwf_box_width to get more pile up possibilities
 

@@ -1,18 +1,14 @@
-#!/usr/bin/python
-#
 # box_wood_frame_macro.py
 # the macro for a wood frame for building a shell or a straw house.
 # created by charlyoleg on 2013/05/31
 # license: CC BY SA 3.0
 
-
 ################################################################
 # this file intends being included in the file bin/cnc25d_example_generator.py
 # for this purpose, there is some syntaxe restrictions
-# dont' use triple inverted commas (') and return character ('\n') in this file
+# dont' use triple inverted commas (') and return character ('\'.'n') in this file
 # but you can still use triple "
 ################################################################
-
 
 """
 this piece of code is an example of how to use the parametric design box_wood_frame
@@ -20,37 +16,27 @@ You can also use this file as a FreeCAD macro from the GUI
 Don't be afraid, look at the code. It's very simple to hack
 """
 
-
 ################################################################
-# Installation
+# Installation pre-request
 ################################################################
-# This script needs freecad (http://www.freecadweb.org/) installed on your system
-# With Ubuntu, run the following command
+# This script needs freecad and Cnc25D installed on your system
+# visit those sites for more information:
+# http://www.freecadweb.org/
+# https://pypi.python.org/pypi/Cnc25D
+#
+# To install FreeCAD on Ubuntu, run the following command:
 # > sudo apt-get install freecad
+# or to get the newest version:
+# > sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
+# > sudo apt-get update
+# > sudo apt-get install freecad
+# and optionally:
+# >  sudo apt-get install freecad-doc freecad-dev
 # To install the python package cnc25d, run the following command:
 # > sudo pip install Cnc25D
 # or
 # > sudo pip install Cnc25D -U
 
-
-################################################################
-# add to sys.path path to the cnc25d package
-################################################################
-
-import importing_cnc25d
-
-#import sys, os
-##getcwd_dir = os.getcwd()
-##print("dbg191: getcwd_dir:", getcwd_dir)
-#file_dir= os.path.dirname(__file__)
-##print("dbg192: file_dir:", file_dir)
-##argv_dir= os.path.dirname(sys.argv[0])
-##print("dbg193: argv_dir:", argv_dir)
-#
-#test_script_dir=file_dir
-#if(test_script_dir==''):
-#  test_script_dir='.'
-#sys.path.append(test_script_dir+'/../..')
 
 ################################################################
 # header for Python / FreeCAD compatibility
@@ -79,7 +65,7 @@ import Part
 # feature request : create a GUI with PyQt4 to edite those parameter values
 
 bwf_box_width = 400.0
-bwf_box_depth = 400.0 # recommendation: keep bwf_box_depth = bwf_box_width to get more pile up possibilities
+bwf_box_depth = 400.0
 bwf_box_height = 400.0
 bwf_fitting_height = 30.0
 bwf_h_plank_width = 50.0
