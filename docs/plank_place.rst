@@ -2,9 +2,6 @@
 Plank Positioning
 =================
 
-:date: 2013-06-04
-:author: charlyoleg
-
 1. Plank definition
 ===================
 

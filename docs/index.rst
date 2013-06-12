@@ -11,9 +11,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   cnc25d_presentation
    cnc_cut_outline
    plank_place
-   box_wood_frame
+   box_wood_frame_conception
+   box_wood_frame_usage
 
 Indices and tables
 ==================
@@ -21,37 +23,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-to be changed
-
-========
-Cnc 2.5D
-========
-
-:date: 2013-06-04
-:author: charlyoleg
-
-
-2.5D and cuboid assembly are a good solution for automated fabrication.
-The Python package cnc25d proposes some generic functions and design examples related to the 2.5D construction.
-
-1. Generic functions
---------------------
-
-Design a millable 2D outline with the cnc_cut_outline.
-
-Place a plank in a cuboid assembly with plank_place.
-
-2. Design examples
-------------------
-
-The piece of furniture box_wood_frame to pile-up.
-
-
-underlying technology
-opencascade
-freecad
-python
-
-recommendation: keep bwf_box_depth = bwf_box_width to get more pile up possibilities
 

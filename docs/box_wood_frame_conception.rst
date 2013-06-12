@@ -1,9 +1,6 @@
-==============
-Box Wood Frame
-==============
-
-:date: 2013-06-03
-:author: charlyoleg
+=========================
+Box Wood Frame Conception
+=========================
 
 1. Design purpose
 =================
@@ -138,5 +135,72 @@ The planks are positioned in the cuboid assembly with the plank_place() function
 .. image:: images/plank07_wall_diagonal_reorientation.png
 .. image:: images/plank08_tobo_diagonal_reorientation.png
 
+7. Slab outline description
+===========================
 
+7.1. slab51_tobo_single
+-----------------------
+Q = 2 if (N==1) else 0
+
+.. image:: images/slab51_tobo_outline.png
+.. .. image:: images/slab51_tobo_single_outline.png
+
+7.2. slab52_tobo_side
+---------------------
+Q = 4 if (N>1) else 0
+
+Same outline as slab51_tobo_single except that the length is::
+
+  box_width - 1.5*plank_height
+
+.. .. image:: images/slab52_tobo_side_outline.png
+
+7.3. slab53_tobo_middle
+-----------------------
+Q = 2*(N-2) if (N>2) else 0
+
+Same outline as slab51_tobo_single except that the length is::
+
+  box_width - 1.0*plank_height
+
+.. .. image:: images/slab53_tobo_middle_outline.png
+
+7.4. slab54_side_left_right
+---------------------------
+Q = 2
+
+.. image:: images/slab54_side_left_right_outline.png
+
+7.5. slab55_side_rear_single
+----------------------------
+Q = 1 if (N==1) else 0
+
+.. image:: images/slab55_side_rear_outline.png
+.. .. image:: images/slab55_side_rear_single_outline.png
+
+7.6. slab56_side_rear_side
+--------------------------
+Q = 2 if (N>1) else 0
+
+Same outline as slab55_side_rear_single except that the length is::
+
+  box_width - 1.5*plank_v_width
+
+.. .. image:: images/slab56_side_rear_side_outline.png
+
+7.7. slab57_side_rear_middle
+----------------------------
+Q = N-2 if (N>2) else 0
+
+Same outline as slab55_side_rear_single except that the length is::
+
+  box_width - 1.0*plank_v_width
+
+.. .. image:: images/slab57_side_rear_middle_outline.png
+
+7.8. slab58_front
+-----------------
+Q = 4*N
+
+.. image:: images/slab58_front_outline.png
 

@@ -2,10 +2,6 @@
 CNC Cut Outline
 ===============
 
-:date: 2013-06-03
-:author: charlyoleg
-
-
 1. Introduction to the automated cutting technology
 ===================================================
     
