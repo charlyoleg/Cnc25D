@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    cnc25d_presentation
+   cnc25d_details
    cnc_cut_outline
    plank_place
    box_wood_frame_conception
