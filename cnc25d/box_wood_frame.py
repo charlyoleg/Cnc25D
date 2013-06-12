@@ -75,10 +75,10 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   plank_wall_diagonal_length = (ai_wall_diagonal_size+2*ai_crenel_depth)*math.sqrt(2)+2*(ai_d_plank_width-ai_crenel_depth*math.sqrt(2)/2)
   plank_wall_diagonal_width = ai_d_plank_width
   plank_wall_diagonal_height = ai_d_plank_height
-  plank_tobo_diagonal_length = ai_tobo_diagonal_size*math.sqrt(2)+2*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2
+  plank_tobo_diagonal_length = ai_tobo_diagonal_size*math.sqrt(2)+2*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2
   plank_tobo_diagonal_width = ai_d_plank_width
   plank_tobo_diagonal_height = plank_wall_diagonal_height
-  plank_hole_cover_length = (ai_d_plank_width*math.sqrt(2)-cai_tobo_diag_depth)
+  plank_hole_cover_length = (ai_d_plank_width*math.sqrt(2)-3*cai_tobo_diag_depth)
   plank_hole_cover_width = ai_d_plank_height
   plank_hole_cover_height = ai_plank_height-cai_tobo_diag_depth
   # rotated plank
@@ -86,6 +86,21 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   plank_wall_diagonal_in_cuboid_y_width = ai_d_plank_width*math.sqrt(2)
   plank_tobo_diagonal_in_cuboid_x_length = ai_tobo_diagonal_size+ai_d_plank_width*math.sqrt(2)-ai_crenel_depth
   plank_tobo_diagonal_in_cuboid_y_width = ai_d_plank_width*math.sqrt(2)
+  ## slab dimension
+  slab_top_bottom_single_length = ai_box_width-2*ai_plank_height
+  slab_top_bottom_side_length = ai_box_width-1.5*ai_plank_height
+  slab_top_bottom_middle_length = ai_box_width-1*ai_plank_height
+  slab_top_bottom_width = ai_box_depth-2*ai_plank_height
+  slab_top_bottom_height = ai_slab_thickness
+  slab_side_length = ai_box_height-2*ai_h_plank_width-ai_fitting_height
+  slab_side_left_right_width = ai_box_depth-2*(ai_plank_height+ai_v_plank_width)
+  slab_side_rear_single_width = ai_box_width-2*ai_v_plank_width
+  slab_side_rear_side_width = ai_box_width-1.5*ai_v_plank_width
+  slab_side_rear_middle_width = ai_box_width-1*ai_v_plank_width
+  slab_side_height = ai_slab_thickness
+  slab_front_length = ai_wall_diagonal_size+ai_d_plank_width*math.sqrt(2)
+  slab_front_width = slab_front_length
+  slab_front_height = ai_slab_thickness
   ## plank dimension and count
   def plank_description(nai_module_width):
     """
@@ -93,17 +108,25 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """
     l_plank_xz_length = nai_module_width*ai_box_width
     r_plank_description = {
-      'plank01_xz_bottom'     : [l_plank_xz_length, plank_xz_width,                       plank_xz_height,              2],
-      'plank02_xz_top'        : [l_plank_xz_length, plank_xz_width,                       plank_xz_height,              2],
-      'plank03_yz_bottom'     : [plank_yz_length, plank_yz_width,                         plank_yz_height,              1+nai_module_width],
-      'plank04_yz_top'        : [plank_yz_length, plank_yz_width,                         plank_yz_height,              1+nai_module_width],
-      'plank05_z_side'        : [plank_z_length, plank_z_width,                           plank_z_height,               4+2*(1+nai_module_width)],
-      'plank06_zx_middle'     : [plank_z_length, plank_z_width,                           plank_z_height,               2*(nai_module_width-1)],
-      'plank07_wall_diagonal' : [plank_wall_diagonal_length, plank_wall_diagonal_width,   plank_wall_diagonal_height,   4*(1+3*nai_module_width)],
-      'plank08_tobo_diagonal' : [plank_tobo_diagonal_length, plank_tobo_diagonal_width,   plank_tobo_diagonal_height,   8*nai_module_width],
-      'plank09_hole_cover'    : [plank_hole_cover_length, plank_hole_cover_width,         plank_hole_cover_height,      8+8*nai_module_width],
-      'plank21_wall_diag_rot' : [plank_wall_diagonal_in_cuboid_x_length, plank_wall_diagonal_in_cuboid_y_width, plank_wall_diagonal_height, 0],
-      'plank22_tobo_diag_rot' : [plank_tobo_diagonal_in_cuboid_x_length, plank_tobo_diagonal_in_cuboid_y_width, plank_tobo_diagonal_height, 0]}
+      'plank01_xz_bottom'       : [l_plank_xz_length, plank_xz_width,                       plank_xz_height,              2],
+      'plank02_xz_top'          : [l_plank_xz_length, plank_xz_width,                       plank_xz_height,              2],
+      'plank03_yz_bottom'       : [plank_yz_length, plank_yz_width,                         plank_yz_height,              1+nai_module_width],
+      'plank04_yz_top'          : [plank_yz_length, plank_yz_width,                         plank_yz_height,              1+nai_module_width],
+      'plank05_z_side'          : [plank_z_length, plank_z_width,                           plank_z_height,               4+2*(1+nai_module_width)],
+      'plank06_zx_middle'       : [plank_z_length, plank_z_width,                           plank_z_height,               2*(nai_module_width-1)],
+      'plank07_wall_diagonal'   : [plank_wall_diagonal_length, plank_wall_diagonal_width,   plank_wall_diagonal_height,   4*(1+3*nai_module_width)],
+      'plank08_tobo_diagonal'   : [plank_tobo_diagonal_length, plank_tobo_diagonal_width,   plank_tobo_diagonal_height,   8*nai_module_width],
+      'plank09_hole_cover'      : [plank_hole_cover_length, plank_hole_cover_width,         plank_hole_cover_height,      8+8*nai_module_width],
+      'plank21_wall_diag_rot'   : [plank_wall_diagonal_in_cuboid_x_length, plank_wall_diagonal_in_cuboid_y_width, plank_wall_diagonal_height, 0],
+      'plank22_tobo_diag_rot'   : [plank_tobo_diagonal_in_cuboid_x_length, plank_tobo_diagonal_in_cuboid_y_width, plank_tobo_diagonal_height, 0],
+      'slab51_tobo_single'      : [slab_top_bottom_single_length, slab_top_bottom_width, slab_top_bottom_height, 2 if (nai_module_width==1) else 0],
+      'slab52_tobo_side'        : [slab_top_bottom_side_length, slab_top_bottom_width, slab_top_bottom_height, 4 if (nai_module_width>1) else 0],
+      'slab53_tobo_middle'      : [slab_top_bottom_middle_length, slab_top_bottom_width, slab_top_bottom_height, 2*(nai_module_width-2) if (nai_module_width>2) else 0],
+      'slab54_side_left_right'  : [slab_side_length, slab_side_left_right_width, slab_side_height, 2],
+      'slab55_side_rear_single' : [slab_side_length, slab_side_rear_single_width, slab_side_height, 1 if (nai_module_width==1) else 0],
+      'slab56_side_rear_side'   : [slab_side_length, slab_side_rear_side_width, slab_side_height, 2 if (nai_module_width>1) else 0],
+      'slab57_side_rear_middle' : [slab_side_length, slab_side_rear_middle_width, slab_side_height, nai_module_width-2 if (nai_module_width>2) else 0],
+      'slab58_front'            : [slab_front_length, slab_front_width, slab_front_height, 4*nai_module_width]}
     return(r_plank_description)
   def plank_per_height(nai_module_width):
     """
@@ -121,22 +144,22 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
         else:
           r_plank_per_height[l_height] = [lp]
     return(r_plank_per_height)
-  def plank_per_width_and_height(nai_module_width):
+  def plank_per_height_and_width(nai_module_width):
     """
     Create a dictionary with the plank's width and height as entry and the according plank list for each width_x_height
     """
     l_plank_desc = plank_description(nai_module_width)
     l_plank_list = sorted(l_plank_desc.keys())
-    r_plank_per_height = {}
+    r_plank_per_height_and_width = {}
     for lp in l_plank_list:
-      l_wxh = "{:03.02f}x{:03.02f}".format(l_plank_desc[lp][1], l_plank_desc[lp][2])
+      l_hxw = "{:05.02f}x{:05.02f}".format(l_plank_desc[lp][2], l_plank_desc[lp][1])
       l_q = l_plank_desc[lp][3]
       if(l_q>0):
-        if(l_wxh in r_plank_per_height):
-          r_plank_per_height[l_wxh].append(lp)
+        if(l_hxw in r_plank_per_height_and_width):
+          r_plank_per_height_and_width[l_hxw].append(lp)
         else:
-          r_plank_per_height[l_wxh] = [lp]
-    return(r_plank_per_height)
+          r_plank_per_height_and_width[l_hxw] = [lp]
+    return(r_plank_per_height_and_width)
   ## sub path
   # we use nested functions to reduce the list of arguments. Most of arguments of the mother function are reused there.
   # jonction_plank_xz_with_zx
@@ -158,7 +181,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #   jonction_plank_xz_with_wall_diagonal
   def jonction_plank_xz_with_wall_diagonal(nai_cutting_extra):
     nr = [
-      [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra*math.sqrt(2), 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius],
+      [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-2*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius],
       [ai_v_plank_width+ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
       [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
       [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius]]
@@ -240,12 +263,14 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(nr)
   # jonction_plank_tobo_diagonal
   def jonction_plank_tobo_diagonal(nai_cutting_extra):
+    l_soft_external = cai_tobo_diag_depth/2
     nr = [
-      [1*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_reamer_radius],
-      [1*ai_d_plank_width-0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
-      [1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_reamer_radius],
-      [0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_reamer_radius],
-      [0*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_reamer_radius]]
+      [1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
+      [1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
+      [1*ai_d_plank_width-2*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
+      [0*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+3*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
+      [0*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
+      [0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external]]
     return(nr)
   #print("dbg412: jonction_plank_tobo_diagonal", jonction_plank_tobo_diagonal)
   # jonction_plank_zx_with_wall_diagonal
@@ -258,11 +283,27 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       [0, 1*ai_v_plank_width, 1*ai_reamer_radius],
       [0, 0*ai_v_plank_width, 1*ai_reamer_radius]]
     return(nr)
+  #   jonction_slab_side_with_wall_diagonal_horizontal
+  def jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra):
+    nr = [
+      [ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra, -1*ai_reamer_radius],
+      [ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
+      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
+      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra,-1*ai_reamer_radius]]
+    return(nr)
+  #   jonction_slab_side_with_wall_diagonal_vertical
+  def jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra):
+    nr = [
+      [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_reamer_radius],
+      [-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_reamer_radius],
+      [-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_reamer_radius],
+      [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, -1*ai_reamer_radius]]
+    return(nr)
 
   ## hole sub   
   # plank_xz_hole plank_yz_hole
   def plank_xz_yz_hole(nai_box_nb, nai_cutting_extra, nai_box_size):
-    hdx = (ai_d_plank_width*math.sqrt(2)-cai_tobo_diag_depth)
+    hdx = (ai_d_plank_width*math.sqrt(2)-3*cai_tobo_diag_depth)
     hdy = ai_d_plank_height
     hpx = ai_tobo_diagonal_size + cai_tobo_diag_depth + 0*ai_plank_height
     #hpy = ai_diagonal_lining_height
@@ -483,7 +524,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   def plank_tobo_diagonal(nai_cutting_extra):
     """ Create the FreeCAD Part Object plank_tobo_diagonal
     """
-    #plank_tobo_diagonal_length = ai_tobo_diagonal_size*math.sqrt(2)+2*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2
+    #plank_tobo_diagonal_length = ai_tobo_diagonal_size*math.sqrt(2)+2*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2
     plank_tobo_diagonal_outline = []
     plank_tobo_diagonal_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_tobo_diagonal(nai_cutting_extra), 1*plank_tobo_diagonal_length, -1))
     plank_tobo_diagonal_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_tobo_diagonal(nai_cutting_extra), 0*plank_tobo_diagonal_length,  1))
@@ -495,8 +536,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """ rotate plank_tobo_diagonal from a convenient cnc orientation to a convenient assembly orientation
     """
     r_plank = plank_tobo_diagonal(nai_cutting_extra)
-    r_plank.rotate(Base.Vector(cai_tobo_diag_depth*math.sqrt(2)/2,0,0), Base.Vector(0,0,1),45)
-    r_plank.translate(Base.Vector(-cai_tobo_diag_depth*math.sqrt(2)/2,0,0))
+    r_plank.rotate(Base.Vector(0*cai_tobo_diag_depth*math.sqrt(2)/2,0,0), Base.Vector(0,0,1),45)
+    #r_plank.translate(Base.Vector(-cai_tobo_diag_depth*math.sqrt(2)/2,0,0))
     return(r_plank)
   #Part.show(plank_tobo_diagonal_in_cuboid(0))
   ## plank_zx_middle
@@ -532,6 +573,75 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     r_plank_hole_cover_solid = plank_hole_cover_face.extrude(Base.Vector(0,0,hdz))
     return(r_plank_hole_cover_solid)
   #Part.show(plank_hole_cover(0))
+  ## slab_top_bottom
+  def slab_top_bottom(nai_type, nai_cutting_extra):
+    """ Create the FreeCAD Part Object slab_top_bottom
+    """
+    if(nai_type=='single'):
+      slab_length = slab_top_bottom_single_length
+    elif(nai_type=='side'):
+      slab_length = slab_top_bottom_side_length
+    elif(nai_type=='middle'):
+      slab_length = slab_top_bottom_middle_length
+    slab_width = slab_top_bottom_width
+    slab_top_bottom_outline = []
+    slab_top_bottom_outline.append([0*slab_length+1*nai_cutting_extra, 0*slab_width+1*nai_cutting_extra, 0])
+    slab_top_bottom_outline.append([1*slab_length-1*nai_cutting_extra, 0*slab_width+1*nai_cutting_extra, 0])
+    slab_top_bottom_outline.append([1*slab_length-1*nai_cutting_extra, 1*slab_width-1*nai_cutting_extra, 0])
+    slab_top_bottom_outline.append([0*slab_length+1*nai_cutting_extra, 1*slab_width-1*nai_cutting_extra, 0])
+    slab_top_bottom_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(slab_top_bottom_outline).Edges))
+    r_slab_top_bottom_solid = slab_top_bottom_face.extrude(Base.Vector(0,0,slab_top_bottom_height))
+    return(r_slab_top_bottom_solid)
+  #Part.show(slab_top_bottom('single',0))
+  ## slab_left_right and slab_rear
+  def slab_side(nai_type, nai_cutting_extra):
+    """ Create the FreeCAD Part Object slab_side
+    """
+    slab_length = slab_side_length
+    if(nai_type=='left_right'):
+      slab_width = slab_side_left_right_width
+    elif(nai_type=='rear_single'):
+      slab_width = slab_side_rear_single_width
+    elif(nai_type=='rear_side'):
+      slab_width = slab_side_rear_side_width
+    elif(nai_type=='rear_middle'):
+      slab_width = slab_side_rear_middle_width
+    slab_side_outline = []
+    slab_side_outline.append([0*slab_length+1*nai_cutting_extra, 0*slab_width+1*nai_cutting_extra, 0])
+    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 0*slab_length, 1, 0*slab_width, 1))
+    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 1*slab_length,-1, 0*slab_width, 1))
+    slab_side_outline.append([1*slab_length-1*nai_cutting_extra, 0*slab_width+1*nai_cutting_extra, 0])
+    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 1*slab_length,-1, 0*slab_width, 1))
+    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 1*slab_length,-1, 1*slab_width,-1))
+    slab_side_outline.append([1*slab_length-1*nai_cutting_extra, 1*slab_width-1*nai_cutting_extra, 0])
+    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 1*slab_length, -1, 1*slab_width,-1))
+    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 0*slab_length,  1, 1*slab_width,-1))
+    slab_side_outline.append([0*slab_length+1*nai_cutting_extra, 1*slab_width-1*nai_cutting_extra, 0])
+    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 0*slab_length, 1, 1*slab_width,-1))
+    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 0*slab_length, 1, 0*slab_width, 1))
+    slab_side_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(slab_side_outline).Edges))
+    r_slab_side_solid = slab_side_face.extrude(Base.Vector(0,0,ai_slab_thickness))
+    return(r_slab_side_solid)
+  #Part.show(slab_side('left_right', 0))
+  ## slab_front
+  def slab_front(nai_cutting_extra):
+    """ Create the FreeCAD Part Object slab_front
+    """
+    slab_front_outline = []
+    slab_front_outline.append([0+1*nai_cutting_extra, 0+1*nai_cutting_extra, 0])
+    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, 0*ai_crenel_depth+1*nai_cutting_extra, -1*ai_reamer_radius])
+    slab_front_outline.append([ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius])
+    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius])
+    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius])
+    slab_front_outline.append([ 0*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 0*ai_reamer_radius])
+    slab_front_outline.append([-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 1*ai_reamer_radius])
+    slab_front_outline.append([-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 1*ai_reamer_radius])
+    slab_front_outline.append([ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, -1*ai_reamer_radius])
+    slab_front_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(slab_front_outline).Edges))
+    r_slab_front_solid = slab_front_face.extrude(Base.Vector(0,0,ai_slab_thickness))
+    return(r_slab_front_solid)
+  #Part.show(slab_front(0))
+
   ## plank_generic
   # to help some reporting function
   def plank_generic(nai_plank_name, nai_module_width, nai_cutting_extra):
@@ -559,6 +669,22 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       r_plank = plank_wall_diagonal_in_cuboid(nai_cutting_extra)
     elif(nai_plank_name=="plank22_tobo_diag_rot"):
       r_plank = plank_tobo_diagonal_in_cuboid(nai_cutting_extra)
+    elif(nai_plank_name=="slab51_tobo_single"):
+      r_plank = slab_top_bottom("single", nai_cutting_extra)
+    elif(nai_plank_name=="slab52_tobo_side"):
+      r_plank = slab_top_bottom("side", nai_cutting_extra)
+    elif(nai_plank_name=="slab53_tobo_middle"):
+      r_plank = slab_top_bottom("middle", nai_cutting_extra)
+    elif(nai_plank_name=="slab54_side_left_right"):
+      r_plank = slab_side("left_right", nai_cutting_extra)
+    elif(nai_plank_name=="slab55_side_rear_single"):
+      r_plank = slab_side("rear_single", nai_cutting_extra)
+    elif(nai_plank_name=="slab56_side_rear_side"):
+      r_plank = slab_side("rear_side", nai_cutting_extra)
+    elif(nai_plank_name=="slab57_side_rear_middle"):
+      r_plank = slab_side("rear_middle", nai_cutting_extra)
+    elif(nai_plank_name=="slab58_front"):
+      r_plank = slab_front(nai_cutting_extra)
     else:
       print("ERR115: Error, the plank_name %s doesn't exist" % nai_plank_name)
       sys.exit(2)
@@ -604,14 +730,83 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
           l_assembly.append(place_plank_generic('plank09_hole_cover', nai_module_width, nai_cutting_extra, 'i', 'yz', lx, ly, lz))
     return(l_assembly)
     # make one Part.compound
-    #r_hole_cover_assembly_solid = Part.makeCompound(l_assembly)
-    #return(r_hole_cover_assembly_solid)
+    r_hole_cover_assembly_solid = Part.makeCompound(l_assembly)
+    return(r_hole_cover_assembly_solid)
   #Part.show(hole_cover_assembly(1,0,0))
   #Part.show(Part.makeCompound(hole_cover_assembly(1,0,0)))
 
+  ## optional slab assembly
+  def slab_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view):
+    """ optional sub-assembly of the slabs
+    """
+    # pre-computing of x coordinates
+    lx_for_tobo_single = []
+    if(nai_module_width==1):
+      lx_for_tobo_single.append(ai_plank_height)
+    lx_for_tobo_side = []
+    if(nai_module_width>1):
+      lx_for_tobo_side.append(ai_plank_height)
+      lx_for_tobo_side.append(nai_module_width*ai_box_width-ai_plank_height-slab_top_bottom_side_length+nai_exploded_view)
+    lx_for_tobo_middle = []
+    for li in range(nai_module_width-2):
+      lx_for_tobo_middle.append(ai_plank_height/2+(1+li)*ai_box_width)
+    lx_for_left_right = []
+    lx_for_left_right.append(0*(nai_module_width*ai_box_width)+(ai_plank_height-ai_d_plank_height-1*ai_slab_thickness))
+    lx_for_left_right.append(1*(nai_module_width*ai_box_width)-(ai_plank_height-ai_d_plank_height-0*ai_slab_thickness)+nai_exploded_view)
+    lx_for_rear_single = []
+    if(nai_module_width==1):
+      lx_for_rear_single.append(ai_v_plank_width)
+    lx_for_rear_side = []
+    if(nai_module_width>1):
+      lx_for_rear_side.append(0*(nai_module_width*ai_box_width)+ai_v_plank_width)
+      lx_for_rear_side.append(1*(nai_module_width*ai_box_width)-ai_v_plank_width-slab_side_rear_side_width+nai_exploded_view)
+    lx_for_rear_middle = []
+    for li in range(nai_module_width-2):
+      lx_for_rear_middle.append(ai_v_plank_width/2+(1+li)*ai_box_width)
+    lx_for_front_left = []
+    lx_for_front_left.append(ai_v_plank_width)
+    for li in range(nai_module_width-1):
+      lx_for_front_left.append(ai_v_plank_width/2+(1+li)*ai_box_width)
+    lx_for_front_right = []
+    for lx in lx_for_front_left:
+      lx_for_front_right.append(nai_module_width*ai_box_width-lx-slab_front_width)
+    lz_for_tobo = []
+    lz_for_tobo.append(ai_fitting_height+ai_h_plank_width-ai_diagonal_lining_bottom_height)
+    lz_for_tobo.append(ai_box_height-ai_h_plank_width+ai_diagonal_lining_top_height+ai_d_plank_height+nai_exploded_view)
+    lz_for_front = []
+    lz_for_front.append(ai_fitting_height+ai_h_plank_width)
+    lz_for_front.append(ai_box_height-ai_h_plank_width-slab_front_length+nai_exploded_view)
+    # initialization of the list of slabs
+    l_assembly = []
+    # positioning
+    for lz in lz_for_tobo:
+      for lx in lx_for_tobo_single:
+        l_assembly.append(place_plank_generic('slab51_tobo_single', nai_module_width, nai_cutting_extra, 'i', 'xy', lx, ai_plank_height, lz))
+      for lx in lx_for_tobo_side:
+        l_assembly.append(place_plank_generic('slab52_tobo_side', nai_module_width, nai_cutting_extra, 'i', 'xy', lx, ai_plank_height, lz))
+      for lx in lx_for_tobo_middle:
+        l_assembly.append(place_plank_generic('slab53_tobo_middle', nai_module_width, nai_cutting_extra, 'i', 'xy', lx, ai_plank_height, lz))
+    for lx in lx_for_left_right:
+      l_assembly.append(place_plank_generic('slab54_side_left_right', nai_module_width, nai_cutting_extra, 'i', 'zy', lx, ai_plank_height+ai_v_plank_width, ai_fitting_height+ai_h_plank_width))
+    for lx in lx_for_rear_single:
+      l_assembly.append(place_plank_generic('slab55_side_rear_single', nai_module_width, nai_cutting_extra, 'i', 'zx', lx, ai_box_depth-ai_plank_height+ai_d_plank_height+nai_exploded_view, ai_fitting_height+ai_h_plank_width))
+    for lx in lx_for_rear_side:
+      l_assembly.append(place_plank_generic('slab56_side_rear_side', nai_module_width, nai_cutting_extra, 'i', 'zx', lx, ai_box_depth-ai_plank_height+ai_d_plank_height+nai_exploded_view, ai_fitting_height+ai_h_plank_width))
+    for lx in lx_for_rear_middle:
+      l_assembly.append(place_plank_generic('slab57_side_rear_middle', nai_module_width, nai_cutting_extra, 'i', 'zx', lx, ai_box_depth-ai_plank_height+ai_d_plank_height+nai_exploded_view, ai_fitting_height+ai_h_plank_width))
+    for lx in lx_for_front_left:
+      l_assembly.append(place_plank_generic('slab58_front',  nai_module_width, nai_cutting_extra, 'i', 'zx', lx, ai_plank_height-ai_d_plank_height-ai_slab_thickness, lz_for_front[0]))
+      l_assembly.append(place_plank_generic('slab58_front',  nai_module_width, nai_cutting_extra, 'y', 'zx', lx, ai_plank_height-ai_d_plank_height-ai_slab_thickness, lz_for_front[1]))
+    for lx in lx_for_front_right:
+      l_assembly.append(place_plank_generic('slab58_front',  nai_module_width, nai_cutting_extra, 'x', 'zx', lx, ai_plank_height-ai_d_plank_height-ai_slab_thickness, lz_for_front[0]))
+      l_assembly.append(place_plank_generic('slab58_front',  nai_module_width, nai_cutting_extra, 'z', 'zx', lx, ai_plank_height-ai_d_plank_height-ai_slab_thickness, lz_for_front[1]))
+    r_assembly = Part.makeCompound(l_assembly)
+    return(r_assembly)
+  #Part.show(slab_assembly(1,0,0))
+
   ## module assembly
-  def box_wood_frame_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view):
-    """ complete assembly of the box_wood_frame as a FreeCAD Part Object
+  def frame_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view):
+    """ assembly of the frame as a FreeCAD Part Object
     """
     # cuboid assembly
     l_assembly = []
@@ -682,13 +877,27 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
         l_assembly.append(place_plank_generic('plank22_tobo_diag_rot', nai_module_width, nai_cutting_extra, 'y', 'xy', lx, ly_for_tobo_diag[1], lz))
     # hole cover  
     # comment this line if you don't want the hole_cover
-    l_assembly.extend(hole_cover_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view))
+    #l_assembly.extend(hole_cover_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view))
+    #l_assembly.extend(slab_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view))
     r_assembly = Part.makeCompound(l_assembly)
     # comment this line if you don't want the hole_cover
     #r_assembly = r_assembly.fuse(hole_cover_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view)) # fuse of two makeCompound seems bugy!
     return(r_assembly)
+  #Part.show(frame_assembly(1,2,200))
+  #Part.show(frame_assembly(1,2,0))
+
+  def box_wood_frame_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view):
+    """ complete assembly of the box_wood_frame as a FreeCAD Part Object
+    """
+    l_assembly = []
+    l_assembly.append(frame_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view))
+    l_assembly.append(hole_cover_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view))
+    l_assembly.append(slab_assembly(nai_module_width, nai_cutting_extra, nai_exploded_view))
+    r_assembly = Part.makeCompound(l_assembly)
+    return(r_assembly)
   #Part.show(box_wood_frame_assembly(1,2,200))
   #Part.show(box_wood_frame_assembly(1,2,0))
+  #Part.show(box_wood_frame_assembly(1,0,0))
 
   def place_plank_list(nai_module_width, nai_cutting_extra, nai_count):
     # plank count
@@ -709,7 +918,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
           l_count = 1
         for li in range(l_count):
           l_batch.append(place_plank_generic(lp, nai_module_width, nai_cutting_extra, 'i', 'xy', place_x+li*(place_step_x+l_plank_desc[lp][0]), place_y, place_z))
-        place_y = place_y + place_step_y
+        place_y = place_y + place_step_y + l_plank_desc[lp][1]
     #
     r_batch = Part.makeCompound(l_batch)
     return(r_batch)
@@ -813,9 +1022,34 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     r_batch = Part.makeCompound(l_batch)
     return(r_batch)
 
+  def box_wood_frame_slab_cutting_plan(nai_module_width, nai_cutting_extra):
+    """ Attempt to place all slabs in a compact way for CNC cutting
+    """
+    l_plank_list = {  # set here the plank of tha batch and their wished orientation and position [orientation, increment_y]
+      'slab51_tobo_single'      : ['yx', 0],
+      'slab52_tobo_side'        : ['yx', 0],
+      'slab53_tobo_middle'      : ['yx', 1],
+      'slab54_side_left_right'  : ['yx', 1],
+      'slab55_side_rear_single' : ['yx', 0],
+      'slab56_side_rear_side'   : ['yx', 0],
+      'slab57_side_rear_middle' : ['yx', 1],
+      'slab58_front'            : ['yx', 1]}
+    # space between plank
+    place_step_x = 10+ai_crenel_depth
+    place_step_y = 10+ai_crenel_depth
+    # position
+    place_x = 0
+    place_y = 0
+    place_z = 0
+    # batch
+    l_batch = plank_serie_place(l_plank_list, nai_module_width, nai_cutting_extra, place_x, place_y, place_z, place_step_x, place_step_y)
+    r_batch = Part.makeCompound(l_batch)
+    return(r_batch)
+
   #Part.show(box_wood_frame_plank_cutting_plan_cuboid(1,0))
   #Part.show(box_wood_frame_plank_cutting_plan_diagonal(2,0))
   #Part.show(box_wood_frame_plank_cutting_plan_hole_cover(2,0))
+  #Part.show(box_wood_frame_slab_cutting_plan(2,0))
 
   def box_wood_frame_plank_cutting_plan(nai_module_width, nai_cutting_extra):
     """ Overview of the three attempts to place all planks in a compact way for CNC cutting
@@ -826,13 +1060,16 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     place_y_plan_diagonal = ((l_plank_desc['plank01_xz_bottom'][3]+l_plank_desc['plank02_xz_top'][3])*(plank_xz_width+place_step_y)
                             + (plank_yz_length+place_step_y) + (plank_z_length+place_step_y))
     place_y_plan_hole_cover = place_y_plan_diagonal + (plank_wall_diagonal_length+place_step_y) + (plank_tobo_diagonal_length+place_step_y)
+    place_y_plan_slab = place_y_plan_hole_cover + (plank_hole_cover_length + place_step_y)
     l_batch = []
     l_batch.append(box_wood_frame_plank_cutting_plan_cuboid(nai_module_width, nai_cutting_extra))
     l_batch.append(box_wood_frame_plank_cutting_plan_diagonal(nai_module_width, nai_cutting_extra))
     l_batch.append(box_wood_frame_plank_cutting_plan_hole_cover(nai_module_width, nai_cutting_extra))
+    l_batch.append(box_wood_frame_slab_cutting_plan(nai_module_width, nai_cutting_extra))
     # translate batch plan_diagonal and _plan_hole_cover
     l_batch[1].translate(Base.Vector(0,place_y_plan_diagonal,0))
     l_batch[2].translate(Base.Vector(0,place_y_plan_hole_cover,0))
+    l_batch[3].translate(Base.Vector(0,place_y_plan_slab,0))
     r_batch = Part.makeCompound(l_batch)
     return(r_batch)
   #Part.show(box_wood_frame_plank_cutting_plan(2,0))
@@ -899,9 +1136,9 @@ oak tree density  :   %0.2f (kg/m3)
     #print("dbg873: possible_plank_height:", possible_plank_height)
     possible_plank_height_str = [ "{: 3.02f}".format(lh) for lh in  possible_plank_height]
     r_text_report += "plank height list: %s\n" % (" ".join(possible_plank_height_str))
-    l_plank_per_width_and_height = plank_per_width_and_height(nai_module_width)
-    possible_plank_width_and_height = list(reversed(sorted(l_plank_per_width_and_height.keys())))
-    r_text_report += "plank width and height list: %s\n" % ("   ".join(possible_plank_width_and_height))
+    l_plank_per_height_and_width = plank_per_height_and_width(nai_module_width)
+    possible_plank_height_and_width = list(reversed(sorted(l_plank_per_height_and_width.keys())))
+    r_text_report += "plank width and height list: %s\n" % ("   ".join(possible_plank_height_and_width))
     r_text_report += """
 4.1. plank list:
 ================
@@ -920,7 +1157,7 @@ oak tree density  :   %0.2f (kg/m3)
         lv = l_plank_desc[lp][0]*l_plank_desc[lp][1]*l_plank_desc[lp][2]/1000
         per_height_q[lpph] += lq
         per_height_volume[lpph] += lq*lv
-        r_text_report += "{:02d}: {:<20s} L*W*H= {: 3.02f} x{: 3.02f} x{: 3.02f} (mm)  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)  Q={: 2d}\n".format(
+        r_text_report += "{:02d}: {:<26s} L*W*H= {: 3.02f} x{: 3.02f} x{: 3.02f} (mm)  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)  Q={: 2d}\n".format(
           l_plank_idx, lp, l_plank_desc[lp][0], l_plank_desc[lp][1], l_plank_desc[lp][2], lv, lv*wood_density_fir_tree*10**-6, lv*wood_density_oak_tree*10**-6, lq)
     r_text_report += """
 4.2. summary per plank height:
@@ -934,7 +1171,7 @@ oak tree density  :   %0.2f (kg/m3)
       total_type_nb += len(l_plank_per_height[lpph])
       total_q += per_height_q[lpph]
       total_volume += per_height_volume[lpph]
-      r_text_report += "for plank height {: 3.02f}: plank_type_nb: {: 2d}  plank_nb: {: 2d}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
+      r_text_report += "for plank height {: 6.02f}: plank_type_nb: {: 2d}  plank_nb: {: 2d}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
         lpph, len(l_plank_per_height[lpph]), per_height_q[lpph], per_height_volume[lpph],
         per_height_volume[lpph]*wood_density_fir_tree*10**-6, per_height_volume[lpph]*wood_density_oak_tree*10**-6)
     r_text_report += """
@@ -956,56 +1193,69 @@ oak tree density  :   %0.2f (kg/m3)
       l_plank_desc['plank05_z_side'][3]*(l_plank_desc['plank05_z_side'][1]+l_space_y)+l_plank_desc['plank06_zx_middle'][3]*(l_plank_desc['plank06_zx_middle'][1]+l_space_y))
     l_h1_dy = 4*(plank_xz_width+l_space_y)+(plank_yz_length+l_space_y)+(plank_z_length+l_space_y)
     l_h1_v = l_h1_dx*l_h1_dy*ai_plank_height/1000
-    r_text_report += "cnc plank height {: 2.02f} :  x_size={: 3.02f}  y_size={: 3.02f}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
+    r_text_report += "cnc plank height {: 6.02f} :  x_size={: 3.02f}  y_size={: 3.02f}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
       ai_plank_height, l_h1_dx, l_h1_dy, l_h1_v, l_h1_v*wood_density_fir_tree*10**-6, l_h1_v*wood_density_oak_tree*10**-6)
     # diagonal plan
     l_h2_dx = max(l_plank_desc['plank07_wall_diagonal'][3]*(l_plank_desc['plank07_wall_diagonal'][1]+l_space_y),
                   l_plank_desc['plank08_tobo_diagonal'][3]*(l_plank_desc['plank08_tobo_diagonal'][1]+l_space_y))
     l_h2_dy = l_plank_desc['plank06_zx_middle'][0] + l_plank_desc['plank07_wall_diagonal'][0] + 2*l_space_y
     l_h2_v = l_h2_dx*l_h2_dy*ai_d_plank_height/1000
-    r_text_report += "cnc plank height {: 2.02f} :  x_size={: 3.02f}  y_size={: 3.02f}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
+    r_text_report += "cnc plank height {: 6.02f} :  x_size={: 3.02f}  y_size={: 3.02f}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
       ai_d_plank_height, l_h2_dx, l_h2_dy, l_h2_v, l_h2_v*wood_density_fir_tree*10**-6, l_h2_v*wood_density_oak_tree*10**-6)
     # hole_cover plan
     l_h3_dx = l_plank_desc['plank09_hole_cover'][3]*(l_plank_desc['plank09_hole_cover'][1]+l_space_y)
-    l_h3_dy = l_plank_desc['plank09_hole_cover'][0] + l_plank_desc['plank09_hole_cover'][0] + 2*l_space_y
+    l_h3_dy = l_plank_desc['plank09_hole_cover'][0] + 2*l_space_y
     l_h3_v = l_h3_dx*l_h3_dy*plank_hole_cover_height/1000
-    r_text_report += "cnc plank height {: 2.02f} :  x_size={: 3.02f}  y_size={: 3.02f}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
+    r_text_report += "cnc plank height {: 6.02f} :  x_size={: 3.02f}  y_size={: 3.02f}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
       plank_hole_cover_height, l_h3_dx, l_h3_dy, l_h3_v, l_h3_v*wood_density_fir_tree*10**-6, l_h3_v*wood_density_oak_tree*10**-6)
+    # slab plan
+    l_h4_dx = max((l_plank_desc['slab51_tobo_single'][3] + l_plank_desc['slab52_tobo_side'][3] + l_plank_desc['slab53_tobo_middle'][3])*(l_plank_desc['slab53_tobo_middle'][1]+l_space_y),
+                  l_plank_desc['slab54_side_left_right'][3]*(l_plank_desc['slab54_side_left_right'][1]+l_space_y),
+                  (l_plank_desc['slab55_side_rear_single'][3] + l_plank_desc['slab56_side_rear_side'][3] + l_plank_desc['slab57_side_rear_middle'][3])*(l_plank_desc['slab57_side_rear_middle'][1]+l_space_y),
+                  l_plank_desc['slab58_front'][3]*(l_plank_desc['slab58_front'][1]+l_space_y))
+    l_h4_dy = l_plank_desc['slab53_tobo_middle'][0] + l_plank_desc['slab54_side_left_right'][0] + l_plank_desc['slab57_side_rear_middle'][0] + l_plank_desc['slab58_front'][0] + 5*l_space_y
+    l_h4_v = l_h4_dx*l_h4_dy*slab_top_bottom_height/1000
+    r_text_report += "cnc slab height {: 6.02f} :  x_size={: 3.02f}  y_size={: 3.02f}  V={: 4.02f} (cm3)  M(min)={: 4.03f}  M(max)={: 4.03f} (kg)\n".format(
+      slab_top_bottom_height, l_h4_dx, l_h4_dy, l_h4_v, l_h4_v*wood_density_fir_tree*10**-6, l_h4_v*wood_density_oak_tree*10**-6)
     r_text_report += """
 6.1. plank requirement:
 =======================
 """
     per_wxh_q = {}
     per_wxh_length = {}
-    for lppwh in possible_plank_width_and_height:
+    for lppwh in possible_plank_height_and_width:
       r_text_report += "plank section width_x_height: %s\n"%lppwh
       per_wxh_q[lppwh] = 0
       per_wxh_length[lppwh] = 0.0
-      for lp in l_plank_per_width_and_height[lppwh]:
+      for lp in l_plank_per_height_and_width[lppwh]:
         lq = l_plank_desc[lp][3]
         l_length = l_plank_desc[lp][0]
         l_total_length = lq*l_length
         per_wxh_q[lppwh] += lq
         per_wxh_length[lppwh] += l_total_length
-        r_text_report += "plank {:<15s} {:<20s} : length: {: 3.02f}  Q={: 2d}  total_length: {: 5.02f}\n".format(lppwh, lp, l_length, lq, l_total_length)
+        r_text_report += "plank {:<15s} {:<26s} : length: {: 3.02f}  Q={: 2d}  total_length: {: 5.02f}\n".format(lppwh, lp, l_length, lq, l_total_length)
     r_text_report += """
 6.2. summary per plank section width x height:
 ==============================================
+for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_type_nb plank_nb total_length
 """
     total_type_nb = 0
     total_q = 0
     total_length = 0
-    for lppwh in possible_plank_width_and_height:
-      total_type_nb += len(l_plank_per_width_and_height[lppwh])
+    for lppwh in possible_plank_height_and_width:
+      total_type_nb += len(l_plank_per_height_and_width[lppwh])
       total_q += per_wxh_q[lppwh]
       total_length += per_wxh_length[lppwh]
-      r_text_report += "for plank section {:<15s} : plank_type_nb: {: 2d}  plank_nb: {: 2d} total_length: {: 5.02f}\n".format(
-                          lppwh, len(l_plank_per_width_and_height[lppwh]), per_wxh_q[lppwh], per_wxh_length[lppwh])
-    r_text_report += """
-6.3. plank section total:
-=========================
-"""
-    r_text_report += "in total: plank_type_nb: {: 2d}  plank_nb: {: 2d}  total_length: {: 5.02f}\n".format(total_type_nb, total_q, total_length)
+      #r_text_report += "for plank section {:<15s} : plank_type_nb: {: 2d}  plank_nb: {: 2d} total_length: {: 5.02f}".format(
+      r_text_report += "for {:<15s} : type_nb: {: 3d}  nb: {: 3d}  length: {: 8.02f}".format(
+                          lppwh, len(l_plank_per_height_and_width[lppwh]), per_wxh_q[lppwh], per_wxh_length[lppwh])
+      #r_text_report += "  Accumulation: plank_type_nb: {: 2d}  plank_nb: {: 2d}  total_length: {: 5.02f}\n".format(total_type_nb, total_q, total_length)
+      r_text_report += "  : Accumulation: type_nb: {: 4d}  nb: {: 4d}  length: {: 10.02f}\n".format(total_type_nb, total_q, total_length)
+#    r_text_report += """
+#6.3. plank section total:
+#=========================
+#"""
+#    r_text_report += "in total: plank_type_nb: {: 2d}  plank_nb: {: 2d}  total_length: {: 5.02f}\n".format(total_type_nb, total_q, total_length)
 
     r_text_report += """
 7. output file list:
@@ -1151,6 +1401,25 @@ oak tree density  :   %0.2f (kg/m3)
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "plank_count_batch.dxf", "Batch of all required planks") 
 
+      # frame assembly
+      l_assembly = frame_assembly(ai_module_width, 0, 0)
+      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "frame_assembly.stl", "Assembly of the frame") 
+      (l_file_idx, l_text_report) = fg_xyz_dxf(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "frame_assembly.dxf", "Assembly of the frame") 
+
+      # frame assembly with amplified_cut
+      l_assembly = frame_assembly(ai_module_width, ai_cutting_extra, 0)
+      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "frame_assembly_with_amplified_cut.stl", "Assembly of the frame with amplified cut") 
+      (l_file_idx, l_text_report) = fg_xyz_dxf(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "frame_assembly_with_amplified_cut.dxf", "Assembly of the frame with amplified cut") 
+
+      # frame explosed assembly with amplified_cut
+      l_assembly = frame_assembly(ai_module_width, ai_cutting_extra, 200)
+      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "exposed_frame_assembly_with_amplified_cut.stl", "Explosed assembly of the frame with amplified cut") 
+
       # assembly
       l_assembly = box_wood_frame_assembly(ai_module_width, 0, 0)
       (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
@@ -1190,6 +1459,13 @@ oak tree density  :   %0.2f (kg/m3)
         "hole_cover_cnc_plan.stl", "Batch of the hole_cover planks gathered on a plan to be cut by cnc") 
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "hole_cover_cnc_plan.dxf", "Batch of the hole_cover planks gathered on a plan to be cut by cnc")
+
+      # cnc plan for slabs
+      l_batch = box_wood_frame_slab_cutting_plan(ai_module_width, 0)
+      (l_file_idx, l_text_report) = fg_stl(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "slab_cnc_plan.stl", "Batch of the slabs gathered on a plan to be cut by cnc") 
+      (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "slab_cnc_plan.dxf", "Batch of the slabs gathered on a plan to be cut by cnc")
 
       # cnc plan overview
       l_batch = box_wood_frame_plank_cutting_plan(ai_module_width, 0)
@@ -1271,7 +1547,7 @@ def box_wood_frame_cli():
     help="It sets the radius of the reamer of the cnc.")
   bwf_parser.add_argument('--cutting_extra','--ce', action='store', type=float, default=2.0, dest='sw_cutting_extra',
     help="It sets the cutting_extra used to see better the fitting in the assembly view.")
-  bwf_parser.add_argument('--slab_thickness','--st', action='store', type=float, default=0.0, dest='sw_slab_thickness',
+  bwf_parser.add_argument('--slab_thickness','--st', action='store', type=float, default=5.0, dest='sw_slab_thickness',
     help="If not zero (the default value), it generates the slabs with this thickness.")
   bwf_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
     help="If not set to the empty string (the default value), it generates a bunch of design files starting with this basename.")
@@ -1302,6 +1578,7 @@ def box_wood_frame_cli():
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("box_wood_frame says hello!\n")
   my_bwf = box_wood_frame_cli()
+  Part.show(my_bwf)
 
 
 

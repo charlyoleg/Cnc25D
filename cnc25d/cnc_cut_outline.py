@@ -120,7 +120,10 @@ def cnc_cut_outline(ai_corner_list):
     # corner_length
     l_corner_length = 0
     l_corner_type = 0
-    if(cur_pt_r>0):
+    if(l_angle2>math.pi-radian_epsilon):
+      l_corner_length = 0
+      l_corner_type = 0
+    elif(cur_pt_r>0):
       # smoothed corner length
       l_smoothed_corner_length = abs(cur_pt_r)/math.tan(l_angle2/2)
       #print("dbg212: l_smoothed_corner_length:", l_smoothed_corner_length)
@@ -154,6 +157,7 @@ def cnc_cut_outline(ai_corner_list):
       corner_length[corn_idx-1] = 0
   # build corners
   for corn_idx in range(len(corner_type)):
+    #print("dbg442: corn_idx:", corn_idx)
     l_pre_direction = pt_vector[corn_idx-2]-pt_vector[corn_idx-1]
     l_pre_direction_1 = l_pre_direction + Base.Vector(0,0,0) # need to duplicate the vector because the method .multiply() change the vector itself
     l_pre_direction_2 = l_pre_direction + Base.Vector(0,0,0) 
