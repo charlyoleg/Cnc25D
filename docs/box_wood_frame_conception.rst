@@ -130,7 +130,7 @@ The plank09_hole_cover has an aesthetic functionality.
 6. Diagonal plank reorientation
 ===============================
 
-The planks are positioned in the cuboid assembly with the plank_place() function. To position the diagonal planks with this function, the diagonal planks must first be rotated of 45 degrees and affected with virtual length and width corresponding to the assimilated straight plank.
+The planks are positioned in the cuboid assembly with the place_plank() function. To position the diagonal planks with this function, the diagonal planks must first be rotated of 45 degrees and affected with virtual length and width corresponding to the assimilated straight plank.
 
 .. image:: images/plank07_wall_diagonal_reorientation.png
 .. image:: images/plank08_tobo_diagonal_reorientation.png

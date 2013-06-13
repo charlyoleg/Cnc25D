@@ -106,11 +106,23 @@ bwf_script_content='''#!/usr/bin/python
 #include "../cnc25d/tests/box_wood_frame_macro.py"
 '''
 
+### cnc25d_generic_function script example
+
+cgf_script_name="cnc25d_generic_function_example.py"
+
+# copy from ../cnc25d/tests/cnc25d_generic_function_macro.py without the import stuff
+cgf_script_content='''#!/usr/bin/python
+#
+# copy/paste of cnc25d/tests/cnc25d_generic_function_macro.py
+#
+#include "../cnc25d/tests/cnc25d_generic_function_macro.py"
+'''
+
 ### Generating the script examples
 
 ceg_example_list={
-  bwf_script_name : bwf_script_content
-}
+  bwf_script_name : bwf_script_content,
+  cgf_script_name : cgf_script_content}
 
 for l_example in ceg_example_list.keys():
   print("cnc25d script example : {:s}".format(l_example))

@@ -12,11 +12,12 @@ Contents:
    :maxdepth: 2
 
    cnc25d_presentation
-   cnc25d_details
+   cnc25d_generic_functions
+   box_wood_frame_example
+   cnc25d_internals
    cnc_cut_outline
    plank_place
    box_wood_frame_conception
-   box_wood_frame_usage
 
 Indices and tables
 ==================

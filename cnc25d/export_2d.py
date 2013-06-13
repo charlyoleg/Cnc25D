@@ -129,7 +129,7 @@ def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_lis
       l_shift_x = ai_size_x
       l_gauge_max = ai_size_y
     elif(lo=='yz'):
-      l_solid.rotate(Base.Vector(ai_size_x/2, ai_size_y/2, ai_size_z/2), Base.Vector(0,0,1), 90)
+      l_solid.rotate(Base.Vector(ai_size_x/2, ai_size_y/2, ai_size_z/2), Base.Vector(0,0,1), -90)
       l_solid.rotate(Base.Vector(ai_size_x/2, ai_size_y/2, ai_size_z/2), Base.Vector(1,0,0), -90)
       l_solid.translate(Base.Vector((ai_size_y-ai_size_x)/2, (ai_size_z-ai_size_y)/2, (ai_size_x-ai_size_z)/2)) # place the module corner at origin (0,0,0)
       l_solid.translate(Base.Vector(0,l_space,0))
@@ -141,7 +141,10 @@ def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_lis
     for l_depth in l_depth_list:
       l_slice_list.extend(draw_gauge(l_shift_x, l_space/2, l_gauge_max, l_depth, l_pos_x, l_pos_y))
       l_pos_x += l_shift_x+2*l_space
-      l_slice_list.extend(l_solid.slice(vec_z_unit, l_depth))
+      ll_depth = l_depth
+      if(lo=='xz'):
+        ll_depth = ai_size_y-l_depth
+      l_slice_list.extend(l_solid.slice(vec_z_unit, ll_depth))
       l_solid.translate(Base.Vector(l_shift_x+2*l_space,0,0))
   l_slice = Part.makeCompound(l_slice_list)
   r_dxf = Drawing.projectToDXF(l_slice, vec_z_unit)
