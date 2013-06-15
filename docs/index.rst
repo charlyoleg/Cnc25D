@@ -16,7 +16,7 @@ Contents:
    box_wood_frame_design
    cnc25d_internals
    cnc_cut_outline
-   plank_place
+   place_plank
    box_wood_frame_conception
 
 Indices and tables

@@ -118,7 +118,7 @@ These scripts are the design examples. Edit one of these scripts, modify the par
   > meshlab # import bwf36_assembly_with_amplified_cut.stl
   > less bwf49_text_report.txt
 
-Look further in the documentation to get information on the parameters of the design examples.
+This documentation contains one chapter per design examples that explains in particulary the parameter list.
 
 3.2. Use a design example within FreeCAD
 ----------------------------------------
@@ -186,7 +186,7 @@ If you are interested in the Cnc25D API and want to create your own design with,
   yz_slice_list = [ 0.1+2*i for i in range(9) ]
   export_2d.export_xyz_to_dxf(my_part_solid, 40, 40, 20, xy_slice_list, xz_slice_list, yz_slice_list, "my_part_scanned.dxf")
   
-Look further in the documentation to get information on the Cnc25D API usage. And look at the script example **cnc25d_api_example.py** that you can generate with the executable **cnc25d_example_generator.py**.
+Further documentation at :doc:`cnc25d_api` . Also look at the script example **cnc25d_api_example.py** that you can generate with the executable **cnc25d_example_generator.py**.
 
 4. Links
 ========

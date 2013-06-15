@@ -106,6 +106,8 @@ The *place_plank()* function uses this approach to place a object in an cuboid a
 
 A physical object can be defined in several ways respecting our *main and second axis* conventions. The choice of the definition influences the behavior of the *flip*. Knowing that, choose the most convenient definitions for your design.
 
+Look at the :doc:`place_plank` chapter to get more explaination on rotation, orientation and flip transformations.
+
 4. export DXF
 =============
 

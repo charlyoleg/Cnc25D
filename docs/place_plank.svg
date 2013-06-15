@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="plank_place.svg">
+   sodipodi:docname="place_plank.svg">
   <defs
      id="defs4">
     <marker
@@ -895,7 +895,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
      inkscape:cx="294.88582"
-     inkscape:cy="722.51337"
+     inkscape:cy="2779.6562"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -918,7 +918,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -972,7 +972,7 @@
            height="27.857143"
            x="17.142857"
            y="10.93361" /></flowRegion><flowPara
-         id="flowPara2991">plank_place.svg</flowPara></flowRoot>    <path
+         id="flowPara2991">place_plank.svg</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
        d="M -369.28571,360.21932 -294.28572,263.07647 -110,263.07646"
        id="path3012"

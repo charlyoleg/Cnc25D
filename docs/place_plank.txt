@@ -204,7 +204,7 @@
     
     
     
-    plank_place.svg    
+    place_plank.svg    
     
         
     
