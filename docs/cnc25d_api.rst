@@ -5,6 +5,9 @@ Cnc25D API
 1. import FreeCAD
 =================
 
+| ``importing_freecad.`` **importing_freecad()**
+|   Modify the global variable *sys.path*.
+
 FreeCAD comes with Python modules. But these FreeCAD modules are not installed in one of the standard directories. You will find the Python FreeCAD modules in a directory such as */usr/lib/freecad/lib*. To use FreeCAD from a Python script, you need either to set the PYTHONPATH system environment variable or to extend the sys.path Python variable.
 
 Because you need to import FreeCAD at each beginning of scripts, this task as been implemented in the module *importing_freecad.py* that is install in a standard location. So, after installing Cnc25D, to use the FreeCAD modules, you only need to add those lines at the beginning of your Python script::
@@ -16,6 +19,9 @@ The function *importing_freecad()* looks for the FreeCAD modules using a locatio
 
 2. cnc_cut_outline
 ==================
+
+| ``cnc_cut_outline.`` **cnc_cut_outline(** *list* **)**
+|   Return a *FreeCAD.Part.Shape*.
 
 2.1. cnc_cut_outline purpose
 ----------------------------
@@ -51,6 +57,12 @@ Look at the script *cnc25d_api_example.py* that you can generate with the execut
 
 2.3. outline_shift
 ------------------
+
+| ``cnc_cut_outline.`` **outline_shift_x(** *list, x-offset, x-factor* **)**
+| ``cnc_cut_outline.`` **outline_shift_y(** *list, y-offset, y-factor* **)**
+| ``cnc_cut_outline.`` **outline_shift_xy(** *list, x-offset, x-factor, y-offset, y-factor* **)**
+|   Return a list that defines a sub-sequence of outline.
+
 The definition a polygon can be quiet long and tedious. It might be useful to split a long list of points into several small sequences and concatenate them into one big list using the *.append()* and *.extend()* methods. Often it happens that sub-sequence patterns appear several times in one outline either shifted or mirrored. The functions *outline_shift_x*, *outline_shift_y* and outline_shift_xy can be use to help the reuse of outline sub sequences. Let's look at the following example.
 
 .. image:: images/outline_with_repeated_sub_sequences.png
@@ -86,6 +98,9 @@ This code is easier to maintain.
 
 3. place_plank
 ==============
+| ``cnc_cut_outline.`` **place_plank(** *FreeCAD.Part.Object, x-size, y-size, z-size, flip, orientation, x-position, y-position, z-posistion* **)**
+|   Return a *FreeCAD.Part.Object*
+
 FreeCAD provides the usual *rotate* and *translate* methods to place an object in a construction-assembly. Even if those methods are mathematically straight forward, they might require many *tries and errors* to find out the correct rotation to apply to an object to place it correctly in an assembly. The *place_plank()* function provides an alternative to the *rotate* method when you want to place a object in a cuboid assembly.
 
 To help positioning object we have the following conventions:
@@ -108,8 +123,31 @@ A physical object can be defined in several ways respecting our *main and second
 
 Look at the :doc:`place_plank` chapter to get more explaination on rotation, orientation and flip transformations.
 
-4. export DXF
-=============
+4. Drawing export
+=================
+
+4.1. Cut export as DXF
+----------------------
+
+| ``export_2d.`` **export_to_dxf(** *FreeCAD.Part.Object, FreeCAD.Base.Vector, depth, path* **)**
+|   Write the DXF_ file *path*.
+
+4.2. Cut export as SVG
+----------------------
+
+| ``export_2d.`` **export_to_svg(** *FreeCAD.Part.Object, FreeCAD.Base.Vector, depth, path* **)**
+|   Write the SVG_ file *path*.
+
+4.3. XYZ scanning
+-----------------
+
+| ``export_2d.`` **export_xyz_to_dxf(** *FreeCAD.Part.Object, x-size, y-size, z-size, x-list, y-list, z-list, path* **)**
+|   Write the DXF_ file *path*.
+
+
+
+.. _DXF : http://en.wikipedia.org/wiki/AutoCAD_DXF
+.. _SVG : http://www.w3.org/Graphics/SVG/
 
 
 
