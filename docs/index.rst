@@ -12,7 +12,7 @@ Contents:
    :maxdepth: 2
 
    cnc25d_presentation
-   cnc25d_generic_functions
+   cnc25d_api
    box_wood_frame_design
    cnc25d_internals
    cnc_cut_outline

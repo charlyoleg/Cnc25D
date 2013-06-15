@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="cnc25d_generic_functions.svg">
+   sodipodi:docname="cnc25d_api.svg">
   <defs
      id="defs4">
     <marker
@@ -403,9 +403,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.9899495"
-     inkscape:cx="286.474"
-     inkscape:cy="1463.5341"
+     inkscape:zoom="1.979899"
+     inkscape:cx="261.99875"
+     inkscape:cy="2514.0927"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -420,7 +420,7 @@
      fit-margin-bottom="0"
      inkscape:object-paths="true"
      inkscape:object-nodes="true"
-     inkscape:snap-global="true" />
+     inkscape:snap-global="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -429,7 +429,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -448,7 +448,7 @@
            height="49.497475"
            x="16.162441"
            y="16.955824" /></flowRegion><flowPara
-         id="flowPara2991">cnc25d_generic_functions.svg</flowPara></flowRoot>    <path
+         id="flowPara2991">cnc25d_api.svg</flowPara></flowRoot>    <path
        style="fill:#c87137;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 65.659917,279.59548 73.741123,0 0,72.73099 38.3858,6.06091 67.68022,-41.41625 -16.16244,-50.50763 -48.48733,-60.60915 -77.78174,-8.08122 -49.497463,30.30457 z"
        id="path3012"
@@ -768,10 +768,9 @@
        y="1040.238" />
     <path
        style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart-2-9-8);marker-end:url(#Arrow1Mend-8-2-4)"
-       d="m 75.256364,1028.8459 123.743686,0"
+       d="m 74.71402,1026.0959 116.75731,0"
        id="path4311"
-       inkscape:connector-curvature="0"
-       transform="translate(-0.5,-2.75)" />
+       inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart-2-9-8);marker-end:url(#Arrow1Mend-8-2-4)"
        d="m 230.81985,1041.9779 0,64.1447"
@@ -872,7 +871,7 @@
            y="1007.6327" /></flowRegion><flowPara
          id="flowPara4307-4">Y</flowPara></flowRoot>    <path
        style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart-2-9-8);marker-end:url(#Arrow1Mend-8-2-4)"
-       d="m 74.568867,1177.1189 123.743683,0"
+       d="m 74.532572,1177.1189 117.755358,0"
        id="path4311-6"
        inkscape:connector-curvature="0" />
     <path
@@ -978,5 +977,93 @@
            height="40.406101"
            x="38.385796"
            y="1319.2648" /></flowRegion><flowPara
-         id="flowPara5082">Object definition and flip</flowPara></flowRoot>  </g>
+         id="flowPara5082">Object definition and flip</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3177"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(9.4999999,-2.3928571)"><flowRegion
+         id="flowRegion3179"><rect
+           id="rect3181"
+           width="63.571438"
+           height="15.502089"
+           x="107.85714"
+           y="1013.3438" /></flowRegion><flowPara
+         id="flowPara3183">x-size</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3185"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-3.3571428,2.25)"><flowRegion
+         id="flowRegion3187"><rect
+           id="rect3189"
+           width="61.071426"
+           height="25.714285"
+           x="235.35715"
+           y="1060.1295" /></flowRegion><flowPara
+         id="flowPara3191">y-size</flowPara></flowRoot>    <flowRoot
+       transform="translate(267.66155,-2.7373484)"
+       xml:space="preserve"
+       id="flowRoot3177-1"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"><flowRegion
+         id="flowRegion3179-0"><rect
+           id="rect3181-9"
+           width="63.571438"
+           height="15.502089"
+           x="107.85714"
+           y="1013.3438" /></flowRegion><flowPara
+         id="flowPara3183-3">x-size</flowPara></flowRoot>    <flowRoot
+       transform="translate(267.66155,147.97693)"
+       xml:space="preserve"
+       id="flowRoot3177-4"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"><flowRegion
+         id="flowRegion3179-1"><rect
+           id="rect3181-4"
+           width="63.571438"
+           height="15.502089"
+           x="107.85714"
+           y="1013.3438" /></flowRegion><flowPara
+         id="flowPara3183-37">x-size</flowPara></flowRoot>    <flowRoot
+       transform="translate(5.161551,147.97694)"
+       xml:space="preserve"
+       id="flowRoot3177-7"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"><flowRegion
+         id="flowRegion3179-5"><rect
+           id="rect3181-7"
+           width="63.571438"
+           height="15.502089"
+           x="107.85714"
+           y="1013.3438" /></flowRegion><flowPara
+         id="flowPara3183-6">x-size</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3185-2"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-2.9531264,151.46117)"><flowRegion
+         id="flowRegion3187-2"><rect
+           id="rect3189-5"
+           width="61.071426"
+           height="25.714285"
+           x="235.35715"
+           y="1060.1295" /></flowRegion><flowPara
+         id="flowPara3191-7">y-size</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3185-22"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(246.68973,151.10403)"><flowRegion
+         id="flowRegion3187-7"><rect
+           id="rect3189-2"
+           width="61.071426"
+           height="25.714285"
+           x="235.35715"
+           y="1060.1295" /></flowRegion><flowPara
+         id="flowPara3191-4">y-size</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3185-7"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(245.97545,1.461175)"><flowRegion
+         id="flowRegion3187-5"><rect
+           id="rect3189-6"
+           width="61.071426"
+           height="25.714285"
+           x="235.35715"
+           y="1060.1295" /></flowRegion><flowPara
+         id="flowPara3191-6">y-size</flowPara></flowRoot>  </g>
 </svg>

@@ -5,7 +5,7 @@ Cnc25D Presentation
 Cnc25D is the contraction of "CNC" and "2.5D".
 
 2.5D and cuboid assembly are good solutions for automated personal fabrication.
-The Python package cnc25d proposes some generic functions and design examples related to those technologies.
+The Python package cnc25d proposes an API and design examples related to those technologies.
 
 - CNC (Computer Numerical Control) and 3D-printers let move from design files to the physical objects.
 - 2.5D parts are objects that can be described as a pile of free 2D path linearly extruded along the third dimension.
@@ -106,7 +106,7 @@ Example of usage::
 After installing Cnc25D, you get the executable **cnc25d_example_generator.py**. When you run this script, it asks you for each design example if you want to generate the script example. Answer 'y' or 'yes' if you want to get the script example. **cnc25d_example_generator.py** can generates the following Python_ script examples:
 
 - **box_wood_frame_example.py** : The piece of furniture to pile up.
-- **cnc25d_generic_function_example.py** : This is not a design example, this shows how to use the generic functions.
+- **cnc25d_api_example.py** : This is not a design example, this shows how to use the API.
 
 These scripts are the design examples. Edit one of these scripts, modify the parameter values, run the script. You get plenty of DXF_ and STL_, that you can view with LibreCAD_ and MeshLab_. You also get a txt file, that provides you a kind of report of your design. In summary, we run the following commands::
 
@@ -156,7 +156,7 @@ Launch FreeCAD_ and run the design example script from the Python_ console::
 
 3.3. Make your design script
 ----------------------------
-If you are interested in the generic functions provided by Cnc25D and want to create your own design with, create a Python_ script with the following snippet::
+If you are interested in the Cnc25D API and want to create your own design with, create a Python_ script with the following snippet::
 
   # import the FreeCAD library
   from cnc25d import importing_freecad
@@ -164,7 +164,7 @@ If you are interested in the generic functions provided by Cnc25D and want to cr
   import Part
   from FreeCAD import Base
 
-  # import the module containing the generic functions
+  # import the Cnc25D API
   from cnc25d import cnc_cut_outline, export_2d
 
   # use the cnc_cut_outline function
@@ -186,7 +186,7 @@ If you are interested in the generic functions provided by Cnc25D and want to cr
   yz_slice_list = [ 0.1+2*i for i in range(9) ]
   export_2d.export_xyz_to_dxf(my_part_solid, 40, 40, 20, xy_slice_list, xz_slice_list, yz_slice_list, "my_part_scanned.dxf")
   
-Look further in the documentation to get information on the Cnc25D generic function usage. And look at the script example **cnc25d_generic_function_example.py** that you can generate with the executable **cnc25d_example_generator.py**.
+Look further in the documentation to get information on the Cnc25D API usage. And look at the script example **cnc25d_api_example.py** that you can generate with the executable **cnc25d_example_generator.py**.
 
 4. Links
 ========
@@ -227,9 +227,9 @@ The Cnc25D Python package is under the `Creative Commons Attribution-ShareAlike 
 6. Feedback and contact
 =======================
 
-If you find bugs, will suggest fix or want new features send me an email or clone the `Cnc25D GitHub repository`_.
+If you find bugs, will suggest fix or want new features report it in the `GitHub issue tracker`_ or clone the `Cnc25D GitHub repository`_.
 
-Send a message to "charlyoleg at fabfolk dot com" for any requests and feedback!
+For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 
 
 
@@ -239,6 +239,7 @@ Send a message to "charlyoleg at fabfolk dot com" for any requests and feedback!
 .. _Sphinx : http://sphinx-doc.org/
 
 .. _`Cnc25D Github repository` : https://github.com/charlyoleg/Cnc25D
+.. _`GitHub issue tracker` : https://github.com/charlyoleg/Cnc25D/issues
 .. _`Cnc25D release documentation` : http://pythonhosted.org/Cnc25D/
 .. _`Cnc25D daily built documentation` : https://cnc25d.readthedocs.org
 .. _PyPI : https://pypi.python.org/pypi/Cnc25D

@@ -4,7 +4,7 @@
 # license: CC BY SA 3.0
 
 """
-cnc_cut_outline.py provides generic functions to design 2.5D parts and create cuboid assembly
+cnc_cut_outline.py provides API functions to design 2.5D parts and create cuboid assembly
 """
 
 ################################################################

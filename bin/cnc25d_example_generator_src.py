@@ -106,16 +106,16 @@ bwf_script_content='''#!/usr/bin/python
 #include "../cnc25d/tests/box_wood_frame_macro.py"
 '''
 
-### cnc25d_generic_function script example
+### cnc25d_api_example script
 
-cgf_script_name="cnc25d_generic_function_example.py"
+cgf_script_name="cnc25d_api_example.py"
 
-# copy from ../cnc25d/tests/cnc25d_generic_function_macro.py without the import stuff
+# copy from ../cnc25d/tests/cnc25d_api_macro.py without the import stuff
 cgf_script_content='''#!/usr/bin/python
 #
-# copy/paste of cnc25d/tests/cnc25d_generic_function_macro.py
+# copy/paste of cnc25d/tests/cnc25d_api_macro.py
 #
-#include "../cnc25d/tests/cnc25d_generic_function_macro.py"
+#include "../cnc25d/tests/cnc25d_api_macro.py"
 '''
 
 ### Generating the script examples

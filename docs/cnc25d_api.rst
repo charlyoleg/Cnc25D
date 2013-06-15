@@ -1,6 +1,6 @@
-========================
-Cnc25D Generic Functions
-========================
+==========
+Cnc25D API
+==========
 
 1. import FreeCAD
 =================
@@ -47,7 +47,7 @@ A polygon is a list of points. The *cnc_cut_outline* function needs as argument 
   my_part_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(my_polygon).Edges))
   my_part_solid = my_part_face.extrude(Base.Vector(0,0,20))
 
-Look at the script *cnc25d_generic_function_example.py* that you can generate with the executable *cnc25d_example_generator.py* for a more complete example.
+Look at the script *cnc25d_api_example.py* that you can generate with the executable *cnc25d_example_generator.py* for a more complete example.
 
 2.3. outline_shift
 ------------------

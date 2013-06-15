@@ -51,11 +51,11 @@ To install Cnc25D:
 Feedback / Contact
 ------------------
 
-If you find bugs, will suggest fix or want new features send me an email or clone the `Cnc25D GitHub repository`_.
+If you find bugs, will suggest fix or want new features report it in the `GitHub issue tracker`_ or clone the `Cnc25D GitHub repository`_.
 
-Send a message to "charlyoleg at fabfolk dot com" for any requests and feedback!
+For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 
 .. _`Cnc25D GitHub repository` : https://github.com/charlyoleg/Cnc25D
-
+.. _`GitHub issue tracker` : https://github.com/charlyoleg/Cnc25D/issues
 
 

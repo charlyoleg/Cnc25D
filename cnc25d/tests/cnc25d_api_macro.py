@@ -1,14 +1,14 @@
 #!/usr/bin/python
 #
-# cnc25d_generic_function_macro.py
-# test and demonstrate the generic functions provided by Cnc25D
+# cnc25d_api_macro.py
+# test and demonstrate the Cnc25D API
 # created by charlyoleg on 2013/06/13
 # license: CC BY SA 3.0
 # 
 
 """
-cnc25d_generic_function_macro.py tests and demonstrates the generic functions provided by Cnc25D.
-Use it as an example of usage of the Cnc25D generic functions when you want to create your own design.
+cnc25d_api_macro.py tests and demonstrates the Cnc25D API.
+Use it as an example of usage of the Cnc25D API when you want to create your own design.
 """
 
 # import the FreeCAD library
@@ -17,11 +17,11 @@ importing_freecad.importing_freecad()
 import Part # this module is part of the FreeCAD library
 from FreeCAD import Base
 
-# import the module containing the generic functions
+# import the Cnc25D API modules
 from cnc25d import cnc_cut_outline, export_2d
 
 # hello message
-print("cnc25d_generic_function_macro.py starts")
+print("cnc25d_api_macro.py starts")
 
 # define the CNC reamer radius
 my_reamer_radius = 5.0 # in mm
@@ -49,7 +49,7 @@ my_polygon = [
   [ 1*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius],
   [ 0*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius]]
 
-# use the generic function cnc_cut_outline to create a makable outline from the wished polygon
+# use the Cnc25D API function cnc_cut_outline to create a makable outline from the wished polygon
 my_part_outline = cnc_cut_outline.cnc_cut_outline(my_polygon)
 # extrude the outline to make a 3D part
 my_part_edges = my_part_outline.Edges
@@ -61,7 +61,7 @@ my_part_solid = my_part_face.extrude(Base.Vector(0,0,big_length)) # straight lin
 # visualize the part with the FreeCAD GUI
 #Part.show(my_part_solid)
 
-# create three my_part and place them using the generic function plank_place
+# create three my_part and place them using the Cnc25D API function plank_place
 my_part_a = cnc_cut_outline.place_plank(my_part_solid.copy(), 3*big_length, 2*big_length, 1*big_length, 'i', 'xz', 0, 0, 0)
 my_part_b = cnc_cut_outline.place_plank(my_part_solid.copy(), 3*big_length, 2*big_length, 1*big_length, 'i', 'zx', 0, 0, big_length)
 my_part_c = cnc_cut_outline.place_plank(my_part_solid.copy(), 3*big_length, 2*big_length, 1*big_length, 'z', 'yz', 2*big_length, 0, 0)
@@ -95,5 +95,5 @@ export_2d.export_xyz_to_dxf(my_assembly, 3*big_length, 3*big_length, 4*big_lengt
 print("The file my_assembly.dxf has been generated")
 
 # bye message
-print("cnc25d_generic_function_macro.py says Bye!")
+print("cnc25d_api_macro.py says Bye!")
 
