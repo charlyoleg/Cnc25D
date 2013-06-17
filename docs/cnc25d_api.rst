@@ -10,7 +10,7 @@ Cnc25D API
 
 FreeCAD comes with Python modules. But these FreeCAD modules are not installed in one of the standard directories. You will find the Python FreeCAD modules in a directory such as */usr/lib/freecad/lib*. To use FreeCAD from a Python script, you need either to set the PYTHONPATH system environment variable or to extend the sys.path Python variable.
 
-Because you need to import FreeCAD at each beginning of scripts, this task as been implemented in the module *importing_freecad.py* that is install in a standard location. So, after installing Cnc25D, to use the FreeCAD modules, you only need to add those lines at the beginning of your Python script::
+Because you need to import FreeCAD at each beginning of scripts, this task as been implemented in the module *importing_freecad.py* that is installed in a standard location. So, after installing Cnc25D, to use the FreeCAD modules, you only need to add those lines at the beginning of your Python script::
   
   from cnc25d import importing_freecad
   importing_freecad.importing_freecad()
@@ -132,11 +132,30 @@ Look at the :doc:`place_plank` chapter to get more explaination on rotation, ori
 | ``export_2d.`` **export_to_dxf(** *FreeCAD.Part.Object, FreeCAD.Base.Vector, depth, path* **)**
 |   Write the DXF_ file *path*.
 
+The *export_to_dxf()* function performs two successive operations:
+
+- It cuts a slice of the *FreeCAD.Part.Object* according to the direction *FreeCAD.Base.Vector* and the *depth*.
+- It writes the DXF_ file *path* containing the projection of the slice.
+
+If you are designing a 2.5D part, this function is useful to get the DXF_ file that will be used by the CNC workflow.
+
+Usage example::
+
+  export_2d.export_to_dxf(my_part_solid, Base.Vector(0,0,1), 1.0, "my_part.dxf")
+
 4.2. Cut export as SVG
 ----------------------
 
 | ``export_2d.`` **export_to_svg(** *FreeCAD.Part.Object, FreeCAD.Base.Vector, depth, path* **)**
 |   Write the SVG_ file *path*.
+
+The *export_to_svg()* function performs the same operations as *export_to_dxf()* except it write a SVG_ file.
+
+
+Usage example::
+
+  export_2d.export_to_svg(my_part_solid, Base.Vector(0,0,1), 1.0, "my_part.svg")
+
 
 4.3. XYZ scanning
 -----------------
@@ -144,6 +163,18 @@ Look at the :doc:`place_plank` chapter to get more explaination on rotation, ori
 | ``export_2d.`` **export_xyz_to_dxf(** *FreeCAD.Part.Object, x-size, y-size, z-size, x-list, y-list, z-list, path* **)**
 |   Write the DXF_ file *path*.
 
+The *export_xyz_to_dxf()* function cuts in many slices the *FreeCAD.Part.Object* according to the three directions of the reference frame axis. The depth of the slices are provided by the three argument lists *x-list*, *y-list* and *z-list*.All the slices are placed in the plan XY and are written in the DXF_ file *path*.
+
+The result looks like a medical scan. This is a more comfortable and readable document than the CAD tradition 3 views projections.
+
+.. image:: images/export_xyz_to_dxf.png
+
+Usage example::
+
+  xy_slice_list = [ 0.1+20*i for i in range(12) ]
+  xz_slice_list = [ 0.1+20*i for i in range(9) ]
+  yz_slice_list = [ 0.1+20*i for i in range(9) ]
+  export_2d.export_xyz_to_dxf(my_assembly, 180.0, 180.0, 240.0, xy_slice_list, xz_slice_list, yz_slice_list, "my_assembly.dxf")
 
 
 .. _DXF : http://en.wikipedia.org/wiki/AutoCAD_DXF

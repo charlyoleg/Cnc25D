@@ -231,6 +231,27 @@ If you find bugs, will suggest fix or want new features report it in the `GitHub
 
 For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 
+7. Releases
+===========
+
+Release 0.1.2
+-------------
+Released on 2013-06-18
+
+* Box wood frame design example
+
+Release 0.1.1
+-------------
+Released on 2013-06-05
+
+* Experimenting distribute
+
+Release 0.1.0
+-------------
+Released on 2013-06-04
+
+* Initial release
+
 
 
 .. _Python : http://www.python.org
