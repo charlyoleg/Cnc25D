@@ -163,9 +163,9 @@ Usage example::
 | ``export_2d.`` **export_xyz_to_dxf(** *FreeCAD.Part.Object, x-size, y-size, z-size, x-list, y-list, z-list, path* **)**
 |   Write the DXF_ file *path*.
 
-The *export_xyz_to_dxf()* function cuts in many slices the *FreeCAD.Part.Object* according to the three directions of the reference frame axis. The depth of the slices are provided by the three argument lists *x-list*, *y-list* and *z-list*.All the slices are placed in the plan XY and are written in the DXF_ file *path*.
+The *export_xyz_to_dxf()* function cuts in many slices the *FreeCAD.Part.Object* according to the three directions of the reference frame axis X, Y and Z. The depth of the slices are provided by the three argument lists *x-list*, *y-list* and *z-list*. All the slices are placed in the plan XY and are written in the DXF_ file *path*.
 
-The result looks like a medical scan. This is a more comfortable and readable document than the CAD tradition 3 views projections.
+The result looks like a medical scan. This is a more comfortable and readable document than the CAD tradition 3 views projections. This helps to show up weaknesses of designs if you choose good slices.
 
 .. image:: images/export_xyz_to_dxf.png
 
