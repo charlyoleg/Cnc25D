@@ -47,6 +47,14 @@ Cnc25D Internals
 
 2. Design example generation
 ============================
+The binary script *cnc25d_example_generator.py* just writes example scripts. These example scripts are actually the files *cnc25d/tests/cnc25d_api_macro.py* and *cnc25d/tests/box_wood_frame_macro.py*. To check these example scripts, you must run their wrapper *scripts cnc25d/tests/cnc25d_api_test.py* and *cnc25d/tests/box_wood_frame_test.py*.
+
+Because of the Python package workflow, the example scripts can not be copied after the installation and must be embedded in the binary script *cnc25d_example_generator.py* before the creation of the Python package distribution. This is the purpose of the script *scr/micropreprocessor.py*. The file *cnc25d_example_generator_src.py* contains the skeleton of the binary script *cnc25d_example_generator.py*. The following command include the example scripts to generate the final  binary script *cnc25d_example_generator.py*::
+
+  > scr/micropreprocessor.py bin/cnc25d_example_generator_src.py
+
+The purpose of this workflow is to help the maintenance of the generated example scripts and avoid bugs in their content.
+
 
 3. Python package distribution release
 ======================================
