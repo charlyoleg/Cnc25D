@@ -218,7 +218,7 @@ If you have Sphinx_ installed on your system and you have downloaded the `Cnc25D
   > cd Cnc25D/docs
   > make html
 
-With your browser open the local directory file:///.../Cnc25D/docs/_build/html.
+With your browser open the local directory ``file:///.../Cnc25D/docs/_build/html``.
 
 5. License
 ==========
