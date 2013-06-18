@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
   name='Cnc25D',
-  version='0.1.1',
+  version='0.1.2',
   author='charlyoleg',
   author_email='charlyoleg@fabfolk.com',
   packages=['cnc25d', 'cnc25d.tests'],
