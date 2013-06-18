@@ -22,7 +22,7 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 > deactivate
 - upload distribution
 > python setup.py sdist upload
-> python setup.py upload_docs
+> python setup.py upload_docs  # sometime it works only at the second run! re-run this command if it fails the first time
 
 2) micropreprocessor.py
 This is a Python package and there should not preprocessing
