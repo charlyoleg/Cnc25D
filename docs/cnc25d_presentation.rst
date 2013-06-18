@@ -45,6 +45,7 @@ Currently, you can use those following design examples:
 
 - The piece of furniture **box_wood_frame** to pile-up.
 
+.. _cnc25d_installation :
 
 2. Cnc25D Installation
 ======================
