@@ -156,6 +156,7 @@ Usage example::
 
   export_2d.export_to_svg(my_part_solid, Base.Vector(0,0,1), 1.0, "my_part.svg")
 
+**Warning:** The function *export_to_svg()* only works when it is used in a script run from the FreeCAD GUI. This is because of a current limitation of the FreeCAD library function *Drawing.projectToSVG()*.
 
 4.3. XYZ scanning
 -----------------
