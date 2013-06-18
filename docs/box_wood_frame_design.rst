@@ -45,81 +45,118 @@ Now you get the *Box wood frame* design files according to your parameters.
 
 3.1. bwf_box_width
 ------------------
-bwf_box_width = 400.0
+bwf_box_width default value : 400.0
+
+.. image:: images/bwf_parameter_box_width.png
 
 3.2. bwf_box_depth
 ------------------
-bwf_box_depth = 400.0
+bwf_box_depth default value : 400.0
+
+.. image:: images/bwf_parameter_box_depth.png
 
 recommendation: keep bwf_box_depth = bwf_box_width to get more pile up possibilities
 
 3.3. bwf_box_height
 -------------------
-bwf_box_height = 400.0
+bwf_box_height default value : 400.0
+
+.. image:: images/bwf_parameter_box_height.png
 
 3.4. bwf_fitting_height
 -----------------------
-bwf_fitting_height = 30.0
+bwf_fitting_height default value : 30.0
+
+.. image:: images/bwf_parameter_fitting_height.png
 
 3.5. bwf_h_plank_width
 ----------------------
-bwf_h_plank_width = 50.0
+bwf_h_plank_width default value : 50.0
+
+.. image:: images/bwf_parameter_h_plank_width.png
 
 3.6. bwf_v_plank_width
 ----------------------
-bwf_v_plank_width = 30.0
+bwf_v_plank_width default value : 30.0
+
+.. image:: images/bwf_parameter_v_plank_width.png
 
 3.7. bwf_plank_height
 ---------------------
-bwf_plank_height = 20.0
+bwf_plank_height default value : 20.0
+
+.. image:: images/bwf_parameter_plank_height.png
 
 3.8. bwf_d_plank_width
 ----------------------
-bwf_d_plank_width = 30.0
+bwf_d_plank_width default value : 30.0
+
+.. image:: images/bwf_parameter_d_plank_width.png
 
 3.9. bwf_d_plank_height
 -----------------------
-bwf_d_plank_height = 10.0
+bwf_d_plank_height default value : 10.0
+
+.. image:: images/bwf_parameter_d_plank_height.png
 
 3.10. bwf_crenel_depth
 ----------------------
-bwf_crenel_depth = 5.0
+bwf_crenel_depth default value : 5.0
+
+.. image:: images/bwf_parameter_crenel_depth.png
 
 3.11. bwf_wall_diagonal_size
 ----------------------------
-bwf_wall_diagonal_size = 50.0
+bwf_wall_diagonal_size default value : 50.0
+
+.. image:: images/bwf_parameter_wall_diagonal_size.png
 
 3.12. bwf_tobo_diagonal_size
 ----------------------------
-bwf_tobo_diagonal_size = 100.0
+bwf_tobo_diagonal_size default value : 100.0
+
+.. image:: images/bwf_parameter_tobo_diagonal_size.png
 
 3.13. bwf_diagonal_lining_top_height
 ------------------------------------
-bwf_diagonal_lining_top_height = 20.0
+bwf_diagonal_lining_top_height default value : 20.0
+
+.. image:: images/bwf_parameter_diagonal_lining_top_height.png
 
 3.14. bwf_diagonal_lining_bottom_height
 ---------------------------------------
-bwf_diagonal_lining_bottom_height = 20.0
+bwf_diagonal_lining_bottom_height default value : 20.0
+
+.. image:: images/bwf_parameter_diagonal_lining_bottom_height.png
 
 3.15. bwf_module_width
 ----------------------
-bwf_module_width = 1
+bwf_module_width default value : 1
+
+.. image:: images/bwf_parameter_module_width_1.png
+.. image:: images/bwf_parameter_module_width_2.png
+.. image:: images/bwf_parameter_module_width_3.png
+.. image:: images/bwf_parameter_module_width_5.png
 
 3.16. bwf_reamer_radius
 -----------------------
-bwf_reamer_radius = 2.0
+bwf_reamer_radius default value : 2.0
+
+.. image:: images/bwf_parameter_reamer_radius.png
 
 3.17. bwf_cutting_extra
 -----------------------
-bwf_cutting_extra = 2.0 # doesn't affect the cnc cutting plan
+bwf_cutting_extra default value : 2.0 # doesn't affect the cnc cutting plan
+
+.. image:: images/bwf_parameter_cutting_extra.png
 
 3.18. bwf_slab_thickness
 ------------------------
-bwf_slab_thickness = 0.0 # set it bigger than 0 if you want to get the slab too
+bwf_slab_thickness default value : 0.0 # set it bigger than 0 if you want to get the slab too
 
 3.19. bwf_output_file_basename
 ------------------------------
-bwf_output_file_basename = "" # set a not-empty string if you want to generate the output files
+bwf_output_file_basename default value : "" # set a not-empty string if you want to generate the output files
 #bwf_output_file_basename = "my_output_dir/" 
 #bwf_output_file_basename = "my_output_dir/my_output_basename" 
 #bwf_output_file_basename = "my_output_basename" 

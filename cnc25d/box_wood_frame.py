@@ -1497,6 +1497,8 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
   #r_bwf = 1
   r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,0)
   #r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,200)
+  #r_bwf = frame_assembly(ai_module_width,ai_cutting_extra,0)
+  #r_bwf.exportStl("bwf_assembly.stl")
   return(r_bwf)
 
 ################################################################
