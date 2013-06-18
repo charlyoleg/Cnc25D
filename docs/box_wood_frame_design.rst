@@ -55,7 +55,7 @@ bwf_box_depth default value : 400.0
 
 .. image:: images/bwf_parameter_box_depth.png
 
-recommendation: keep bwf_box_depth = bwf_box_width to get more pile up possibilities
+**recommendation:** Keep bwf_box_depth = bwf_box_width to get more pile up possibilities.
 
 3.3. bwf_box_height
 -------------------
@@ -133,9 +133,20 @@ bwf_diagonal_lining_bottom_height default value : 20.0
 ----------------------
 bwf_module_width default value : 1
 
+bwf_module_width = 1
+
 .. image:: images/bwf_parameter_module_width_1.png
+
+bwf_module_width = 2
+
 .. image:: images/bwf_parameter_module_width_2.png
+
+bwf_module_width = 3
+
 .. image:: images/bwf_parameter_module_width_3.png
+
+bwf_module_width = 5
+
 .. image:: images/bwf_parameter_module_width_5.png
 
 3.16. bwf_reamer_radius
@@ -146,20 +157,31 @@ bwf_reamer_radius default value : 2.0
 
 3.17. bwf_cutting_extra
 -----------------------
-bwf_cutting_extra default value : 2.0 # doesn't affect the cnc cutting plan
+bwf_cutting_extra default value : 2.0
 
 .. image:: images/bwf_parameter_cutting_extra.png
 
+**Note:** The parameter *bwf_cutting_extra* doesn't affect the cnc cutting plan. It just help to see the junction between the plans.
+
 3.18. bwf_slab_thickness
 ------------------------
-bwf_slab_thickness default value : 0.0 # set it bigger than 0 if you want to get the slab too
+bwf_slab_thickness default value : 5.0
+
+The slabs are the skin of your *box wood frame*. Set the slab thickness to the available plywood thickness of your supplier. Try to keep this relation::
+
+  bwf_plank_height > bwf_d_plank_height + bwf_slab_thickness
 
 3.19. bwf_output_file_basename
 ------------------------------
-bwf_output_file_basename default value : "" # set a not-empty string if you want to generate the output files
-#bwf_output_file_basename = "my_output_dir/" 
-#bwf_output_file_basename = "my_output_dir/my_output_basename" 
-#bwf_output_file_basename = "my_output_basename" 
+bwf_output_file_basename default value : ""
+
+Set the parameter *bwf_output_file_basename* to a not-empty string if you want to generate the output files. The *box_wood_frame_example.py* generates many files. These files can be generated in a directory or be identified by a common basename. The generated text file *text_report.txt* described all generated files.
+
+Output file base name example::
+
+  bwf_output_file_basename = "my_output_dir/" 
+  bwf_output_file_basename = "my_output_dir/my_output_basename" 
+  bwf_output_file_basename = "my_output_basename" 
 
 
 4. Box wood frame conception
