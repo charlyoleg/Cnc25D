@@ -1418,7 +1418,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
       # frame explosed assembly with amplified_cut
       l_assembly = frame_assembly(ai_module_width, ai_cutting_extra, 200)
       (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "exposed_frame_assembly_with_amplified_cut.stl", "Explosed assembly of the frame with amplified cut") 
+        "explosed_frame_assembly_with_amplified_cut.stl", "Explosed assembly of the frame with amplified cut") 
 
       # assembly
       l_assembly = box_wood_frame_assembly(ai_module_width, 0, 0)
@@ -1437,7 +1437,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
       # explosed assembly with amplified_cut
       l_assembly = box_wood_frame_assembly(ai_module_width, ai_cutting_extra, 200)
       (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "exposed_assembly_with_amplified_cut.stl", "Explosed assembly of the box_wood_frame with amplified cut") 
+        "explosed_assembly_with_amplified_cut.stl", "Explosed assembly of the box_wood_frame with amplified cut") 
 
       # cnc plan for cuboid plank
       l_batch = box_wood_frame_plank_cutting_plan_cuboid(ai_module_width, 0)
