@@ -32,7 +32,11 @@ After installing FreeCAD_ and the Python package Cnc25D_ as described at the par
   > cnc25d_example_generator.py # answer 'y' or 'yes' when it asks you to generate the example  box_wood_frame_example.py
   > python box_wood_frame_example.py
 
-After several minutes of computation, you get all files that let you manufacture a *Box wood frame*. Read the *text_report.txt* files to get further information on your generated *Box wood frame* and on the descriptions of the other generated files.
+After several minutes of computation, you get plenty of DXF_ and STL_ files that let you manufacture a *Box wood frame*. Read the *text_report.txt* files to get further information on your generated *Box wood frame* and on the descriptions of the other generated files. Use LibreCAD_ to view the DXF_ files. Use MeshLAB to view the STL_ files::
+
+  > librecad bwf37_assembly_with_amplified_cut.dxf
+  > meshlab     # import bwf36_assembly_with_amplified_cut.stl
+  > less bwf49_text_report.txt
 
 Your *Box wood frame* has been generated with the default parameters. You may want to changes these parameter values to adapt them to your need. Edit the file *box_wood_frame_example.py*, change some parameters values, save your changes and run again::
 
@@ -206,4 +210,9 @@ After getting the templates fitting your *Box wood frame* parameters, you can us
 .. _Cnc25D : https://pypi.python.org/pypi/Cnc25D
 .. _CNC : http://en.wikipedia.org/wiki/CNC_wood_router
 .. _`wood router` : http://en.wikipedia.org/wiki/Wood_router
+
+.. _DXF : http://en.wikipedia.org/wiki/AutoCAD_DXF
+.. _STL : http://en.wikipedia.org/wiki/STL_%28file_format%29
+.. _LibreCAD :  http://librecad.org
+.. _MeshLab : http://meshlab.sourceforge.net/
 
