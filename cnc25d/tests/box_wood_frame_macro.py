@@ -62,7 +62,7 @@ import Part
 ################################################################
 #
 # choose the values of the parameters by editing this file
-# feature request : create a GUI with PyQt4 to edite those parameter values
+# feature request : create a GUI with PyQt4 to edit those parameter values
 
 bwf_box_width = 400.0
 bwf_box_depth = 400.0

@@ -98,12 +98,24 @@ You can rename, move, copy and edit the script {:s}
 
 bwf_script_name="box_wood_frame_example.py"
 
-# copy from ../cnc25d/tests/box_wood_frame_example.py without the import stuff
+# copy from ../cnc25d/tests/box_wood_frame_macro.py without the import stuff
 bwf_script_content='''#!/usr/bin/python
 #
 # copy/paste of cnc25d/tests/box_wood_frame_macro.py
 #
 #include "../cnc25d/tests/box_wood_frame_macro.py"
+'''
+
+### gearwheel script example
+
+gw_script_name="gearwheel_example.py"
+
+# copy from ../cnc25d/tests/gearwheel_macro.py without the import stuff
+gw_script_content='''#!/usr/bin/python
+#
+# copy/paste of cnc25d/tests/gearwheel_macro.py
+#
+#include "../cnc25d/tests/gearwheel_macro.py"
 '''
 
 ### cnc25d_api_example script
@@ -122,17 +134,30 @@ cgf_script_content='''#!/usr/bin/python
 
 ceg_example_list={
   bwf_script_name : bwf_script_content,
+  gw_script_name : gw_script_content,
   cgf_script_name : cgf_script_content}
 
+print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")
 for l_example in ceg_example_list.keys():
-  print("cnc25d script example : {:s}".format(l_example))
-  user_choice=raw_input("Do you want to generate the file {:s} in the current directory? [yes/No] ".format(l_example))
-  if((user_choice=='yes')or(user_choice=='y')):
+  print("  +  {:s}".format(l_example))
+user_choice=raw_input("Do you want to generate all these upper files in the current directory? [yes/No] ")
+if((user_choice=='yes')or(user_choice=='y')):
+  for l_example in ceg_example_list.keys():
     fh_output = open(l_example, 'w')
     fh_output.write(ceg_example_list[l_example])
     fh_output.close()
-    print(ceg_instructions.format(l_example, l_example, l_example))
-  else:
-    print("The script example {:s} has not been created.".format(l_example))
+  print("All cnc25d script examples have been created in the current directory :)")
+else:
+  print("Choose which cnc25d script example you want to generate in the current directory:")
+  for l_example in ceg_example_list.keys():
+    print("cnc25d script example : {:s}".format(l_example))
+    user_choice=raw_input("Do you want to generate the file {:s} in the current directory? [yes/No] ".format(l_example))
+    if((user_choice=='yes')or(user_choice=='y')):
+      fh_output = open(l_example, 'w')
+      fh_output.write(ceg_example_list[l_example])
+      fh_output.close()
+      print(ceg_instructions.format(l_example, l_example, l_example))
+    else:
+      print("The script example {:s} has not been created.".format(l_example))
 
 
