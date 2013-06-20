@@ -273,6 +273,8 @@ importing_freecad.importing_freecad()
 ################################################################
 
 #
+import math
+#
 from cnc25d import gearwheel
 #
 import Part
@@ -291,7 +293,7 @@ gw_gear_tooth_nb = 17
 gw_gear_module = 3.0
 gw_gear_primitive_diameter = 0.0
 gw_gear_base_diameter = 16.0
-gw_gear_tooth_height = 5.0
+gw_gear_tooth_half_height = 5.0
 gw_gear_addendum_dedendum_parity = 50.0
 gw_gear_addendum_height_pourcentage = 100.0
 gw_gear_dedendum_height_pourcentage = 100.0
@@ -306,7 +308,7 @@ gw_gear_force_angle = 20*math.pi/180
 gw_second_gear_tooth_nb = 14
 gw_second_gear_primitive_diameter = 0.0
 gw_second_gear_base_diameter = 14.0
-gw_second_gear_tooth_height = 5.0
+gw_second_gear_tooth_half_height = 5.0
 gw_second_gear_addendum_dedendum_parity = 50.0
 gw_second_gear_addendum_height_pourcentage = 100.0
 gw_second_gear_dedendum_height_pourcentage = 100.0
@@ -333,6 +335,8 @@ gw_part_split = 0
 # center position parameters
 gw_center_position_x = 0.0
 gw_center_position_y = 0.0
+# gearwheel linear extrusion
+gw_gearwheel_height = 1.0
 # cnc reamer constraint
 gw_cnc_reamer_radius = 2.0
 # tooth resolution
@@ -355,7 +359,7 @@ my_gw = gearwheel.gearwheel(
           gw_gear_module,
           gw_gear_primitive_diameter,
           gw_gear_base_diameter,
-          gw_gear_tooth_height,
+          gw_gear_tooth_half_height,
           gw_gear_addendum_dedendum_parity,
           gw_gear_addendum_height_pourcentage,
           gw_gear_dedendum_height_pourcentage,
@@ -366,10 +370,9 @@ my_gw = gearwheel.gearwheel(
           gw_second_gear_additional_axe_length,
           gw_gear_force_angle,
           gw_second_gear_tooth_nb,
-          gw_second_gear_module,
           gw_second_gear_primitive_diameter,
           gw_second_gear_base_diameter,
-          gw_second_gear_tooth_height,
+          gw_second_gear_tooth_half_height,
           gw_second_gear_addendum_dedendum_parity,
           gw_second_gear_addendum_height_pourcentage,
           gw_second_gear_dedendum_height_pourcentage,
@@ -390,11 +393,12 @@ my_gw = gearwheel.gearwheel(
           gw_part_split,
           gw_center_position_x,
           gw_center_position_y,
+          gw_gearwheel_height,
           gw_cnc_reamer_radius,
           gw_gear_tooth_resolution,
           gw_output_file_basename)
 
-Part.show(my_gw)
+#Part.show(my_gw)
 
 
 '''

@@ -52,6 +52,8 @@ importing_freecad.importing_freecad()
 ################################################################
 
 #
+import math
+#
 from cnc25d import gearwheel
 #
 import Part
@@ -147,7 +149,6 @@ my_gw = gearwheel.gearwheel(
           gw_second_gear_additional_axe_length,
           gw_gear_force_angle,
           gw_second_gear_tooth_nb,
-          gw_second_gear_module,
           gw_second_gear_primitive_diameter,
           gw_second_gear_base_diameter,
           gw_second_gear_tooth_half_height,
@@ -176,5 +177,5 @@ my_gw = gearwheel.gearwheel(
           gw_gear_tooth_resolution,
           gw_output_file_basename)
 
-Part.show(my_gw)
+#Part.show(my_gw)
 

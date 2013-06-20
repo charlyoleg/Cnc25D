@@ -125,13 +125,13 @@ def gearwheel_cli():
   gw_parser.add_argument('--gear_tooth_half_height','--gthh', action='store', type=float, default=0.0, dest='sw_gear_tooth_half_height',
     help="If not set to zero, redefine the tooth half height of the first gearwheel. Default: 0.0")
   gw_parser.add_argument('--gear_addendum_dedendum_parity','--gadp', action='store', type=float, default=50.0, dest='sw_gear_addendum_dedendum_parity',
-    help="Set the addendum / dedendum parity of the first gearwheel. Default: 50.0%")
+    help="Set the addendum / dedendum parity of the first gearwheel. Default: 50.0%%")
   gw_parser.add_argument('--gear_addendum_height_pourcentage','--gahp', action='store', type=float, default=100.0, dest='sw_gear_addendum_height_pourcentage',
-    help="Set the addendum height of the first gearwheel in pourcentage of the tooth half height. Default: 100.0%")
+    help="Set the addendum height of the first gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
   gw_parser.add_argument('--gear_dedendum_height_pourcentage','--gdhp', action='store', type=float, default=100.0, dest='sw_gear_dedendum_height_pourcentage',
-    help="Set the dedendum height of the first gearwheel in pourcentage of the tooth half height. Default: 100.0%")
+    help="Set the dedendum height of the first gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
   gw_parser.add_argument('--gear_hollow_height_pourcentage','--ghhp', action='store', type=float, default=25.0, dest='sw_gear_hollow_height_pourcentage',
-    help="Set the hollow height of the first gearwheel in pourcentage of the tooth half height. Default: 25.0%")
+    help="Set the hollow height of the first gearwheel in pourcentage of the tooth half height. Default: 25.0%%")
   gw_parser.add_argument('--gear_reamer_radius','--grr', action='store', type=float, default=1.0, dest='sw_gear_reamer_radius',
     help="Set the reamer radius used to create the gear hollow of the first gearwheel. Default: 1.0")
   gw_parser.add_argument('--gear_initial_angle','--gia', action='store', type=float, default=0.0, dest='sw_gear_initial_angle',
@@ -153,13 +153,13 @@ def gearwheel_cli():
   gw_parser.add_argument('--second_gear_tooth_half_height','--sgthh', action='store', type=float, default=0.0, dest='sw_second_gear_tooth_half_height',
     help="If not set to zero, redefine the tooth half height of the second gearwheel. Default: 0.0")
   gw_parser.add_argument('--second_gear_addendum_dedendum_parity','--sgadp', action='store', type=float, default=50.0, dest='sw_second_gear_addendum_dedendum_parity',
-    help="Set the addendum / dedendum parity of the second gearwheel. Default: 50.0%")
+    help="Set the addendum / dedendum parity of the second gearwheel. Default: 50.0%%")
   gw_parser.add_argument('--second_gear_addendum_height_pourcentage','--sgahp', action='store', type=float, default=100.0, dest='sw_second_gear_addendum_height_pourcentage',
-    help="Set the addendum height of the second gearwheel in pourcentage of the tooth half height. Default: 100.0%")
+    help="Set the addendum height of the second gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
   gw_parser.add_argument('--second_gear_dedendum_height_pourcentage','--sgdhp', action='store', type=float, default=100.0, dest='sw_second_gear_dedendum_height_pourcentage',
-    help="Set the dedendum height of the second gearwheel in pourcentage of the tooth half height. Default: 100.0%")
+    help="Set the dedendum height of the second gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
   gw_parser.add_argument('--second_gear_hollow_height_pourcentage','--sghhp', action='store', type=float, default=25.0, dest='sw_second_gear_hollow_height_pourcentage',
-    help="Set the hollow height of the second gearwheel in pourcentage of the tooth half height. Default: 25.0%")
+    help="Set the hollow height of the second gearwheel in pourcentage of the tooth half height. Default: 25.0%%")
   gw_parser.add_argument('--second_gear_reamer_radius','--sgrr', action='store', type=float, default=1.0, dest='sw_second_gear_reamer_radius',
     help="Set the reamer radius used to create the gear hollow of the second gearwheel. Default: 1.0")
   # simulation
@@ -228,7 +228,7 @@ def gearwheel_cli():
   gw_args = gw_parser.parse_args(effective_args)
   print("dbg111: start making gearwheel")
   if(gw_args.sw_self_test_enable):
-    gearwheel_self_test()
+    r_gw = gearwheel_self_test()
   else:
     r_gw = gearwheel(
             gw_args.sw_gear_type,
