@@ -8,6 +8,7 @@ gearwheel.py is a parametric generator of gear-wheels.
 It's actually a single function with the design parameters as input.
 The function writes STL, DXF and SVG files if an output basename is given as argument.
 The function can also display a small Tk windows for gear simulation.
+Finally, the backends used are: FreeCAD (for GUI rendering, STL and DXF export), mozman dxfwrite, mozman svgwrite and Tkinter.
 The function return the gear-wheel as FreeCAD Part object.
 """
 

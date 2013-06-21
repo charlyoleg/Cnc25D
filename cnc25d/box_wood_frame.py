@@ -1283,6 +1283,38 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
     r_fg = (l_file_idx, l_text_report)
     return(r_fg)
 
+  def fg_step(ai_solid, ai_file_idx, ai_text_report, ai_output_dir, ai_output_basename, ai_file_basename2, ai_file_description):
+    l_file_idx = ai_file_idx + 1
+    l_file_name = "{:s}bwf{:02d}_{:s}".format(ai_output_basename, l_file_idx, ai_file_basename2)
+    l_file_description = "{:s}. ISO standard STEP format (3D).".format(ai_file_description)
+    l_file_path = fg_file_path(ai_output_dir, l_file_name) 
+    ai_solid.exportStep(l_file_path)
+    l_text_report = ai_text_report + fg_text_report(l_file_idx, l_file_name, l_file_description, os.path.getsize(l_file_path))
+    r_fg = (l_file_idx, l_text_report)
+    return(r_fg)
+
+  def fg_brep(ai_solid, ai_file_idx, ai_text_report, ai_output_dir, ai_output_basename, ai_file_basename2, ai_file_description):
+    l_file_idx = ai_file_idx + 1
+    l_file_name = "{:s}bwf{:02d}_{:s}".format(ai_output_basename, l_file_idx, ai_file_basename2)
+    l_file_description = "{:s}. Native OpenCasCade BRep format (3D).".format(ai_file_description)
+    l_file_path = fg_file_path(ai_output_dir, l_file_name) 
+    ai_solid.exportBrep(l_file_path)
+    l_text_report = ai_text_report + fg_text_report(l_file_idx, l_file_name, l_file_description, os.path.getsize(l_file_path))
+    r_fg = (l_file_idx, l_text_report)
+    return(r_fg)
+
+  def fg_3d(ai_solid, ai_file_idx, ai_text_report, ai_output_dir, ai_output_basename, ai_file_basename2, ai_file_description):
+    l_file_idx = ai_file_idx
+    l_text_report = ai_text_report
+    # stl to be viewed with meshlab or freecad
+    (l_file_idx, l_text_report) = fg_stl(ai_solid, l_file_idx, l_text_report, ai_output_dir, ai_output_basename, "{:s}.stl".format(ai_file_basename2), ai_file_description) 
+    # STEP (iso standard) to be viewed with freecad. Warning: largest file size!
+    #(l_file_idx, l_text_report) = fg_step(ai_solid, l_file_idx, l_text_report, ai_output_dir, ai_output_basename, "{:s}.step".format(ai_file_basename2), ai_file_description) 
+    # BRep (OpenCascade Native) to be viewed with freecad
+    (l_file_idx, l_text_report) = fg_brep(ai_solid, l_file_idx, l_text_report, ai_output_dir, ai_output_basename, "{:s}.brep".format(ai_file_basename2), ai_file_description) 
+    r_fg = (l_file_idx, l_text_report)
+    return(r_fg)
+
   def fg_dxf(ai_solid, ai_file_idx, ai_text_report, ai_output_dir, ai_output_basename, ai_file_basename2, ai_file_description):
     l_file_idx = ai_file_idx + 1
     l_file_name = "{:s}bwf{:02d}_{:s}".format(ai_output_basename, l_file_idx, ai_file_basename2)
@@ -1380,8 +1412,8 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
       for lp in l_plank_list:
         if(l_plank_desc[lp][3]>0):
           l_plank = plank_generic(lp, ai_module_width, 0)
-          (l_file_idx, l_text_report) = fg_stl(l_plank, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-            "{:s}_definition.stl".format(lp), "Definition of the plank: {:s}".format(lp)) 
+          (l_file_idx, l_text_report) = fg_3d(l_plank, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+            "{:s}_definition".format(lp), "Definition of the plank: {:s}".format(lp)) 
           (l_file_idx, l_text_report) = fg_dxf(l_plank, l_file_idx, l_text_report, l_output_dir, l_output_basename,
             "{:s}_definition.dxf".format(lp), "Definition of the plank: {:s}".format(lp)) 
           #(l_file_idx, l_text_report) = fg_svg(l_plank, l_file_idx, l_text_report, l_output_dir, l_output_basename,
@@ -1389,88 +1421,88 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
 
       # plank type batch
       l_batch = box_wood_frame_plank_definition_list(ai_module_width, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "plank_type_batch.stl", "Batch of each plank type") 
+      (l_file_idx, l_text_report) = fg_3d(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "plank_type_batch", "Batch of each plank type") 
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "plank_type_batch.dxf", "Batch of each plank type") 
 
       # plank count batch
       l_batch = box_wood_frame_plank_count_list(ai_module_width, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "plank_count_batch.stl", "Batch of all required planks") 
+      (l_file_idx, l_text_report) = fg_3d(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "plank_count_batch", "Batch of all required planks") 
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "plank_count_batch.dxf", "Batch of all required planks") 
 
       # frame assembly
       l_assembly = frame_assembly(ai_module_width, 0, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "frame_assembly.stl", "Assembly of the frame") 
+      (l_file_idx, l_text_report) = fg_3d(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "frame_assembly", "Assembly of the frame") 
       (l_file_idx, l_text_report) = fg_xyz_dxf(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "frame_assembly.dxf", "Assembly of the frame") 
 
       # frame assembly with amplified_cut
       l_assembly = frame_assembly(ai_module_width, ai_cutting_extra, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "frame_assembly_with_amplified_cut.stl", "Assembly of the frame with amplified cut") 
+      (l_file_idx, l_text_report) = fg_3d(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "frame_assembly_with_amplified_cut", "Assembly of the frame with amplified cut") 
       (l_file_idx, l_text_report) = fg_xyz_dxf(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "frame_assembly_with_amplified_cut.dxf", "Assembly of the frame with amplified cut") 
 
       # frame explosed assembly with amplified_cut
       l_assembly = frame_assembly(ai_module_width, ai_cutting_extra, 200)
-      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "explosed_frame_assembly_with_amplified_cut.stl", "Explosed assembly of the frame with amplified cut") 
+      (l_file_idx, l_text_report) = fg_3d(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "explosed_frame_assembly_with_amplified_cut", "Explosed assembly of the frame with amplified cut") 
 
       # assembly
       l_assembly = box_wood_frame_assembly(ai_module_width, 0, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "assembly.stl", "Assembly of the box_wood_frame") 
+      (l_file_idx, l_text_report) = fg_3d(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "assembly", "Assembly of the box_wood_frame") 
       (l_file_idx, l_text_report) = fg_xyz_dxf(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "assembly.dxf", "Assembly of the box_wood_frame") 
 
       # assembly with amplified_cut
       l_assembly = box_wood_frame_assembly(ai_module_width, ai_cutting_extra, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "assembly_with_amplified_cut.stl", "Assembly of the box_wood_frame with amplified cut") 
+      (l_file_idx, l_text_report) = fg_3d(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "assembly_with_amplified_cut", "Assembly of the box_wood_frame with amplified cut") 
       (l_file_idx, l_text_report) = fg_xyz_dxf(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "assembly_with_amplified_cut.dxf", "Assembly of the box_wood_frame with amplified cut") 
 
       # explosed assembly with amplified_cut
       l_assembly = box_wood_frame_assembly(ai_module_width, ai_cutting_extra, 200)
-      (l_file_idx, l_text_report) = fg_stl(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "explosed_assembly_with_amplified_cut.stl", "Explosed assembly of the box_wood_frame with amplified cut") 
+      (l_file_idx, l_text_report) = fg_3d(l_assembly, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "explosed_assembly_with_amplified_cut", "Explosed assembly of the box_wood_frame with amplified cut") 
 
       # cnc plan for cuboid plank
       l_batch = box_wood_frame_plank_cutting_plan_cuboid(ai_module_width, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "cuboid_cnc_plan.stl", "Batch of the cuboid planks gathered on a plan to be cut by cnc") 
+      (l_file_idx, l_text_report) = fg_3d(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "cuboid_cnc_plan", "Batch of the cuboid planks gathered on a plan to be cut by cnc") 
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "cuboid_cnc_plan.dxf", "Batch of the cuboid planks gathered on a plan to be cut by cnc")
 
       # cnc plan for diagonal plank
       l_batch = box_wood_frame_plank_cutting_plan_diagonal(ai_module_width, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "diagonal_cnc_plan.stl", "Batch of the diagonal planks gathered on a plan to be cut by cnc") 
+      (l_file_idx, l_text_report) = fg_3d(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "diagonal_cnc_plan", "Batch of the diagonal planks gathered on a plan to be cut by cnc") 
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "diagonal_cnc_plan.dxf", "Batch of the diagonal planks gathered on a plan to be cut by cnc")
 
       # cnc plan for hole_cover plank
       l_batch = box_wood_frame_plank_cutting_plan_hole_cover(ai_module_width, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "hole_cover_cnc_plan.stl", "Batch of the hole_cover planks gathered on a plan to be cut by cnc") 
+      (l_file_idx, l_text_report) = fg_3d(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "hole_cover_cnc_plan", "Batch of the hole_cover planks gathered on a plan to be cut by cnc") 
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "hole_cover_cnc_plan.dxf", "Batch of the hole_cover planks gathered on a plan to be cut by cnc")
 
       # cnc plan for slabs
       l_batch = box_wood_frame_slab_cutting_plan(ai_module_width, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "slab_cnc_plan.stl", "Batch of the slabs gathered on a plan to be cut by cnc") 
+      (l_file_idx, l_text_report) = fg_3d(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "slab_cnc_plan", "Batch of the slabs gathered on a plan to be cut by cnc") 
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "slab_cnc_plan.dxf", "Batch of the slabs gathered on a plan to be cut by cnc")
 
       # cnc plan overview
       l_batch = box_wood_frame_plank_cutting_plan(ai_module_width, 0)
-      (l_file_idx, l_text_report) = fg_stl(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
-        "cnc_plan_overview.stl", "Batch of all planks gathered on a cnc plan for checking. Don't use it for cnc!") 
+      (l_file_idx, l_text_report) = fg_3d(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
+        "cnc_plan_overview", "Batch of all planks gathered on a cnc plan for checking. Don't use it for cnc!") 
       (l_file_idx, l_text_report) = fg_dxf(l_batch, l_file_idx, l_text_report, l_output_dir, l_output_basename,
         "cnc_plan_overview.dxf", "Batch of all planks gathered on a cnc plan for checking. Don't use it for cnc!")
 
