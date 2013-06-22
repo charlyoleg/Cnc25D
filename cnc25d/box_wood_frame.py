@@ -165,7 +165,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   # jonction_plank_xz_with_zx
   def jonction_plank_xz_with_zx(nai_cutting_extra):
     nr = [
-      [1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
+      #[1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
+      [1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius],
       [1.0/2*ai_v_plank_width-1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
       [2.0/2*ai_v_plank_width+1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
       [2.0/2*ai_v_plank_width+1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius]]
@@ -244,11 +245,14 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(nr)
   # jonction_plank_z_side_with_xz
   def jonction_plank_z_side_with_xz(nai_cutting_extra):
+    act = (1+math.sqrt(2))*ai_reamer_radius
     nr = [
-      [0*ai_crenel_depth, 2.0/2*ai_v_plank_width, 1*ai_reamer_radius],
-      [0*ai_crenel_depth, 1.0/2*ai_v_plank_width, 1*ai_reamer_radius],
-      [1*ai_crenel_depth, 1.0/2*ai_v_plank_width, 1*ai_reamer_radius],
-      [1*ai_crenel_depth, 0.0/2*ai_v_plank_width, 0*ai_reamer_radius]]
+      [0*ai_crenel_depth,     2.0/2*ai_v_plank_width,     1*ai_reamer_radius],
+      [0*ai_crenel_depth,     1.0/2*ai_v_plank_width,     1*ai_reamer_radius],
+      #[1*ai_crenel_depth,    1.0/2*ai_v_plank_width,     1*ai_reamer_radius],
+      [1*ai_crenel_depth+act, 1.0/2*ai_v_plank_width,     1*ai_reamer_radius],
+      [1*ai_crenel_depth,     1.0/2*ai_v_plank_width-act, 0*ai_reamer_radius],
+      [1*ai_crenel_depth,     0.0/2*ai_v_plank_width,     0*ai_reamer_radius]]
     return(nr)
   # jonction_plank_z_with_wall_diagonal
   def jonction_plank_z_with_wall_diagonal(nai_cutting_extra):
