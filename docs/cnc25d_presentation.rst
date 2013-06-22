@@ -235,6 +235,13 @@ For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 7. Releases
 ===========
 
+Release 0.1.3
+-------------
+Released on 2013-07-07
+
+* Box wood frame design example generates also BRep in addition to STL and DXF.
+* API function cnc_cut_outline() gets an additional argument *string* to help tracking issues due to the *reamer radius*.
+
 Release 0.1.2
 -------------
 Released on 2013-06-18

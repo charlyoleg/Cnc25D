@@ -20,7 +20,7 @@ The function *importing_freecad()* looks for the FreeCAD modules using a locatio
 2. cnc_cut_outline
 ==================
 
-| ``cnc_cut_outline.`` **cnc_cut_outline(** *list* **)**
+| ``cnc_cut_outline.`` **cnc_cut_outline(** *list, string* **)**
 |   Return a *FreeCAD.Part.Shape*.
 
 2.1. cnc_cut_outline purpose
@@ -54,6 +54,10 @@ A polygon is a list of points. The *cnc_cut_outline* function needs as argument 
   my_part_solid = my_part_face.extrude(Base.Vector(0,0,20))
 
 Look at the script *cnc25d_api_example.py* that you can generate with the executable *cnc25d_example_generator.py* for a more complete example.
+
+If the requested *reamer radius* is too large, the corner transformation may not be applied because of geometrical constraints. You get a *warning* or *error* message containing *string* set as argument. A good practice is to set *string* to the function name that calls *cnc_cut_outline()*. So you can find out which outline is not compatible with the requested *reamer radius* in case of error. Below an example of warning message due to a too large *reamer radius*. Thanks to the *string*, we know that the outline issue is located in the *plank_z_side* function::
+
+  WARN301: Warning, corner plank_z_side.1 can not be smoothed or enlarged because edges are too short! 
 
 2.3. outline_shift
 ------------------
@@ -95,6 +99,17 @@ If we want to define this outline brutally, we must create a list of 28 points. 
   my_outline.extend(green_sequence)
 
 This code is easier to maintain.
+
+2.4. Alternative corner transformation
+--------------------------------------
+
+The cnc_cut_outline() function provides three possibilites as corner transformation (smooth, unchange, enlarge):
+
+.. image:: images/cnc_cut_outline_transformations.png
+
+You may want others corner transformations such as enlarging a corner without milling one side of the corner. By changing the input outline, you can achieve it:
+
+.. image:: images/alternative_corner_transformation.png
 
 3. place_plank
 ==============
