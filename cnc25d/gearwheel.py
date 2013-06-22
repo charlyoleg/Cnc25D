@@ -140,9 +140,11 @@ gearwheel_parser.add_argument('--gearwheel_height','--gwh', action='store', type
 # cnc reamer constraint
 gearwheel_parser.add_argument('--cnc_reamer_radius','--crr', action='store', type=float, default=1.0, dest='sw_cnc_reamer_radius',
   help="Set the minimum reamer radius of the first gearwheel. It increases gear_reamer_radius, axe_reamer_radius and wheel_hollow_reamer_radius if needed. Default: 1.0")
-# tooth resolution
+# manufacturing technology related
 gearwheel_parser.add_argument('--gear_tooth_resolution','--gtr', action='store', type=int, default=3, dest='sw_gear_tooth_resolution',
-  help="It sets the number of intermediate points of the tooth profile. Default: 3")
+  help="It sets the number of intermediate points of the gear tooth profile. Default: 3")
+gearwheel_parser.add_argument('--gear_skin_thickness','--gst', action='store', type=float, default=0.0, dest='sw_gear_skin_thickness',
+  help="Add or remove radial thickness on the gear tooth profile. Default: 0.0")
 # output
 gearwheel_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
   help="If not set to the empty string (the default value), it generates a bunch of design files starting with this basename.")
@@ -197,6 +199,7 @@ def gearwheel(
       ai_gearwheel_height,
       ai_cnc_reamer_radius,
       ai_gear_tooth_resolution,
+      ai_gear_skin_thickness,
       ai_output_file_basename):
   """
   The main function of the script.
@@ -259,6 +262,7 @@ def gearwheel_argparse(ai_gw_args):
             ai_gw_args.sw_gearwheel_height,
             ai_gw_args.sw_cnc_reamer_radius,
             ai_gw_args.sw_gear_tooth_resolution,
+            ai_gw_args.sw_gear_skin_thickness,
             ai_gw_args.sw_output_file_basename)
   return(r_gw)
 

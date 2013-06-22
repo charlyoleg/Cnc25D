@@ -22,9 +22,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="283.0187"
-     inkscape:cy="1436.247"
+     inkscape:zoom="2.8"
+     inkscape:cx="448.70925"
+     inkscape:cy="3152.4984"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -32,18 +32,58 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="780"
-     inkscape:window-height="926"
-     inkscape:window-x="1109"
-     inkscape:window-y="61"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
      inkscape:object-paths="true"
      inkscape:snap-intersection-paths="false"
      inkscape:snap-global="false"
      inkscape:snap-center="true"
      inkscape:object-nodes="false" />
   <defs
-     id="defs4" />
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Send"
+       style="overflow:visible;">
+      <path
+         id="path4189"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Sstart"
+       style="overflow:visible">
+      <path
+         id="path4186"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mstart"
+       style="overflow:visible">
+      <path
+         id="path4180"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+  </defs>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -1843,5 +1883,41 @@
            height="85.862892"
            x="30.304577"
            y="3431.8257" /></flowRegion><flowPara
-         id="flowPara6018">Additional holes for centering parts?</flowPara></flowRoot>  </g>
+         id="flowPara6018">Additional holes for centering parts?</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#999999;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 401.65304,648.81616 c 0,0 5.58523,-0.9173 8.40779,-0.92064 4.4729,-0.005 9.00483,0.37657 13.32755,1.42725 7.23425,1.7587 14.21579,4.56807 20.65756,8.05568 5.30091,2.86992 10.25051,6.39123 14.53234,10.4421 2.34587,2.21931 5.983,7.47146 5.983,7.47146 l 0,0"
+       id="path3031-5-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="caaaaac" />
+    <path
+       style="fill:none;stroke:#999999;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 405.40302,661.23977 c 0,0 4.52187,-0.8412 6.80705,-0.84426 3.62131,-0.005 7.29042,0.34533 10.79014,1.30884 5.85693,1.6128 11.50927,4.1891 16.7246,7.38738 4.29168,2.63182 8.29894,5.861 11.76557,9.57581 1.89924,2.03519 4.8439,6.85162 4.8439,6.85162 l 0,0"
+       id="path3031-5-9-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="caaaaac" />
+    <path
+       style="color:#000000;fill:none;stroke:#333333;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;marker-start:url(#Arrow1Sstart);marker-end:url(#Arrow1Send)"
+       d="m 468.58451,694.94365 -5.55583,8.83884"
+       id="path3400"
+       inkscape:connector-curvature="0"
+       transform="translate(-21,-34.34375)" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4988"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#666666;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-12.785714,-38.629464)"><flowRegion
+         id="flowRegion4990"><rect
+           id="rect4992"
+           width="100.35714"
+           height="31.071428"
+           x="488.57144"
+           y="635.22321"
+           style="fill:#666666" /></flowRegion><flowPara
+         id="flowPara4994">skin_thickness</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 449.51622,658.86141 60.39612,-46.32107"
+       id="path4040-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+  </g>
 </svg>

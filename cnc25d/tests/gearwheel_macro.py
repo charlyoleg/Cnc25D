@@ -118,8 +118,9 @@ gw_center_position_y = 0.0
 gw_gearwheel_height = 1.0
 # cnc reamer constraint
 gw_cnc_reamer_radius = 2.0
-# tooth resolution
+# manufacturing technology related
 gw_gear_tooth_resolution = 5
+gw_gear_skin_thickness = 0.0
 # output
 gw_output_file_basename = "" # set a not-empty string if you want to generate the output files
 #gw_output_file_basename = "my_output_dir/" 
@@ -175,6 +176,7 @@ my_gw = gearwheel.gearwheel(
           gw_gearwheel_height,
           gw_cnc_reamer_radius,
           gw_gear_tooth_resolution,
+          gw_gear_skin_thickness,
           gw_output_file_basename)
 
 #Part.show(my_gw)
