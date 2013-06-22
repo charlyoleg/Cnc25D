@@ -464,12 +464,12 @@ my_polygon = [
   [ 0*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius]]
 
 # use the Cnc25D API function cnc_cut_outline to create a makable outline from the wished polygon
-my_part_outline = cnc_cut_outline.cnc_cut_outline(my_polygon)
+my_part_outline = cnc_cut_outline.cnc_cut_outline(my_polygon, 'api_example')
 # extrude the outline to make a 3D part
 my_part_edges = my_part_outline.Edges
 my_part_wire = Part.Wire(my_part_edges)
 my_part_face = Part.Face(my_part_wire)
-# short version: my_part_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(my_part_outline).Edges))
+# short version: my_part_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(my_part_outline, 'api_example').Edges))
 my_part_solid = my_part_face.extrude(Base.Vector(0,0,big_length)) # straight linear extrusion
 
 # visualize the part with the FreeCAD GUI

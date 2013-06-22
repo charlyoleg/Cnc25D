@@ -65,7 +65,7 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
     r_outline.reverse()
   return(r_outline)
 
-def cnc_cut_outline(ai_corner_list):
+def cnc_cut_outline(ai_corner_list, ai_error_msg_id):
   """
   This function converts a list of points into a FreeCAD closed wire shape that can be extruded afterward.
   For each input point, you must provide its (X,Y) coordinate and the reamer radius R.
@@ -78,7 +78,7 @@ def cnc_cut_outline(ai_corner_list):
   #return Part.Shape
   const_z = 0
   if(len(ai_corner_list)<3):
-    print("ERR202: Error, the number of corners must be bigger than 2. Currently: %s"%len(ai_corner_list))
+    print("ERR202: Error in {:s}, the number of corners must be bigger than 2. Currently: {:s}".format(ai_error_msg_id, len(ai_corner_list)))
     return(Part.Shape())
   # array initialization
   p2p_length = [0] * len(ai_corner_list)
@@ -95,7 +95,7 @@ def cnc_cut_outline(ai_corner_list):
     # calculate the length between two points
     l_length=math.sqrt((post_pt_x-cur_pt_x)**2+(post_pt_y-cur_pt_y)**2)
     if(l_length==0):
-      print("ERR405: l_length is null at point index %d (%0.2f, %0.2f) r=%0.2f"%(pt_idx, cur_pt_x, cur_pt_y, cur_pt_r))
+      print("ERR405: l_length is null at point index {:s}.{:d} ({:0.02f}, {:0.02f}) r={:0.02f}".format(ai_error_msg_id, pt_idx, cur_pt_x, cur_pt_y, cur_pt_r))
       print("dbg405: post_pt_x: %0.2f  post_pt_y: %0.2f  post_pt_r: %0.2f"%(post_pt_x, post_pt_y, post_pt_r))
       print("dbg415: pre_pt_x: %0.2f  pre_pt_y: %0.2f  pre_pt_r: %0.2f"%(pre_pt_x, pre_pt_y, pre_pt_r))
       sys.exit(1)
@@ -152,7 +152,7 @@ def cnc_cut_outline(ai_corner_list):
     cur_corner.append([])
     if(((corner_length[corn_idx-1]+corner_length[corn_idx-2])>p2p_length[corn_idx-2])
       or ((corner_length[corn_idx]+corner_length[corn_idx-1])>p2p_length[corn_idx-1])):
-      print("WARN301: Warning, corner %s can not be smoothed or enlarged because edges are too short!"%(corn_idx-1))
+      print("WARN301: Warning, corner {:s}.{:d} can not be smoothed or enlarged because edges are too short!".format(ai_error_msg_id, corn_idx-1))
       corner_type[corn_idx-1] = 0
       corner_length[corn_idx-1] = 0
   # build corners
@@ -302,7 +302,7 @@ def make_H_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
   [xox + 1*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_reamer_r],
   [xox + 0*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_reamer_r]]
   ## construction
-  myh_shape = cnc_cut_outline(myh_outline)
+  myh_shape = cnc_cut_outline(myh_outline, 'h_shape')
   #Part.show(myh_shape) # for debug
   # preparation for the extrusion
   myh_wire = Part.Wire(myh_shape.Edges)
@@ -340,7 +340,7 @@ def make_X_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
   [xox+0*xys_xa+0*xys_xb, xoy+6*xys_yc, 2*ai_reamer_r],
   [xox+1*xys_xa+0*xys_xb, xoy+3*xys_yc, 1*ai_reamer_r]]
   ## construction
-  myx_shape = cnc_cut_outline(myx_outline)
+  myx_shape = cnc_cut_outline(myx_outline, 'x_shape')
   myx_wire = Part.Wire(myx_shape.Edges)
   myx_face = Part.Face(myx_wire)
   myx_solid = myx_face.extrude(Base.Vector(0,0,ai_height)) # straight linear extrusion
@@ -385,7 +385,7 @@ def make_M_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
   ## set origine
   myx_outline = outline_shift_xy(myx_outline, mox, 1, moy, 1)
   ## construction
-  myx_shape = cnc_cut_outline(myx_outline)
+  myx_shape = cnc_cut_outline(myx_outline, 'm_shape')
   myx_wire = Part.Wire(myx_shape.Edges)
   myx_face = Part.Face(myx_wire)
   myx_solid = myx_face.extrude(Base.Vector(0,0,ai_height)) # straight linear extrusion
