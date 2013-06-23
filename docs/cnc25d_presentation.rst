@@ -239,8 +239,9 @@ Release 0.1.3
 -------------
 Released on 2013-07-07
 
-* Box wood frame design example generates also BRep in addition to STL and DXF.
 * API function cnc_cut_outline() gets an additional argument *string* to help tracking issues due to the *reamer radius*.
+* Box wood frame design example generates also BRep in addition to STL and DXF.
+* Box wood frame design example support reamer radius up to 4.9 mm with all others parameters at default.
 
 Release 0.1.2
 -------------

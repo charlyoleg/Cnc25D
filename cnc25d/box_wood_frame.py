@@ -290,16 +290,22 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(nr)
   #   jonction_slab_side_with_wall_diagonal_horizontal
   def jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra):
+    act = (1+math.sqrt(2))*ai_reamer_radius
     nr = [
       [ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra, -1*ai_reamer_radius],
       [ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
       [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
-      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra,-1*ai_reamer_radius]]
+      #[ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra,-1*ai_reamer_radius]]
+      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+act+1*nai_cutting_extra, 1*ai_reamer_radius],
+      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+act+0*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra, 0*ai_reamer_radius]]
     return(nr)
   #   jonction_slab_side_with_wall_diagonal_vertical
   def jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra):
+    act = (1+math.sqrt(2))*ai_reamer_radius
     nr = [
-      [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_reamer_radius],
+      #[ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_reamer_radius],
+      [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+act+0*nai_cutting_extra, -1*ai_reamer_radius],
+      [ 0*ai_crenel_depth+act+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_reamer_radius],
       [-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_reamer_radius],
       [-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_reamer_radius],
       [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, -1*ai_reamer_radius]]
