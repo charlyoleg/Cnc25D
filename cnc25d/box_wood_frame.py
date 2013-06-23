@@ -273,8 +273,8 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       [1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
       [1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
       [1*ai_d_plank_width-2*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
-      [0*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+3*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
-      [0*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
+      [0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
+      [0*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
       [0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external]]
     return(nr)
   #print("dbg412: jonction_plank_tobo_diagonal", jonction_plank_tobo_diagonal)
@@ -314,15 +314,20 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   ## hole sub   
   # plank_xz_hole plank_yz_hole
   def plank_xz_yz_hole(nai_box_nb, nai_cutting_extra, nai_box_size):
-    hdx = (ai_d_plank_width*math.sqrt(2)-3*cai_tobo_diag_depth)
+    hdx = (ai_d_plank_width*math.sqrt(2)-2*cai_tobo_diag_depth)
     hdy = ai_d_plank_height
     hpx = ai_tobo_diagonal_size + cai_tobo_diag_depth + 0*ai_plank_height
     #hpy = ai_diagonal_lining_height
+    act = (1+math.sqrt(2))*ai_reamer_radius
     plank_xz_hole_outline = [ # the y position is not set yet for an easier re-use for other planks
-      [hpx+0*hdx-1*nai_cutting_extra, 0*hdy-1*nai_cutting_extra, -ai_reamer_radius],
-      [hpx+1*hdx+1*nai_cutting_extra, 0*hdy-1*nai_cutting_extra, -ai_reamer_radius],
-      [hpx+1*hdx+1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, -ai_reamer_radius],
-      [hpx+0*hdx-1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, -ai_reamer_radius]]
+      [hpx+0*hdx-1*nai_cutting_extra, 0*hdy-act-1*nai_cutting_extra, 1*ai_reamer_radius],
+      [hpx+0*hdx+act-1*nai_cutting_extra, 0*hdy-1*nai_cutting_extra, 0*ai_reamer_radius],
+      [hpx+1*hdx-act+1*nai_cutting_extra, 0*hdy-1*nai_cutting_extra, 0*ai_reamer_radius],
+      [hpx+1*hdx+1*nai_cutting_extra, 0*hdy-act-1*nai_cutting_extra, 1*ai_reamer_radius],
+      [hpx+1*hdx+1*nai_cutting_extra, 1*hdy+act+1*nai_cutting_extra, 1*ai_reamer_radius],
+      [hpx+1*hdx-act+1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, 0*ai_reamer_radius],
+      [hpx+0*hdx+act-1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, 0*ai_reamer_radius],
+      [hpx+0*hdx-1*nai_cutting_extra, 1*hdy+act+1*nai_cutting_extra, 1*ai_reamer_radius]]
     plank_xz_hole_shape = cnc_cut_outline.cnc_cut_outline(plank_xz_hole_outline, 'plank_xz_yz_hole')
     plank_xz_hole_wire = Part.Wire(plank_xz_hole_shape.Edges)
     plank_xz_hole_face = Part.Face(plank_xz_hole_wire)
@@ -1542,6 +1547,8 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
   #r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,200)
   #r_bwf = frame_assembly(ai_module_width,ai_cutting_extra,0)
   #r_bwf.exportStl("bwf_assembly.stl")
+  #r_bwf = plank_tobo_diagonal(0)
+  #r_bwf.exportBrep("plank_tobo_diagonal.brep")
   return(r_bwf)
 
 ################################################################
