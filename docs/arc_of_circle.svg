@@ -54,8 +54,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="190.41132"
-     inkscape:cy="443.57122"
+     inkscape:cx="306.57886"
+     inkscape:cy="1062.3667"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -309,7 +309,7 @@
            height="557.17377"
            x="392.94934"
            y="41.199486" /></flowRegion><flowPara
-         id="flowPara3051">Calcul of M and N:</flowPara><flowPara
+         id="flowPara3051">Calculation of M and N:</flowPara><flowPara
          id="flowPara3053">xM = (xA+xB)/2</flowPara><flowPara
          id="flowPara3055">yM = (yA+yB)/2</flowPara><flowPara
          id="flowPara3057">xN = (xB+xC)/2</flowPara><flowPara
@@ -702,7 +702,7 @@
        sodipodi:cy="81.290756"
        sodipodi:rx="17.142857"
        sodipodi:ry="18.704292"
-       d="M 89.888666,72.458697 A 17.142857,18.704292 0 1 1 95.82276,97.089099"
+       d="m 89.888666,72.458697 c 4.470611,-9.105922 14.860334,-12.533484 23.206094,-7.655672 8.34576,4.877811 11.48719,16.213868 7.01657,25.31979 -4.47061,9.105923 -14.86033,12.533485 -23.206088,7.655673 -0.368409,-0.215323 -0.729477,-0.445273 -1.082482,-0.689389"
        sodipodi:start="3.633371"
        sodipodi:end="8.4188907"
        transform="matrix(4.3877363,0,0,4.0382844,-287.20953,1395.7081)"

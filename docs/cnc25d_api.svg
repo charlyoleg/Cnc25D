@@ -488,16 +488,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="400.44985"
-     inkscape:cy="1298.7593"
+     inkscape:cx="232.76453"
+     inkscape:cy="1356.1073"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1339"
-     inkscape:window-height="911"
-     inkscape:window-x="17"
-     inkscape:window-y="108"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -521,7 +521,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1822,7 +1822,7 @@
          id="flowPara4661">cnc_cut_outline() transformations</flowPara></flowRoot>    <rect
        style="fill:none;stroke:#e6e6e6;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect6028-4"
-       width="422.38416"
+       width="432.48569"
        height="284.28448"
        x="30.976345"
        y="2204.0676"
