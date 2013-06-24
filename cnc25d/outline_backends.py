@@ -53,10 +53,21 @@ def arc_of_circle(ai_3_points, ai_resolution):
   if((ptax==ptbx)and(ptcy==ptcy)):
     print("ERR809: Error, point_A and point_C are identical!")
     sys.exit(2)
+  ## check the documentation for the explanation of the following calculation
+  # length of [AB] and [BC]
   lab = math.sqrt((ptbx-ptax)**2+(ptby-ptay)**2)
   lbc = math.sqrt((ptcx-ptbx)**2+(ptcy-ptby)**2)
-  cos_ab = (ptbx-ptax)/lab
-  cos_bc = (ptcx-ptbx)/lbc
+  if(lab<epilon):
+    print("ERR811: Error, A and B are almost identical")
+    sys.exit(2)
+  if(lbc<epilon):
+    print("ERR812: Error, B and C are almost identical")
+    sys.exit(2)
+  # calculation of cos(e), cos(f), sin(e) and sin(f)
+  cos_e = (ptbx-ptax)/lab
+  cos_f = (ptcx-ptbx)/lbc
+  sin_e = (ptby-ptay)/lab
+  sin_f = (ptcy-ptby)/lbc
   if(abs(cos_ab-cos_bc)<epilon):
     print("ERR810: Error, A, B, C are colinear. Arc can not be created!")
     sys.exit(2)
@@ -65,8 +76,67 @@ def arc_of_circle(ai_3_points, ai_resolution):
   ptmy = (ptay+ptby)/2
   ptnx = (ptbx+ptcx)/2
   ptny = (ptby+ptcy)/2
-  
-  r_polyline = ''
+  # calculation of I
+  lix = cos_e*sin_f-cos_f*sin_e
+  kix = sin_f*(cos_e*ptmx+sin_e*ptmy)-sin_e*(cos_f*ptnx+sin_f*ptny)
+  liy = sin_e*cos_f-sin_f*cos_e
+  kiy = cos_f*(cos_e*ptmx+sin_e*ptmy)+cos_e*(cos_f*ptnx+sin_f*ptny)
+  if(lix<epilon):
+    print("ERR813: Error, A, B and C are almost colinear. Arc can not be created!")
+    sys.exit(2)
+  if(liy<epilon):
+    print("ERR814: Error, A, B and C are almost colinear. Arc can not be created!")
+    sys.exit(2)
+  ptix = kix / lix
+  ptiy = kiy / liy
+  # length of [IA], [IB] and [IC]
+  lia = math.sqrt((ptax-ptix)**2+(ptay-ptiy)**2)
+  lib = math.sqrt((ptbx-ptix)**2+(ptby-ptiy)**2)
+  lic = math.sqrt((ptcx-ptix)**2+(ptcy-ptiy)**2)
+  if(abs(lib-lia)>epilon):
+    print("ERR815: I is not equidistant from A and B!")
+    sys.exit(2)
+  if(abs(lic-lib)>epilon):
+    print("ERR815: I is not equidistant from B and C!")
+    sys.exit(2)
+  # calculation of the angle u=(Ix, IA) , v=(Ix, IB) and w=(Ix, IC)
+  u = math.atan2(ptay-ptiy, ptax, ptix)
+  v = math.atan2(ptby-ptiy, ptbx, ptix)
+  w = math.atan2(ptcy-ptiy, ptcx, ptix)
+  # calculation of the angle uv=(IA, IB), uw=(IA, IC) vw=(IB, IC)
+  uv = math.fmod(v-u+4*math.pi, 2*math.py)
+  uw = math.fmod(w-u+4*math.pi, 2*math.py)
+  vw = math.fmod(w-v+4*math.pi, 2*math.py)
+  # check arc direction
+  ccw_ncw = 1
+  if(uw>uv):
+    print("dbg874: arc of circle direction: counter clock wise (CCW)")
+    ccw_ncw = 1
+  else:
+    print("dbg875: arc of circle direction: clock wise (CW)")
+    ccw_ncw = 0
+    uv = uv - 2*math.pi
+    vw = vw - 2*math.pi
+  # calculation of the angle resolution:
+  if(ai_resolution<3):
+    print("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution))
+    sys.exit(2)
+  ar = 2*math.pi/ai_resolution
+  # number of intermediate point between A and B and step angle
+  abip = abs(uv)/ar
+  absa = uv/(abip+1)
+  # number of intermediate point between B and C and step angle
+  bcip = abs(vw)/ar
+  bcsa = vw/(bcip+1)
+  # polyline construction
+  r_polyline = []
+  r_polyline.append([ptax, ptay])
+  for i in range(abip):
+    r_polyline.append([ptix+lia*cos(u+(i+1)*absa), ptiy+lia*sin(u+(i+1)*absa)])
+  r_polyline.append([ptbx, ptby])
+  for i in range(bcip):
+    r_polyline.append([ptix+lia*cos(v+(i+1)*bcsa), ptiy+lia*sin(v+(i+1)*bcsa)])
+  r_polyline.append([ptcx, ptcy])
   return(r_polyline)
 
 def outline_arc_line_with_freecad(ai_segments, ai_outline_closed):
