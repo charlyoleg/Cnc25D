@@ -21,7 +21,7 @@ The Python package cnc25d proposes an API and design examples related to those t
 
 In the Cnc25D Python package, you find functions that help you design parts to be made by a 3-axis CNC, to assemble those parts and to create DXF 2D plans of your design. In particular you get those functions:
 
-- **cnc_cut_outline** takes as input a 2D polygon defined by a list of points and a CNC reamer diameter and provides as output a millable 2D outline. Then, you just need to extrude this outline to get your 2.5D part.
+- **cnc_cut_outline** takes as input a 2D polygon defined by a list of points and a CNC router_bit diameter and provides as output a millable 2D outline. Then, you just need to extrude this outline to get your 2.5D part.
 - **place_plank** offers an alternative natural way to place a part in a cuboid assembly.
 - **export_to_dxf** writes a DXF file with a projection of a cut of your design.
 - **export_xyz_to_dxf** writes a DXF file with many projections of cuts of your design along the 3 axis, in a similar way as a medical 3D scanner.
@@ -239,9 +239,9 @@ Release 0.1.3
 -------------
 Released on 2013-07-07
 
-* API function cnc_cut_outline() gets an additional argument *string* to help tracking issues due to the *reamer radius*.
+* API function cnc_cut_outline() gets an additional argument *string* to help tracking issues due to the *router_bit radius*.
 * Box wood frame design example generates also BRep in addition to STL and DXF.
-* Box wood frame design example support reamer radius up to 4.9 mm with all others parameters at default.
+* Box wood frame design example support router_bit radius up to 4.9 mm with all others parameters at default.
 
 Release 0.1.2
 -------------

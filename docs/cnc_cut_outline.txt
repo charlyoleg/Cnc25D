@@ -51,7 +51,7 @@
     
     
     
-    CNC lets cut material directly from computer design file (dxf, stl, g-code ...)This ensures precision, reproducibility, shape-complexity and automation.    The 3-axis CNC can process:- 2.5D : xy-path at z constant- 3D: xyz-path (if ad-hoc reamer and particular path)    Cutting technology:- laser cutter (Only 2.5D: cutting and engraving)- water jet (Only 2.5D)- reamer / mechanical (2.5D and 3D depending on shape and reamer shape)    Minimal curve radius constraint:- laser and water-jet implies no specific constraint- For mechanical cutter, inner curve must have a curve radius bigger than the reamer radius.    
+    CNC lets cut material directly from computer design file (dxf, stl, g-code ...)This ensures precision, reproducibility, shape-complexity and automation.    The 3-axis CNC can process:- 2.5D : xy-path at z constant- 3D: xyz-path (if ad-hoc router_bit and particular path)    Cutting technology:- laser cutter (Only 2.5D: cutting and engraving)- water jet (Only 2.5D)- router_bit / mechanical (2.5D and 3D depending on shape and router_bit shape)    Minimal curve radius constraint:- laser and water-jet implies no specific constraint- For mechanical cutter, inner curve must have a curve radius bigger than the router_bit radius.    
     
     
     
@@ -60,21 +60,21 @@
     
     
     
-    So inner corner can not be cut with reamer.They must be replaced by inner curve.Tight inner curve must be smoothed to respect the minimal curve radius constraint.    
+    So inner corner can not be cut with router_bit.They must be replaced by inner curve.Tight inner curve must be smoothed to respect the minimal curve radius constraint.    
     outer corner    outer curve    inner curve    inner corner    
     
     
     
-    2D path    Possible 2D shape with a reamer of radius (r)    
+    2D path    Possible 2D shape with a router_bit of radius (r)    
     
-    reamer of radius (r)    
-    
-    
+    router_bit of radius (r)    
     
     
     
     
-    If you want a perfect fitting between two coplanar shapes,then outer corners and outer curves must be rounded to get a minimum curve radius bigger than the reamer radius.For a perfect fitting, the coplanar shapes must be complementary.    
+    
+    
+    If you want a perfect fitting between two coplanar shapes,then outer corners and outer curves must be rounded to get a minimum curve radius bigger than the router_bit radius.For a perfect fitting, the coplanar shapes must be complementary.    
     
     
     
@@ -133,7 +133,7 @@
     details of smoothed corners (for fitting two coplanar shapes):    
     
     ideal path    
-    reamer of radius (r)    
+    router_bit of radius (r)    
     
     
     
@@ -162,7 +162,7 @@
     L    K    
     (D3)    
     
-    (D1)    (D2)    J    The triangles KAI and IAL are similar so AL=AK.(LAI)=(IAK)=a/2AI=AO-IO=r/sin(a/2)-r=r*(1-sin(a/2))/sin(a/2)AK=AI/cos(a/2)=r*(1-sin(a/2))/(sin(a/2)*cos(a/2))=r*(1-sin(a/2))*2/sin(a)AJ=AK+AL=(AI+IL)+(AI+IK)=2*AIAI=(AK+AL)/2Kx=Ax+(Gx-Ax)*AK/AG    Knowing Gx,Gy,Ax,Ay,Hx,Hy,a we want to calculate: Ix, Iy.    With E,I and F, we define the arc than can be build with a reamer of radius r.    details of enlarged corners (for fitting two not-coplanar shapes):    
+    (D1)    (D2)    J    The triangles KAI and IAL are similar so AL=AK.(LAI)=(IAK)=a/2AI=AO-IO=r/sin(a/2)-r=r*(1-sin(a/2))/sin(a/2)AK=AI/cos(a/2)=r*(1-sin(a/2))/(sin(a/2)*cos(a/2))=r*(1-sin(a/2))*2/sin(a)AJ=AK+AL=(AI+IL)+(AI+IK)=2*AIAI=(AK+AL)/2Kx=Ax+(Gx-Ax)*AK/AG    Knowing Gx,Gy,Ax,Ay,Hx,Hy,a we want to calculate: Ix, Iy.    With E,I and F, we define the arc than can be build with a router_bit of radius r.    details of enlarged corners (for fitting two not-coplanar shapes):    
     
     
     
@@ -220,4 +220,7 @@
     Not coplanar fitting with obtuse angle    
     Not coplanar fitting with right angle    
     Not coplanar fitting with acute angle    
-    Detailed not coplanar fitting with acute angle  
+    Detailed not coplanar fitting with acute angle    
+    
+    enlarging for a router_bit of radius (r)    
+  

@@ -184,7 +184,7 @@ bwf_tobo_diagonal_size = 100.0
 bwf_diagonal_lining_top_height = 20.0
 bwf_diagonal_lining_bottom_height = 20.0
 bwf_module_width = 1
-bwf_reamer_radius = 2.0
+bwf_router_bit_radius = 2.0
 bwf_cutting_extra = 2.0 # doesn't affect the cnc cutting plan
 bwf_slab_thickness = 5.0
 bwf_output_file_basename = "" # set a not-empty string if you want to generate the output files
@@ -203,7 +203,7 @@ bwf_assembly = box_wood_frame.box_wood_frame(bwf_box_width, bwf_box_depth, bwf_b
                                               bwf_d_plank_width, bwf_d_plank_height, bwf_crenel_depth,
                                               bwf_wall_diagonal_size, bwf_tobo_diagonal_size,
                                               bwf_diagonal_lining_top_height, bwf_diagonal_lining_bottom_height,
-                                              bwf_module_width, bwf_reamer_radius, bwf_cutting_extra,
+                                              bwf_module_width, bwf_router_bit_radius, bwf_cutting_extra,
                                               bwf_slab_thickness, bwf_output_file_basename)
 Part.show(bwf_assembly)
 
@@ -298,7 +298,7 @@ gw_gear_addendum_dedendum_parity = 50.0
 gw_gear_addendum_height_pourcentage = 100.0
 gw_gear_dedendum_height_pourcentage = 100.0
 gw_gear_hollow_height_pourcentage = 25.0
-gw_gear_reamer_radius = 2.0
+gw_gear_router_bit_radius = 2.0
 gw_gear_initial_angle = 0*math.pi
 # gear contact parameters
 gw_second_gear_position_angle = 0*math.pi
@@ -313,7 +313,7 @@ gw_second_gear_addendum_dedendum_parity = 50.0
 gw_second_gear_addendum_height_pourcentage = 100.0
 gw_second_gear_dedendum_height_pourcentage = 100.0
 gw_second_gear_hollow_height_pourcentage = 25.0
-gw_second_gear_reamer_radius = 2.0
+gw_second_gear_router_bit_radius = 2.0
 # simulation
 gw_simulation_enable = True
 gw_simulation_zoom = 4.0
@@ -321,7 +321,7 @@ gw_simulation_zoom = 4.0
 gw_axe_type = "square"
 gw_axe_size_1 = 30.0
 gw_axe_size_2 = 5.0
-gw_axe_reamer_radius = 4.0
+gw_axe_router_bit_radius = 4.0
 # portion parameter
 gw_portion_tooth_nb = 0
 # wheel hollow parameters
@@ -329,7 +329,7 @@ gw_wheel_hollow_internal_diameter = 30.0
 gw_wheel_hollow_external_diameter = 60.0
 gw_wheel_hollow_leg_number = 3
 gw_wheel_hollow_leg_width = 5.0
-gw_wheel_hollow_reamer_radius = 4.0
+gw_wheel_hollow_router_bit_radius = 4.0
 # part split parameter
 gw_part_split = 0
 # center position parameters
@@ -337,8 +337,8 @@ gw_center_position_x = 0.0
 gw_center_position_y = 0.0
 # gearwheel linear extrusion
 gw_gearwheel_height = 1.0
-# cnc reamer constraint
-gw_cnc_reamer_radius = 2.0
+# cnc router_bit constraint
+gw_cnc_router_bit_radius = 2.0
 # manufacturing technology related
 gw_gear_tooth_resolution = 5
 gw_gear_skin_thickness = 0.0
@@ -365,7 +365,7 @@ my_gw = gearwheel.gearwheel(
           gw_gear_addendum_height_pourcentage,
           gw_gear_dedendum_height_pourcentage,
           gw_gear_hollow_height_pourcentage,
-          gw_gear_reamer_radius,
+          gw_gear_router_bit_radius,
           gw_gear_initial_angle,
           gw_second_gear_position_angle,
           gw_second_gear_additional_axe_length,
@@ -378,24 +378,24 @@ my_gw = gearwheel.gearwheel(
           gw_second_gear_addendum_height_pourcentage,
           gw_second_gear_dedendum_height_pourcentage,
           gw_second_gear_hollow_height_pourcentage,
-          gw_second_gear_reamer_radius,
+          gw_second_gear_router_bit_radius,
           gw_simulation_enable,
           gw_simulation_zoom,
           gw_axe_type,
           gw_axe_size_1,
           gw_axe_size_2,
-          gw_axe_reamer_radius,
+          gw_axe_router_bit_radius,
           gw_portion_tooth_nb,
           gw_wheel_hollow_internal_diameter,
           gw_wheel_hollow_external_diameter,
           gw_wheel_hollow_leg_number,
           gw_wheel_hollow_leg_width,
-          gw_wheel_hollow_reamer_radius,
+          gw_wheel_hollow_router_bit_radius,
           gw_part_split,
           gw_center_position_x,
           gw_center_position_y,
           gw_gearwheel_height,
-          gw_cnc_reamer_radius,
+          gw_cnc_router_bit_radius,
           gw_gear_tooth_resolution,
           gw_gear_skin_thickness,
           gw_output_file_basename)
@@ -439,31 +439,31 @@ from cnc25d import cnc_cut_outline, export_2d
 # hello message
 print("cnc25d_api_macro.py starts")
 
-# define the CNC reamer radius
-my_reamer_radius = 5.0 # in mm
+# define the CNC router_bit radius
+my_router_bit_radius = 5.0 # in mm
 
 # some design constant
 big_length = 60
 small_length = 20
 
 # create a free polygon.
-# A polygon is list of points. A point is a list of three elements: x coordinate, y coordiante, reamer radius.
-# If the reamer radius is positive, the angle is smoothed for this radius.
-# If the reamer radius is negative, the angle is enlarged for this radius.
-# If the reamer radius is zero, the angle is unchanged
+# A polygon is list of points. A point is a list of three elements: x coordinate, y coordiante, router_bit radius.
+# If the router_bit radius is positive, the angle is smoothed for this radius.
+# If the router_bit radius is negative, the angle is enlarged for this radius.
+# If the router_bit radius is zero, the angle is unchanged
 my_polygon = [
-  [ 0*big_length+0*small_length,  0*big_length+0*small_length,    my_reamer_radius],
-  [ 1*big_length+1*small_length,  0*big_length+0*small_length,    my_reamer_radius],
-  [ 1*big_length+1*small_length,  0*big_length+2*small_length,    my_reamer_radius],
-  [ 1*big_length+2*small_length,  0*big_length+2*small_length,    my_reamer_radius],
-  [ 1*big_length+2*small_length,  0*big_length+0*small_length,    my_reamer_radius],
-  [ 3*big_length+0*small_length,  0*big_length+0*small_length,    my_reamer_radius],
-  [ 3*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius],
-  [ 2*big_length+0*small_length,  1*big_length+0*small_length, -1*my_reamer_radius],
-  [ 2*big_length+0*small_length,  2*big_length+0*small_length,    my_reamer_radius],
-  [ 1*big_length+0*small_length,  2*big_length+0*small_length,    my_reamer_radius],
-  [ 1*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius],
-  [ 0*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius]]
+  [ 0*big_length+0*small_length,  0*big_length+0*small_length,    my_router_bit_radius],
+  [ 1*big_length+1*small_length,  0*big_length+0*small_length,    my_router_bit_radius],
+  [ 1*big_length+1*small_length,  0*big_length+2*small_length,    my_router_bit_radius],
+  [ 1*big_length+2*small_length,  0*big_length+2*small_length,    my_router_bit_radius],
+  [ 1*big_length+2*small_length,  0*big_length+0*small_length,    my_router_bit_radius],
+  [ 3*big_length+0*small_length,  0*big_length+0*small_length,    my_router_bit_radius],
+  [ 3*big_length+0*small_length,  1*big_length+0*small_length,    my_router_bit_radius],
+  [ 2*big_length+0*small_length,  1*big_length+0*small_length, -1*my_router_bit_radius],
+  [ 2*big_length+0*small_length,  2*big_length+0*small_length,    my_router_bit_radius],
+  [ 1*big_length+0*small_length,  2*big_length+0*small_length,    my_router_bit_radius],
+  [ 1*big_length+0*small_length,  1*big_length+0*small_length,    my_router_bit_radius],
+  [ 0*big_length+0*small_length,  1*big_length+0*small_length,    my_router_bit_radius]]
 
 # use the Cnc25D API function cnc_cut_outline to create a makable outline from the wished polygon
 my_part_outline = cnc_cut_outline.cnc_cut_outline(my_polygon, 'api_example')

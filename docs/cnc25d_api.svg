@@ -1775,7 +1775,7 @@
            height="40.714214"
            x="199.28571"
            y="2301.1028" /></flowRegion><flowPara
-         id="flowPara4610">reamer_radius &gt; 0</flowPara></flowRoot>    <flowRoot
+         id="flowPara4610">router_bit_radius &gt; 0</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4604-7"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1786,7 +1786,7 @@
            height="40.714214"
            x="199.28571"
            y="2301.1028" /></flowRegion><flowPara
-         id="flowPara4610-7">reamer_radius &lt; 0</flowPara></flowRoot>    <flowRoot
+         id="flowPara4610-7">router_bit_radius &lt; 0</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4639"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -2023,7 +2023,7 @@
            height="40.714214"
            x="199.28571"
            y="2301.1028" /></flowRegion><flowPara
-         id="flowPara4610-9">reamer_radius = 0</flowPara></flowRoot>    <path
+         id="flowPara4610-9">router_bit_radius = 0</flowPara></flowRoot>    <path
        style="color:#000000;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;marker-end:url(#marker4878-7-1)"
        d="m 137.8909,2332.225 c 0,0 47.41965,5.3677 71.21575,5.0508 22.49643,-0.2996 44.67673,-6.5437 67.17515,-6.566 15.89808,-0.016 31.65467,2.9971 47.47716,4.5457 6.73576,0.6592 20.20306,2.0203 20.20306,2.0203"
        id="path3447"

@@ -68,10 +68,10 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
 def cnc_cut_outline(ai_corner_list, ai_error_msg_id):
   """
   This function converts a list of points into a FreeCAD closed wire shape that can be extruded afterward.
-  For each input point, you must provide its (X,Y) coordinate and the reamer radius R.
+  For each input point, you must provide its (X,Y) coordinate and the router_bit radius R.
   If R=0, the point is an angular corner.
-  If R>0, the point is smoothed to fit the constraints of a reamer radius R.
-  If R<0, the point is enlarged to fit the constraints of a reamer radius R.
+  If R>0, the point is smoothed to fit the constraints of a router_bit radius R.
+  If R<0, the point is enlarged to fit the constraints of a router_bit radius R.
   """
   # use to check is angle is smaller than pi/2
   radian_epsilon = math.pi/1000
@@ -276,7 +276,7 @@ def place_plank(ai_plank_solid, ai_x_length, ai_y_width, ai_z_height, ai_flip, a
 # function for testing
 ################################################################
 
-def make_H_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_file):
+def make_H_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output_file):
   """ design a H-shape to test 90 degree angles with the function cnc_cut_outline()
   """
   print("dbg601: make the H-shape")
@@ -289,18 +289,18 @@ def make_H_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
   xoy = ai_origin_y
   ## outline definition: in this example we draw a 'H'
   myh_outline=[
-  [xox + 0*ys_xa + 0*ys_xb, xoy + 0*ys_yc + 0*ys_cd, 0*ai_reamer_r],
-  [xox + 1*ys_xa + 0*ys_xb, xoy + 0*ys_yc + 0*ys_cd, ai_reamer_r],
-  [xox + 1*ys_xa + 0*ys_xb, xoy + 1*ys_yc + 0*ys_cd, -4*ai_reamer_r],
-  [xox + 1*ys_xa + 1*ys_xb, xoy + 1*ys_yc + 0*ys_cd, ai_reamer_r],
-  [xox + 1*ys_xa + 1*ys_xb, xoy + 0*ys_yc + 0*ys_cd, ai_reamer_r],
-  [xox + 2*ys_xa + 1*ys_xb, xoy + 0*ys_yc + 0*ys_cd, ai_reamer_r],
-  [xox + 2*ys_xa + 1*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_reamer_r],
-  [xox + 1*ys_xa + 1*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_reamer_r],
-  [xox + 1*ys_xa + 1*ys_xb, xoy + 1*ys_yc + 1*ys_cd, ai_reamer_r],
-  [xox + 1*ys_xa + 0*ys_xb, xoy + 1*ys_yc + 1*ys_cd, ai_reamer_r],
-  [xox + 1*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_reamer_r],
-  [xox + 0*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_reamer_r]]
+  [xox + 0*ys_xa + 0*ys_xb, xoy + 0*ys_yc + 0*ys_cd, 0*ai_router_bit_r],
+  [xox + 1*ys_xa + 0*ys_xb, xoy + 0*ys_yc + 0*ys_cd, ai_router_bit_r],
+  [xox + 1*ys_xa + 0*ys_xb, xoy + 1*ys_yc + 0*ys_cd, -4*ai_router_bit_r],
+  [xox + 1*ys_xa + 1*ys_xb, xoy + 1*ys_yc + 0*ys_cd, ai_router_bit_r],
+  [xox + 1*ys_xa + 1*ys_xb, xoy + 0*ys_yc + 0*ys_cd, ai_router_bit_r],
+  [xox + 2*ys_xa + 1*ys_xb, xoy + 0*ys_yc + 0*ys_cd, ai_router_bit_r],
+  [xox + 2*ys_xa + 1*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_router_bit_r],
+  [xox + 1*ys_xa + 1*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_router_bit_r],
+  [xox + 1*ys_xa + 1*ys_xb, xoy + 1*ys_yc + 1*ys_cd, ai_router_bit_r],
+  [xox + 1*ys_xa + 0*ys_xb, xoy + 1*ys_yc + 1*ys_cd, ai_router_bit_r],
+  [xox + 1*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_router_bit_r],
+  [xox + 0*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_router_bit_r]]
   ## construction
   myh_shape = cnc_cut_outline(myh_outline, 'h_shape')
   #Part.show(myh_shape) # for debug
@@ -315,7 +315,7 @@ def make_H_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
     myh_solid.exportStl(ai_output_file)
     print("output stl file: %s"%(ai_output_file))
 
-def make_X_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_file):
+def make_X_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output_file):
   """ design a X-shape to test not 90 degree angles with the function cnc_cut_outline()
   """
   print("dbg602: make the X-shape")
@@ -327,18 +327,18 @@ def make_X_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
   xoy = ai_origin_y
   ## outline definition: in this example we draw a 'X'
   myx_outline=[
-  [xox+0*xys_xa+0*xys_xb, xoy+0*xys_yc, 0*ai_reamer_r],
-  [xox+1*xys_xa+0*xys_xb, xoy+1*xys_yc, 1*ai_reamer_r],
-  [xox+1*xys_xa+1*xys_xb, xoy+2*xys_yc,-1*ai_reamer_r],
-  [xox+1*xys_xa+2*xys_xb, xoy+1*xys_yc, 1*ai_reamer_r],
-  [xox+2*xys_xa+2*xys_xb, xoy+0*xys_yc, 1*ai_reamer_r],
-  [xox+2*xys_xa+1*xys_xb, xoy+3*xys_yc, 1*ai_reamer_r],
-  [xox+2*xys_xa+2*xys_xb, xoy+6*xys_yc, 1*ai_reamer_r],
-  [xox+2*xys_xa+1*xys_xb, xoy+5*xys_yc, 1*ai_reamer_r],
-  [xox+1*xys_xa+1*xys_xb, xoy+4*xys_yc, 1*ai_reamer_r],
-  [xox+0*xys_xa+1*xys_xb, xoy+5*xys_yc, 1*ai_reamer_r],
-  [xox+0*xys_xa+0*xys_xb, xoy+6*xys_yc, 2*ai_reamer_r],
-  [xox+1*xys_xa+0*xys_xb, xoy+3*xys_yc, 1*ai_reamer_r]]
+  [xox+0*xys_xa+0*xys_xb, xoy+0*xys_yc, 0*ai_router_bit_r],
+  [xox+1*xys_xa+0*xys_xb, xoy+1*xys_yc, 1*ai_router_bit_r],
+  [xox+1*xys_xa+1*xys_xb, xoy+2*xys_yc,-1*ai_router_bit_r],
+  [xox+1*xys_xa+2*xys_xb, xoy+1*xys_yc, 1*ai_router_bit_r],
+  [xox+2*xys_xa+2*xys_xb, xoy+0*xys_yc, 1*ai_router_bit_r],
+  [xox+2*xys_xa+1*xys_xb, xoy+3*xys_yc, 1*ai_router_bit_r],
+  [xox+2*xys_xa+2*xys_xb, xoy+6*xys_yc, 1*ai_router_bit_r],
+  [xox+2*xys_xa+1*xys_xb, xoy+5*xys_yc, 1*ai_router_bit_r],
+  [xox+1*xys_xa+1*xys_xb, xoy+4*xys_yc, 1*ai_router_bit_r],
+  [xox+0*xys_xa+1*xys_xb, xoy+5*xys_yc, 1*ai_router_bit_r],
+  [xox+0*xys_xa+0*xys_xb, xoy+6*xys_yc, 2*ai_router_bit_r],
+  [xox+1*xys_xa+0*xys_xb, xoy+3*xys_yc, 1*ai_router_bit_r]]
   ## construction
   myx_shape = cnc_cut_outline(myx_outline, 'x_shape')
   myx_wire = Part.Wire(myx_shape.Edges)
@@ -350,7 +350,7 @@ def make_X_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
     myx_solid.exportStl(ai_output_file)
     print("output stl file: %s"%(ai_output_file))
 
-def make_M_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_file):
+def make_M_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output_file):
   """ design a M-shape to test the three outline_shift_x, _y and _xy functions
   """
   print("dbg602: make the M-shape")
@@ -361,26 +361,26 @@ def make_M_shape(ai_origin_x, ai_origin_y, ai_reamer_r, ai_height, ai_output_fil
   moy = ai_origin_y
   ## jonction : piece of outline
   jonction_a = [
-    [5, 0, 0*ai_reamer_r],
-    [5, 10, 1*ai_reamer_r],
-    [20, 10, -1*ai_reamer_r],
-    [10, 0, 0*ai_reamer_r]]
+    [5, 0, 0*ai_router_bit_r],
+    [5, 10, 1*ai_router_bit_r],
+    [20, 10, -1*ai_router_bit_r],
+    [10, 0, 0*ai_router_bit_r]]
   jonction_b = [
-    [0, 30, 0*ai_reamer_r],
-    [20, 40, 1*ai_reamer_r],
-    [10, 20, 1*ai_reamer_r],
-    [0, 20, 0*ai_reamer_r]]
+    [0, 30, 0*ai_router_bit_r],
+    [20, 40, 1*ai_router_bit_r],
+    [10, 20, 1*ai_router_bit_r],
+    [0, 20, 0*ai_router_bit_r]]
   ## outline definition: in this example we draw a 'X'
   myx_outline=[]
-  myx_outline.append([0*mw, 0*mh, 0*ai_reamer_r])
+  myx_outline.append([0*mw, 0*mh, 0*ai_router_bit_r])
   myx_outline.extend(outline_shift_x(jonction_a, 0*mw, 1))
   myx_outline.extend(outline_shift_x(jonction_a, 1*mw,-1))
-  myx_outline.append([1*mw, 0*mh, 0*ai_reamer_r])
+  myx_outline.append([1*mw, 0*mh, 0*ai_router_bit_r])
   myx_outline.extend(outline_shift_x(jonction_b, 1*mw, -1))
-  myx_outline.append([1*mw, 1*mh, 0*ai_reamer_r])
+  myx_outline.append([1*mw, 1*mh, 0*ai_router_bit_r])
   myx_outline.extend(outline_shift_xy(jonction_a, 1*mw, -1, 1*mh, -1))
   myx_outline.extend(outline_shift_y(jonction_a, 1*mh, -1))
-  myx_outline.append([0*mw, 1*mh, 0*ai_reamer_r])
+  myx_outline.append([0*mw, 1*mh, 0*ai_router_bit_r])
   myx_outline.extend(outline_shift_x(jonction_b, 0*mw, 1))
   ## set origine
   myx_outline = outline_shift_xy(myx_outline, mox, 1, moy, 1)
@@ -408,8 +408,8 @@ def cnc_cut_outline_main():
   """ it is the command line interface of cnc_cut_outline.py when it is used in standalone
   """
   cco_parser = argparse.ArgumentParser(description='Run the function cnc_cut_outline() to check it.')
-  cco_parser.add_argument('--reamer_radius','--rr', action='store', type=float, default=1.0, dest='sw_reamer_radius',
-    help="It defines the reamer radius (R) of the 2.5D cnc. If sets to '0', the corners will be angular. If positive, the corner will smooth with a curve of radius R. If negative, the corner is enlarged to let the reamer of radius R to go up to the corner. Note that you can set a value equal or bigger to your actual cnc reamer radius.")
+  cco_parser.add_argument('--router_bit_radius','--rr', action='store', type=float, default=1.0, dest='sw_router_bit_radius',
+    help="It defines the router_bit radius (R) of the 2.5D cnc. If sets to '0', the corners will be angular. If positive, the corner will smooth with a curve of radius R. If negative, the corner is enlarged to let the router_bit of radius R to go up to the corner. Note that you can set a value equal or bigger to your actual cnc router_bit radius.")
   cco_parser.add_argument('--height', action='store', type=float, default=1.0, dest='sw_height',
     help='It defines the height of the extrusion along the Z axis.')
   cco_parser.add_argument('--output_file_base','--ofb', action='store', default="", dest='sw_output_file_base',
@@ -426,10 +426,10 @@ def cnc_cut_outline_main():
   cco_args = cco_parser.parse_args(sys.argv[arg_index_offset+1:])
   print("dbg111: start building the 3D part")
   if(cco_args.sw_self_test):
-    ### check the cnc_cut_outline function with several reamer diameter
+    ### check the cnc_cut_outline function with several router_bit diameter
     y_offset = 0
     for ir in [2.0, 1.5, 1.0, 0, -1.0, -2.0]:
-      print("dbg603: test with reamer radius (ir):", ir)
+      print("dbg603: test with router_bit radius (ir):", ir)
       make_H_shape( 0,  y_offset, ir, 2, "self_test_cnc_cut_outline_H_r%0.2f.stl"%ir)
       make_X_shape(50,  y_offset, ir, 2, "self_test_cnc_cut_outline_X_r%0.2f.stl"%ir)
       make_M_shape(150,  y_offset, ir, 2, "self_test_cnc_cut_outline_M_r%0.2f.stl"%ir)
@@ -443,9 +443,9 @@ def cnc_cut_outline_main():
       ofb_H_shape = cco_args.sw_output_file_base + "_S_shape.stl"
       ofb_X_shape = cco_args.sw_output_file_base + "_X_shape.stl"
       ofb_M_shape = cco_args.sw_output_file_base + "_M_shape.stl"
-    make_H_shape(0, 0, cco_args.sw_reamer_radius, cco_args.sw_height, ofb_H_shape)
-    make_X_shape(50, 0, cco_args.sw_reamer_radius, cco_args.sw_height, ofb_X_shape)
-    make_M_shape(150, 0, cco_args.sw_reamer_radius, cco_args.sw_height, ofb_M_shape)
+    make_H_shape(0, 0, cco_args.sw_router_bit_radius, cco_args.sw_height, ofb_H_shape)
+    make_X_shape(50, 0, cco_args.sw_router_bit_radius, cco_args.sw_height, ofb_X_shape)
+    make_M_shape(150, 0, cco_args.sw_router_bit_radius, cco_args.sw_height, ofb_M_shape)
     # test place_plank()
     #pp0 = test_plank()
     #Part.show(pp0)

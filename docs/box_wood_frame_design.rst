@@ -153,11 +153,11 @@ bwf_module_width = 5
 
 .. image:: images/bwf_parameter_module_width_5.png
 
-3.16. bwf_reamer_radius
------------------------
-bwf_reamer_radius default value : 2.0
+3.16. bwf_router_bit_radius
+---------------------------
+bwf_router_bit_radius default value : 2.0
 
-.. image:: images/bwf_parameter_reamer_radius.png
+.. image:: images/bwf_parameter_router_bit_radius.png
 
 3.17. bwf_cutting_extra
 -----------------------

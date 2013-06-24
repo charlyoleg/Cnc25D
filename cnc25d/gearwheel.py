@@ -68,8 +68,8 @@ gearwheel_parser.add_argument('--gear_dedendum_height_pourcentage','--gdhp', act
   help="Set the dedendum height of the first gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
 gearwheel_parser.add_argument('--gear_hollow_height_pourcentage','--ghhp', action='store', type=float, default=25.0, dest='sw_gear_hollow_height_pourcentage',
   help="Set the hollow height of the first gearwheel in pourcentage of the tooth half height. Default: 25.0%%")
-gearwheel_parser.add_argument('--gear_reamer_radius','--grr', action='store', type=float, default=1.0, dest='sw_gear_reamer_radius',
-  help="Set the reamer radius used to create the gear hollow of the first gearwheel. Default: 1.0")
+gearwheel_parser.add_argument('--gear_router_bit_radius','--grr', action='store', type=float, default=1.0, dest='sw_gear_router_bit_radius',
+  help="Set the router_bit radius used to create the gear hollow of the first gearwheel. Default: 1.0")
 gearwheel_parser.add_argument('--gear_initial_angle','--gia', action='store', type=float, default=0.0, dest='sw_gear_initial_angle',
   help="Set the gear reference angle (in Radian). Default: 0.0")
 # gear contact parameters
@@ -96,8 +96,8 @@ gearwheel_parser.add_argument('--second_gear_dedendum_height_pourcentage','--sgd
   help="Set the dedendum height of the second gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
 gearwheel_parser.add_argument('--second_gear_hollow_height_pourcentage','--sghhp', action='store', type=float, default=25.0, dest='sw_second_gear_hollow_height_pourcentage',
   help="Set the hollow height of the second gearwheel in pourcentage of the tooth half height. Default: 25.0%%")
-gearwheel_parser.add_argument('--second_gear_reamer_radius','--sgrr', action='store', type=float, default=1.0, dest='sw_second_gear_reamer_radius',
-  help="Set the reamer radius used to create the gear hollow of the second gearwheel. Default: 1.0")
+gearwheel_parser.add_argument('--second_gear_router_bit_radius','--sgrr', action='store', type=float, default=1.0, dest='sw_second_gear_router_bit_radius',
+  help="Set the router_bit radius used to create the gear hollow of the second gearwheel. Default: 1.0")
 # simulation
 gearwheel_parser.add_argument('--simulation_enable','--se', action='store_true', default=False, dest='sw_simulation_enable',
   help='It display a Tk window where you can observe the gear running. Check with your eyes if the geometry is working.')
@@ -110,8 +110,8 @@ gearwheel_parser.add_argument('--axe_size_1','--as1', action='store', type=float
   help="Set the axe cylinder diameter or the axe rectangle width of the first gearwheel. Default: 10.0")
 gearwheel_parser.add_argument('--axe_size_2','--as2', action='store', type=float, default=10.0, dest='sw_axe_size_2',
   help="Set the axe rectangle height of the first gearwheel. Default: 10.0")
-gearwheel_parser.add_argument('--axe_reamer_radius','--arr', action='store', type=float, default=1.0, dest='sw_axe_reamer_radius',
-  help="Set the reamer radius of the first gearwheel rectangle axe. Default: 1.0")
+gearwheel_parser.add_argument('--axe_router_bit_radius','--arr', action='store', type=float, default=1.0, dest='sw_axe_router_bit_radius',
+  help="Set the router_bit radius of the first gearwheel rectangle axe. Default: 1.0")
 # portion parameter
 gearwheel_parser.add_argument('--portion_tooth_nb','--ptn', action='store', type=int, default=0, dest='sw_portion_tooth_nb',
   help="If not set to zero, cut a portion of the first gearwheel according to this portion tooth number. Default: 0")
@@ -124,8 +124,8 @@ gearwheel_parser.add_argument('--wheel_hollow_leg_number','--whln', action='stor
   help="Set the number of legs for the wheel hollow of the first gearwheel. The legs are uniform distributed. The first leg is centered on the gear reference angle (gear_initial_angle). Default: 1")
 gearwheel_parser.add_argument('--wheel_hollow_leg_width','--whlw', action='store', type=float, default=10.0, dest='sw_wheel_hollow_leg_width',
   help="Set the wheel hollow leg width of the first gearwheel. Default: 10.0")
-gearwheel_parser.add_argument('--wheel_hollow_reamer_radius','--whrr', action='store', type=float, default=1.0, dest='sw_wheel_hollow_reamer_radius',
-  help="Set the reamer radius of the wheel hollow of the first gearwheel. Default: 1.0")
+gearwheel_parser.add_argument('--wheel_hollow_router_bit_radius','--whrr', action='store', type=float, default=1.0, dest='sw_wheel_hollow_router_bit_radius',
+  help="Set the router_bit radius of the wheel hollow of the first gearwheel. Default: 1.0")
 # part split parameter
 gearwheel_parser.add_argument('--part_split','--ps', action='store', type=int, default=1, dest='sw_part_split',
   help="Split the first gearwheel in N (=part_split) parts that can be glued together to create the gear wheel. Two series of N parts are created. N=1 doesn't split the gearwheel. Default: 1")
@@ -137,9 +137,9 @@ gearwheel_parser.add_argument('--center_position_y','--cpy', action='store', typ
 # firt gearwheel extrusion (currently only linear extrusion is possible)
 gearwheel_parser.add_argument('--gearwheel_height','--gwh', action='store', type=float, default=1.0, dest='sw_gearwheel_height',
   help="Set the height of the linear extrusion of the first gearwheel. Default: 1.0")
-# cnc reamer constraint
-gearwheel_parser.add_argument('--cnc_reamer_radius','--crr', action='store', type=float, default=1.0, dest='sw_cnc_reamer_radius',
-  help="Set the minimum reamer radius of the first gearwheel. It increases gear_reamer_radius, axe_reamer_radius and wheel_hollow_reamer_radius if needed. Default: 1.0")
+# cnc router_bit constraint
+gearwheel_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=1.0, dest='sw_cnc_router_bit_radius',
+  help="Set the minimum router_bit radius of the first gearwheel. It increases gear_router_bit_radius, axe_router_bit_radius and wheel_hollow_router_bit_radius if needed. Default: 1.0")
 # manufacturing technology related
 gearwheel_parser.add_argument('--gear_tooth_resolution','--gtr', action='store', type=int, default=3, dest='sw_gear_tooth_resolution',
   help="It sets the number of intermediate points of the gear tooth profile. Default: 3")
@@ -167,7 +167,7 @@ def gearwheel(
       ai_gear_addendum_height_pourcentage,
       ai_gear_dedendum_height_pourcentage,
       ai_gear_hollow_height_pourcentage,
-      ai_gear_reamer_radius,
+      ai_gear_router_bit_radius,
       ai_gear_initial_angle,
       ai_second_gear_position_angle,
       ai_second_gear_additional_axe_length,
@@ -180,24 +180,24 @@ def gearwheel(
       ai_second_gear_addendum_height_pourcentage,
       ai_second_gear_dedendum_height_pourcentage,
       ai_second_gear_hollow_height_pourcentage,
-      ai_second_gear_reamer_radius,
+      ai_second_gear_router_bit_radius,
       ai_simulation_enable,
       ai_simulation_zoom,
       ai_axe_type,
       ai_axe_size_1,
       ai_axe_size_2,
-      ai_axe_reamer_radius,
+      ai_axe_router_bit_radius,
       ai_portion_tooth_nb,
       ai_wheel_hollow_internal_diameter,
       ai_wheel_hollow_external_diameter,
       ai_wheel_hollow_leg_number,
       ai_wheel_hollow_leg_width,
-      ai_wheel_hollow_reamer_radius,
+      ai_wheel_hollow_router_bit_radius,
       ai_part_split,
       ai_center_position_x,
       ai_center_position_y,
       ai_gearwheel_height,
-      ai_cnc_reamer_radius,
+      ai_cnc_router_bit_radius,
       ai_gear_tooth_resolution,
       ai_gear_skin_thickness,
       ai_output_file_basename):
@@ -230,7 +230,7 @@ def gearwheel_argparse(ai_gw_args):
             ai_gw_args.sw_gear_addendum_height_pourcentage,
             ai_gw_args.sw_gear_dedendum_height_pourcentage,
             ai_gw_args.sw_gear_hollow_height_pourcentage,
-            ai_gw_args.sw_gear_reamer_radius,
+            ai_gw_args.sw_gear_router_bit_radius,
             ai_gw_args.sw_gear_initial_angle,
             ai_gw_args.sw_second_gear_position_angle,
             ai_gw_args.sw_second_gear_additional_axe_length,
@@ -243,24 +243,24 @@ def gearwheel_argparse(ai_gw_args):
             ai_gw_args.sw_second_gear_addendum_height_pourcentage,
             ai_gw_args.sw_second_gear_dedendum_height_pourcentage,
             ai_gw_args.sw_second_gear_hollow_height_pourcentage,
-            ai_gw_args.sw_second_gear_reamer_radius,
+            ai_gw_args.sw_second_gear_router_bit_radius,
             ai_gw_args.sw_simulation_enable,
             ai_gw_args.sw_simulation_zoom,
             ai_gw_args.sw_axe_type,
             ai_gw_args.sw_axe_size_1,
             ai_gw_args.sw_axe_size_2,
-            ai_gw_args.sw_axe_reamer_radius,
+            ai_gw_args.sw_axe_router_bit_radius,
             ai_gw_args.sw_portion_tooth_nb,
             ai_gw_args.sw_wheel_hollow_internal_diameter,
             ai_gw_args.sw_wheel_hollow_external_diameter,
             ai_gw_args.sw_wheel_hollow_leg_number,
             ai_gw_args.sw_wheel_hollow_leg_width,
-            ai_gw_args.sw_wheel_hollow_reamer_radius,
+            ai_gw_args.sw_wheel_hollow_router_bit_radius,
             ai_gw_args.sw_part_split,
             ai_gw_args.sw_center_position_x,
             ai_gw_args.sw_center_position_y,
             ai_gw_args.sw_gearwheel_height,
-            ai_gw_args.sw_cnc_reamer_radius,
+            ai_gw_args.sw_cnc_router_bit_radius,
             ai_gw_args.sw_gear_tooth_resolution,
             ai_gw_args.sw_gear_skin_thickness,
             ai_gw_args.sw_output_file_basename)

@@ -366,7 +366,7 @@
            y="71.504059" /></flowRegion><flowPara
          id="flowPara5253">The 3-axis CNC can process:</flowPara><flowPara
          id="flowPara5255">- 2.5D : xy-path at z constant</flowPara><flowPara
-         id="flowPara5257">- 3D: xyz-path (if ad-hoc reamer and particular path)</flowPara></flowRoot>    <flowRoot
+         id="flowPara5257">- 3D: xyz-path (if ad-hoc router_bit and particular path)</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot5259"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -380,7 +380,7 @@
          id="flowPara5265">Cutting technology:</flowPara><flowPara
          id="flowPara5267">- laser cutter (Only 2.5D: cutting and engraving)</flowPara><flowPara
          id="flowPara5269">- water jet (Only 2.5D)</flowPara><flowPara
-         id="flowPara5271">- reamer / mechanical (2.5D and 3D depending on shape and reamer shape)</flowPara></flowRoot>    <flowRoot
+         id="flowPara5271">- router_bit / mechanical (2.5D and 3D depending on shape and router_bit shape)</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot5292"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -393,7 +393,7 @@
            y="271.00919" /></flowRegion><flowPara
          id="flowPara5298">Minimal curve radius constraint:</flowPara><flowPara
          id="flowPara5300">- laser and water-jet implies no specific constraint</flowPara><flowPara
-         id="flowPara5302">- For mechanical cutter, inner curve must have a curve radius bigger than the reamer radius.</flowPara></flowRoot>    <path
+         id="flowPara5302">- For mechanical cutter, inner curve must have a curve radius bigger than the router_bit radius.</flowPara></flowRoot>    <path
        style="fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 419.71837,556.37729 c 0,0 20.60485,52.04609 42.93149,65.65991 15.31869,9.34067 35.72719,7.71976 53.53808,5.55584 36.05435,-4.38039 102.53048,-36.87057 102.53048,-36.87057"
        id="path5304"
@@ -513,7 +513,7 @@
            height="80.81218"
            x="52.527931"
            y="373.53967" /></flowRegion><flowPara
-         id="flowPara5372">So inner corner can not be cut with reamer.</flowPara><flowPara
+         id="flowPara5372">So inner corner can not be cut with router_bit.</flowPara><flowPara
          id="flowPara5374">They must be replaced by inner curve.</flowPara><flowPara
          id="flowPara5376">Tight inner curve must be smoothed to respect the minimal curve radius constraint.</flowPara></flowRoot>    <path
        style="fill:#d38d5f;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -610,7 +610,7 @@
            height="39.395977"
            x="45.456863"
            y="739.2149" /></flowRegion><flowPara
-         id="flowPara5434">Possible 2D shape with a reamer of radius (r)</flowPara></flowRoot>    <rect
+         id="flowPara5434">Possible 2D shape with a router_bit of radius (r)</flowPara></flowRoot>    <rect
        style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect5436"
        width="751.55347"
@@ -638,7 +638,7 @@
            height="28.571455"
            x="72.14286"
            y="808" /></flowRegion><flowPara
-         id="flowPara5446">reamer of radius (r)</flowPara></flowRoot>    <path
+         id="flowPara5446">router_bit of radius (r)</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 247.23446,764.02672 30.71429,24.28572"
        id="path5448"
@@ -708,7 +708,7 @@
            y="1038.7142" /></flowRegion><flowPara
          id="flowPara5499">If you want a perfect fitting between two coplanar shapes,</flowPara><flowPara
          id="flowPara5501">then outer corners and outer curves must be rounded </flowPara><flowPara
-         id="flowPara5503">to get a minimum curve radius bigger than the reamer radius.</flowPara><flowPara
+         id="flowPara5503">to get a minimum curve radius bigger than the router_bit radius.</flowPara><flowPara
          id="flowPara4686">For a perfect fitting, the coplanar shapes must be complementary.</flowPara></flowRoot>    <path
        sodipodi:type="arc"
        style="fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
@@ -1221,7 +1221,7 @@
            x="374.7666"
            y="2250.5991"
            style="fill:#ff0000" /></flowRegion><flowPara
-         id="flowPara6135">reamer of radius (r)</flowPara></flowRoot>    <path
+         id="flowPara6135">router_bit of radius (r)</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 325.75645,2708.418 7.82868,30.3045"
        id="path6137"
@@ -1878,7 +1878,7 @@
            height="59.28582"
            x="42.857143"
            y="3781.6028" /></flowRegion><flowPara
-         id="flowPara3669">With E,I and F, we define the arc than can be build with a reamer of radius r.</flowPara></flowRoot>    <flowRoot
+         id="flowPara3669">With E,I and F, we define the arc than can be build with a router_bit of radius r.</flowPara></flowRoot>    <flowRoot
        transform="translate(-22.029704,2535.0022)"
        xml:space="preserve"
        id="flowRoot6107-4"
@@ -2931,7 +2931,7 @@
        height="264.53592"
        x="58.357849"
        y="748.31213"
-       inkscape:export-filename="/home/charli/Bis/Project/CardanCo/Not_yet_in_Github/Cnc25D/docs/images/possible_2d_shape_with_a_reamer_of_radius_r.png"
+       inkscape:export-filename="/home/charli/Bis/Project/CardanCo/Not_yet_in_Github/Cnc25D/docs/images/possible_2d_shape_with_a_router_bit_of_radius_r.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <rect
@@ -3169,7 +3169,7 @@
            x="435.71429"
            y="2291.4731"
            style="fill:#000000" /></flowRegion><flowPara
-         id="flowPara3867">enlarging for a reamer of radius (r)</flowPara></flowRoot>    <path
+         id="flowPara3867">enlarging for a router_bit of radius (r)</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 399.44445,2299.5635 47.47717,16.6676"
        id="path6052-5"

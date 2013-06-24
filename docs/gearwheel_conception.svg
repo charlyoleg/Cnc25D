@@ -750,7 +750,7 @@
            y="286.71786" /></flowRegion><flowPara
          id="flowPara4274">- tooth_number</flowPara><flowPara
          id="flowPara4276">- module</flowPara><flowPara
-         id="flowPara3435">- gear reamer diameter</flowPara></flowRoot>    <flowRoot
+         id="flowPara3435">- gear router_bit diameter</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4278"
        style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
@@ -1044,7 +1044,7 @@
            height="36.36552"
            x="44.446712"
            y="1851.1588" /></flowRegion><flowPara
-         id="flowPara3443">axe reamer diameter</flowPara></flowRoot>    <rect
+         id="flowPara3443">axe router_bit diameter</flowPara></flowRoot>    <rect
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3445"
        width="63.63961"
@@ -1555,7 +1555,7 @@
          id="flowPara5701">- wheel hollow external diameter</flowPara><flowPara
          id="flowPara5703">- leg number</flowPara><flowPara
          id="flowPara5705">- leg width</flowPara><flowPara
-         id="flowPara5707">- wheel hollow reamer diameter</flowPara></flowRoot>    <g
+         id="flowPara5707">- wheel hollow router_bit diameter</flowPara></flowRoot>    <g
        id="g4942-7-1"
        transform="matrix(2.0317476,0,0,2.0317476,388.11178,2830.7105)"
        inkscape:label="Gear20"

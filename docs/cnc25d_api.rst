@@ -25,7 +25,7 @@ The function *importing_freecad()* looks for the FreeCAD modules using a locatio
 
 2.1. cnc_cut_outline purpose
 ----------------------------
-If you work with 3-axis CNC, your free XY-path gets actually some constraints due to the reamer diameter. Real inner angle can not be manufacture and must be replaced either by a smoothed angle or an enlarged angle.
+If you work with 3-axis CNC, your free XY-path gets actually some constraints due to the router_bit diameter. Real inner angle can not be manufacture and must be replaced either by a smoothed angle or an enlarged angle.
 
 .. image:: images/inner_angle_for_3_axis_cnc.png
 
@@ -40,9 +40,9 @@ A point is defined by a list of three floats:
 
 - the X coordinate
 - the Y coordinate
-- the reamer diameter.
+- the router_bit diameter.
 
-If the reamer diameter is positive, the angle is smoothed. If the reamer diameter is negative, the angle is enlarged. If the reamer diameter is zero, the angle is unmodified.
+If the router_bit diameter is positive, the angle is smoothed. If the router_bit diameter is negative, the angle is enlarged. If the router_bit diameter is zero, the angle is unmodified.
 
 A polygon is a list of points. The *cnc_cut_outline* function needs as argument a polygon and returns the outline as a FreeCAD Part Object, that can be after some conversion extruded::
 
@@ -55,7 +55,7 @@ A polygon is a list of points. The *cnc_cut_outline* function needs as argument 
 
 Look at the script *cnc25d_api_example.py* that you can generate with the executable *cnc25d_example_generator.py* for a more complete example.
 
-If the requested *reamer radius* is too large, the corner transformation may not be applied because of geometrical constraints. You get a *warning* or *error* message containing *string* set as argument. A good practice is to set *string* to the function name that calls *cnc_cut_outline()*. So you can find out which outline is not compatible with the requested *reamer radius* in case of error. Below an example of warning message due to a too large *reamer radius*. Thanks to the *string*, we know that the outline issue is located in the *plank_z_side* function::
+If the requested *router_bit radius* is too large, the corner transformation may not be applied because of geometrical constraints. You get a *warning* or *error* message containing *string* set as argument. A good practice is to set *string* to the function name that calls *cnc_cut_outline()*. So you can find out which outline is not compatible with the requested *router_bit radius* in case of error. Below an example of warning message due to a too large *router_bit radius*. Thanks to the *string*, we know that the outline issue is located in the *plank_z_side* function::
 
   WARN301: Warning, corner plank_z_side.1 can not be smoothed or enlarged because edges are too short! 
 

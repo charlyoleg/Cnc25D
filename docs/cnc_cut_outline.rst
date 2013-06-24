@@ -11,12 +11,12 @@ Computer numerical control (a.k.a. CNC) lets cut material directly from computer
 
 The 3-axis CNC can process:
   - 2.5D : xy-path at z constant
-  - 3D: xyz-path in case of well adapted reamer and path
+  - 3D: xyz-path in case of well adapted router_bit and path
   
 Cutting technology:
   - laser cutter (Only 2D: cutting and engraving)
   - water jet (Only 2D with a 3-axis machine)
-  - mechanical reamer (2.5D and 3D depending on shape and reamer shape)
+  - mechanical router_bit (2.5D and 3D depending on shape and router_bit shape)
 
 
 2. 2D path constraints
@@ -26,18 +26,18 @@ Cutting technology:
 
 Minimal curve radius constraint:
   - laser and water-jet requests no specific constraint
-  - For mechanical reamer, inner curve must have a curve radius bigger than the reamer radius.    
+  - For mechanical router_bit, inner curve must have a curve radius bigger than the router_bit radius.    
 
 .. image:: images/osculating_circle.png
 
-So inner corner can not be cut with reamer. They must be replaced by inner curve. Tight inner curve must be smoothed to respect the minimal curve radius constraint.
+So inner corner can not be cut with router_bit. They must be replaced by inner curve. Tight inner curve must be smoothed to respect the minimal curve radius constraint.
 
-.. image:: images/possible_2d_shape_with_a_reamer_of_radius_r.png
+.. image:: images/possible_2d_shape_with_a_router_bit_of_radius_r.png
 
 2.1. Coplanar fitting
 ---------------------
 
-If you want a perfect fitting between two coplanar shapes, then outer corners and outer curves must be rounded to get a minimum curve radius bigger than the reamer radius. For a perfect fitting, two coplanar shapes must be complementary.
+If you want a perfect fitting between two coplanar shapes, then outer corners and outer curves must be rounded to get a minimum curve radius bigger than the router_bit radius. For a perfect fitting, two coplanar shapes must be complementary.
 
 .. image:: images/coplanar_fitting.png
 
@@ -126,7 +126,7 @@ Other method with the law of cosines c²=a²+b²-2*a*b*cos(C)
 ::
 
   Knowing Gx,Gy,Ax,Ay,Hx,Hy,a we want to calculate: Ix, Iy
-  With E,I and F, we define the arc than can be build with a reamer of radius r.
+  With E,I and F, we define the arc than can be build with a router_bit of radius r.
   
 4. Incoplanar fitting details
 =============================

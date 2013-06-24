@@ -45,7 +45,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     ai_d_plank_width, ai_d_plank_height, ai_crenel_depth,
     ai_wall_diagonal_size, ai_tobo_diagonal_size,
     ai_diagonal_lining_top_height, ai_diagonal_lining_bottom_height,
-    ai_module_width, ai_reamer_radius, ai_cutting_extra,
+    ai_module_width, ai_router_bit_radius, ai_cutting_extra,
     ai_slab_thickness, ai_output_file_basename):
   """
   The main function of the script.
@@ -165,77 +165,77 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   # jonction_plank_xz_with_zx
   def jonction_plank_xz_with_zx(nai_cutting_extra):
     nr = [
-      #[1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
-      [1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius],
-      [1.0/2*ai_v_plank_width-1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
-      [2.0/2*ai_v_plank_width+1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
-      [2.0/2*ai_v_plank_width+1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius]]
+      #[1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 1*ai_router_bit_radius],
+      [1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_router_bit_radius],
+      [1.0/2*ai_v_plank_width-1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [2.0/2*ai_v_plank_width+1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [2.0/2*ai_v_plank_width+1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_router_bit_radius]]
     return(nr)
   # jonction_plank_xz_with_middle_zx
   def jonction_plank_xz_with_middle_zx(nai_cutting_extra):
     nr = [
-      [-1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius],
-      [-1.0/2*ai_v_plank_width-1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
-      [ 1.0/2*ai_v_plank_width+1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
-      [ 1.0/2*ai_v_plank_width+1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius]]
+      [-1.0/2*ai_v_plank_width-1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_router_bit_radius],
+      [-1.0/2*ai_v_plank_width-1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [ 1.0/2*ai_v_plank_width+1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [ 1.0/2*ai_v_plank_width+1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_router_bit_radius]]
     return(nr)
   #   jonction_plank_xz_with_wall_diagonal
   def jonction_plank_xz_with_wall_diagonal(nai_cutting_extra):
     nr = [
-      [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-2*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius],
-      [ai_v_plank_width+ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
-      [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_reamer_radius],
-      [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius]]
+      [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-2*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_router_bit_radius],
+      [ai_v_plank_width+ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+1*nai_cutting_extra, 1*ai_crenel_depth+1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [ai_v_plank_width+ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+1*nai_cutting_extra, 0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_router_bit_radius]]
     return(nr)
   # jonction_plank_top_xz_with_yz
   def jonction_plank_top_xz_with_yz(nai_cutting_extra):
     nr = [
-      [0*ai_plank_height+0*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra, 0*ai_reamer_radius],
-      [1*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_reamer_radius],
-      [1*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_reamer_radius],
-      [0*ai_plank_height+0*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra, 0*ai_reamer_radius]]
+      [0*ai_plank_height+0*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra, 0*ai_router_bit_radius],
+      [1*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [1*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [0*ai_plank_height+0*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra, 0*ai_router_bit_radius]]
     return(nr)
   def hole_in_plank_top_xz_for_yz(nai_x_offset, nai_cutting_extra):
     l_outline = [
-      [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_reamer_radius],
-      [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_reamer_radius],
-      [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_reamer_radius],
-      [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_reamer_radius]]
+      [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius]]
     l_hole_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(l_outline, 'hole_in_plank_top_xz_for_yz').Edges))
     r_hole_solid = l_hole_face.extrude(Base.Vector(0,0,ai_plank_height+2*remove_skin_thickness)) # straight linear extrusion
     return(r_hole_solid)
   # jonction_plank_bot_xz_with_yz
   def jonction_plank_bot_xz_with_yz(nai_cutting_extra):
     nr = [
-      [0*ai_plank_height+0*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra, 0*ai_reamer_radius],
-      [1*ai_plank_height+1*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_reamer_radius],
-      [1*ai_plank_height+1*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_reamer_radius],
-      [0*ai_plank_height+0*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra, 0*ai_reamer_radius]]
+      [0*ai_plank_height+0*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra, 0*ai_router_bit_radius],
+      [1*ai_plank_height+1*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [1*ai_plank_height+1*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [0*ai_plank_height+0*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra, 0*ai_router_bit_radius]]
     return(nr)
   def hole_in_plank_bot_xz_for_yz(nai_x_offset, nai_cutting_extra):
     l_outline = [
-      [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_reamer_radius],
-      [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_reamer_radius],
-      [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_reamer_radius],
-      [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_reamer_radius]]
+      [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius],
+      [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius]]
     l_hole_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(l_outline, 'hole_in_plank_bot_xz_for_yz').Edges))
     r_hole_solid = l_hole_face.extrude(Base.Vector(0,0,ai_plank_height+2*remove_skin_thickness)) # straight linear extrusion
     return(r_hole_solid)
   # jonction_plank_top_yz_with_xz
   def jonction_plank_top_yz_with_xz(nai_cutting_extra):
     nr = [
-      [1*ai_plank_height, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth),-1*ai_reamer_radius],
-      [0*ai_plank_height, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth), 0*ai_reamer_radius],
-      [0*ai_plank_height, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth), 0*ai_reamer_radius],
-      [1*ai_plank_height, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth),-1*ai_reamer_radius]]
+      [1*ai_plank_height, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth),-1*ai_router_bit_radius],
+      [0*ai_plank_height, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth), 0*ai_router_bit_radius],
+      [0*ai_plank_height, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth), 0*ai_router_bit_radius],
+      [1*ai_plank_height, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth),-1*ai_router_bit_radius]]
     return(nr)
   # jonction_plank_bot_yz_with_xz
   def jonction_plank_bot_yz_with_xz(nai_cutting_extra):
     nr = [
-      [1*ai_plank_height, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth),-1*ai_reamer_radius],
-      [0*ai_plank_height, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth), 0*ai_reamer_radius],
-      [0*ai_plank_height, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth), 0*ai_reamer_radius],
-      [1*ai_plank_height, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth),-1*ai_reamer_radius]]
+      [1*ai_plank_height, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth),-1*ai_router_bit_radius],
+      [0*ai_plank_height, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth), 0*ai_router_bit_radius],
+      [0*ai_plank_height, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth), 0*ai_router_bit_radius],
+      [1*ai_plank_height, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth),-1*ai_router_bit_radius]]
     return(nr)
   # jonction_plank_xz_fitting
   def jonction_plank_xz_fitting(nai_cutting_extra):
@@ -245,14 +245,14 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(nr)
   # jonction_plank_z_side_with_xz
   def jonction_plank_z_side_with_xz(nai_cutting_extra):
-    act = (1+math.sqrt(2))*ai_reamer_radius
+    act = (1+math.sqrt(2))*ai_router_bit_radius
     nr = [
-      [0*ai_crenel_depth,     2.0/2*ai_v_plank_width,     1*ai_reamer_radius],
-      [0*ai_crenel_depth,     1.0/2*ai_v_plank_width,     1*ai_reamer_radius],
-      #[1*ai_crenel_depth,    1.0/2*ai_v_plank_width,     1*ai_reamer_radius],
-      [1*ai_crenel_depth+act, 1.0/2*ai_v_plank_width,     1*ai_reamer_radius],
-      [1*ai_crenel_depth,     1.0/2*ai_v_plank_width-act, 0*ai_reamer_radius],
-      [1*ai_crenel_depth,     0.0/2*ai_v_plank_width,     0*ai_reamer_radius]]
+      [0*ai_crenel_depth,     2.0/2*ai_v_plank_width,     1*ai_router_bit_radius],
+      [0*ai_crenel_depth,     1.0/2*ai_v_plank_width,     1*ai_router_bit_radius],
+      #[1*ai_crenel_depth,    1.0/2*ai_v_plank_width,     1*ai_router_bit_radius],
+      [1*ai_crenel_depth+act, 1.0/2*ai_v_plank_width,     1*ai_router_bit_radius],
+      [1*ai_crenel_depth,     1.0/2*ai_v_plank_width-act, 0*ai_router_bit_radius],
+      [1*ai_crenel_depth,     0.0/2*ai_v_plank_width,     0*ai_router_bit_radius]]
     return(nr)
   # jonction_plank_z_with_wall_diagonal
   def jonction_plank_z_with_wall_diagonal(nai_cutting_extra):
@@ -261,9 +261,9 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   # jonction_plank_wall_diagonal
   def jonction_plank_wall_diagonal(nai_cutting_extra):
     nr = [
-      [1*ai_d_plank_width-1*ai_crenel_depth*math.sqrt(2)/2, 1*ai_d_plank_width+0*ai_crenel_depth*math.sqrt(2)/2, 1*ai_reamer_radius],
-      [0*ai_d_plank_width-0*ai_crenel_depth*math.sqrt(2)/2, 0*ai_d_plank_width+1*ai_crenel_depth*math.sqrt(2)/2, 1*ai_reamer_radius],
-      [0*ai_d_plank_width+1*ai_crenel_depth*math.sqrt(2)/2, 0*ai_d_plank_width+0*ai_crenel_depth*math.sqrt(2)/2, 0*ai_reamer_radius]]
+      [1*ai_d_plank_width-1*ai_crenel_depth*math.sqrt(2)/2, 1*ai_d_plank_width+0*ai_crenel_depth*math.sqrt(2)/2, 1*ai_router_bit_radius],
+      [0*ai_d_plank_width-0*ai_crenel_depth*math.sqrt(2)/2, 0*ai_d_plank_width+1*ai_crenel_depth*math.sqrt(2)/2, 1*ai_router_bit_radius],
+      [0*ai_d_plank_width+1*ai_crenel_depth*math.sqrt(2)/2, 0*ai_d_plank_width+0*ai_crenel_depth*math.sqrt(2)/2, 0*ai_router_bit_radius]]
     return(nr)
   # jonction_plank_tobo_diagonal
   def jonction_plank_tobo_diagonal(nai_cutting_extra):
@@ -271,10 +271,10 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     l_soft_external = 0
     nr = [
       [1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
-      [1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
+      [1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_router_bit_radius],
       [1*ai_d_plank_width-2*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
       [0*ai_d_plank_width+(1.5-1)*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+(1.5+1)*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
-      [0*ai_d_plank_width+1.5*cai_tobo_diag_depth*math.sqrt(2)/2,     0*ai_d_plank_width+1.5*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
+      [0*ai_d_plank_width+1.5*cai_tobo_diag_depth*math.sqrt(2)/2,     0*ai_d_plank_width+1.5*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_router_bit_radius],
       [0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2,       0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external]]
     return(nr)
   #print("dbg412: jonction_plank_tobo_diagonal", jonction_plank_tobo_diagonal)
@@ -285,30 +285,30 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   # jonction_plank_zx_with_xz
   def jonction_plank_zx_with_xz(nai_cutting_extra):
     nr = [
-      [0, 1*ai_v_plank_width, 1*ai_reamer_radius],
-      [0, 0*ai_v_plank_width, 1*ai_reamer_radius]]
+      [0, 1*ai_v_plank_width, 1*ai_router_bit_radius],
+      [0, 0*ai_v_plank_width, 1*ai_router_bit_radius]]
     return(nr)
   #   jonction_slab_side_with_wall_diagonal_horizontal
   def jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra):
-    act = (1+math.sqrt(2))*ai_reamer_radius
+    act = (1+math.sqrt(2))*ai_router_bit_radius
     nr = [
-      [ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra, -1*ai_reamer_radius],
-      [ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
-      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius],
-      #[ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra,-1*ai_reamer_radius]]
-      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+act+1*nai_cutting_extra, 1*ai_reamer_radius],
-      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+act+0*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra, 0*ai_reamer_radius]]
+      [ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra, -1*ai_router_bit_radius],
+      [ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_router_bit_radius],
+      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_router_bit_radius],
+      #[ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra,-1*ai_router_bit_radius]]
+      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+act+1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+act+0*nai_cutting_extra,  0*ai_crenel_depth+1*nai_cutting_extra, 0*ai_router_bit_radius]]
     return(nr)
   #   jonction_slab_side_with_wall_diagonal_vertical
   def jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra):
-    act = (1+math.sqrt(2))*ai_reamer_radius
+    act = (1+math.sqrt(2))*ai_router_bit_radius
     nr = [
-      #[ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_reamer_radius],
-      [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+act+0*nai_cutting_extra,  0*ai_reamer_radius],
-      [ 0*ai_crenel_depth+act+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_reamer_radius],
-      [-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_reamer_radius],
-      [-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_reamer_radius],
-      [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, -1*ai_reamer_radius]]
+      #[ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_router_bit_radius],
+      [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+act+0*nai_cutting_extra,  0*ai_router_bit_radius],
+      [ 0*ai_crenel_depth+act+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_router_bit_radius],
+      [-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_router_bit_radius],
+      [-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  1*ai_router_bit_radius],
+      [ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, -1*ai_router_bit_radius]]
     return(nr)
 
   ## hole sub   
@@ -318,16 +318,16 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     hdy = ai_d_plank_height
     hpx = ai_tobo_diagonal_size + cai_tobo_diag_depth + 0*ai_plank_height
     #hpy = ai_diagonal_lining_height
-    act = (1+math.sqrt(2))*ai_reamer_radius
+    act = (1+math.sqrt(2))*ai_router_bit_radius
     plank_xz_hole_outline = [ # the y position is not set yet for an easier re-use for other planks
-      [hpx+0*hdx-1*nai_cutting_extra, 0*hdy-act-1*nai_cutting_extra, 1*ai_reamer_radius],
-      [hpx+0*hdx+act-1*nai_cutting_extra, 0*hdy-1*nai_cutting_extra, 0*ai_reamer_radius],
-      [hpx+1*hdx-act+1*nai_cutting_extra, 0*hdy-1*nai_cutting_extra, 0*ai_reamer_radius],
-      [hpx+1*hdx+1*nai_cutting_extra, 0*hdy-act-1*nai_cutting_extra, 1*ai_reamer_radius],
-      [hpx+1*hdx+1*nai_cutting_extra, 1*hdy+act+1*nai_cutting_extra, 1*ai_reamer_radius],
-      [hpx+1*hdx-act+1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, 0*ai_reamer_radius],
-      [hpx+0*hdx+act-1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, 0*ai_reamer_radius],
-      [hpx+0*hdx-1*nai_cutting_extra, 1*hdy+act+1*nai_cutting_extra, 1*ai_reamer_radius]]
+      [hpx+0*hdx-1*nai_cutting_extra, 0*hdy-act-1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [hpx+0*hdx+act-1*nai_cutting_extra, 0*hdy-1*nai_cutting_extra, 0*ai_router_bit_radius],
+      [hpx+1*hdx-act+1*nai_cutting_extra, 0*hdy-1*nai_cutting_extra, 0*ai_router_bit_radius],
+      [hpx+1*hdx+1*nai_cutting_extra, 0*hdy-act-1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [hpx+1*hdx+1*nai_cutting_extra, 1*hdy+act+1*nai_cutting_extra, 1*ai_router_bit_radius],
+      [hpx+1*hdx-act+1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, 0*ai_router_bit_radius],
+      [hpx+0*hdx+act-1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, 0*ai_router_bit_radius],
+      [hpx+0*hdx-1*nai_cutting_extra, 1*hdy+act+1*nai_cutting_extra, 1*ai_router_bit_radius]]
     plank_xz_hole_shape = cnc_cut_outline.cnc_cut_outline(plank_xz_hole_outline, 'plank_xz_yz_hole')
     plank_xz_hole_wire = Part.Wire(plank_xz_hole_shape.Edges)
     plank_xz_hole_face = Part.Face(plank_xz_hole_wire)
@@ -382,7 +382,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """
     # plank_xz_top_outline
     plank_xz_top_outline = []
-    plank_xz_top_outline.append([0*ai_box_width, 0*ai_h_plank_width, 0*ai_reamer_radius]) #0
+    plank_xz_top_outline.append([0*ai_box_width, 0*ai_h_plank_width, 0*ai_router_bit_radius]) #0
     plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),             0*ai_box_width, 1)) #1-4
     plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  0*ai_box_width, 1)) #5-8
     for i in range(nai_module_width-1):
@@ -391,13 +391,13 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (i+1)*ai_box_width-1.0/2*ai_v_plank_width, 1))
     plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  nai_module_width*ai_box_width, -1)) #9-12
     plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),             nai_module_width*ai_box_width, -1)) #13-16
-    plank_xz_top_outline.append([nai_module_width*ai_box_width, 0*ai_plank_height, 0*ai_reamer_radius]) #17
+    plank_xz_top_outline.append([nai_module_width*ai_box_width, 0*ai_plank_height, 0*ai_router_bit_radius]) #17
     plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_top_xz_with_yz(nai_cutting_extra),         nai_module_width*ai_box_width, -1)) #18-21
-    plank_xz_top_outline.append([nai_module_width*ai_box_width, 1*ai_h_plank_width, 0*ai_reamer_radius]) #22
+    plank_xz_top_outline.append([nai_module_width*ai_box_width, 1*ai_h_plank_width, 0*ai_router_bit_radius]) #22
     for i in range(nai_module_width):
       plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1],    (nai_module_width-i)*ai_box_width, -1, ai_h_plank_width, 1)) #23-24
       plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1],  (nai_module_width-1-i)*ai_box_width,  1, ai_h_plank_width, 1)) #25-26
-    plank_xz_top_outline.append([0*ai_box_width, 1*ai_h_plank_width, 0*ai_reamer_radius]) #27
+    plank_xz_top_outline.append([0*ai_box_width, 1*ai_h_plank_width, 0*ai_router_bit_radius]) #27
     plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_top_xz_with_yz(nai_cutting_extra),         0*ai_box_width,  1)) #28-31
     # extrusion
     plank_xz_top_shape = cnc_cut_outline.cnc_cut_outline(plank_xz_top_outline, 'plank_xz_top')
@@ -415,13 +415,13 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """
     # plank_xz_bottom_outline
     plank_xz_bottom_outline = []
-    plank_xz_bottom_outline.append([0*ai_box_width, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius]) #0
+    plank_xz_bottom_outline.append([0*ai_box_width, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius]) #0
     for i in range(nai_module_width):
       plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra),              i*ai_box_width, 1)) #1-2
       plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra),          (i+1)*ai_box_width,-1))
-    plank_xz_bottom_outline.append([nai_module_width*ai_box_width, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius])
+    plank_xz_bottom_outline.append([nai_module_width*ai_box_width, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
     plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_bot_xz_with_yz(nai_cutting_extra),          nai_module_width*ai_box_width, -1))
-    plank_xz_bottom_outline.append([nai_module_width*ai_box_width, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius])
+    plank_xz_bottom_outline.append([nai_module_width*ai_box_width, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
     plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),             nai_module_width*ai_box_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  nai_module_width*ai_box_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     for i in range(nai_module_width-1):
@@ -430,7 +430,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (nai_module_width-i-1)*ai_box_width+1.0/2*ai_v_plank_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  0*ai_box_width,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),             0*ai_box_width,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-    plank_xz_bottom_outline.append([0*ai_box_width, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius])
+    plank_xz_bottom_outline.append([0*ai_box_width, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
     plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_bot_xz_with_yz(nai_cutting_extra),          0*ai_box_width,  1))
     # extrusion
     #plank_xz_bottom_shape = cnc_cut_outline.cnc_cut_outline(plank_xz_bottom_outline, 'plank_xz_bottom')
@@ -450,17 +450,17 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """
     # plank_yz_top_outline
     plank_yz_top_outline = []
-    plank_yz_top_outline.append([0*ai_box_depth+1*ai_plank_height, 0*ai_h_plank_width, 0*ai_reamer_radius]) #0
+    plank_yz_top_outline.append([0*ai_box_depth+1*ai_plank_height, 0*ai_h_plank_width, 0*ai_router_bit_radius]) #0
     plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),            0*ai_box_depth+1*ai_plank_height, 1)) #1-4
     plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), 0*ai_box_depth+1*ai_plank_height, 1)) #5-8
     plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), 1*ai_box_depth-1*ai_plank_height, -1)) #9-12
     plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),            1*ai_box_depth-1*ai_plank_height, -1)) #13-16
-    plank_yz_top_outline.append([1*ai_box_depth-1*ai_plank_height, 0*ai_plank_height, 0*ai_reamer_radius]) #17
+    plank_yz_top_outline.append([1*ai_box_depth-1*ai_plank_height, 0*ai_plank_height, 0*ai_router_bit_radius]) #17
     plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_top_yz_with_xz(nai_cutting_extra),            1*ai_box_depth, -1)) #18-21
-    plank_yz_top_outline.append([1*ai_box_depth-1*ai_plank_height, 1*ai_h_plank_width, 0*ai_reamer_radius]) #22
+    plank_yz_top_outline.append([1*ai_box_depth-1*ai_plank_height, 1*ai_h_plank_width, 0*ai_router_bit_radius]) #22
     plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1], 1*ai_box_depth, -1, ai_h_plank_width, 1)) #23-24
     plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1], 0*ai_box_depth,  1, ai_h_plank_width, 1)) #25-26
-    plank_yz_top_outline.append([0*ai_box_depth+1*ai_plank_height, 1*ai_h_plank_width, 0*ai_reamer_radius]) #27
+    plank_yz_top_outline.append([0*ai_box_depth+1*ai_plank_height, 1*ai_h_plank_width, 0*ai_router_bit_radius]) #27
     plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_top_yz_with_xz(nai_cutting_extra),            0*ai_box_depth,  1)) #28-31
     # extrusion
     plank_yz_top_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_yz_top_outline, 'plank_yz_top').Edges))
@@ -474,12 +474,12 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """
     # plank_yz_bottom_outline
     plank_yz_bottom_outline = []
-    plank_yz_bottom_outline.append([0*ai_box_depth+1*ai_plank_height, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius]) #0
+    plank_yz_bottom_outline.append([0*ai_box_depth+1*ai_plank_height, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius]) #0
     plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra), 0*ai_box_depth, 1)) #1-2
     plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra), 1*ai_box_depth,-1))
-    plank_yz_bottom_outline.append([1*ai_box_depth-1*ai_plank_height, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius])
+    plank_yz_bottom_outline.append([1*ai_box_depth-1*ai_plank_height, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
     plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_bot_yz_with_xz(nai_cutting_extra),  1*ai_box_depth, -1))
-    plank_yz_bottom_outline.append([1*ai_box_depth-1*ai_plank_height, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius])
+    plank_yz_bottom_outline.append([1*ai_box_depth-1*ai_plank_height, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
     plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),
       1*ai_box_depth-1*ai_plank_height, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),
@@ -488,7 +488,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       0*ai_box_depth+1*ai_plank_height,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),
       0*ai_box_depth+1*ai_plank_height,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-    plank_yz_bottom_outline.append([0*ai_box_depth+1*ai_plank_height, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_reamer_radius])
+    plank_yz_bottom_outline.append([0*ai_box_depth+1*ai_plank_height, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
     plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_bot_yz_with_xz(nai_cutting_extra),  0*ai_box_depth,  1))
     # extrusion
     plank_yz_bottom_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_yz_bottom_outline, 'plank_yz_bottom').Edges))
@@ -645,14 +645,14 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """
     slab_front_outline = []
     slab_front_outline.append([0+1*nai_cutting_extra, 0+1*nai_cutting_extra, 0])
-    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, 0*ai_crenel_depth+1*nai_cutting_extra, -1*ai_reamer_radius])
-    slab_front_outline.append([ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius])
-    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_reamer_radius])
-    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_reamer_radius])
-    slab_front_outline.append([ 0*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 0*ai_reamer_radius])
-    slab_front_outline.append([-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 1*ai_reamer_radius])
-    slab_front_outline.append([-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 1*ai_reamer_radius])
-    slab_front_outline.append([ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, -1*ai_reamer_radius])
+    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, 0*ai_crenel_depth+1*nai_cutting_extra, -1*ai_router_bit_radius])
+    slab_front_outline.append([ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_router_bit_radius])
+    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, -1*ai_crenel_depth+0*nai_cutting_extra, 1*ai_router_bit_radius])
+    slab_front_outline.append([ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra,  0*ai_crenel_depth+0*nai_cutting_extra, 0*ai_router_bit_radius])
+    slab_front_outline.append([ 0*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 0*ai_router_bit_radius])
+    slab_front_outline.append([-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 1*ai_router_bit_radius])
+    slab_front_outline.append([-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 1*ai_router_bit_radius])
+    slab_front_outline.append([ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, -1*ai_router_bit_radius])
     slab_front_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(slab_front_outline, 'slab_front').Edges))
     r_slab_front_solid = slab_front_face.extrude(Base.Vector(0,0,ai_slab_thickness))
     return(r_slab_front_solid)
@@ -1121,7 +1121,7 @@ wall_diagonal_size    : %0.2f
 tobo_diagonal_size    : %0.2f
 diagonal_lining_top_height    : %0.2f
 diagonal_lining_bottom_height : %0.2f
-reamer_radius         : %0.2f
+router_bit_radius         : %0.2f
 cutting_extra         : %0.2f
 slab_thickness        : %0.2f
 output_file_basename  : %s
@@ -1130,7 +1130,7 @@ output_file_basename  : %s
         ai_d_plank_width, ai_d_plank_height, ai_crenel_depth,
         ai_wall_diagonal_size, ai_tobo_diagonal_size,
         ai_diagonal_lining_top_height, ai_diagonal_lining_bottom_height,
-        ai_reamer_radius, ai_cutting_extra,
+        ai_router_bit_radius, ai_cutting_extra,
         ai_slab_thickness, ai_output_file_basename)
     wood_density_fir_tree = 450 #kg/m3
     wood_density_oak_tree = 980 #kg/m3
@@ -1595,8 +1595,8 @@ def box_wood_frame_cli():
   #  help="It sets the depth of the module in number of box_depth.")
   #bwf_parser.add_argument('--module_height','--mh', action='store', type=int, default=1, dest='sw_module_height',
   #  help="It sets the height of the module in number of box_height.")
-  bwf_parser.add_argument('--reamer_radius','--rr', action='store', type=float, default=2.0, dest='sw_reamer_radius',
-    help="It sets the radius of the reamer of the cnc.")
+  bwf_parser.add_argument('--router_bit_radius','--rr', action='store', type=float, default=2.0, dest='sw_router_bit_radius',
+    help="It sets the radius of the router_bit of the cnc.")
   bwf_parser.add_argument('--cutting_extra','--ce', action='store', type=float, default=2.0, dest='sw_cutting_extra',
     help="It sets the cutting_extra used to see better the fitting in the assembly view.")
   bwf_parser.add_argument('--slab_thickness','--st', action='store', type=float, default=5.0, dest='sw_slab_thickness',
@@ -1617,7 +1617,7 @@ def box_wood_frame_cli():
     bwf_args.sw_d_plank_width, bwf_args.sw_d_plank_height, bwf_args.sw_crenel_depth,
     bwf_args.sw_wall_diagonal_size, bwf_args.sw_tobo_diagonal_size,
     bwf_args.sw_diagonal_lining_top_height, bwf_args.sw_diagonal_lining_bottom_height,
-    bwf_args.sw_module_width, bwf_args.sw_reamer_radius, bwf_args.sw_cutting_extra,
+    bwf_args.sw_module_width, bwf_args.sw_router_bit_radius, bwf_args.sw_cutting_extra,
     bwf_args.sw_slab_thickness, bwf_args.sw_output_file_basename)
   print("dbg999: end of script")
   return(r_bwf)

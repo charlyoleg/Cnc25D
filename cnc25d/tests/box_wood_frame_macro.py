@@ -79,7 +79,7 @@ bwf_tobo_diagonal_size = 100.0
 bwf_diagonal_lining_top_height = 20.0
 bwf_diagonal_lining_bottom_height = 20.0
 bwf_module_width = 1
-bwf_reamer_radius = 2.0
+bwf_router_bit_radius = 2.0
 bwf_cutting_extra = 2.0 # doesn't affect the cnc cutting plan
 bwf_slab_thickness = 5.0
 bwf_output_file_basename = "" # set a not-empty string if you want to generate the output files
@@ -98,7 +98,7 @@ bwf_assembly = box_wood_frame.box_wood_frame(bwf_box_width, bwf_box_depth, bwf_b
                                               bwf_d_plank_width, bwf_d_plank_height, bwf_crenel_depth,
                                               bwf_wall_diagonal_size, bwf_tobo_diagonal_size,
                                               bwf_diagonal_lining_top_height, bwf_diagonal_lining_bottom_height,
-                                              bwf_module_width, bwf_reamer_radius, bwf_cutting_extra,
+                                              bwf_module_width, bwf_router_bit_radius, bwf_cutting_extra,
                                               bwf_slab_thickness, bwf_output_file_basename)
 Part.show(bwf_assembly)
 

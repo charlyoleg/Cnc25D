@@ -23,31 +23,31 @@ from cnc25d import cnc_cut_outline, export_2d
 # hello message
 print("cnc25d_api_macro.py starts")
 
-# define the CNC reamer radius
-my_reamer_radius = 5.0 # in mm
+# define the CNC router_bit radius
+my_router_bit_radius = 5.0 # in mm
 
 # some design constant
 big_length = 60
 small_length = 20
 
 # create a free polygon.
-# A polygon is list of points. A point is a list of three elements: x coordinate, y coordiante, reamer radius.
-# If the reamer radius is positive, the angle is smoothed for this radius.
-# If the reamer radius is negative, the angle is enlarged for this radius.
-# If the reamer radius is zero, the angle is unchanged
+# A polygon is list of points. A point is a list of three elements: x coordinate, y coordiante, router_bit radius.
+# If the router_bit radius is positive, the angle is smoothed for this radius.
+# If the router_bit radius is negative, the angle is enlarged for this radius.
+# If the router_bit radius is zero, the angle is unchanged
 my_polygon = [
-  [ 0*big_length+0*small_length,  0*big_length+0*small_length,    my_reamer_radius],
-  [ 1*big_length+1*small_length,  0*big_length+0*small_length,    my_reamer_radius],
-  [ 1*big_length+1*small_length,  0*big_length+2*small_length,    my_reamer_radius],
-  [ 1*big_length+2*small_length,  0*big_length+2*small_length,    my_reamer_radius],
-  [ 1*big_length+2*small_length,  0*big_length+0*small_length,    my_reamer_radius],
-  [ 3*big_length+0*small_length,  0*big_length+0*small_length,    my_reamer_radius],
-  [ 3*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius],
-  [ 2*big_length+0*small_length,  1*big_length+0*small_length, -1*my_reamer_radius],
-  [ 2*big_length+0*small_length,  2*big_length+0*small_length,    my_reamer_radius],
-  [ 1*big_length+0*small_length,  2*big_length+0*small_length,    my_reamer_radius],
-  [ 1*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius],
-  [ 0*big_length+0*small_length,  1*big_length+0*small_length,    my_reamer_radius]]
+  [ 0*big_length+0*small_length,  0*big_length+0*small_length,    my_router_bit_radius],
+  [ 1*big_length+1*small_length,  0*big_length+0*small_length,    my_router_bit_radius],
+  [ 1*big_length+1*small_length,  0*big_length+2*small_length,    my_router_bit_radius],
+  [ 1*big_length+2*small_length,  0*big_length+2*small_length,    my_router_bit_radius],
+  [ 1*big_length+2*small_length,  0*big_length+0*small_length,    my_router_bit_radius],
+  [ 3*big_length+0*small_length,  0*big_length+0*small_length,    my_router_bit_radius],
+  [ 3*big_length+0*small_length,  1*big_length+0*small_length,    my_router_bit_radius],
+  [ 2*big_length+0*small_length,  1*big_length+0*small_length, -1*my_router_bit_radius],
+  [ 2*big_length+0*small_length,  2*big_length+0*small_length,    my_router_bit_radius],
+  [ 1*big_length+0*small_length,  2*big_length+0*small_length,    my_router_bit_radius],
+  [ 1*big_length+0*small_length,  1*big_length+0*small_length,    my_router_bit_radius],
+  [ 0*big_length+0*small_length,  1*big_length+0*small_length,    my_router_bit_radius]]
 
 # use the Cnc25D API function cnc_cut_outline to create a makable outline from the wished polygon
 my_part_outline = cnc_cut_outline.cnc_cut_outline(my_polygon, 'api_example')

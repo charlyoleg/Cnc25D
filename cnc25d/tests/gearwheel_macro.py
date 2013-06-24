@@ -77,7 +77,7 @@ gw_gear_addendum_dedendum_parity = 50.0
 gw_gear_addendum_height_pourcentage = 100.0
 gw_gear_dedendum_height_pourcentage = 100.0
 gw_gear_hollow_height_pourcentage = 25.0
-gw_gear_reamer_radius = 2.0
+gw_gear_router_bit_radius = 2.0
 gw_gear_initial_angle = 0*math.pi
 # gear contact parameters
 gw_second_gear_position_angle = 0*math.pi
@@ -92,7 +92,7 @@ gw_second_gear_addendum_dedendum_parity = 50.0
 gw_second_gear_addendum_height_pourcentage = 100.0
 gw_second_gear_dedendum_height_pourcentage = 100.0
 gw_second_gear_hollow_height_pourcentage = 25.0
-gw_second_gear_reamer_radius = 2.0
+gw_second_gear_router_bit_radius = 2.0
 # simulation
 gw_simulation_enable = True
 gw_simulation_zoom = 4.0
@@ -100,7 +100,7 @@ gw_simulation_zoom = 4.0
 gw_axe_type = "square"
 gw_axe_size_1 = 30.0
 gw_axe_size_2 = 5.0
-gw_axe_reamer_radius = 4.0
+gw_axe_router_bit_radius = 4.0
 # portion parameter
 gw_portion_tooth_nb = 0
 # wheel hollow parameters
@@ -108,7 +108,7 @@ gw_wheel_hollow_internal_diameter = 30.0
 gw_wheel_hollow_external_diameter = 60.0
 gw_wheel_hollow_leg_number = 3
 gw_wheel_hollow_leg_width = 5.0
-gw_wheel_hollow_reamer_radius = 4.0
+gw_wheel_hollow_router_bit_radius = 4.0
 # part split parameter
 gw_part_split = 0
 # center position parameters
@@ -116,8 +116,8 @@ gw_center_position_x = 0.0
 gw_center_position_y = 0.0
 # gearwheel linear extrusion
 gw_gearwheel_height = 1.0
-# cnc reamer constraint
-gw_cnc_reamer_radius = 2.0
+# cnc router_bit constraint
+gw_cnc_router_bit_radius = 2.0
 # manufacturing technology related
 gw_gear_tooth_resolution = 5
 gw_gear_skin_thickness = 0.0
@@ -144,7 +144,7 @@ my_gw = gearwheel.gearwheel(
           gw_gear_addendum_height_pourcentage,
           gw_gear_dedendum_height_pourcentage,
           gw_gear_hollow_height_pourcentage,
-          gw_gear_reamer_radius,
+          gw_gear_router_bit_radius,
           gw_gear_initial_angle,
           gw_second_gear_position_angle,
           gw_second_gear_additional_axe_length,
@@ -157,24 +157,24 @@ my_gw = gearwheel.gearwheel(
           gw_second_gear_addendum_height_pourcentage,
           gw_second_gear_dedendum_height_pourcentage,
           gw_second_gear_hollow_height_pourcentage,
-          gw_second_gear_reamer_radius,
+          gw_second_gear_router_bit_radius,
           gw_simulation_enable,
           gw_simulation_zoom,
           gw_axe_type,
           gw_axe_size_1,
           gw_axe_size_2,
-          gw_axe_reamer_radius,
+          gw_axe_router_bit_radius,
           gw_portion_tooth_nb,
           gw_wheel_hollow_internal_diameter,
           gw_wheel_hollow_external_diameter,
           gw_wheel_hollow_leg_number,
           gw_wheel_hollow_leg_width,
-          gw_wheel_hollow_reamer_radius,
+          gw_wheel_hollow_router_bit_radius,
           gw_part_split,
           gw_center_position_x,
           gw_center_position_y,
           gw_gearwheel_height,
-          gw_cnc_reamer_radius,
+          gw_cnc_router_bit_radius,
           gw_gear_tooth_resolution,
           gw_gear_skin_thickness,
           gw_output_file_basename)
