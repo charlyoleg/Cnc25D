@@ -273,9 +273,9 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       [1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
       [1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-1*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
       [1*ai_d_plank_width-2*cai_tobo_diag_depth*math.sqrt(2)/2, 1*ai_d_plank_width-0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
-      [0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+2*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
-      [0*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+1*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
-      [0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external]]
+      [0*ai_d_plank_width+(1.5-1)*cai_tobo_diag_depth*math.sqrt(2)/2, 0*ai_d_plank_width+(1.5+1)*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external],
+      [0*ai_d_plank_width+1.5*cai_tobo_diag_depth*math.sqrt(2)/2,     0*ai_d_plank_width+1.5*cai_tobo_diag_depth*math.sqrt(2)/2,-1*ai_reamer_radius],
+      [0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2,       0*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2, 1*l_soft_external]]
     return(nr)
   #print("dbg412: jonction_plank_tobo_diagonal", jonction_plank_tobo_diagonal)
   # jonction_plank_zx_with_wall_diagonal
@@ -314,7 +314,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   ## hole sub   
   # plank_xz_hole plank_yz_hole
   def plank_xz_yz_hole(nai_box_nb, nai_cutting_extra, nai_box_size):
-    hdx = (ai_d_plank_width*math.sqrt(2)-2*cai_tobo_diag_depth)
+    hdx = (ai_d_plank_width*math.sqrt(2)-(1+1.5)*cai_tobo_diag_depth)
     hdy = ai_d_plank_height
     hpx = ai_tobo_diagonal_size + cai_tobo_diag_depth + 0*ai_plank_height
     #hpy = ai_diagonal_lining_height
