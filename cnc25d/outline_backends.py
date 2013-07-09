@@ -25,32 +25,42 @@ import Part
 from FreeCAD import Base
 import math
 import sys, argparse
+import svgwrite
+
+################################################################
+# global variable
+################################################################
+
+arc_resolution = 6
 
 ################################################################
 # ******** sub-functions for the API ***********
 ################################################################
 
-def arc_of_circle(ai_3_points, ai_resolution):
+def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   """ From three points (list of 6 floats) creates a polyline (list of 2*n flaots) representing the arc of circle defined by the three points
       ai_resolution sets the mamximum number of intermediate points to create
   """
   # interpretation of the three points
-  ptax = ai_3_points[0]
-  ptay = ai_3_points[1]
-  ptbx = ai_3_points[2]
-  ptby = ai_3_points[3]
-  ptcx = ai_3_points[4]
-  ptcy = ai_3_points[5]
+  ptax = ai_start[0]
+  ptay = ai_start[1]
+  ptbx = ai_middle[0]
+  ptby = ai_middle[1]
+  ptcx = ai_end[0]
+  ptcy = ai_end[1]
+  #print("dbg501: pta: {:6.01f}  {:6.01f}".format(ptax, ptay))
+  #print("dbg502: ptb: {:6.01f}  {:6.01f}".format(ptbx, ptby))
+  #print("dbg503: ptc: {:6.01f}  {:6.01f}".format(ptcx, ptcy))
   # epsilon definiton to be tolerant to calculation imprecision
   epilon = math.pi/1000 # can be used to compare radian and sine
   # check
   if((ptax==ptbx)and(ptay==ptby)):
     print("ERR807: Error, point_A and point_B are identical!")
     sys.exit(2)
-  if((ptbx==ptbx)and(ptcy==ptcy)):
+  if((ptbx==ptcx)and(ptby==ptcy)):
     print("ERR808: Error, point_B and point_C are identical!")
     sys.exit(2)
-  if((ptax==ptbx)and(ptcy==ptcy)):
+  if((ptax==ptcx)and(ptay==ptcy)):
     print("ERR809: Error, point_A and point_C are identical!")
     sys.exit(2)
   ## check the documentation for the explanation of the following calculation
@@ -68,7 +78,11 @@ def arc_of_circle(ai_3_points, ai_resolution):
   cos_f = (ptcx-ptbx)/lbc
   sin_e = (ptby-ptay)/lab
   sin_f = (ptcy-ptby)/lbc
-  if(abs(cos_ab-cos_bc)<epilon):
+  #print("dbg304: cos_e: ", cos_e)
+  #print("dbg305: sin_e: ", sin_e)
+  #print("dbg306: cos_f: ", cos_f)
+  #print("dbg307: sin_f: ", sin_f)
+  if(abs(cos_e-cos_f)<epilon):
     print("ERR810: Error, A, B, C are colinear. Arc can not be created!")
     sys.exit(2)
   # Calculation of M and N
@@ -80,15 +94,16 @@ def arc_of_circle(ai_3_points, ai_resolution):
   lix = cos_e*sin_f-cos_f*sin_e
   kix = sin_f*(cos_e*ptmx+sin_e*ptmy)-sin_e*(cos_f*ptnx+sin_f*ptny)
   liy = sin_e*cos_f-sin_f*cos_e
-  kiy = cos_f*(cos_e*ptmx+sin_e*ptmy)+cos_e*(cos_f*ptnx+sin_f*ptny)
-  if(lix<epilon):
+  kiy = cos_f*(cos_e*ptmx+sin_e*ptmy)-cos_e*(cos_f*ptnx+sin_f*ptny)
+  if(abs(lix)<epilon):
     print("ERR813: Error, A, B and C are almost colinear. Arc can not be created!")
     sys.exit(2)
-  if(liy<epilon):
+  if(abs(liy)<epilon):
     print("ERR814: Error, A, B and C are almost colinear. Arc can not be created!")
     sys.exit(2)
   ptix = kix / lix
   ptiy = kiy / liy
+  #print("dbg505: pti: {:6.01f}  {:6.01f}".format(ptix, ptiy))
   # length of [IA], [IB] and [IC]
   lia = math.sqrt((ptax-ptix)**2+(ptay-ptiy)**2)
   lib = math.sqrt((ptbx-ptix)**2+(ptby-ptiy)**2)
@@ -97,23 +112,25 @@ def arc_of_circle(ai_3_points, ai_resolution):
     print("ERR815: I is not equidistant from A and B!")
     sys.exit(2)
   if(abs(lic-lib)>epilon):
-    print("ERR815: I is not equidistant from B and C!")
+    #print("dbg402: lib:", lib)
+    #print("dbg403: lic:", lic)
+    print("ERR816: I is not equidistant from B and C!")
     sys.exit(2)
   # calculation of the angle u=(Ix, IA) , v=(Ix, IB) and w=(Ix, IC)
-  u = math.atan2(ptay-ptiy, ptax, ptix)
-  v = math.atan2(ptby-ptiy, ptbx, ptix)
-  w = math.atan2(ptcy-ptiy, ptcx, ptix)
+  u = math.atan2(ptay-ptiy, ptax-ptix)
+  v = math.atan2(ptby-ptiy, ptbx-ptix)
+  w = math.atan2(ptcy-ptiy, ptcx-ptix)
   # calculation of the angle uv=(IA, IB), uw=(IA, IC) vw=(IB, IC)
-  uv = math.fmod(v-u+4*math.pi, 2*math.py)
-  uw = math.fmod(w-u+4*math.pi, 2*math.py)
-  vw = math.fmod(w-v+4*math.pi, 2*math.py)
+  uv = math.fmod(v-u+4*math.pi, 2*math.pi)
+  uw = math.fmod(w-u+4*math.pi, 2*math.pi)
+  vw = math.fmod(w-v+4*math.pi, 2*math.pi)
   # check arc direction
   ccw_ncw = 1
   if(uw>uv):
-    print("dbg874: arc of circle direction: counter clock wise (CCW)")
+    #print("dbg874: arc of circle direction: counter clock wise (CCW)")
     ccw_ncw = 1
   else:
-    print("dbg875: arc of circle direction: clock wise (CW)")
+    #print("dbg875: arc of circle direction: clock wise (CW)")
     ccw_ncw = 0
     uv = uv - 2*math.pi
     vw = vw - 2*math.pi
@@ -121,21 +138,25 @@ def arc_of_circle(ai_3_points, ai_resolution):
   if(ai_resolution<3):
     print("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution))
     sys.exit(2)
-  ar = 2*math.pi/ai_resolution
+  #print("dbg414: arc radius: lia:", lia)
+  angle_resolution = ai_resolution * lia # angle resolution increase with the radius
+  ar = 2*math.pi/angle_resolution
   # number of intermediate point between A and B and step angle
-  abip = abs(uv)/ar
+  abip = int(abs(uv)/ar)
   absa = uv/(abip+1)
+  #print("dbg741: uv angle resolution: absa:", absa)
   # number of intermediate point between B and C and step angle
-  bcip = abs(vw)/ar
+  bcip = int(abs(vw)/ar)
   bcsa = vw/(bcip+1)
+  #print("dbg742: vw angle resolution: bcsa:", bcsa)
   # polyline construction
   r_polyline = []
   r_polyline.append([ptax, ptay])
   for i in range(abip):
-    r_polyline.append([ptix+lia*cos(u+(i+1)*absa), ptiy+lia*sin(u+(i+1)*absa)])
+    r_polyline.append([ptix+lia*math.cos(u+(i+1)*absa), ptiy+lia*math.sin(u+(i+1)*absa)])
   r_polyline.append([ptbx, ptby])
   for i in range(bcip):
-    r_polyline.append([ptix+lia*cos(v+(i+1)*bcsa), ptiy+lia*sin(v+(i+1)*bcsa)])
+    r_polyline.append([ptix+lia*math.cos(v+(i+1)*bcsa), ptiy+lia*math.sin(v+(i+1)*bcsa)])
   r_polyline.append([ptcx, ptcy])
   return(r_polyline)
 
@@ -170,21 +191,52 @@ def outline_arc_line_with_freecad(ai_segments, ai_outline_closed):
   r_outline = Part.Shape(fc_outline)
   return(r_outline)
 
-def outline_arc_line_with_svgwrite(ai_segments, ai_outline_closed):
+def outline_arc_line_with_svgwrite(ai_segments, ai_outline_closed, ao_object_svg):
   """ Generates the arcs and lines outline with the mozman svgwrite
   """
-  
-  r_outline = ''
+  svg_points = [tuple((ai_segments[0][0], ai_segments[0][1]))]
+  segment_nb = len(ai_segments)-1
+  svg_outline = []
+  for i in range(segment_nb):
+    segment_type = 'line'
+    svg_points.append(tuple((ai_segments[i+1][0], ai_segments[i+1][1])))
+    point_start = svg_points[-2]
+    point_end = svg_points[-1]
+    if(len(ai_segments[i+1])==4):
+      segment_type = 'arc'
+      svg_points.append(tuple((ai_segments[i+1][2], ai_segments[i+1][3])))
+      point_start = svg_points[-3]
+      point_mid = svg_points[-2]
+      point_end = svg_points[-1]
+    if(i==segment_nb-1):
+      #print("dbg306: last segment")
+      if(ai_outline_closed):
+        #print("dbg307: close")
+        point_end = svg_points[0]
+    #print("dbg563: i: {:d}  segment: {:s}".format(i, segment_type))
+    if(segment_type=='line'):
+      svg_line = ao_object_svg.add(ao_object_svg.line(start=point_start, end=point_end))
+      #svg_line.fill('green', opacity=0.25).stroke('black', width=1)
+      svg_outline.append(svg_line)
+    elif(segment_type=='arc'):
+      arc_polyline = arc_of_circle(point_start, point_mid, point_end, arc_resolution)
+      arc_polyline_svg = []
+      for i in arc_polyline:
+        arc_polyline_svg.append(tuple(i))
+      svg_polyline = ao_object_svg.add(ao_object_svg.polyline(arc_polyline_svg))
+      #svg_polyline.fill('green', opacity=0.25).stroke('black', width=1)
+      svg_outline.append(svg_polyline)
+  r_outline = svg_outline
   return(r_outline)
 
-def outline_arc_line_with_dxfwrite(ai_segments, ai_outline_closed):
+def outline_arc_line_with_dxfwrite(ai_segments, ai_outline_closed, ao_object):
   """ Generates the arcs and lines outline with the mozman dxfwrite
   """
   
   r_outline = ''
   return(r_outline)
 
-def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed):
+def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed, ao_object):
   """ Generates the arcs and lines outline with the tkinter
   """
   
@@ -195,7 +247,7 @@ def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed):
 # ******** outline creation API ***************
 ################################################################
 
-def outline_arc_line(ai_segments, ai_backend):
+def outline_arc_line(ai_segments, ai_backend, ao_object = 'Nothing'):
   """ Generates the arcs and lines outline according to the selected backend
       Possible backend: freecad, mozman dxfwrite, mozman svgwrite, Tkinter.
       ai_segments is a list of segments (ie line or arc)
@@ -228,11 +280,11 @@ def outline_arc_line(ai_segments, ai_backend):
   if(ai_backend=='freecad'):
     r_outline = outline_arc_line_with_freecad(ai_segments, outline_closed)
   elif(ai_backend=='svgwrite'):
-    r_outline = outline_arc_line_with_svgwrite(ai_segments, outline_closed)
+    r_outline = outline_arc_line_with_svgwrite(ai_segments, outline_closed, ao_object)
   elif(ai_backend=='dxfwrite'):
-    r_outline = outline_arc_line_with_dxfwrite(ai_segments, outline_closed)
+    r_outline = outline_arc_line_with_dxfwrite(ai_segments, outline_closed, ao_object)
   elif(ai_backend=='tkinter'):
-    r_outline = outline_arc_line_with_tkinter(ai_segments, outline_closed)
+    r_outline = outline_arc_line_with_tkinter(ai_segments, outline_closed, ao_object)
   return(r_outline)
 
 def outline_circle(ai_center, ai_radius, ai_backend):
@@ -278,7 +330,18 @@ def outline_arc_line_test1():
     [200,10]]
     #[200,0, 210,0]]
 
-  l_ols = [l_ol1, l_ol2, l_ol3]
+  # check CC (clock wise)
+  l_ol4 = [
+    [300,10],
+    [300, 20],
+    [300,30, 310,30],
+    [320,30],
+    [330,30, 330,20],
+    [330,10],
+    [330,0, 320,0],
+    [310,0]]
+
+  l_ols = [l_ol1, l_ol2, l_ol3, l_ol4]
   #l_ols = [l_ol2]
   # backend freecad
   print("dbg701: test1 backend freecad")
@@ -290,16 +353,28 @@ def outline_arc_line_test1():
     Part.show(r_test_solid)
   # backend svgwrite
   print("dbg702: test1 backend svgwrite")
+  output_file_name =  "outline_arc_line_test1_00.svg"
+  object_svg = svgwrite.Drawing(filename = output_file_name)
+  #output_file_idx = 0
   for i_ol in l_ols:
-    r_ol = outline_arc_line(i_ol, 'svgwrite')
+    #output_file_idx += 1
+    #output_file_name =  "outline_arc_line_test1_{:02d}.svg".format(output_file_idx)
+    #object_svg = svgwrite.Drawing(filename = output_file_name)
+    svg_poly_1 = outline_arc_line(i_ol, 'svgwrite', object_svg)
+    for i_svg_poly in svg_poly_1:
+      i_svg_poly.fill('green', opacity=0.25).stroke('black', width=1)
+    #object_svg.save()
+  object_svg.save()
   # backend dxfwrite
   print("dbg703: test1 backend dxfwrite")
   for i_ol in l_ols:
-    r_ol = outline_arc_line(i_ol, 'dxfwrite')
+    object_dxf = ''
+    r_ol = outline_arc_line(i_ol, 'dxfwrite', object_dxf)
   # backend tkinter
   print("dbg704: test1 backend tkinter")
   for i_ol in l_ols:
-    r_ol = outline_arc_line(i_ol, 'tkinter')
+    object_tkinter = ''
+    r_ol = outline_arc_line(i_ol, 'tkinter', object_tkinter)
 
   r_test = 1
   return(r_test)
