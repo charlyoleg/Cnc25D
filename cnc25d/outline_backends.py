@@ -4,7 +4,7 @@
 # license: CC BY SA 3.0
 
 """
-outline_backends.py provides a common API to create lines, arcs and circles with freecad, dxfwrite, svgwrite and Tkinter
+outline_backends.py provides a common API to create lines, arcs and circles with freecad, dxfwrite, svgwrite and Tkinter (via display_backends.py)
 """
 
 ################################################################
@@ -34,6 +34,8 @@ from FreeCAD import Base
 import math
 import sys, argparse
 import svgwrite
+from dxfwrite import DXFEngine
+import Tkinter
 
 
 ################################################################
@@ -41,6 +43,7 @@ import svgwrite
 ################################################################
 
 arc_resolution = 6
+#default_dxf_layer_name = 'CNC25D'
 
 ################################################################
 # ******** sub-functions for the API ***********
@@ -256,8 +259,40 @@ def outline_arc_line_with_svgwrite(ai_segments, ai_outline_closed):
 def outline_arc_line_with_dxfwrite(ai_segments, ai_outline_closed):
   """ Generates the arcs and lines outline with the mozman dxfwrite
   """
-  
-  r_outline = ''
+  dxf_points = [tuple((ai_segments[0][0], ai_segments[0][1]))]
+  segment_nb = len(ai_segments)-1
+  dxf_outline = []
+  for i in range(segment_nb):
+    segment_type = 'line'
+    dxf_points.append(tuple((ai_segments[i+1][0], ai_segments[i+1][1])))
+    point_start = dxf_points[-2]
+    point_end = dxf_points[-1]
+    if(len(ai_segments[i+1])==4):
+      segment_type = 'arc'
+      dxf_points.append(tuple((ai_segments[i+1][2], ai_segments[i+1][3])))
+      point_start = dxf_points[-3]
+      point_mid = dxf_points[-2]
+      point_end = dxf_points[-1]
+    if(i==segment_nb-1):
+      #print("dbg306: last segment")
+      if(ai_outline_closed):
+        #print("dbg307: close")
+        point_end = dxf_points[0]
+    #print("dbg563: i: {:d}  segment: {:s}".format(i, segment_type))
+    if(segment_type=='line'):
+      #dxf_line = DXFEngine.line(start=point_start, end=point_end, color=7, layer=default_dxf_layer_name)
+      dxf_line = DXFEngine.line(start=point_start, end=point_end)
+      dxf_outline.append(dxf_line)
+    elif(segment_type=='arc'):
+      arc_polyline = arc_of_circle(point_start, point_mid, point_end, arc_resolution)
+      arc_polyline_dxf = []
+      for i in arc_polyline:
+        arc_polyline_dxf.append(tuple(i))
+      #dxf_polyline = DXFEngine.polyline(arc_polyline_dxf, color=7, layer=default_dxf_layer_name)
+      #dxf_polyline = DXFEngine.polyline(arc_polyline_dxf, flags=DXFEngine.POLYLINE_3D_POLYLINE)
+      dxf_polyline = DXFEngine.polyline(arc_polyline_dxf)
+      dxf_outline.append(dxf_polyline)
+  r_outline = dxf_outline
   return(r_outline)
 
 def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed):
@@ -317,6 +352,7 @@ def outline_circle(ai_center, ai_radius, ai_backend):
   """
   r_outline = 0
   return(r_outline)
+
 
 ################################################################
 # ******** test API ***********
@@ -387,13 +423,13 @@ def outline_arc_line_test1():
     Part.show(r_test_solid)
   # backend svgwrite
   print("dbg702: test1 backend svgwrite")
-  output_file_name =  "outline_arc_line_test1_00.svg"
-  object_svg = svgwrite.Drawing(filename = output_file_name)
+  output_svg_file_name =  "outline_arc_line_test1_00.svg"
+  object_svg = svgwrite.Drawing(filename = output_svg_file_name)
   #output_file_idx = 0
   for i_ol in l_ols:
     #output_file_idx += 1
-    #output_file_name =  "outline_arc_line_test1_{:02d}.svg".format(output_file_idx)
-    #object_svg = svgwrite.Drawing(filename = output_file_name)
+    #output_svg_file_name =  "outline_arc_line_test1_{:02d}.svg".format(output_file_idx)
+    #object_svg = svgwrite.Drawing(filename = output_svg_file_name)
     svg_outline = outline_arc_line(i_ol, 'svgwrite')
     for one_line_or_arc in svg_outline:
       object_svg.add(one_line_or_arc)
@@ -401,13 +437,22 @@ def outline_arc_line_test1():
   object_svg.save()
   # backend dxfwrite
   print("dbg703: test1 backend dxfwrite")
+  output_dxf_file_name =  "outline_arc_line_test1_00.dxf"
+  object_dxf = DXFEngine.drawing(output_dxf_file_name)
+  #object_dxf.add_layer(default_dxf_layer_name)
   for i_ol in l_ols:
-    r_ol = outline_arc_line(i_ol, 'dxfwrite')
+    dxf_outline = outline_arc_line(i_ol, 'dxfwrite')
+    for one_line_or_arc in dxf_outline:
+      object_dxf.add(one_line_or_arc)
+  object_dxf.save()
   # backend tkinter
   print("dbg704: test1 backend tkinter")
+  tk_root = Tkinter.Tk()
+  my_canvas = display_backends.Two_Canvas(tk_root)
   for i_ol in l_ols:
-    r_ol = outline_arc_line(i_ol, 'tkinter')
-
+    my_canvas.add(outline_arc_line(i_ol, 'tkinter'))
+  tk_root.mainloop()
+  #
   r_test = 1
   return(r_test)
 
