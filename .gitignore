@@ -37,3 +37,6 @@ nosetests.xml
 # sphynx build
 docs/_build
 
+# added for this project
+cnc25d/outline_arc_line_test1_00.svg
+
