@@ -4,7 +4,7 @@
 # license: CC BY SA 3.0
 
 """
-outline_backends.py provides a common API to create lines, arcs and circles with freecad, dxfwrite, svgwrite and Tkinter (via display_backends.py)
+outline_backends.py provides a common API to create lines, arcs and circles with freecad, dxfwrite, svgwrite and Tkinter (via display_backend.py)
 """
 
 ################################################################
@@ -36,6 +36,7 @@ import sys, argparse
 import svgwrite
 from dxfwrite import DXFEngine
 import Tkinter
+import display_backend
 
 
 ################################################################
@@ -448,7 +449,7 @@ def outline_arc_line_test1():
   # backend tkinter
   print("dbg704: test1 backend tkinter")
   tk_root = Tkinter.Tk()
-  my_canvas = display_backends.Two_Canvas(tk_root)
+  my_canvas = display_backend.Two_Canvas(tk_root)
   for i_ol in l_ols:
     my_canvas.add(outline_arc_line(i_ol, 'tkinter'))
   tk_root.mainloop()

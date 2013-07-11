@@ -1,10 +1,10 @@
-# display_backends.py
+# display_backend.py
 # creates and displays the two Tkinter Canvas windows used by outline_backends.py
 # created by charlyoleg on 2013/07/11
 # license: CC BY SA 3.0
 
 """
-display_backends.py creates and displays the two Tkinter Canvas windows used by outline_backends.py
+display_backend.py creates and displays the two Tkinter Canvas windows used by outline_backends.py
 """
 
 
@@ -228,7 +228,7 @@ def two_canvas_class_test1():
 def display_backends_cli():
   """ command line interface to run this script in standalone
   """
-  db_parser = argparse.ArgumentParser(description='Test the display_backends Two_Canvas).')
+  db_parser = argparse.ArgumentParser(description='Test the display_backend Two_Canvas).')
   db_parser.add_argument('--test1','--t1', action='store_true', default=False, dest='sw_test1',
     help='Run two_canvas_class_test1()')
   # this ensure the possible to use the script with python and freecad
@@ -256,7 +256,7 @@ def display_backends_cli():
 ################################################################
 
 if __name__ == "__main__":
-  print("display_backends.py says hello!\n")
+  print("display_backend.py says hello!\n")
   #display_backends_cli()
   # or alternatively, run directly a test
   two_canvas_class_test1()
