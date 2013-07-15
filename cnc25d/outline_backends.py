@@ -300,6 +300,10 @@ def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed):
   """ Generates the arcs and lines outline with the tkinter
   """
   
+  # Part.makeCircle ( radius,[pnt,dir,angle1,angle2] )
+  # DXFEngine.circle(radius=1.0, center=(0., 0.), **kwargs)
+  # class svgwrite.shapes.Circle(center=(0, 0), r=1, **extra)
+
   r_outline = ''
   return(r_outline)
 

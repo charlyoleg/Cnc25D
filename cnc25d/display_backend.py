@@ -1,4 +1,6 @@
 # display_backend.py
+# -*- coding: utf-8 -*-
+
 # creates and displays the two Tkinter Canvas windows used by outline_backends.py
 # created by charlyoleg on 2013/07/11
 # license: CC BY SA 3.0
@@ -16,16 +18,166 @@ import math
 import sys, argparse
 import Tkinter
 #import tkMessageBox
+import matplotlib.pyplot
 
 ################################################################
 # global variable
 ################################################################
 initial_tkinter_canvas_width = 400
 initial_tkinter_canvas_height = 400
+tkinter_canvas_margin_x = 20
+tkinter_canvas_margin_y = 20
 g_step_angle_speed = 1/100.0
 g_slow_angle_speed = 1/1000.0
 g_fast_angle_speed = 16*g_slow_angle_speed
 g_step_period = 100 # ms
+
+################################################################
+# ******** sub-functions for Two_Canvas ***********
+################################################################
+
+def find_outline_extremum(ai_outline_list):
+  """ find the four extremum (min_x, min_y, max_x, max_y) of a list of outlines
+  """
+  # first point
+  first_point_x = 0
+  first_point_y = 0
+  first_outline_type = ai_outline_list[0][0]
+  first_outline = ai_outline_list[0][1]
+  if((first_outline_type=='graphic_lines')or(first_outline_type=='overlay_lines')):
+    first_point_x=first_outline[0][0]
+    first_point_y=first_outline[0][1]
+  elif((first_outline_type=='graphic_polygon')or(first_outline_type=='overlay_polygon')):
+    first_point_x=first_outline[0]
+    first_point_y=first_outline[1]
+  else:
+    print("ERR305: Error, the outline type is unknow: {:s}".format(first_outline_type))
+    sys.exit(2)
+  min_x=first_point_x
+  max_x=first_point_x
+  min_y=first_point_y
+  max_y=first_point_y
+  for outline in ai_outline_list:
+    outline_type = outline[0]
+    if((outline_type=='graphic_lines')or(outline_type=='overlay_lines')):
+      lines = outline[1]
+      for line in lines:
+        #print("dbg772: line:", line)
+        min_x = min(min_x, line[0], line[2])
+        max_x = max(max_x, line[0], line[2])
+        min_y = min(min_y, line[1], line[3])
+        max_y = max(max_y, line[1], line[3])
+    elif((outline_type=='graphic_polygon')or(outline_type=='overlay_polygon')):
+      points = outline[1]
+      for i in range(len(points)/2):
+        #print("dbg773: i:", i)
+        min_x = min(min_x, points[2*i])
+        max_x = max(max_x, points[2*i])
+        min_y = min(min_y, points[2*i+1])
+        max_y = max(max_y, points[2*i+1])
+  r_extremum = (min_x, min_y, max_x, max_y)
+  #print("dbg653: r_extremum:", r_extremum)
+  return(r_extremum)
+
+def compute_scale_coef(ai_extremum, ai_canvas_size):
+  """ compute the four scale coefficient to apply to the outlines to make it fit into a canvas
+  """
+  (min_x, min_y, max_x, max_y) = ai_extremum
+  (canvas_width, canvas_height, margin_x, margin_y) = ai_canvas_size
+  r_scale_coef = (1, 0, 1, 0)
+  if(((max_x-min_x)>0)and((max_y-min_y)>0)):
+    lx = (canvas_width-2*margin_x)/float(max_x-min_x)
+    ly = (canvas_height-2*margin_y)/float(max_y-min_y)
+    lxy = min(lx, ly)
+    #kx = margin_x - min_x*lx
+    #ky = margin_y - min_y*ly
+    kx = (canvas_width - (max_x-min_x)*lxy)/2 - min_x*lxy
+    ky = (canvas_height - (max_y-min_y)*lxy)/2 - min_y*lxy
+    r_scale_coef = (lxy, kx, lxy, ky)
+  return(r_scale_coef)
+
+def scale_outline(ai_outline_list, ai_coef):
+  """ apply the scale coefficient to a list of outlines
+  """
+  (lx, kx, ly, ky) = ai_coef
+  r_outline_list = []
+  for outline in ai_outline_list:
+    outline_type = outline[0]
+    if((outline_type=='graphic_lines')or(outline_type=='overlay_lines')):
+      lines = outline[1]
+      new_lines = []
+      for line in lines:
+        new_line = []
+        for i in range(len(line)/2):
+          new_line.append(line[2*i]*lx+kx)
+          new_line.append(line[2*i+1]*ly+ky)
+        new_lines.append(tuple(new_line))
+      r_outline_list.append((outline_type, tuple(new_lines),  outline[2],  outline[3]))
+    elif((outline_type=='graphic_polygon')or(outline_type=='overlay_polygon')):
+      points = outline[1]
+      new_points = []
+      for i in range(len(points)/2):
+        new_points.append(points[2*i]*lx+kx)
+        new_points.append(points[2*i+1]*ly+ky)
+      r_outline_list.append((outline_type, tuple(new_points),  outline[2],  outline[3], outline[4]))
+  return(r_outline_list)
+
+def compute_crop_limit(ai_selected_area, ai_canvas_size, ai_scale_coef):
+  """ compute the crop four parameters according to the mouse positions, window size and current applied scale coefficient
+  """
+  (mouse_x1, mouse_y1, mouse_x2, mouse_y2) = ai_selected_area
+  (canvas_width, canvas_height, margin_x, margin_y) = ai_canvas_size
+  (lx, kx, ly, ky) = ai_scale_coef
+  top_left_x = max(0, min(mouse_x1, mouse_x2))
+  top_left_y = max(0, min(mouse_y1, mouse_y2))
+  bottom_right_x = min(canvas_width, max(mouse_x1, mouse_x2))
+  bottom_right_y = min(canvas_height, max(mouse_y1, mouse_y2))
+  limit_x1=(top_left_x-kx)/float(lx)
+  limit_y1=(top_left_y-ky)/float(ly)
+  limit_x2=(bottom_right_x-kx)/float(lx)
+  limit_y2=(bottom_right_y-ky)/float(ly)
+  r_crop_limit = (limit_x1, limit_y1, limit_x2, limit_y2)
+  return(r_crop_limit)
+
+def crop_outline(ai_outline_list, ai_limit):
+  """ crop a list of outlines to get a new list of outlines
+  """
+  (limit_x1, limit_y1, limit_x2, limit_y2) = ai_limit
+  r_outline_list = []
+  for outline in ai_outline_list:
+    outline_type = outline[0]
+    if((outline_type=='graphic_lines')or(outline_type=='overlay_lines')):
+      lines = outline[1]
+      new_lines = []
+      for line in lines:
+        include_new_line = 1
+        for i in range(len(line)/2):
+          if((line[2*i]<limit_x1)
+              or (line[2*i]>limit_x2)
+              or (line[2*i+1]<limit_y1)
+              or (line[2*i+1]>limit_y2)):
+            include_new_line = 0
+        if(include_new_line==1):
+          new_lines.append(line)
+      if(len(new_lines)>0):
+        r_outline_list.append((outline_type, tuple(new_lines),  outline[2],  outline[3]))
+    elif((outline_type=='graphic_polygon')or(outline_type=='overlay_polygon')):
+      points = outline[1]
+      new_points = []
+      for i in range(len(points)/2):
+        if((points[2*i]>limit_x1)
+            and (points[2*i]<limit_x2)
+            and (points[2*i+1]>limit_y1)
+            and (points[2*i+1]<limit_y2)):
+          new_points.append(points[2*i])
+          new_points.append(points[2*i+1])
+        else:
+          if(len(new_points)>1):
+            r_outline_list.append((outline_type, tuple(new_points),  outline[2],  outline[3], outline[4]))
+            new_points = []
+      if(len(new_points)>1):
+        r_outline_list.append((outline_type, tuple(new_points),  outline[2],  outline[3], outline[4]))
+  return(r_outline_list)
 
 ################################################################
 # ******** Two_Canvas class ***********
@@ -33,43 +185,66 @@ g_step_period = 100 # ms
 
 
 class Two_Canvas():
+  """ Tkinter frame work to display a gear system or other simple mechanism
+      It contains:
+      - a main window with a graphic overview and some button control
+      - a zoom window
+      - a simple input parameter window
+      - a matplotlib window to display curves
+  """
 
   def action_button_fast_backward(self):
+    """ widget action
+    """
     self.angle_speed = -1*g_fast_angle_speed
     #self.angle_position += self.angle_speed
     self.set_label_content()
 
   def action_button_slow_backward(self):
+    """ widget action
+    """
     self.angle_speed = -1*g_slow_angle_speed
     #self.angle_position += self.angle_speed
     self.set_label_content()
 
   def action_button_step_backward(self):
+    """ widget action
+    """
     self.angle_speed = 0
     self.angle_position += -1*g_step_angle_speed
     self.set_label_content()
 
   def action_button_stop(self):
+    """ widget action
+    """
     self.angle_speed = 0
     #self.angle_position += 0
     self.set_label_content()
 
   def action_button_step_forward(self):
+    """ widget action
+    """
     self.angle_speed = 0
     self.angle_position += 1*g_step_angle_speed
     self.set_label_content()
 
   def action_button_slow_forward(self):
+    """ widget action
+    """
     self.angle_speed = 1*g_slow_angle_speed
     #self.angle_position += self.angle_speed
     self.set_label_content()
 
   def action_button_fast_forward(self):
+    """ widget action
+    """
     self.angle_speed = 1*g_fast_angle_speed
     #self.angle_position += self.angle_speed
     self.set_label_content()
 
   def set_label_content(self):
+    """ Update the angle labels
+    """
     lb1 = "Angle position : {:0.3f} radian   {:0.2f} degree".format(self.angle_position, self.angle_position*180/math.pi)
     lb2 = "Angle speed    : {:0.3f} radian   {:0.2f} degree".format(self.angle_speed, self.angle_speed*180/math.pi)
     #print("dbg774: lb1:", lb1)
@@ -79,35 +254,129 @@ class Two_Canvas():
     #print("dbg845: self.label1_content.get:", self.label1_content.get())
 
   def action_button_check_event(self, event):
+    """ This function is only used for debug
+        It has no utility for the Two_Canvas class
+    """
     print("dbg141: event:", event)
     print("dbg142: event.time:", event.time)
     print("dbg143: event.type:", event.type)
     print("dbg144: event.widget:", event.widget)
     print("dbg145: event.keysym:", event.keysym)
 
+  def action_canvas_a_mouse_button_press(self, event):
+    """ Start of the zoom area selection
+    """
+    self.mouse_x1 = event.x
+    self.mouse_y1 = event.y
+    self.mouse_x2 = self.mouse_x1
+    self.mouse_y2 = self.mouse_y1
+    self.canvas_a_mouse_press = 1
+    #print("dbg874: mouse_x1, mouse_y1:", self.mouse_x1, self.mouse_y1)
+
+  def action_canvas_a_mouse_button_motion(self, event):
+    """ widget action
+    """
+    self.mouse_x2 = event.x
+    self.mouse_y2 = event.y
+    #self.canvas_a.create_rectangle(self.mouse_x1, self.mouse_y1, self.mouse_x2, self.mouse_y2, fill='', outline='red', width=2)
+
+  def action_canvas_a_mouse_button_release(self, event):
+    """ End of the zoom area selection
+        It computes the crop_limit parameters
+    """
+    self.mouse_x2 = event.x
+    self.mouse_y2 = event.y
+    self.canvas_a_mouse_press = 0
+    #print("dbg875: mouse_x2, mouse_y2:", self.mouse_x2, self.mouse_y2)
+    selected_area = (self.mouse_x1, self.mouse_y1, self.mouse_x2, self.mouse_y2)
+    canvas_a_size = (self.canvas_a.winfo_width(), self.canvas_a.winfo_height(), tkinter_canvas_margin_x, tkinter_canvas_margin_y)
+    if(self.scale_coef_a==None):
+      print("Warn763: Warning, self.scale_coef_a is not set!")
+    else:
+      self.crop_limit = compute_crop_limit(selected_area, canvas_a_size, self.scale_coef_a)
+      #print("dbg986: self.crop_limit:", self.crop_limit)
+
   def simulation_step(self):
+    """ Time simulation main function
+    """
     self.angle_position += self.angle_speed
     self.set_label_content()
-    self.draw_canvas_a()
+    self.apply_canvas_graphic_function()
+    self.apply_curve_graphic_function(self.angle_position, self.angle_speed)
     self.frame_a.after(g_step_period, self.simulation_step)
   
-  def draw_canvas_a(self):
+  def draw_canvas(self, ai_canvas, ai_canvas_graphics, ai_overlay):
+    """ Draw the computed outline list into a canvas
+    """
+    for outline in ai_canvas_graphics:
+      outline_type = outline[0]
+      if(outline_type=='graphic_lines'):
+        lines = outline[1]
+        for line in lines:
+          ai_canvas.create_line(line, fill=outline[2], width=outline[3])
+      elif(outline_type=='overlay_lines'):
+        if(ai_overlay==1):
+          lines = outline[1]
+          for line in lines:
+            ai_canvas.create_line(line, fill=outline[2], width=outline[3])
+      elif(outline_type=='graphic_polygon'):
+        ai_canvas.create_polygon(outline[1], fill=outline[2], outline=outline[3], width=outline[4])
+      elif(outline_type=='overlay_polygon'):
+        if(ai_overlay==1):
+          ai_canvas.create_polygon(outline[1], fill=outline[2], outline=outline[3], width=outline[4])
+
+  def apply_canvas_graphic_function(self):
+    """ compute and draw the outline list for the main and the zoom window
+    """
     canvas_a_width = self.canvas_a.winfo_width()
     canvas_a_height = self.canvas_a.winfo_height()
+    canvas_b_width = self.canvas_b.winfo_width()
+    canvas_b_height = self.canvas_b.winfo_height()
     #print("dbg104: canvas_a_width:", canvas_a_width)
     #print("dbg105: canvas_a_height:", canvas_a_height)
-    self.canvas_a.delete(Tkinter.ALL)
-    if(self.overlay==1):
-      self.canvas_a.create_line((50,50,200,200), fill='red', width=1)
-    self.canvas_a.create_line((5,5,canvas_a_width-5,canvas_a_height-5), fill='green', width=1)
+    #if(self.canvas_graphic_function==None):
+    #  #print("ERR446: Error, the canvas_graphic_function has not been set!")
+    #  #sys.exit(2)
+    #  print("WARN446: Warning, the canvas_graphic_function has not been set!")
+    if(self.canvas_graphic_function!=None):
+      all_graphics = self.canvas_graphic_function(self.angle_position)
+      #
+      self.canvas_a.delete(Tkinter.ALL)
+      outline_extremum = find_outline_extremum(all_graphics)
+      canvas_a_size = (canvas_a_width, canvas_a_height, tkinter_canvas_margin_x, tkinter_canvas_margin_y)
+      self.scale_coef_a = compute_scale_coef(outline_extremum, canvas_a_size)
+      canvas_a_graphics = scale_outline(all_graphics, self.scale_coef_a)
+      self.draw_canvas(self.canvas_a, canvas_a_graphics, self.overlay)
+      if(self.canvas_a_mouse_press==1):
+        self.canvas_a.create_rectangle(self.mouse_x1, self.mouse_y1, self.mouse_x2, self.mouse_y2, fill='', outline='red', width=2)
+      #
+      if(self.crop_limit==(0,0,0,0)):
+        self.crop_limit=(outline_extremum[0], outline_extremum[1], (outline_extremum[0]+outline_extremum[2])/2, (outline_extremum[1]+outline_extremum[3])/2)
+      #
+      self.canvas_b.delete(Tkinter.ALL)
+      crop_graphics = crop_outline(all_graphics, self.crop_limit)
+      #print("dbg857: len(crop_graphics):", len(crop_graphics))
+      canvas_b_size = (canvas_b_width, canvas_b_height, 2, 2)
+      #print("dbg768: self.crop_limit:", self.crop_limit)
+      #print("dbg763: canvas_b_size:", canvas_b_size)
+      scale_coef_b = compute_scale_coef(self.crop_limit, canvas_b_size)
+      #print("dbg854: scale_coef_b:", scale_coef_b)
+      canvas_b_graphics = scale_outline(crop_graphics, scale_coef_b)
+      #print("dbg986: canvas_b_graphics:", canvas_b_graphics)
+      self.draw_canvas(self.canvas_b, canvas_b_graphics, self.overlay)
+      #self.canvas_b.create_line((5,5,canvas_b_width-5,canvas_b_height-5), fill='yellow', width=3)
 
   def action_button_overlay(self):
+    """ Toggle the overlay visibility
+    """
     if(self.overlay==0):
       self.overlay=1
     else:
       self.overlay=0
 
   def action_button_zoom(self):
+    """ Toggle the zoom window visibility
+    """
     #print("dbg656: action_button_zoom")
     #print("dbg567: frame_b.winfo_exists:", self.frame_b.winfo_exists())
     #print("dbg568: frame_b.state:", self.frame_b.state())
@@ -117,21 +386,34 @@ class Two_Canvas():
       self.hide_zoom_frame()
 
   def create_zoom_frame(self):
+    """ Define the zoom window
+    """
     #print("dbg554: create_zoom_frame")
     self.frame_b = Tkinter.Toplevel(self.frame_a)
+    #self.frame_b.grid(column=0, row=0, sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W) # Toplevel doesn't have grid method !
+    #self.frame_b.pack(fill=Tkinter.BOTH, expand=1)
     self.frame_b.title("cnc25d display backend details")
     self.canvas_b = Tkinter.Canvas(self.frame_b, width=initial_tkinter_canvas_width, height=initial_tkinter_canvas_height)
-    self.canvas_b.grid(sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W)
+    #self.canvas_b.grid(column=0, row=0, sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W)
+    #self.canvas_b.columnconfigure(0, weight=1)
+    #self.canvas_b.rowconfigure(0, weight=1)
+    self.canvas_b.pack(fill=Tkinter.BOTH, expand=1) # with Toplevel parent, it seems you need to use pack to resisze the canvas !
     self.frame_b.protocol("WM_DELETE_WINDOW", self.hide_zoom_frame) # change the behaviour of the window X button
 
   def hide_zoom_frame(self):
+    """ Hide the zoom window
+    """
     self.frame_b.withdraw()
 
   def show_zoom_frame(self):
+    """ Show the zoom window
+    """
     self.frame_b.update()
     self.frame_b.deiconify()
 
   def action_button_parameters(self):
+    """ Toggle the parameter window visibility
+    """
     #tkMessageBox.showinfo('lala','Yes mes')
     #print("dbg566: frame_c.winfo_exists:", self.frame_c.winfo_exists())
     #print("dbg569: frame_c.state:", self.frame_c.state())
@@ -140,11 +422,10 @@ class Two_Canvas():
     else:
       self.hide_parameter_frame()
 
-  def set_parameter_content(self):
-    lpc = "les stroumpf \n atennt\n\njop"
-    self.parameter_content.set(lpc)
 
   def create_parameter_frame(self):
+    """ Define the parameter window
+    """
     #print("dbg414: create_parameter_frame")
     self.frame_c = Tkinter.Toplevel(self.frame_a)
     self.frame_c.title("parameter info")
@@ -153,13 +434,55 @@ class Two_Canvas():
     self.frame_c.protocol("WM_DELETE_WINDOW", self.hide_parameter_frame) # change the behaviour of the window X button
 
   def hide_parameter_frame(self):
+    """ Hide the parameter window
+    """
     self.frame_c.withdraw()
 
   def show_parameter_frame(self):
+    """ Show the parameter window
+    """
     self.frame_c.update()
     self.frame_c.deiconify()
 
+  def apply_curve_graphic_function(self, ai_angle_position, ai_angle_speed):
+    """ Compute the curve new points accordind to the angle_position and angle_speed
+    """
+    curve_nb = len(self.curve_graphic_function)-1
+    if(curve_nb>0):
+      # angle in x-axis
+      #lx = ai_angle_position
+      # time in x-axis
+      lx = 0 # initial timestamp
+      if(len(self.curve_points[0])>0):
+        dlx = ai_angle_speed/self.curve_graphic_function[0][2]
+        lx = self.curve_points[0][-1] + abs(dlx)
+      self.curve_points[0].append(lx)
+      for i in range(curve_nb):
+        ly = self.curve_graphic_function[i+1][1](ai_angle_position, ai_angle_speed)
+        self.curve_points[i+1].append(ly)
+
+  def action_button_curve_graph(self, event):
+    """ Launch the matplotlib window for curve display
+    """
+    curve_nb = len(self.curve_graphic_function)-1
+    if(curve_nb<=0):
+      print("WARN451: Warning, self.curve_graphic_function is not set!")
+    else:
+      #matplotlib.pyplot.plot([1,2,3,4,5],[5,3,2,1,4])
+      matplotlib.pyplot.figure(1)
+      for i in range(curve_nb):
+        matplotlib.pyplot.subplot(curve_nb,1,i+1)
+        matplotlib.pyplot.plot(self.curve_points[0], self.curve_points[i+1], self.curve_graphic_function[i+1][2])
+        matplotlib.pyplot.ylabel(self.curve_graphic_function[i+1][0])
+        if(i==0):
+          matplotlib.pyplot.title(self.curve_graphic_function[0][0])
+        if(i==curve_nb-1):
+          matplotlib.pyplot.xlabel(self.curve_graphic_function[0][1])
+      matplotlib.pyplot.show()
+
   def createWidgets(self):
+    """ Create the widgets of the main window with their layout and also the zoom window and parameter window
+    """
     #
     #self.frame_canvas = Tkinter.Frame(self.frame_a)
     ##self.frame_canvas.pack(side=Tkinter.TOP)
@@ -173,6 +496,9 @@ class Two_Canvas():
     self.canvas_a.grid(column=0, row=0, sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W)
     self.canvas_a.columnconfigure(0, weight=1)
     self.canvas_a.rowconfigure(0, weight=1)
+    self.canvas_a.bind("<ButtonPress-1>", self.action_canvas_a_mouse_button_press)
+    self.canvas_a.bind("<B1-Motion>", self.action_canvas_a_mouse_button_motion)
+    self.canvas_a.bind("<ButtonRelease-1>", self.action_canvas_a_mouse_button_release)
     #
     self.frame_control = Tkinter.Frame(self.frame_a)
     #self.frame_control.pack(side=Tkinter.BOTTOM)
@@ -254,7 +580,8 @@ class Two_Canvas():
     self.button_graph["text"] = "Graph",
     #self.button_graph["command"] = lambda a=1: self.action_button_check_event(a)
     #self.button_graph.bind("<Button-1>", lambda event: self.action_button_check_event(event))
-    self.button_graph.bind("<Button-1>", self.action_button_check_event) # the event argument is added by default
+    #self.button_graph.bind("<Button-1>", self.action_button_check_event) # the event argument is added by default
+    self.button_graph.bind("<Button-1>", self.action_button_curve_graph) # the event argument is added by default
     self.button_graph.pack(side=Tkinter.LEFT)
     #
     self.button_quit = Tkinter.Button(self.frame_button_options)
@@ -271,6 +598,8 @@ class Two_Canvas():
     self.hide_parameter_frame()
 
   def __init__(self, winParent):
+    """ Initiate the class Two_Canvas by creating the windows, initializing the class variables and starting the time simulation
+    """
     self.frame_a = Tkinter.Frame(winParent)
     winParent.title("cnc25d display backend main")
     #self.frame_a.pack()
@@ -289,18 +618,45 @@ class Two_Canvas():
     self.set_label_content()
     #
     self.parameter_content = Tkinter.StringVar()
-    self.set_parameter_content()
     #
     self.overlay = 0
-    self.zoom_frame_exist = 0
-    self.parameter_frame_exist = 0
+    self.canvas_graphic_function = None
+    self.mouse_x1 = 0
+    self.mouse_y1 = 0
+    self.mouse_x2 = initial_tkinter_canvas_width/2
+    self.mouse_y2 = initial_tkinter_canvas_height/2
+    self.canvas_a_mouse_press = 0
+    self.scale_coef_a = None
+    self.crop_limit = (0,0,0,0)
+    #
+    self.curve_graphic_function = []
+    self.curve_points = []
     #
     self.createWidgets()
     # initiate the time simulation
     self.simulation_step()
 
-  def add_graphic(self, ai_graphic):
-    print("dbg445: ai_graphic:", ai_graphic)
+  def add_canvas_graphic_function(self, ai_canvas_graphic_function):
+    """ api method to add or change the canvas graphics
+    """
+    #print("dbg445: ai_graphic_function:", ai_graphic_function)
+    self.canvas_graphic_function = ai_canvas_graphic_function
+
+  def add_parameter_info(self, ai_parameter_info):
+    """ api method to add or change the parameter info
+    """
+    self.parameter_content.set(ai_parameter_info)
+    
+  def add_curve_graphic_function(self, ai_curve_graphic_function):
+    """ api method to add or change the curve functions for matplotlib
+    """
+    self.curve_graphic_function = ai_curve_graphic_function
+    curve_nb = len(self.curve_graphic_function)-1
+    self.curve_points = []
+    for i in range(curve_nb+1):
+      self.curve_points.append([])
+
+
 
 #  tk_a = Tkinter.Tk()
 #  tk_a.title("test1 backend tkinter")
@@ -314,20 +670,119 @@ class Two_Canvas():
 # ******** test the Two_Canvas class ***********
 ################################################################
 
+def test_canvas_graphic_1(ai_angle):
+  """ Sub-function for test 1
+      Also example of the callback function for add_canvas_graphic_function
+  """
+  polygon_test_1 = (
+    5,5,
+    35,5,
+    20,35)
+  lines_test_1 = (
+    (0,0,20,25),
+    (5,5,20,25))
+  polygon_test_2 = (
+    105,105,
+    135,105,
+    120,135)
+  lines_test_2 = (
+    (15,0,50,15),
+    (-30,30,50,15))
+  polygon_test_3 = (
+    205,205,
+    235,205,
+    220,265)
+  r_canvas_graph = []
+  r_canvas_graph.append(('graphic_lines', lines_test_1, 'red', 1))
+  r_canvas_graph.append(('graphic_polygon', polygon_test_1, 'green', 'red', 1))
+  r_canvas_graph.append(('overlay_lines', lines_test_2, 'yellow', 2))
+  r_canvas_graph.append(('overlay_polygon', polygon_test_2, 'orange', 'yellow', 2))
+  r_canvas_graph.append(('graphic_polygon', polygon_test_3, 'green', 'red', 1))
+  return(r_canvas_graph)
+
+def test1_curve1(ai_angle_position, ai_angle_speed):
+  """ test curve for matplotlib
+  """
+  r_y = math.sin(ai_angle_position)
+  return(r_y)
+
+def test1_curve2(ai_angle_position, ai_angle_speed):
+  """ test curve for matplotlib
+  """
+  r_y = math.cos(ai_angle_position)
+  return(r_y)
+
 def two_canvas_class_test1():
   """ test the simple display of a static graphic with Two_Canvas
   """
-  test_graphic = [
-    [5,5],
-    [35,5],
-    [20,35]]
+  #
+  test_parameter_info = """
+Maître Corbeau, sur un arbre perché,
+Tenait en son bec un fromage.
+Maître Renard, par l'odeur alléché,
+Lui tint à peu près ce langage :
+"Hé ! bonjour, Monsieur du Corbeau.
+Que vous êtes joli ! que vous me semblez beau !
+Sans mentir, si votre ramage
+Se rapporte à votre plumage,
+Vous êtes le Phénix des hôtes de ces bois. "
+  """
+  #
+  #lambda_function_1 = test1_curve1
+  #lambda_function_1 = lambda x: test1_curve1(x)
+  #lambda_function_2 = test1_curve2
+  test_curve_graphic_1 = (('global_title', 'x_axis_name', math.pi*10),
+    ('plot1_title', test1_curve1, 'bo'),
+    ('plot2_title', test1_curve2, 'r'))
   #
   tk_root = Tkinter.Tk()
   dut = Two_Canvas(tk_root)
   #dut = Two_Canvas()
-  dut.add_graphic(test_graphic)
+  dut.add_canvas_graphic_function(test_canvas_graphic_1)
+  dut.add_parameter_info(test_parameter_info)
+  dut.add_curve_graphic_function(test_curve_graphic_1)
   tk_root.mainloop()
   #dut.mainloop()
+  r_test = 1
+  return(r_test)
+
+def test_canvas_graphic_2(ai_angle):
+  """ Sub-function for test 1
+      Also example of the callback function for add_canvas_graphic_function
+  """
+  polygon_test_2 = (
+    30*math.cos(ai_angle+1.0*math.pi/2), 30*math.sin(ai_angle+1.0*math.pi/2),
+    35*math.cos(ai_angle+1.5*math.pi/2), 35*math.sin(ai_angle+1.5*math.pi/2),
+    20*math.cos(ai_angle+2.0*math.pi/2), 20*math.sin(ai_angle+2.0*math.pi/2),
+    50*math.cos(ai_angle+2.5*math.pi/2), 50*math.sin(ai_angle+2.5*math.pi/2),
+    40*math.cos(ai_angle+3.0*math.pi/2), 40*math.sin(ai_angle+3.0*math.pi/2),
+    30*math.cos(ai_angle+3.5*math.pi/2), 30*math.sin(ai_angle+3.5*math.pi/2),
+    25*math.cos(ai_angle+4.0*math.pi/2), 25*math.sin(ai_angle+4.0*math.pi/2),
+    35*math.cos(ai_angle+4.5*math.pi/2), 35*math.sin(ai_angle+4.5*math.pi/2))
+  r_canvas_graph = []
+  r_canvas_graph.append(('graphic_polygon', polygon_test_2, '', 'red', 1))
+  return(r_canvas_graph)
+
+def two_canvas_class_test2():
+  """ test the simple display of a dynamic graphic with Two_Canvas
+  """
+  #
+  test_parameter_info = """
+Maître Corbeau, sur un arbre perché,
+Tenait en son bec un fromage.
+  """
+  #
+  test_curve_graphic_1 = (('global_title', 'x_axis_name', math.pi*10),
+    ('plot1_title', test1_curve1, 'bo'),
+    ('plot2_title', test1_curve2, 'r'))
+  #
+  tk_root = Tkinter.Tk()
+  dut = Two_Canvas(tk_root)
+  dut.add_canvas_graphic_function(test_canvas_graphic_2)
+  dut.add_parameter_info(test_parameter_info)
+  dut.add_curve_graphic_function(test_curve_graphic_1)
+  tk_root.mainloop()
+  #
   r_test = 1
   return(r_test)
 
@@ -335,22 +790,26 @@ def two_canvas_class_test1():
 # ******** command line interface ***********
 ################################################################
 
-def display_backends_cli():
+def display_backends_cli(ai_args=None):
   """ command line interface to run this script in standalone
   """
   db_parser = argparse.ArgumentParser(description='Test the display_backend Two_Canvas).')
   db_parser.add_argument('--test1','--t1', action='store_true', default=False, dest='sw_test1',
-    help='Run two_canvas_class_test1()')
+    help='Run two_canvas_class_test1() with a static graphic')
+  db_parser.add_argument('--test2','--t2', action='store_true', default=False, dest='sw_test2',
+    help='Run two_canvas_class_test2() with a dynamic graphic')
   # this ensure the possible to use the script with python and freecad
   # You can not use argparse and FreeCAD together, so it's actually useless !
   # Running this script, FreeCAD will just use the argparse default values
-  arg_index_offset=0
-  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-    arg_index_offset=1
-    if(len(sys.argv)>=2):
-      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-        arg_index_offset=2
-  effective_args = sys.argv[arg_index_offset+1:]
+  effective_args = ai_args
+  if(ai_args==None):
+    arg_index_offset=0
+    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
+      arg_index_offset=1
+      if(len(sys.argv)>=2):
+        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
+          arg_index_offset=2
+    effective_args = sys.argv[arg_index_offset+1:]
   #print("dbg115: effective_args:", str(effective_args))
   #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
   db_args = db_parser.parse_args(effective_args)
@@ -358,6 +817,8 @@ def display_backends_cli():
   print("dbg111: start testing outline_backends")
   if(db_args.sw_test1):
     r_dbc = two_canvas_class_test1()
+  elif(db_args.sw_test2):
+    r_dbc = two_canvas_class_test2()
   print("dbg999: end of script")
   return(r_dbc)
 
@@ -366,8 +827,9 @@ def display_backends_cli():
 ################################################################
 
 if __name__ == "__main__":
-  print("display_backend.py says hello!\n")
-  #display_backends_cli()
-  # or alternatively, run directly a test
-  two_canvas_class_test1()
+  print("display_backend.py says hello!")
+  # choose the script behavior
+  #display_backends_cli()                   # get arguments from the command line
+  display_backends_cli("--test1".split())   # run the test1
+  #display_backends_cli("--test2".split())
 
