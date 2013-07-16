@@ -342,16 +342,17 @@ class Two_Canvas():
       all_graphics = self.canvas_graphic_function(self.angle_position)
       #
       self.canvas_a.delete(Tkinter.ALL)
-      outline_extremum = find_outline_extremum(all_graphics)
+      # uncomment if you want to scale outline depending on the angle_position
+      #self.outline_extremum = find_outline_extremum(all_graphics)
       canvas_a_size = (canvas_a_width, canvas_a_height, tkinter_canvas_margin_x, tkinter_canvas_margin_y)
-      self.scale_coef_a = compute_scale_coef(outline_extremum, canvas_a_size)
+      self.scale_coef_a = compute_scale_coef(self.outline_extremum, canvas_a_size)
       canvas_a_graphics = scale_outline(all_graphics, self.scale_coef_a)
       self.draw_canvas(self.canvas_a, canvas_a_graphics, self.overlay)
       if(self.canvas_a_mouse_press==1):
         self.canvas_a.create_rectangle(self.mouse_x1, self.mouse_y1, self.mouse_x2, self.mouse_y2, fill='', outline='red', width=2)
       #
       if(self.crop_limit==(0,0,0,0)):
-        self.crop_limit=(outline_extremum[0], outline_extremum[1], (outline_extremum[0]+outline_extremum[2])/2, (outline_extremum[1]+outline_extremum[3])/2)
+        self.crop_limit=(self.outline_extremum[0], self.outline_extremum[1], (self.outline_extremum[0]+self.outline_extremum[2])/2, (self.outline_extremum[1]+self.outline_extremum[3])/2)
       #
       self.canvas_b.delete(Tkinter.ALL)
       crop_graphics = crop_outline(all_graphics, self.crop_limit)
@@ -612,6 +613,7 @@ class Two_Canvas():
     #
     self.angle_speed = 0*g_slow_angle_speed
     self.angle_position = 0
+    self.outline_extremum = (0,0,0,0)
     #
     self.label1_content = Tkinter.StringVar()
     self.label2_content = Tkinter.StringVar()
@@ -641,6 +643,8 @@ class Two_Canvas():
     """
     #print("dbg445: ai_graphic_function:", ai_graphic_function)
     self.canvas_graphic_function = ai_canvas_graphic_function
+    # the next line is to compute the extremum once at initialization if you don't want to recompute it at each angle_position
+    self.outline_extremum = find_outline_extremum(self.canvas_graphic_function(self.angle_position))
 
   def add_parameter_info(self, ai_parameter_info):
     """ api method to add or change the parameter info

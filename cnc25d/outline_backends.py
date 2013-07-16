@@ -300,9 +300,6 @@ def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed):
   """ Generates the arcs and lines outline with the tkinter
   """
   
-  # Part.makeCircle ( radius,[pnt,dir,angle1,angle2] )
-  # DXFEngine.circle(radius=1.0, center=(0., 0.), **kwargs)
-  # class svgwrite.shapes.Circle(center=(0, 0), r=1, **extra)
 
   r_outline = ''
   return(r_outline)
@@ -355,6 +352,11 @@ def outline_circle(ai_center, ai_radius, ai_backend):
   """ Generates a circle according to the selected backend.
       Possible backend: freecad, mozman dxfwrite, mozman svgwrite, Tkinter.
   """
+
+  # Part.makeCircle ( radius,[pnt,dir,angle1,angle2] )
+  # DXFEngine.circle(radius=1.0, center=(0., 0.), **kwargs)
+  # class svgwrite.shapes.Circle(center=(0, 0), r=1, **extra)
+
   r_outline = 0
   return(r_outline)
 
@@ -454,8 +456,10 @@ def outline_arc_line_test1():
   print("dbg704: test1 backend tkinter")
   tk_root = Tkinter.Tk()
   my_canvas = display_backend.Two_Canvas(tk_root)
+  canvas_graphics = []
   for i_ol in l_ols:
-    my_canvas.add(outline_arc_line(i_ol, 'tkinter'))
+    canvas_graphics.extend(outline_arc_line(i_ol, 'tkinter'))
+  #my_canvas.add_canvas_graphic_function(canvas_graphics)
   tk_root.mainloop()
   #
   r_test = 1
@@ -465,7 +469,7 @@ def outline_arc_line_test1():
 # ******** command line interface ***********
 ################################################################
 
-def outline_backends_cli():
+def outline_backends_cli(ai_args=None):
   """ command line interface to run this script in standalone
   """
   ob_parser = argparse.ArgumentParser(description='Test the outline_backends API.')
@@ -474,13 +478,15 @@ def outline_backends_cli():
   # this ensure the possible to use the script with python and freecad
   # You can not use argparse and FreeCAD together, so it's actually useless !
   # Running this script, FreeCAD will just use the argparse default values
-  arg_index_offset=0
-  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-    arg_index_offset=1
-    if(len(sys.argv)>=2):
-      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-        arg_index_offset=2
-  effective_args = sys.argv[arg_index_offset+1:]
+  effective_args = ai_args
+  if(ai_args==None):
+    arg_index_offset=0
+    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
+      arg_index_offset=1
+      if(len(sys.argv)>=2):
+        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
+          arg_index_offset=2
+    effective_args = sys.argv[arg_index_offset+1:]
   #print("dbg115: effective_args:", str(effective_args))
   #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
   ob_args = ob_parser.parse_args(effective_args)
@@ -497,7 +503,7 @@ def outline_backends_cli():
 
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("outline_backends.py says hello!\n")
+  # select your script behavior
   #outline_backends_cli()
-  # when running with freecad:
-  outline_arc_line_test1()
+  outline_backends_cli("--test1".split())
 
