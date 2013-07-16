@@ -43,12 +43,29 @@ import display_backend
 # global variable
 ################################################################
 
-arc_resolution = 6
+unit_circle_resolution = 6
 #default_dxf_layer_name = 'CNC25D'
 
 ################################################################
 # ******** sub-functions for the API ***********
 ################################################################
+
+def complete_circle(ai_center, ai_radius, ai_resolution):
+  """ Generate a list of points that creates a circle with the resolution ai_resolution.
+      ai_resolution sets the mamximum number of intermediate points to create
+  """
+  r_points = []
+  # calculation of the angle resolution:
+  if(ai_resolution<3):
+    print("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution))
+    sys.exit(2)
+  #print("dbg424: ai_radius:", ai_radius)
+  circle_resolution = int(ai_resolution * ai_radius) # circle resolution increase with the radius
+  angle_resolution = 2*math.pi/circle_resolution
+  # create the list of points
+  for i in range(circle_resolution):
+    r_points.append([ai_center[0]+ai_radius*math.cos(i*angle_resolution), ai_center[1]+ai_radius*math.sin(i*angle_resolution)])
+  return(r_points)
 
 def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   """ From three points (list of 6 floats) creates a polyline (list of 2*n flaots) representing the arc of circle defined by the three points
@@ -163,8 +180,8 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
     print("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution))
     sys.exit(2)
   #print("dbg414: arc radius: lia:", lia)
-  angle_resolution = ai_resolution * lia # angle resolution increase with the radius
-  ar = 2*math.pi/angle_resolution
+  circle_resolution = ai_resolution * lia # angle resolution increase with the radius
+  ar = 2*math.pi/circle_resolution
   # number of intermediate point between A and B and step angle
   abip = int(abs(uv)/ar)
   absa = uv/(abip+1)
@@ -245,7 +262,7 @@ def outline_arc_line_with_svgwrite(ai_segments, ai_outline_closed):
       #svg_line.stroke('black', width=1)
       svg_outline.append(svg_line)
     elif(segment_type=='arc'):
-      arc_polyline = arc_of_circle(point_start, point_mid, point_end, arc_resolution)
+      arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
       arc_polyline_svg = []
       for i in arc_polyline:
         arc_polyline_svg.append(tuple(i))
@@ -285,7 +302,7 @@ def outline_arc_line_with_dxfwrite(ai_segments, ai_outline_closed):
       dxf_line = DXFEngine.line(start=point_start, end=point_end)
       dxf_outline.append(dxf_line)
     elif(segment_type=='arc'):
-      arc_polyline = arc_of_circle(point_start, point_mid, point_end, arc_resolution)
+      arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
       arc_polyline_dxf = []
       for i in arc_polyline:
         arc_polyline_dxf.append(tuple(i))
@@ -297,7 +314,7 @@ def outline_arc_line_with_dxfwrite(ai_segments, ai_outline_closed):
   return(r_outline)
 
 def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed):
-  """ Transform the arcs and lines outlines for tkinter lines
+  """ Transform the arcs and lines outlines into tkinter lines
   """
   tkline_points = [tuple((ai_segments[0][0], ai_segments[0][1]))]
   segment_nb = len(ai_segments)-1
@@ -320,16 +337,26 @@ def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed):
         point_end = tkline_points[0]
     #print("dbg563: i: {:d}  segment: {:s}".format(i, segment_type))
     if(segment_type=='line'):
-      #dxf_line = DXFEngine.line(start=point_start, end=point_end, color=7, layer=default_dxf_layer_name)
       tkinter_line = (point_start[0], point_start[1], point_end[0], point_end[1])
       tkline_outline.append(tkinter_line)
     elif(segment_type=='arc'):
-      arc_polyline = arc_of_circle(point_start, point_mid, point_end, arc_resolution)
+      arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
       arc_polyline_tk = []
       for i in range(len(arc_polyline)-1):
         arc_polyline_tk.append((arc_polyline[i][0], arc_polyline[i][1], arc_polyline[i+1][0], arc_polyline[i+1][1]))
       tkline_outline.extend(arc_polyline_tk)
   r_outline = tuple(tkline_outline)
+  return(r_outline)
+
+def outline_circle_with_tkinter(ai_center, ai_radius):
+  """ Transform the circle outline into tkinter lines
+  """
+  circle_points = complete_circle(ai_center, ai_radius, unit_circle_resolution)
+  circle_polyline_tk = []
+  for i in range(len(circle_points)-1):
+    circle_polyline_tk.append((circle_points[i][0], circle_points[i][1], circle_points[i+1][0], circle_points[i+1][1]))
+  circle_polyline_tk.append((circle_points[-1][0], circle_points[-1][1], circle_points[0][0], circle_points[0][1]))
+  r_outline = tuple(circle_polyline_tk)
   return(r_outline)
 
 ################################################################
@@ -380,12 +407,21 @@ def outline_circle(ai_center, ai_radius, ai_backend):
   """ Generates a circle according to the selected backend.
       Possible backend: freecad, mozman dxfwrite, mozman svgwrite, Tkinter.
   """
-
-  # Part.makeCircle ( radius,[pnt,dir,angle1,angle2] )
-  # DXFEngine.circle(radius=1.0, center=(0., 0.), **kwargs)
-  # class svgwrite.shapes.Circle(center=(0, 0), r=1, **extra)
-
-  r_outline = 0
+  r_outline = ''
+  # check the radius
+  if(ai_radius<=0):
+    print("ERR409: Error, the radius is negative or null!")
+    sys.exit(2)
+  # select backend
+  if(ai_backend=='freecad'):
+    r_outline = Part.Circle(Base.Vector(ai_center[0], ai_center[1], 0), Base.Vector(0,0,1), ai_radius)
+  elif(ai_backend=='svgwrite'):
+    r_outline = svgwrite.shapes.Circle(center=(ai_center[0], ai_center[1]), r=ai_radius)
+    r_outline.fill('green', opacity=0.25).stroke('black', width=1)
+  elif(ai_backend=='dxfwrite'):
+    r_outline = DXFEngine.circle(radius=ai_radius, center=(ai_center[0], ai_center[1]))
+  elif(ai_backend=='tkinter'):
+    r_outline = outline_circle_with_tkinter(ai_center, ai_radius)
   return(r_outline)
 
 
@@ -394,7 +430,7 @@ def outline_circle(ai_center, ai_radius, ai_backend):
 ################################################################
 
 def outline_arc_line_test1():
-  """ test the function outline_arc_line.
+  """ test the functions outline_arc_line and outline_circle.
   """
   l_ol1 = [
     [0,0],
@@ -448,6 +484,9 @@ def outline_arc_line_test1():
 
   l_ols = [l_ol1, l_ol2, l_ol3, l_ol4, l_ol5]
   #l_ols = [l_ol2]
+  # circle
+  l_circle_center = [200,200]
+  l_circle_radius = 150
   # backend freecad
   print("dbg701: test1 backend freecad")
   for i_ol in l_ols:
@@ -456,6 +495,10 @@ def outline_arc_line_test1():
     l_test_face = Part.Face(Part.Wire(r_ol.Edges))
     r_test_solid = l_test_face.extrude(Base.Vector(0,0,1)) # straight linear extrusion
     Part.show(r_test_solid)
+  #r_ol = outline_circle(l_circle_center, l_circle_radius, 'freecad')
+  #l_test_face = Part.Face(Part.Wire(r_ol.Edges))
+  #r_test_solid = l_test_face.extrude(Base.Vector(0,0,1)) # straight linear extrusion
+  Part.show(r_test_solid)
   # backend svgwrite
   print("dbg702: test1 backend svgwrite")
   output_svg_file_name =  "outline_arc_line_test1_00.svg"
@@ -469,6 +512,8 @@ def outline_arc_line_test1():
     for one_line_or_arc in svg_outline:
       object_svg.add(one_line_or_arc)
     #object_svg.save()
+  one_circle = outline_circle(l_circle_center, l_circle_radius, 'svgwrite')
+  object_svg.add(one_circle)
   object_svg.save()
   # backend dxfwrite
   print("dbg703: test1 backend dxfwrite")
@@ -479,6 +524,8 @@ def outline_arc_line_test1():
     dxf_outline = outline_arc_line(i_ol, 'dxfwrite')
     for one_line_or_arc in dxf_outline:
       object_dxf.add(one_line_or_arc)
+  one_circle = outline_circle(l_circle_center, l_circle_radius, 'dxfwrite')
+  object_dxf.add(one_circle)
   object_dxf.save()
   # backend tkinter
   print("dbg704: test1 backend tkinter")
@@ -489,7 +536,9 @@ def outline_arc_line_test1():
     r_canvas_graphics = []
     for i_ol in l_ols:
       r_canvas_graphics.append(('graphic_lines', outline_arc_line(i_ol, 'tkinter'), 'red', 2))
+    r_canvas_graphics.append(('graphic_lines', outline_circle(l_circle_center, l_circle_radius, 'tkinter'), 'blue', 2))
     return(r_canvas_graphics)
+  # end of callback function
   my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
   tk_root.mainloop()
   #
