@@ -414,7 +414,7 @@ def outline_circle(ai_center, ai_radius, ai_backend):
     sys.exit(2)
   # select backend
   if(ai_backend=='freecad'):
-    r_outline = Part.Circle(Base.Vector(ai_center[0], ai_center[1], 0), Base.Vector(0,0,1), ai_radius)
+    r_outline = Part.Circle(Base.Vector(ai_center[0], ai_center[1], 0), Base.Vector(0,0,1), ai_radius).toShape()
   elif(ai_backend=='svgwrite'):
     r_outline = svgwrite.shapes.Circle(center=(ai_center[0], ai_center[1]), r=ai_radius)
     r_outline.fill('green', opacity=0.25).stroke('black', width=1)
@@ -495,9 +495,9 @@ def outline_arc_line_test1():
     l_test_face = Part.Face(Part.Wire(r_ol.Edges))
     r_test_solid = l_test_face.extrude(Base.Vector(0,0,1)) # straight linear extrusion
     Part.show(r_test_solid)
-  #r_ol = outline_circle(l_circle_center, l_circle_radius, 'freecad')
-  #l_test_face = Part.Face(Part.Wire(r_ol.Edges))
-  #r_test_solid = l_test_face.extrude(Base.Vector(0,0,1)) # straight linear extrusion
+  r_ol = outline_circle(l_circle_center, l_circle_radius, 'freecad')
+  l_test_face = Part.Face(Part.Wire(r_ol.Edges))
+  r_test_solid = l_test_face.extrude(Base.Vector(0,0,1)) # straight linear extrusion
   Part.show(r_test_solid)
   # backend svgwrite
   print("dbg702: test1 backend svgwrite")
