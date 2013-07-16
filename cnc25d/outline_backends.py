@@ -297,11 +297,39 @@ def outline_arc_line_with_dxfwrite(ai_segments, ai_outline_closed):
   return(r_outline)
 
 def outline_arc_line_with_tkinter(ai_segments, ai_outline_closed):
-  """ Generates the arcs and lines outline with the tkinter
+  """ Transform the arcs and lines outlines for tkinter lines
   """
-  
-
-  r_outline = ''
+  tkline_points = [tuple((ai_segments[0][0], ai_segments[0][1]))]
+  segment_nb = len(ai_segments)-1
+  tkline_outline = []
+  for i in range(segment_nb):
+    segment_type = 'line'
+    tkline_points.append(tuple((ai_segments[i+1][0], ai_segments[i+1][1])))
+    point_start = tkline_points[-2]
+    point_end = tkline_points[-1]
+    if(len(ai_segments[i+1])==4):
+      segment_type = 'arc'
+      tkline_points.append(tuple((ai_segments[i+1][2], ai_segments[i+1][3])))
+      point_start = tkline_points[-3]
+      point_mid = tkline_points[-2]
+      point_end = tkline_points[-1]
+    if(i==segment_nb-1):
+      #print("dbg306: last segment")
+      if(ai_outline_closed):
+        #print("dbg307: close")
+        point_end = tkline_points[0]
+    #print("dbg563: i: {:d}  segment: {:s}".format(i, segment_type))
+    if(segment_type=='line'):
+      #dxf_line = DXFEngine.line(start=point_start, end=point_end, color=7, layer=default_dxf_layer_name)
+      tkinter_line = (point_start[0], point_start[1], point_end[0], point_end[1])
+      tkline_outline.append(tkinter_line)
+    elif(segment_type=='arc'):
+      arc_polyline = arc_of_circle(point_start, point_mid, point_end, arc_resolution)
+      arc_polyline_tk = []
+      for i in range(len(arc_polyline)-1):
+        arc_polyline_tk.append((arc_polyline[i][0], arc_polyline[i][1], arc_polyline[i+1][0], arc_polyline[i+1][1]))
+      tkline_outline.extend(arc_polyline_tk)
+  r_outline = tuple(tkline_outline)
   return(r_outline)
 
 ################################################################
@@ -456,10 +484,13 @@ def outline_arc_line_test1():
   print("dbg704: test1 backend tkinter")
   tk_root = Tkinter.Tk()
   my_canvas = display_backend.Two_Canvas(tk_root)
-  canvas_graphics = []
-  for i_ol in l_ols:
-    canvas_graphics.extend(outline_arc_line(i_ol, 'tkinter'))
-  #my_canvas.add_canvas_graphic_function(canvas_graphics)
+  # callback function for display_backend
+  def sub_canvas_graphics(ai_angle_position):
+    r_canvas_graphics = []
+    for i_ol in l_ols:
+      r_canvas_graphics.append(('graphic_lines', outline_arc_line(i_ol, 'tkinter'), 'red', 2))
+    return(r_canvas_graphics)
+  my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
   tk_root.mainloop()
   #
   r_test = 1

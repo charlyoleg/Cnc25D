@@ -89,11 +89,15 @@ def compute_scale_coef(ai_extremum, ai_canvas_size):
     lx = (canvas_width-2*margin_x)/float(max_x-min_x)
     ly = (canvas_height-2*margin_y)/float(max_y-min_y)
     lxy = min(lx, ly)
+    # choose lx and ly to get (O,x,y) orthonormal direct
+    lx = 1*lxy
+    ly = -1*lxy
     #kx = margin_x - min_x*lx
     #ky = margin_y - min_y*ly
-    kx = (canvas_width - (max_x-min_x)*lxy)/2 - min_x*lxy
-    ky = (canvas_height - (max_y-min_y)*lxy)/2 - min_y*lxy
-    r_scale_coef = (lxy, kx, lxy, ky)
+    kx = (canvas_width - (max_x-min_x)*lx)/2 - min_x*lx
+    #ky = (canvas_height - (max_y-min_y)*ly)/2 - min_y*ly
+    ky = (canvas_height - (max_y-min_y)*abs(ly))/2 - max_y*ly
+    r_scale_coef = (lx, kx, ly, ky)
   return(r_scale_coef)
 
 def scale_outline(ai_outline_list, ai_coef):
@@ -133,9 +137,11 @@ def compute_crop_limit(ai_selected_area, ai_canvas_size, ai_scale_coef):
   bottom_right_x = min(canvas_width, max(mouse_x1, mouse_x2))
   bottom_right_y = min(canvas_height, max(mouse_y1, mouse_y2))
   limit_x1=(top_left_x-kx)/float(lx)
-  limit_y1=(top_left_y-ky)/float(ly)
+  #limit_y1=(top_left_y-ky)/float(ly)
+  limit_y2=(top_left_y-ky)/float(ly)
   limit_x2=(bottom_right_x-kx)/float(lx)
-  limit_y2=(bottom_right_y-ky)/float(ly)
+  #limit_y2=(bottom_right_y-ky)/float(ly)
+  limit_y1=(bottom_right_y-ky)/float(ly)
   r_crop_limit = (limit_x1, limit_y1, limit_x2, limit_y2)
   return(r_crop_limit)
 
