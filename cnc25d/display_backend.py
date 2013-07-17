@@ -812,7 +812,7 @@ def display_backends_cli(ai_args=None):
   # You can not use argparse and FreeCAD together, so it's actually useless !
   # Running this script, FreeCAD will just use the argparse default values
   effective_args = ai_args
-  if(ai_args==None):
+  if(effective_args==None):
     arg_index_offset=0
     if(sys.argv[0]=='freecad'): # check if the script is used by freecad
       arg_index_offset=1
@@ -824,7 +824,7 @@ def display_backends_cli(ai_args=None):
   #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
   db_args = db_parser.parse_args(effective_args)
   r_dbc = 0
-  print("dbg111: start testing outline_backends")
+  print("dbg111: start testing display_backends.py")
   if(db_args.sw_test1):
     r_dbc = two_canvas_class_test1()
   elif(db_args.sw_test2):

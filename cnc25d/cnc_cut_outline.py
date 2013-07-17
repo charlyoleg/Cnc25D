@@ -27,11 +27,7 @@ import math
 import sys, argparse
 
 ################################################################
-# ******** the functions to be re-used ***********
-################################################################
-
-################################################################
-# outline creation
+# ******** API function for outline creation ***********
 ################################################################
 
 def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
@@ -221,59 +217,7 @@ def cnc_cut_outline(ai_corner_list, ai_error_msg_id):
   return(r_shape)
 
 ################################################################
-# Positioning
-################################################################
-
-def place_plank(ai_plank_solid, ai_x_length, ai_y_width, ai_z_height, ai_flip, ai_orientation, ai_translate_x, ai_translate_y, ai_translate_z):
-  """ After creating a plank, use this function to place it in a cuboid construction
-  """
-  r_placed_plank = ai_plank_solid
-  #r_placed_plank = ai_plank_solid.copy()
-  # flip
-  flip_center_x = ai_x_length/2
-  flip_center_y = ai_y_width/2
-  flip_center_z = ai_z_height/2
-  if(ai_flip=='i'):
-    r_placed_plank.rotate(Base.Vector(flip_center_x, flip_center_y, flip_center_z),Base.Vector(0,0,1),0)
-  elif(ai_flip=='x'):
-    r_placed_plank.rotate(Base.Vector(flip_center_x, flip_center_y, flip_center_z),Base.Vector(1,0,0),180)
-  elif(ai_flip=='y'):
-    r_placed_plank.rotate(Base.Vector(flip_center_x, flip_center_y, flip_center_z),Base.Vector(0,1,0),180)
-  elif(ai_flip=='z'):
-    r_placed_plank.rotate(Base.Vector(flip_center_x, flip_center_y, flip_center_z),Base.Vector(0,0,1),180)
-  else:
-    print("ERR505: Error, the flip value %s doesn't exist! Use only: i,x,y,z."%ai_flip)
-    sys.exit(2)
-  # orientation
-  if(ai_orientation=='xy'):
-    r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(0,0,1),0)
-    r_placed_plank.translate(Base.Vector(0, 0, 0))
-  elif(ai_orientation=='xz'):
-    r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(1,0,0),90)
-    r_placed_plank.translate(Base.Vector(0, ai_z_height, 0))
-  elif(ai_orientation=='yx'):
-    r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(0,0,1),90)
-    r_placed_plank.translate(Base.Vector(ai_y_width, 0, 0))
-  elif(ai_orientation=='yz'):
-    r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(0,0,1),90)
-    r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(0,1,0),90)
-    r_placed_plank.translate(Base.Vector(0, 0, 0))
-  elif(ai_orientation=='zx'):
-    r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(0,1,0),-90)
-    r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(0,0,1),-90)
-    r_placed_plank.translate(Base.Vector(0, 0, 0))
-  elif(ai_orientation=='zy'):
-    r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(0,1,0),-90)
-    r_placed_plank.translate(Base.Vector(ai_z_height, 0, 0))
-  else:
-    print("ERR506: Error, the orientation value %s doesn't exist! Use only: xz,xy,yx,yz,zx,zy."%ai_orientation)
-    sys.exit(2)
-  # translation
-  r_placed_plank.translate(Base.Vector(ai_translate_x, ai_translate_y, ai_translate_z))
-  return(r_placed_plank)
-
-################################################################
-# function for testing
+# cnc_cut_outline API testing
 ################################################################
 
 def make_H_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output_file):
@@ -395,17 +339,43 @@ def make_M_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output
     myx_solid.exportStl(ai_output_file)
     print("output stl file: %s"%(ai_output_file))
 
-def test_plank():
-  """ Plank example to test the place_plank function
+def cnc_cut_outline_test1():
+  """ First test to check the cnc_cut_outline API
   """
-  r_plank = Part.makeBox(20,4,2)
-  r_plank = r_plank.cut(Part.makeBox(5,3,4, Base.Vector(16,-1,-1), Base.Vector(0,0,1)))
-  r_plank = r_plank.cut(Part.makeBox(3,6,2, Base.Vector(18,-1,1), Base.Vector(0,0,1)))
-  #Part.show(r_plank)
-  return(r_plank)
+  ### check the cnc_cut_outline function with several router_bit diameter
+  y_offset = 0
+  for ir in [2.0, 1.5, 1.0, 0, -1.0, -2.0]:
+    print("dbg603: test with router_bit radius (ir):", ir)
+    make_H_shape( 0,  y_offset, ir, 2, "self_test_cnc_cut_outline_H_r%0.2f.stl"%ir)
+    make_X_shape(50,  y_offset, ir, 2, "self_test_cnc_cut_outline_X_r%0.2f.stl"%ir)
+    make_M_shape(150,  y_offset, ir, 2, "self_test_cnc_cut_outline_M_r%0.2f.stl"%ir)
+    y_offset += 100
+  r_test = 1
+  return(r_test)
 
-def cnc_cut_outline_main():
-  """ it is the command line interface of cnc_cut_outline.py when it is used in standalone
+def cnc_cut_outline_test2(ai_sw_output_file_base, ai_sw_router_bit_radius, ai_sw_height):
+  """ Second test to check the cnc_cut_outline API
+  """
+  ### check the cnc_cut_outline through examples
+  ofb_H_shape = ""
+  ofb_X_shape = ""
+  ofb_M_shape = ""
+  if(ai_sw_output_file_base!=""):
+    ofb_H_shape = ai_sw_output_file_base + "_S_shape.stl"
+    ofb_X_shape = ai_sw_output_file_base + "_X_shape.stl"
+    ofb_M_shape = ai_sw_output_file_base + "_M_shape.stl"
+  make_H_shape(0, 0, ai_sw_router_bit_radius, ai_sw_height, ofb_H_shape)
+  make_X_shape(50, 0, ai_sw_router_bit_radius, ai_sw_height, ofb_X_shape)
+  make_M_shape(150, 0, ai_sw_router_bit_radius, ai_sw_height, ofb_M_shape)
+  r_test = 1
+  return(r_test)
+
+################################################################
+# cnc_cut_outline command line interface
+################################################################
+
+def cnc_cut_outline_cli(ai_args=None):
+  """ command line interface of cnc_cut_outline.py when it is used in standalone
   """
   cco_parser = argparse.ArgumentParser(description='Run the function cnc_cut_outline() to check it.')
   cco_parser.add_argument('--router_bit_radius','--rr', action='store', type=float, default=1.0, dest='sw_router_bit_radius',
@@ -414,65 +384,26 @@ def cnc_cut_outline_main():
     help='It defines the height of the extrusion along the Z axis.')
   cco_parser.add_argument('--output_file_base','--ofb', action='store', default="", dest='sw_output_file_base',
     help='It defines the base name of the output file. If it is set to the empty string (which is the default value), no output files are generated')
-  cco_parser.add_argument('--self_test','--st', action='store_true', default=False, dest='sw_self_test',
+  cco_parser.add_argument('--test1','--t1', action='store_true', default=False, dest='sw_test1',
+    help='It generates a bunch of shapes, that you should observed afterward.')
+  cco_parser.add_argument('--test2','--t2', action='store_true', default=False, dest='sw_test2',
     help='It generates a bunch of shapes, that you should observed afterward.')
   # this ensure the possible to use the script with python and freecad
-  arg_index_offset=0
-  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-    arg_index_offset=1
-    if(len(sys.argv)>=2):
-      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-        arg_index_offset=2
-  cco_args = cco_parser.parse_args(sys.argv[arg_index_offset+1:])
-  print("dbg111: start building the 3D part")
-  if(cco_args.sw_self_test):
-    ### check the cnc_cut_outline function with several router_bit diameter
-    y_offset = 0
-    for ir in [2.0, 1.5, 1.0, 0, -1.0, -2.0]:
-      print("dbg603: test with router_bit radius (ir):", ir)
-      make_H_shape( 0,  y_offset, ir, 2, "self_test_cnc_cut_outline_H_r%0.2f.stl"%ir)
-      make_X_shape(50,  y_offset, ir, 2, "self_test_cnc_cut_outline_X_r%0.2f.stl"%ir)
-      make_M_shape(150,  y_offset, ir, 2, "self_test_cnc_cut_outline_M_r%0.2f.stl"%ir)
-      y_offset += 100
-  else:
-    ### check the cnc_cut_outline and place_plank functions through examples
-    ofb_H_shape = ""
-    ofb_X_shape = ""
-    ofb_M_shape = ""
-    if(cco_args.sw_output_file_base!=""):
-      ofb_H_shape = cco_args.sw_output_file_base + "_S_shape.stl"
-      ofb_X_shape = cco_args.sw_output_file_base + "_X_shape.stl"
-      ofb_M_shape = cco_args.sw_output_file_base + "_M_shape.stl"
-    make_H_shape(0, 0, cco_args.sw_router_bit_radius, cco_args.sw_height, ofb_H_shape)
-    make_X_shape(50, 0, cco_args.sw_router_bit_radius, cco_args.sw_height, ofb_X_shape)
-    make_M_shape(150, 0, cco_args.sw_router_bit_radius, cco_args.sw_height, ofb_M_shape)
-    # test place_plank()
-    #pp0 = test_plank()
-    #Part.show(pp0)
-    pp1 = place_plank(test_plank(), 20,4,2, 'i', 'xy', 300,0,0)
-    Part.show(pp1)
-    pp2 = place_plank(test_plank(), 20,4,2, 'x', 'xy', 300,30,0)
-    Part.show(pp2)
-    pp3 = place_plank(test_plank(), 20,4,2, 'y', 'xy', 300,60,0)
-    Part.show(pp3)
-    pp4 = place_plank(test_plank(), 20,4,2, 'z', 'xy', 300,90,0)
-    Part.show(pp4)
-    #pp4 = place_plank(test_plank(), 20,4,2, 'u', 'xy', 300,30,0)
-    pp21 = place_plank(test_plank(), 20,4,2, 'i', 'xy', 350,0,0)
-    Part.show(pp21)
-    pp22 = place_plank(test_plank(), 20,4,2, 'i', 'xz', 350,30,0)
-    Part.show(pp22)
-    pp23 = place_plank(test_plank(), 20,4,2, 'i', 'yx', 350,60,0)
-    Part.show(pp23)
-    pp24 = place_plank(test_plank(), 20,4,2, 'i', 'yz', 350,90,0)
-    Part.show(pp24)
-    pp25 = place_plank(test_plank(), 20,4,2, 'i', 'zx', 350,120,0)
-    Part.show(pp25)
-    pp26 = place_plank(test_plank(), 20,4,2, 'i', 'zy', 350,150,0)
-    Part.show(pp26)
-    #pp27 = place_plank(test_plank(), 20,4,2, 'i', 'xx', 350,180,0)
-
-    Part.show(pp1)
+  effective_args=ai_args
+  if(effective_args==None):
+    arg_index_offset=0
+    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
+      arg_index_offset=1
+      if(len(sys.argv)>=2):
+        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
+          arg_index_offset=2
+    effective_args = sys.argv[arg_index_offset+1:]
+  cco_args = cco_parser.parse_args(effective_args)
+  print("dbg111: start testing cnc_cut_outline.py")
+  if(cco_args.sw_test1):
+    cnc_cut_outline_test1()
+  if(cco_args.sw_test2):
+    cnc_cut_outline_test2(cco_args.sw_output_file_base, cco_args.sw_router_bit_radius, cco_args.sw_height)
   print("dbg999: end of script")
   
     
@@ -484,8 +415,10 @@ def cnc_cut_outline_main():
 # with freecad, the script is also main :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("dbg109: I'm main\n")
-  cnc_cut_outline_main()
-#cnc_cut_outline_main()
-#make_H_shape(1.0,2.0,'')
+  #cnc_cut_outline_cli()
+  #cnc_cut_outline_cli("--test1".split())
+  cnc_cut_outline_cli("--test2".split())
+  #cnc_cut_outline_cli("--test1 --test2".split())
+  #make_H_shape(1.0,2.0,'')
 
 
