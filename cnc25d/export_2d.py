@@ -28,7 +28,32 @@ import Drawing
 #import FreeCADGui
 
 ################################################################
-# functions to be re-used
+# export_2d sub-functions
+################################################################
+
+def draw_rectangle(ai_position_x, ai_position_y, ai_size_x, ai_size_y):
+  p1 = Base.Vector(ai_position_x+0*ai_size_x, ai_position_y+0*ai_size_y, 0)
+  p2 = Base.Vector(ai_position_x+1*ai_size_x, ai_position_y+0*ai_size_y, 0)
+  p3 = Base.Vector(ai_position_x+1*ai_size_x, ai_position_y+1*ai_size_y, 0)
+  p4 = Base.Vector(ai_position_x+0*ai_size_x, ai_position_y+1*ai_size_y, 0)
+  r_rectangle_outline=[]
+  r_rectangle_outline.append(Part.makeLine(p1, p2))
+  r_rectangle_outline.append(Part.makeLine(p2, p3))
+  r_rectangle_outline.append(Part.makeLine(p3, p4))
+  r_rectangle_outline.append(Part.makeLine(p4, p1))
+  #r_rectangle = Part.Face(Part.Wire(r_rectangle_outline))
+  r_rectangle = r_rectangle_outline
+  return(r_rectangle)
+
+def draw_gauge(ai_drawing_length, ai_drawing_height, ai_representation_max, ai_representation_value, ai_position_x, ai_position_y):
+  l_gauge_value = ai_drawing_length*ai_representation_value/ai_representation_max
+  r_gauge = []
+  r_gauge.extend(draw_rectangle(ai_position_x-ai_drawing_height/2, ai_position_y, ai_drawing_length+ai_drawing_height, ai_drawing_height))
+  r_gauge.extend(draw_rectangle(ai_position_x, ai_position_y+ai_drawing_height/4, l_gauge_value, ai_drawing_height/2))
+  return(r_gauge)
+
+################################################################
+# export_2d API
 ################################################################
 
 def export_to_dxf_abandoned(ai_solid, ai_vector, ai_depth, ai_output_file): # it works only the FreeCAD Gui
@@ -74,27 +99,6 @@ def export_to_svg(ai_solid, ai_vector, ai_depth, ai_output_file):
   fh_output.write(r_dxf)
   fh_output.close()
   return(1)
-
-def draw_rectangle(ai_position_x, ai_position_y, ai_size_x, ai_size_y):
-  p1 = Base.Vector(ai_position_x+0*ai_size_x, ai_position_y+0*ai_size_y, 0)
-  p2 = Base.Vector(ai_position_x+1*ai_size_x, ai_position_y+0*ai_size_y, 0)
-  p3 = Base.Vector(ai_position_x+1*ai_size_x, ai_position_y+1*ai_size_y, 0)
-  p4 = Base.Vector(ai_position_x+0*ai_size_x, ai_position_y+1*ai_size_y, 0)
-  r_rectangle_outline=[]
-  r_rectangle_outline.append(Part.makeLine(p1, p2))
-  r_rectangle_outline.append(Part.makeLine(p2, p3))
-  r_rectangle_outline.append(Part.makeLine(p3, p4))
-  r_rectangle_outline.append(Part.makeLine(p4, p1))
-  #r_rectangle = Part.Face(Part.Wire(r_rectangle_outline))
-  r_rectangle = r_rectangle_outline
-  return(r_rectangle)
-
-def draw_gauge(ai_drawing_length, ai_drawing_height, ai_representation_max, ai_representation_value, ai_position_x, ai_position_y):
-  l_gauge_value = ai_drawing_length*ai_representation_value/ai_representation_max
-  r_gauge = []
-  r_gauge.extend(draw_rectangle(ai_position_x-ai_drawing_height/2, ai_position_y, ai_drawing_length+ai_drawing_height, ai_drawing_height))
-  r_gauge.extend(draw_rectangle(ai_position_x, ai_position_y+ai_drawing_height/4, l_gauge_value, ai_drawing_height/2))
-  return(r_gauge)
 
 def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_list, ai_xz_slice_list, ai_yz_slice_list, ai_output_file):
   """ Cut a FreeCAD Part Object in many slices in the three directions X, Y and Z and put all those slices in a DXF file

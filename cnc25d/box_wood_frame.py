@@ -14,8 +14,10 @@ The function return a FreeCAD Part object of the assembled object.
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import importing_freecad
-importing_freecad.importing_freecad()
+#import importing_freecad
+#importing_freecad.importing_freecad()
+import cnc25d_api
+cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 #FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
@@ -29,8 +31,9 @@ import sys, argparse
 from datetime import datetime
 import os, errno
 #
-import cnc_cut_outline
-import export_2d
+# replaced by cnc25d_api
+#import cnc_cut_outline
+#import export_2d
 #
 import Part
 from FreeCAD import Base
@@ -201,7 +204,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+2.0/3*(ai_h_plank_width-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_router_bit_radius],
       [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius],
       [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, ai_crenel_depth+1.0/3*(ai_h_plank_width-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius]]
-    l_hole_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(l_outline, 'hole_in_plank_top_xz_for_yz').Edges))
+    l_hole_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(l_outline, 'hole_in_plank_top_xz_for_yz').Edges))
     r_hole_solid = l_hole_face.extrude(Base.Vector(0,0,ai_plank_height+2*remove_skin_thickness)) # straight linear extrusion
     return(r_hole_solid)
   # jonction_plank_bot_xz_with_yz
@@ -218,7 +221,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, 2.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)+1*nai_cutting_extra,-1*ai_router_bit_radius],
       [nai_x_offset+1.0/2*ai_plank_height+1*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius],
       [nai_x_offset-1.0/2*ai_plank_height-1*nai_cutting_extra, 1.0/3*(ai_h_plank_width+ai_fitting_height-ai_crenel_depth)-1*nai_cutting_extra,-1*ai_router_bit_radius]]
-    l_hole_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(l_outline, 'hole_in_plank_bot_xz_for_yz').Edges))
+    l_hole_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(l_outline, 'hole_in_plank_bot_xz_for_yz').Edges))
     r_hole_solid = l_hole_face.extrude(Base.Vector(0,0,ai_plank_height+2*remove_skin_thickness)) # straight linear extrusion
     return(r_hole_solid)
   # jonction_plank_top_yz_with_xz
@@ -256,7 +259,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     return(nr)
   # jonction_plank_z_with_wall_diagonal
   def jonction_plank_z_with_wall_diagonal(nai_cutting_extra):
-    nr = cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), -1*ai_v_plank_width+1*ai_crenel_depth, 1, ai_v_plank_width, -1)
+    nr = cnc25d_api.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), -1*ai_v_plank_width+1*ai_crenel_depth, 1, ai_v_plank_width, -1)
     return(nr)
   # jonction_plank_wall_diagonal
   def jonction_plank_wall_diagonal(nai_cutting_extra):
@@ -280,7 +283,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
   #print("dbg412: jonction_plank_tobo_diagonal", jonction_plank_tobo_diagonal)
   # jonction_plank_zx_with_wall_diagonal
   def jonction_plank_zx_with_wall_diagonal(nai_cutting_extra):
-    nr = cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), -1*ai_v_plank_width+1*ai_crenel_depth, 1, 0*ai_v_plank_width, 1)
+    nr = cnc25d_api.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), -1*ai_v_plank_width+1*ai_crenel_depth, 1, 0*ai_v_plank_width, 1)
     return(nr)
   # jonction_plank_zx_with_xz
   def jonction_plank_zx_with_xz(nai_cutting_extra):
@@ -328,7 +331,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       [hpx+1*hdx-act+1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, 0*ai_router_bit_radius],
       [hpx+0*hdx+act-1*nai_cutting_extra, 1*hdy+1*nai_cutting_extra, 0*ai_router_bit_radius],
       [hpx+0*hdx-1*nai_cutting_extra, 1*hdy+act+1*nai_cutting_extra, 1*ai_router_bit_radius]]
-    plank_xz_hole_shape = cnc_cut_outline.cnc_cut_outline(plank_xz_hole_outline, 'plank_xz_yz_hole')
+    plank_xz_hole_shape = cnc25d_api.cnc_cut_outline(plank_xz_hole_outline, 'plank_xz_yz_hole')
     plank_xz_hole_wire = Part.Wire(plank_xz_hole_shape.Edges)
     plank_xz_hole_face = Part.Face(plank_xz_hole_wire)
     plank_xz_hole_face.translate(Base.Vector(0,0,-remove_skin_thickness))
@@ -383,24 +386,24 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     # plank_xz_top_outline
     plank_xz_top_outline = []
     plank_xz_top_outline.append([0*ai_box_width, 0*ai_h_plank_width, 0*ai_router_bit_radius]) #0
-    plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),             0*ai_box_width, 1)) #1-4
-    plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  0*ai_box_width, 1)) #5-8
+    plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),             0*ai_box_width, 1)) #1-4
+    plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  0*ai_box_width, 1)) #5-8
     for i in range(nai_module_width-1):
-      plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (i+1)*ai_box_width+1.0/2*ai_v_plank_width, -1))
-      plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_middle_zx(nai_cutting_extra),      (i+1)*ai_box_width,  1))
-      plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (i+1)*ai_box_width-1.0/2*ai_v_plank_width, 1))
-    plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  nai_module_width*ai_box_width, -1)) #9-12
-    plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),             nai_module_width*ai_box_width, -1)) #13-16
+      plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (i+1)*ai_box_width+1.0/2*ai_v_plank_width, -1))
+      plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_middle_zx(nai_cutting_extra),      (i+1)*ai_box_width,  1))
+      plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (i+1)*ai_box_width-1.0/2*ai_v_plank_width, 1))
+    plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  nai_module_width*ai_box_width, -1)) #9-12
+    plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),             nai_module_width*ai_box_width, -1)) #13-16
     plank_xz_top_outline.append([nai_module_width*ai_box_width, 0*ai_plank_height, 0*ai_router_bit_radius]) #17
-    plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_top_xz_with_yz(nai_cutting_extra),         nai_module_width*ai_box_width, -1)) #18-21
+    plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_top_xz_with_yz(nai_cutting_extra),         nai_module_width*ai_box_width, -1)) #18-21
     plank_xz_top_outline.append([nai_module_width*ai_box_width, 1*ai_h_plank_width, 0*ai_router_bit_radius]) #22
     for i in range(nai_module_width):
-      plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1],    (nai_module_width-i)*ai_box_width, -1, ai_h_plank_width, 1)) #23-24
-      plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1],  (nai_module_width-1-i)*ai_box_width,  1, ai_h_plank_width, 1)) #25-26
+      plank_xz_top_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1],    (nai_module_width-i)*ai_box_width, -1, ai_h_plank_width, 1)) #23-24
+      plank_xz_top_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1],  (nai_module_width-1-i)*ai_box_width,  1, ai_h_plank_width, 1)) #25-26
     plank_xz_top_outline.append([0*ai_box_width, 1*ai_h_plank_width, 0*ai_router_bit_radius]) #27
-    plank_xz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_top_xz_with_yz(nai_cutting_extra),         0*ai_box_width,  1)) #28-31
+    plank_xz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_top_xz_with_yz(nai_cutting_extra),         0*ai_box_width,  1)) #28-31
     # extrusion
-    plank_xz_top_shape = cnc_cut_outline.cnc_cut_outline(plank_xz_top_outline, 'plank_xz_top')
+    plank_xz_top_shape = cnc25d_api.cnc_cut_outline(plank_xz_top_outline, 'plank_xz_top')
     plank_xz_top_wire = Part.Wire(plank_xz_top_shape.Edges)
     plank_xz_top_face = Part.Face(plank_xz_top_wire)
     plank_xz_top_solid = plank_xz_top_face.extrude(Base.Vector(0,0,ai_plank_height)) # straight linear extrusion
@@ -417,27 +420,27 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     plank_xz_bottom_outline = []
     plank_xz_bottom_outline.append([0*ai_box_width, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius]) #0
     for i in range(nai_module_width):
-      plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra),              i*ai_box_width, 1)) #1-2
-      plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra),          (i+1)*ai_box_width,-1))
+      plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra),              i*ai_box_width, 1)) #1-2
+      plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra),          (i+1)*ai_box_width,-1))
     plank_xz_bottom_outline.append([nai_module_width*ai_box_width, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
-    plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_bot_xz_with_yz(nai_cutting_extra),          nai_module_width*ai_box_width, -1))
+    plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_bot_xz_with_yz(nai_cutting_extra),          nai_module_width*ai_box_width, -1))
     plank_xz_bottom_outline.append([nai_module_width*ai_box_width, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
-    plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),             nai_module_width*ai_box_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-    plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  nai_module_width*ai_box_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
+    plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),             nai_module_width*ai_box_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
+    plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  nai_module_width*ai_box_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     for i in range(nai_module_width-1):
-      plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (nai_module_width-i-1)*ai_box_width-1.0/2*ai_v_plank_width,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-      plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_middle_zx(nai_cutting_extra),      (nai_module_width-i-1)*ai_box_width, 1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-      plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (nai_module_width-i-1)*ai_box_width+1.0/2*ai_v_plank_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-    plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  0*ai_box_width,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-    plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),             0*ai_box_width,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
+      plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (nai_module_width-i-1)*ai_box_width-1.0/2*ai_v_plank_width,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
+      plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_middle_zx(nai_cutting_extra),      (nai_module_width-i-1)*ai_box_width, 1, 1*(ai_h_plank_width+ai_fitting_height), -1))
+      plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  (nai_module_width-i-1)*ai_box_width+1.0/2*ai_v_plank_width, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
+    plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),  0*ai_box_width,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
+    plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),             0*ai_box_width,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     plank_xz_bottom_outline.append([0*ai_box_width, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
-    plank_xz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_bot_xz_with_yz(nai_cutting_extra),          0*ai_box_width,  1))
+    plank_xz_bottom_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_bot_xz_with_yz(nai_cutting_extra),          0*ai_box_width,  1))
     # extrusion
-    #plank_xz_bottom_shape = cnc_cut_outline.cnc_cut_outline(plank_xz_bottom_outline, 'plank_xz_bottom')
+    #plank_xz_bottom_shape = cnc25d_api.cnc_cut_outline(plank_xz_bottom_outline, 'plank_xz_bottom')
     #plank_xz_bottom_wire = Part.Wire(plank_xz_bottom_shape.Edges)
     #plank_xz_bottom_face = Part.Face(plank_xz_bottom_wire)
     #plank_xz_bottom_face = Part.Face(Part.Wire(plank_xz_bottom_shape.Edges))
-    plank_xz_bottom_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_xz_bottom_outline, 'plank_xz_bottom').Edges))
+    plank_xz_bottom_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(plank_xz_bottom_outline, 'plank_xz_bottom').Edges))
     plank_xz_bottom_solid = plank_xz_bottom_face.extrude(Base.Vector(0,0,ai_plank_height)) # straight linear extrusion
     #print("dbg601: ai_h_plank_width+ai_fitting_height-hdy-ai_diagonal_lining_bottom_height:", ai_h_plank_width, ai_fitting_height, hdy, ai_diagonal_lining_bottom_height)
     plank_xz_bottom_solid = plank_xz_bottom_solid.cut(plank_xz_bottom_hole(nai_module_width, nai_cutting_extra))
@@ -451,19 +454,19 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     # plank_yz_top_outline
     plank_yz_top_outline = []
     plank_yz_top_outline.append([0*ai_box_depth+1*ai_plank_height, 0*ai_h_plank_width, 0*ai_router_bit_radius]) #0
-    plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),            0*ai_box_depth+1*ai_plank_height, 1)) #1-4
-    plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), 0*ai_box_depth+1*ai_plank_height, 1)) #5-8
-    plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), 1*ai_box_depth-1*ai_plank_height, -1)) #9-12
-    plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),            1*ai_box_depth-1*ai_plank_height, -1)) #13-16
+    plank_yz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),            0*ai_box_depth+1*ai_plank_height, 1)) #1-4
+    plank_yz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), 0*ai_box_depth+1*ai_plank_height, 1)) #5-8
+    plank_yz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra), 1*ai_box_depth-1*ai_plank_height, -1)) #9-12
+    plank_yz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_with_zx(nai_cutting_extra),            1*ai_box_depth-1*ai_plank_height, -1)) #13-16
     plank_yz_top_outline.append([1*ai_box_depth-1*ai_plank_height, 0*ai_plank_height, 0*ai_router_bit_radius]) #17
-    plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_top_yz_with_xz(nai_cutting_extra),            1*ai_box_depth, -1)) #18-21
+    plank_yz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_top_yz_with_xz(nai_cutting_extra),            1*ai_box_depth, -1)) #18-21
     plank_yz_top_outline.append([1*ai_box_depth-1*ai_plank_height, 1*ai_h_plank_width, 0*ai_router_bit_radius]) #22
-    plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1], 1*ai_box_depth, -1, ai_h_plank_width, 1)) #23-24
-    plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1], 0*ai_box_depth,  1, ai_h_plank_width, 1)) #25-26
+    plank_yz_top_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1], 1*ai_box_depth, -1, ai_h_plank_width, 1)) #23-24
+    plank_yz_top_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_fitting(nai_cutting_extra)[::-1], 0*ai_box_depth,  1, ai_h_plank_width, 1)) #25-26
     plank_yz_top_outline.append([0*ai_box_depth+1*ai_plank_height, 1*ai_h_plank_width, 0*ai_router_bit_radius]) #27
-    plank_yz_top_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_top_yz_with_xz(nai_cutting_extra),            0*ai_box_depth,  1)) #28-31
+    plank_yz_top_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_top_yz_with_xz(nai_cutting_extra),            0*ai_box_depth,  1)) #28-31
     # extrusion
-    plank_yz_top_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_yz_top_outline, 'plank_yz_top').Edges))
+    plank_yz_top_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(plank_yz_top_outline, 'plank_yz_top').Edges))
     plank_yz_top_solid = plank_yz_top_face.extrude(Base.Vector(0,0,ai_plank_height)) # straight linear extrusion
     plank_yz_top_solid = plank_yz_top_solid.cut(plank_yz_top_hole(1, nai_cutting_extra))
     return(plank_yz_top_solid)
@@ -475,23 +478,23 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     # plank_yz_bottom_outline
     plank_yz_bottom_outline = []
     plank_yz_bottom_outline.append([0*ai_box_depth+1*ai_plank_height, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius]) #0
-    plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra), 0*ai_box_depth, 1)) #1-2
-    plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra), 1*ai_box_depth,-1))
+    plank_yz_bottom_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra), 0*ai_box_depth, 1)) #1-2
+    plank_yz_bottom_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_xz_fitting(nai_cutting_extra), 1*ai_box_depth,-1))
     plank_yz_bottom_outline.append([1*ai_box_depth-1*ai_plank_height, 0*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
-    plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_bot_yz_with_xz(nai_cutting_extra),  1*ai_box_depth, -1))
+    plank_yz_bottom_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_bot_yz_with_xz(nai_cutting_extra),  1*ai_box_depth, -1))
     plank_yz_bottom_outline.append([1*ai_box_depth-1*ai_plank_height, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
-    plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),
+    plank_yz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),
       1*ai_box_depth-1*ai_plank_height, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-    plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),
+    plank_yz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),
       1*ai_box_depth-1*ai_plank_height, -1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-    plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),
+    plank_yz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_wall_diagonal(nai_cutting_extra),
       0*ai_box_depth+1*ai_plank_height,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
-    plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),
+    plank_yz_bottom_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_xz_with_zx(nai_cutting_extra),
       0*ai_box_depth+1*ai_plank_height,  1, 1*(ai_h_plank_width+ai_fitting_height), -1))
     plank_yz_bottom_outline.append([0*ai_box_depth+1*ai_plank_height, 1*(ai_h_plank_width+ai_fitting_height), 0*ai_router_bit_radius])
-    plank_yz_bottom_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_bot_yz_with_xz(nai_cutting_extra),  0*ai_box_depth,  1))
+    plank_yz_bottom_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_bot_yz_with_xz(nai_cutting_extra),  0*ai_box_depth,  1))
     # extrusion
-    plank_yz_bottom_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_yz_bottom_outline, 'plank_yz_bottom').Edges))
+    plank_yz_bottom_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(plank_yz_bottom_outline, 'plank_yz_bottom').Edges))
     plank_yz_bottom_solid = plank_yz_bottom_face.extrude(Base.Vector(0,0,ai_plank_height)) # straight linear extrusion
     #plank_xz_bottom_hole_solid.translate(Base.Vector(0,ai_h_plank_width+ai_fitting_height-hdy-ai_diagonal_lining_bottom_height,0))
     plank_yz_bottom_solid = plank_yz_bottom_solid.cut(plank_yz_bottom_hole(1, nai_cutting_extra))
@@ -506,12 +509,12 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     #plank_z_side_length = ai_box_height - 2*ai_h_plank_width - ai_fitting_height + 2*ai_crenel_depth
     plank_z_side_length = plank_z_length
     plank_z_side_outline = []
-    plank_z_side_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_z_side_with_xz(nai_cutting_extra), 0*plank_z_side_length, 1))
-    plank_z_side_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_z_side_with_xz(nai_cutting_extra), 1*plank_z_side_length,-1))
-    plank_z_side_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_z_with_wall_diagonal(nai_cutting_extra), 1*plank_z_side_length,-1))
-    plank_z_side_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_z_with_wall_diagonal(nai_cutting_extra), 0*plank_z_side_length, 1))
+    plank_z_side_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_z_side_with_xz(nai_cutting_extra), 0*plank_z_side_length, 1))
+    plank_z_side_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_z_side_with_xz(nai_cutting_extra), 1*plank_z_side_length,-1))
+    plank_z_side_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_z_with_wall_diagonal(nai_cutting_extra), 1*plank_z_side_length,-1))
+    plank_z_side_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_z_with_wall_diagonal(nai_cutting_extra), 0*plank_z_side_length, 1))
     # extrusion
-    plank_z_side_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_z_side_outline, 'plank_z_side').Edges))
+    plank_z_side_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(plank_z_side_outline, 'plank_z_side').Edges))
     plank_z_side_solid = plank_z_side_face.extrude(Base.Vector(0,0,ai_plank_height))
     return(plank_z_side_solid)
   #Part.show(plank_z_side(0))
@@ -522,9 +525,9 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     #plank_wall_diagonal_length = (ai_wall_diagonal_size+2*ai_crenel_depth)*math.sqrt(2)+2*(ai_d_plank_width-ai_crenel_depth*math.sqrt(2)/2)
     #print("dbg825: plank_wall_diagonal_length:", plank_wall_diagonal_length)
     plank_wall_diagonal_outline = []
-    plank_wall_diagonal_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_wall_diagonal(nai_cutting_extra), 1*plank_wall_diagonal_length, -1))
-    plank_wall_diagonal_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_wall_diagonal(nai_cutting_extra), 0*plank_wall_diagonal_length,  1))
-    plank_wall_diagonal_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_wall_diagonal_outline, 'plank_wall_diagonal').Edges))
+    plank_wall_diagonal_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_wall_diagonal(nai_cutting_extra), 1*plank_wall_diagonal_length, -1))
+    plank_wall_diagonal_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_wall_diagonal(nai_cutting_extra), 0*plank_wall_diagonal_length,  1))
+    plank_wall_diagonal_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(plank_wall_diagonal_outline, 'plank_wall_diagonal').Edges))
     plank_wall_diagonal_solid = plank_wall_diagonal_face.extrude(Base.Vector(0,0,ai_d_plank_height))
     return(plank_wall_diagonal_solid)
   #Part.show(plank_wall_diagonal(0))
@@ -542,9 +545,9 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """
     #plank_tobo_diagonal_length = ai_tobo_diagonal_size*math.sqrt(2)+2*ai_d_plank_width+0*cai_tobo_diag_depth*math.sqrt(2)/2
     plank_tobo_diagonal_outline = []
-    plank_tobo_diagonal_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_tobo_diagonal(nai_cutting_extra), 1*plank_tobo_diagonal_length, -1))
-    plank_tobo_diagonal_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_tobo_diagonal(nai_cutting_extra), 0*plank_tobo_diagonal_length,  1))
-    plank_tobo_diagonal_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_tobo_diagonal_outline, 'plank_tobo_diagonal').Edges))
+    plank_tobo_diagonal_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_tobo_diagonal(nai_cutting_extra), 1*plank_tobo_diagonal_length, -1))
+    plank_tobo_diagonal_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_tobo_diagonal(nai_cutting_extra), 0*plank_tobo_diagonal_length,  1))
+    plank_tobo_diagonal_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(plank_tobo_diagonal_outline, 'plank_tobo_diagonal').Edges))
     plank_tobo_diagonal_solid = plank_tobo_diagonal_face.extrude(Base.Vector(0,0,ai_d_plank_height))
     return(plank_tobo_diagonal_solid)
   #Part.show(plank_tobo_diagonal(0))
@@ -563,13 +566,13 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     #plank_z_side_length = ai_box_height - 2*ai_h_plank_width - ai_fitting_height + 2*ai_crenel_depth
     plank_z_side_length = plank_z_length
     plank_zx_middle_outline = []
-    plank_zx_middle_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_zx_with_wall_diagonal(nai_cutting_extra), 0*plank_z_side_length, 1, 0*ai_v_plank_width, 1))
-    plank_zx_middle_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_zx_with_wall_diagonal(nai_cutting_extra), 1*plank_z_side_length,-1, 0*ai_v_plank_width, 1))
-    plank_zx_middle_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_zx_with_xz(nai_cutting_extra), 1*plank_z_side_length,-1))
-    plank_zx_middle_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_zx_with_wall_diagonal(nai_cutting_extra), 1*plank_z_side_length,-1, 1*ai_v_plank_width, -1))
-    plank_zx_middle_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_plank_zx_with_wall_diagonal(nai_cutting_extra), 0*plank_z_side_length, 1, 1*ai_v_plank_width, -1))
-    plank_zx_middle_outline.extend(cnc_cut_outline.outline_shift_x(jonction_plank_zx_with_xz(nai_cutting_extra), 0*plank_z_side_length, 1))
-    plank_zx_middle_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_zx_middle_outline, 'plank_zx_middle').Edges))
+    plank_zx_middle_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_zx_with_wall_diagonal(nai_cutting_extra), 0*plank_z_side_length, 1, 0*ai_v_plank_width, 1))
+    plank_zx_middle_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_zx_with_wall_diagonal(nai_cutting_extra), 1*plank_z_side_length,-1, 0*ai_v_plank_width, 1))
+    plank_zx_middle_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_zx_with_xz(nai_cutting_extra), 1*plank_z_side_length,-1))
+    plank_zx_middle_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_zx_with_wall_diagonal(nai_cutting_extra), 1*plank_z_side_length,-1, 1*ai_v_plank_width, -1))
+    plank_zx_middle_outline.extend(cnc25d_api.outline_shift_xy(jonction_plank_zx_with_wall_diagonal(nai_cutting_extra), 0*plank_z_side_length, 1, 1*ai_v_plank_width, -1))
+    plank_zx_middle_outline.extend(cnc25d_api.outline_shift_x(jonction_plank_zx_with_xz(nai_cutting_extra), 0*plank_z_side_length, 1))
+    plank_zx_middle_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(plank_zx_middle_outline, 'plank_zx_middle').Edges))
     plank_zx_middle_solid = plank_zx_middle_face.extrude(Base.Vector(0,0,ai_plank_height))
     return(plank_zx_middle_solid)
   #Part.show(plank_zx_middle(0))
@@ -585,7 +588,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     plank_hole_cover_outline.append([1*hdx, 0*hdy, 0])
     plank_hole_cover_outline.append([1*hdx, 1*hdy, 0])
     plank_hole_cover_outline.append([0*hdx, 1*hdy, 0])
-    plank_hole_cover_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(plank_hole_cover_outline, 'plank_hole_cover').Edges))
+    plank_hole_cover_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(plank_hole_cover_outline, 'plank_hole_cover').Edges))
     r_plank_hole_cover_solid = plank_hole_cover_face.extrude(Base.Vector(0,0,hdz))
     return(r_plank_hole_cover_solid)
   #Part.show(plank_hole_cover(0))
@@ -605,7 +608,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     slab_top_bottom_outline.append([1*slab_length-1*nai_cutting_extra, 0*slab_width+1*nai_cutting_extra, 0])
     slab_top_bottom_outline.append([1*slab_length-1*nai_cutting_extra, 1*slab_width-1*nai_cutting_extra, 0])
     slab_top_bottom_outline.append([0*slab_length+1*nai_cutting_extra, 1*slab_width-1*nai_cutting_extra, 0])
-    slab_top_bottom_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(slab_top_bottom_outline, 'slab_top_bottom').Edges))
+    slab_top_bottom_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(slab_top_bottom_outline, 'slab_top_bottom').Edges))
     r_slab_top_bottom_solid = slab_top_bottom_face.extrude(Base.Vector(0,0,slab_top_bottom_height))
     return(r_slab_top_bottom_solid)
   #Part.show(slab_top_bottom('single',0))
@@ -624,18 +627,18 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
       slab_width = slab_side_rear_middle_width
     slab_side_outline = []
     slab_side_outline.append([0*slab_length+1*nai_cutting_extra, 0*slab_width+1*nai_cutting_extra, 0])
-    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 0*slab_length, 1, 0*slab_width, 1))
-    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 1*slab_length,-1, 0*slab_width, 1))
+    slab_side_outline.extend(cnc25d_api.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 0*slab_length, 1, 0*slab_width, 1))
+    slab_side_outline.extend(cnc25d_api.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 1*slab_length,-1, 0*slab_width, 1))
     slab_side_outline.append([1*slab_length-1*nai_cutting_extra, 0*slab_width+1*nai_cutting_extra, 0])
-    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 1*slab_length,-1, 0*slab_width, 1))
-    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 1*slab_length,-1, 1*slab_width,-1))
+    slab_side_outline.extend(cnc25d_api.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 1*slab_length,-1, 0*slab_width, 1))
+    slab_side_outline.extend(cnc25d_api.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 1*slab_length,-1, 1*slab_width,-1))
     slab_side_outline.append([1*slab_length-1*nai_cutting_extra, 1*slab_width-1*nai_cutting_extra, 0])
-    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 1*slab_length, -1, 1*slab_width,-1))
-    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 0*slab_length,  1, 1*slab_width,-1))
+    slab_side_outline.extend(cnc25d_api.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 1*slab_length, -1, 1*slab_width,-1))
+    slab_side_outline.extend(cnc25d_api.outline_shift_xy(jonction_slab_side_with_wall_diagonal_horizontal(nai_cutting_extra), 0*slab_length,  1, 1*slab_width,-1))
     slab_side_outline.append([0*slab_length+1*nai_cutting_extra, 1*slab_width-1*nai_cutting_extra, 0])
-    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 0*slab_length, 1, 1*slab_width,-1))
-    slab_side_outline.extend(cnc_cut_outline.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 0*slab_length, 1, 0*slab_width, 1))
-    slab_side_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(slab_side_outline, 'slab_side').Edges))
+    slab_side_outline.extend(cnc25d_api.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 0*slab_length, 1, 1*slab_width,-1))
+    slab_side_outline.extend(cnc25d_api.outline_shift_xy(jonction_slab_side_with_wall_diagonal_vertical(nai_cutting_extra), 0*slab_length, 1, 0*slab_width, 1))
+    slab_side_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(slab_side_outline, 'slab_side').Edges))
     r_slab_side_solid = slab_side_face.extrude(Base.Vector(0,0,ai_slab_thickness))
     return(r_slab_side_solid)
   #Part.show(slab_side('left_right', 0))
@@ -653,7 +656,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     slab_front_outline.append([-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+1*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 1*ai_router_bit_radius])
     slab_front_outline.append([-1*ai_crenel_depth+0*nai_cutting_extra, ai_wall_diagonal_size+1*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)+0*nai_cutting_extra, 1*ai_router_bit_radius])
     slab_front_outline.append([ 0*ai_crenel_depth+1*nai_cutting_extra, ai_wall_diagonal_size+0*ai_crenel_depth+0*ai_d_plank_width*math.sqrt(2)-1*nai_cutting_extra, -1*ai_router_bit_radius])
-    slab_front_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(slab_front_outline, 'slab_front').Edges))
+    slab_front_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(slab_front_outline, 'slab_front').Edges))
     r_slab_front_solid = slab_front_face.extrude(Base.Vector(0,0,ai_slab_thickness))
     return(r_slab_front_solid)
   #Part.show(slab_front(0))
@@ -709,7 +712,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     """ Wrapper function to place any planks in a cuboid construction
     """
     l_plank_desc = plank_description(nai_module_width)
-    r_placed_plank = cnc_cut_outline.place_plank(plank_generic(nai_plank_name, nai_module_width, nai_cutting_extra),
+    r_placed_plank = cnc25d_api.place_plank(plank_generic(nai_plank_name, nai_module_width, nai_cutting_extra),
       l_plank_desc[nai_plank_name][0], l_plank_desc[nai_plank_name][1], l_plank_desc[nai_plank_name][2],
       ai_flip, ai_orientation, ai_position_x, ai_position_y, ai_position_z)
     return(r_placed_plank)
@@ -1336,7 +1339,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
     l_file_name = "{:s}bwf{:02d}_{:s}".format(ai_output_basename, l_file_idx, ai_file_basename2)
     l_file_description = "{:s}. DXF format (2D).".format(ai_file_description)
     l_file_path = fg_file_path(ai_output_dir, l_file_name) 
-    export_2d.export_to_dxf(ai_solid, Base.Vector(0,0,1), 1.0, l_file_path) # slice the plank in the XY plan at a height of 1.0
+    cnc25d_api.export_to_dxf(ai_solid, Base.Vector(0,0,1), 1.0, l_file_path) # slice the plank in the XY plan at a height of 1.0
     l_text_report = ai_text_report + fg_text_report(l_file_idx, l_file_name, l_file_description, os.path.getsize(l_file_path))
     r_fg = (l_file_idx, l_text_report)
     return(r_fg)
@@ -1346,7 +1349,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
     l_file_name = "{:s}bwf{:02d}_{:s}".format(ai_output_basename, l_file_idx, ai_file_basename2)
     l_file_description = "{:s}. SVG format (2D).".format(ai_file_description)
     l_file_path = fg_file_path(ai_output_dir, l_file_name) 
-    export_2d.export_to_svg(ai_solid, Base.Vector(0,0,1), 1.0, l_file_path) # slice the plank in the XY plan at a height of 1.0
+    cnc25d_api.export_to_svg(ai_solid, Base.Vector(0,0,1), 1.0, l_file_path) # slice the plank in the XY plan at a height of 1.0
     l_text_report = ai_text_report + fg_text_report(l_file_idx, l_file_name, l_file_description, os.path.getsize(l_file_path))
     r_fg = (l_file_idx, l_text_report)
     return(r_fg)
@@ -1388,7 +1391,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
                         ai_box_width-(ai_plank_height+lepsilon),
                         ai_box_width-(ai_plank_height-lepsilon),
                         ai_box_width-lepsilon]
-    export_2d.export_xyz_to_dxf(ai_solid, ai_module_width*ai_box_width, ai_box_depth, ai_box_height, l_xy_slice_list, l_xz_slice_list, l_yz_slice_list, l_file_path)
+    cnc25d_api.export_xyz_to_dxf(ai_solid, ai_module_width*ai_box_width, ai_box_depth, ai_box_height, l_xy_slice_list, l_xz_slice_list, l_yz_slice_list, l_file_path)
     l_text_report = ai_text_report + fg_text_report(l_file_idx, l_file_name, l_file_description, os.path.getsize(l_file_path))
     r_fg = (l_file_idx, l_text_report)
     return(r_fg)
@@ -1552,7 +1555,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
   return(r_bwf)
 
 ################################################################
-# functions for the main
+# box_wood_frame command line interface
 ################################################################
 
 def box_wood_frame_cli():

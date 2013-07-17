@@ -16,8 +16,8 @@ The function return the gear-wheel as FreeCAD Part object.
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import importing_freecad
-importing_freecad.importing_freecad()
+import cnc25d_api
+cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 #FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
@@ -30,9 +30,6 @@ import math
 import sys, argparse
 from datetime import datetime
 import os, errno
-#
-import cnc_cut_outline
-import export_2d
 #
 import Part
 from FreeCAD import Base
@@ -316,7 +313,7 @@ def gearwheel_self_test():
   return(r_gwst)
 
 ################################################################
-# command line interface
+# gearwheel command line interface
 ################################################################
 
 def gearwheel_cli():
