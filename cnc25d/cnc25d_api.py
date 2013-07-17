@@ -44,3 +44,13 @@ export_to_svg = export_2d.export_to_svg
 export_xyz_to_dxf = export_2d.export_xyz_to_dxf
 
 
+################################################################
+# function combinations
+################################################################
+
+def cnc_cut_outline_fc(*args, **kwargs):
+  """ Associate cnc_cut_outline() with outline_arc_line() in mode freecad
+  """
+  return(outline_arc_line(cnc_cut_outline(*args, **kwargs), 'freecad'))
+
+
