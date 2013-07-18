@@ -180,6 +180,30 @@
     
       
     
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
   
   
   
@@ -192,6 +216,7 @@
     
   
   
+    
     
     
     wood_frame.svg    
@@ -601,7 +626,7 @@
     
     
     
-    tobo_diag_depth*cos(pi/4)(default = plank_height/2-0.5)    
+    tobo_diag_depth*cos(pi/4)    
     
     tobo_diagonal_size/cos(pi/4) + 2*d_plank_width    
     
@@ -670,9 +695,9 @@
     diagonal_lining_top_height    
     diagonal_lining_top_height    
     diagonal_lining_top_height    
-        (d_plank_width/cos(pi/4)-tobo_diag_depth, d_plank_height)    
+        (d_plank_width/cos(pi/4)-(1+1.5)*tobo_diag_depth, d_plank_height)    
     
-    (d_plank_width/cos(pi/4)-tobo_diag_depth, d_plank_height)    
+    (d_plank_width/cos(pi/4)-(1+1.5)*tobo_diag_depth, d_plank_height)    
     
     
     diagonal_lining_bottom_height    
@@ -716,7 +741,195 @@
     Plank05_z_side outline    
     Plank07_wall_diagonal outline    
     Plank06_zx_middle outline    
-    Planl08_tobo_diagonal outline    
+    Plank08_tobo_diagonal outline    
     Plank09_hole_cover outline    
     
-    Plank07_wall_diagonal reorientation    Planl08_tobo_diagonal reorientation  
+    Plank07_wall_diagonal reorientation    Plank08_tobo_diagonal reorientation    
+    
+    
+    
+    tobo_diagonal_size/cos(pi/4)    
+    
+    
+    
+    
+    
+    
+    
+    
+    tobo_diag_depth*cos(pi/4)(default = plank_height/2-0.5)    
+    
+    tobo_diagonal_size/cos(pi/4) + 2*d_plank_width    
+    
+    
+    d_plank_width    
+    
+    
+    
+    
+    
+    
+    
+    Plank08_tobo_diagonal outline    old version before 2013/06/07    
+    
+    
+    
+    
+    
+    
+    
+    tobo_diag_depth (default = plank_height/2-0.5)    
+    
+    
+    
+    d_plank_width/cos(pi/4)    
+    1.5*tobo_diag_depth*cos(pi/4)    slab51_top_bottom outline    
+    
+    
+    box_width - 2*plank_height    box_depth - 2*plank_height    
+    51. Slab51_top_bottomQ=2*N    
+    
+    
+    
+    
+    
+    
+    
+    
+    slab54_side_left_right outline    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    box_height-2*plank_h_width-fitting_height    box_depth-2*(plank_height+plank_v_width)        wall_diagonal_size    crenel_depth    plank_d_width/cos(pi/4)-crenel_depth    slab55_side_rear outline    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    box_height-2*plank_h_width-fitting_height    box_width-2*plank_v_width    wall_diagonal_size    crenel_depth    plank_d_width/cos(pi/4)-crenel_depth    slab58_front outline    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    wall_diagonal_size    crenel_depth    plank_d_width/cos(pi/4)-crenel_depth    54. slab54_sideQ=2    55. 56. 57. Slab55_rearQ=N    58. Slab58_frontQ=4*N    types:- single- side- middle    types:- left_right- rear_single- rear_side- rear_middle    types:- rear_single- rear_side- rear_middle    types:- left_right- rear_single- rear_side- rear_middle    
+    
+    
+    
+    
+    tobo_diagonal_size/cos(pi/4)    
+    
+    
+    
+    
+    
+    
+    
+    
+    tobo_diag_depth*cos(pi/4)    
+    
+    tobo_diagonal_size/cos(pi/4) + 2*d_plank_width    
+    
+    
+    d_plank_width    
+    
+    
+    
+    
+    
+    
+    
+    Plank08_tobo_diagonal outline    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    tobo_diag_depth (default = plank_height/2-0.5)    
+    
+    
+    
+    d_plank_width/cos(pi/4)    
+    
+    
+    
+    2*tobo_diag_depth*cos(pi/4)    
+    old version before 2013/06/22    
+    
+  

@@ -1,0 +1,330 @@
+
+  
+  
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+  
+  
+    
+      
+        image/svg+xml
+        
+        
+      
+    
+  
+  
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    
+    
+    gearwheel_conception.svg    This Cnc25D design example must generate gear-wheel as script or as FreeCAD macro and outputs SVG, DXF, STL and FreeCAD rendering.    1. Input parameters:    1.1. gear parameters        1.2. axe parameters    1.4. wheel hollow parameters    1.3. portion parameter    1.5. split parameter    1.8. position parameters    
+    gengeras.py command line explanation    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    primitive    base    
+    
+    
+    addendum    
+    
+    dedendum    
+    
+    gear hollow    
+    
+    tooth_height    
+    
+    
+    addendum_dedendum_parity    
+    
+    
+    
+    type:    
+    
+    extern-extern    
+    
+    intern-extern    
+    intern-extern    
+    
+    cremailliere-extern    extern-cremailliere    
+    
+    gear definition:    - tooth_number- module- gear router_bit diameter    positioning:    
+    
+    
+    
+    
+    
+    gear_initial_angle    
+    - position_x- position_y    cut_a    
+    cut_b    
+    
+    position_second_gear    
+    X-axis    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    position_additional_axe_length    
+    
+    
+    force_angle    
+    axe type:    axe router_bit diameter    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+      
+    
+    
+    
+      
+    
+    
+    None    cylindricalaxe_diameter    squareaxe_widthaxe_height    Torque transmission with mis-aligned axes    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    gear_initial_angle(from gear parameters)    
+    effective tooth number    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    - wheel hollow internal diameter- wheel hollow external diameter- leg number- leg width- wheel hollow router_bit diameter    
+      
+    
+    
+    
+    
+    
+    
+    
+    
+    Split the gear-wheel in two series of N parts.    
+      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    x4    
+    
+    
+    
+    x4    - position_x- position_y- gear_initial_angle (already defined in gear parameters)        Additional holes for centering parts?    
+    
+    
+    skin_thickness    
+    1.6. centering holes for extern gearwheel split parts    
+      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    - hole1_diameter- hole1_position_radius- hole1_position_angle_offset- hole1_number- hole2_diameter- hole2_position_radius- hole2_position_angle_offset- hole2_number    1.7. centering holes for internal gearwheel split parts    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    - hole3_diameter- hole3_position_radius- hole3_position_angle_offset- hole3_number- holder_diameter- holder_position_radius- holder_position_angle_offset- holder_number- holder_inter_axe_length- holder_skin_thickness_radius- holder_crenel_width- holder_crenel_depth  

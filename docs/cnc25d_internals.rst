@@ -49,18 +49,41 @@ Cnc25D Internals
 ============================
 The binary script *cnc25d_example_generator.py* just writes example scripts. These example scripts are actually the files *cnc25d/tests/cnc25d_api_macro.py* and *cnc25d/tests/box_wood_frame_macro.py*. To check these example scripts, you must run their wrapper *scripts cnc25d/tests/cnc25d_api_test.py* and *cnc25d/tests/box_wood_frame_test.py*.
 
-Because of the Python package workflow, the example scripts can not be copied after the installation and must be embedded in the binary script *cnc25d_example_generator.py* before the creation of the Python package distribution. This is the purpose of the script *scr/micropreprocessor.py*. The file *cnc25d_example_generator_src.py* contains the skeleton of the binary script *cnc25d_example_generator.py*. The following command include the example scripts to generate the final  binary script *cnc25d_example_generator.py*::
+Because of the Python package workflow, the example scripts can not be copied after the installation and must be embedded in the binary script *cnc25d_example_generator.py* before the creation of the Python package distribution. This is the purpose of the script *scr/micropreprocessor.py*. The file *bin/cnc25d_example_generator_src.py* contains the skeleton of the script *bin/cnc25d_example_generator.py*. The following command include the example scripts to generate the final script *bin/cnc25d_example_generator.py*::
 
   > scr/micropreprocessor.py bin/cnc25d_example_generator_src.py
 
 The purpose of this workflow is to help the maintenance of the generated example scripts and avoid bugs in their content.
 
+To create a new design example, follow those steps:
+
+- Create the new design example file in the directory *Cnc25D/cnc25d/tests/* with a file name such as *my_new_design_macro.py*
+- Create a wrapper script (eg: *my_new_design_test.py*) in the same directory that imports the cnc25d package to let run the script *my_new_design_macro.py*
+- Add the few lines in the file *Cnc25D/bin/cnc25d_example_generator_src.py* that includes the new script *Cnc25D/cnc25d/tests/my_new_design_macro.py*
+- Regenerate *Cnc25D/bin/cnc25d_example_generator.py* with the command *scr/micropreprocessor.py bin/cnc25d_example_generator_src.py*
 
 3. Python package distribution release
 ======================================
 
-4. Documentation recommendations
-================================
+4. Documentation process
+========================
+
+*SVG* files are edited with Inkscape_ and are use as draft documents for pictures and texts. If you want to modify one of the *PNG* of the documentation, you can find the vectorial source in one of the *SVG* files. After modifying the *SVG*, save it and export the picture as *PNG* in the directory *docs/images/*.
+
+A good practice is to use a *SVG* document with a width of 600 pixels. It helps creating not too large pictures for a nice fitting in *html* and *pdf* documents. Extend the height of the *SVG* document as much as you need it. 
+
+Texts can be extracted from the *SVG* files with the command::
+
+  > scr/svg2txt.py docs/*.svg
+
+The generated *txt* files are used for checking spelling and are raw material for the *reStructuredText* files.
+
+The sources of the Sphinx_ documentation are the *reStructuredText* files (*.rst) and the *PNG* files (*.png).
+
+.. image:: images/documentation_process.png
+
+.. _Inkscape : http://inkscape.org/
+.. _Sphinx : http://sphinx-doc.org/
 
 5. Design example recommendations
 =================================

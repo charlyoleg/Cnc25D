@@ -370,8 +370,11 @@ def outline_arc_line(ai_segments, ai_backend):
       a segment starts from the last point of the previous segment.
       a line is defined by a list of two floats [x-end, y-end]
       an arc is defined by a list of four floats [x-mid, y-mid, x-end, y-end]
-      The first element of ai_segments is the starting point, a list of two floats [x-start, y-start]
+      The first element of ai_segments is the starting point, i.e. a list of two floats [x-start, y-start]
       If the last point [x-end, y-end] of the last segment is equal to [x-start, y-start] the outline is closed.
+      ai_segments can be made with lists or tuples or a mix of both.
+      From a programming point of view, ai_segments is a tuple of 2-tulpes and/or 4-tuples.
+      eg: ai_segments = [ [x1,y1], .. [x2,y2], .. [x3,y3,x4,y4], .. ]
   """
   r_outline = ''
   #print("dbg204: len(ai_segments):", len(ai_segments))

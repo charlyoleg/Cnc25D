@@ -1,0 +1,162 @@
+
+  
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+  
+  
+  
+    
+      
+        image/svg+xml
+        
+        
+      
+    
+  
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    cnc25d_architecture.svg    display_backend.py    outline_backends.py    cnc_cut_outline.py    box_wood frame.py    gearwheel.py    export_2d.py    importing_freecad.py    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    matplotlib    Tkinter    freecad    dxfwrite    svgwrite    
+    
+    
+    
+    
+    design examples    cnc25d api    cnc25d api sub modules    external packages    
+    outline_backends api:outline_arc_line(ai_segments, ai_backend)outline_circle(ai_center, ai_radius, ai_backend)    ai_segments = [ # list or tuple[x1,y1], # create a new line[x2,y2, x3, y3] # create a new arc... ] # can be close or open    
+    ai_backend = 'freecad''svgwrite''dxfwrite''tkinter'    
+    
+    ai_center = (x1,y1)    float    
+    
+    cnc25d file dependency    positioning.py    
+    cnc25d_api.py    
+    
+    outline_backends    cnc_cut_outline    export_2d.py    positioning    Design workflow    wished outlines oflines and arcsand router_bitconstraints        outlines oflines and arcsfor cnc    
+    
+    
+    dxf, svg files    
+    
+    FreeCAD parts    FreeCADassembly     
+    
+    
+    stl, brep files    
+    Tkinter display    
+    
+    
+    cnc25d_api    design script    3D output    2D output  

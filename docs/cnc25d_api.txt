@@ -1,0 +1,265 @@
+
+  
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+    
+      
+    
+  
+  
+    
+  
+  
+    
+      
+        image/svg+xml
+        
+        
+      
+    
+  
+  
+    
+    cnc25d_api.svg    
+    inner angleunmillable by a 3-axis CNC        
+    
+    
+    smoothed inner angle    
+    enlarged inner angle    
+    
+    
+    replacement solutions    
+    Inner angle for 3-axis CNC    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    height    width    
+    
+    
+    Outline with repeated sub-sequences    
+    X    Y    
+    
+    
+    Object definition A    
+    X    Y    
+    
+    Object definition B    
+    
+    X    Y    
+    
+    Z-flip, object A    
+    X    Y    
+    
+    Z-flip, object B    
+    
+    
+    
+    Object definition and flip    x-size    y-size    x-size    x-size    x-size    y-size    y-size    y-size    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    x    y    z    
+    x    y    DXF content:    Object slicing:    
+    x    z    
+    y    z    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    router_bit_radius > 0    router_bit_radius < 0    input:    output:    cnc_cut_outline() transformations    
+    
+    
+    
+    
+    
+    
+    pi/4    
+    
+    
+    
+    
+    
+    
+    
+    
+    (1+sqrt(2))*R    
+    
+    
+    
+    wished corner transformation:    possible corner:    Alternative corner transformation    
+    
+    router_bit_radius = 0    
+    
+    
+  

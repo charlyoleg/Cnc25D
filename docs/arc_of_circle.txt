@@ -1,0 +1,73 @@
+
+  
+    
+      
+    
+    
+      
+    
+  
+  
+  
+    
+      
+        image/svg+xml
+        
+        
+      
+    
+  
+  
+    arc_of_circle.svg    
+    x    y    
+    
+    
+    
+    
+    
+    A    B    C    
+    A    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    I    M    N    Calculation of M and N:xM = (xA+xB)/2yM = (yA+yB)/2xN = (xB+xC)/2yN = (yB+yC)/2Calculation of the inclination of (AB) and (BC):cos(e)=(xB-xA)/sqrt((xB-xA)²+(yB-yA)²)sin(e)=(yB-yA)/sqrt((xB-xA)²+(yB-yA)²)cos(f)=(xC-xB)/sqrt((xC-xB)²+(yC-yB)²)sin(f)=(yC-yB)/sqrt((xC-xB)²+(yC-yB)²)g=e+pi/2cos(g) = -sin(e)sin(g) = cos(e)h=f+pi/2cos(h) = -sin(f)sin(h) = cos(f)(D1) equation:sin(g)*x - cos(g)*y - (sin(g)*xM-cos(g)*yM) = 0cos(e)*x + sin(e)*y - (cos(e)*xM+sin(e)*yM) = 0(D2) equation:sin(h)*x - cos(h)*y - (sin(h)*xN-cos(h)*yN) = 0cos(f)*x + sin(f)*y - (cos(f)*xN+sin(f)*yN) = 0Calculation of I:(cos(e)*sin(f)-cos(f)*sin(e))*x = sin(f)*(cos(e)*xM+sin(e)*yM)-sin(e)*(cos(f)*xN+sin(f)*yN)(sin(e)*cos(f)-sin(f)*cos(e))*y = cos(f)*(cos(e)*xM+sin(e)*yM)-cos(e)*(cos(f)*xN+sin(f)*yN)    Equation of a line:    Circumbscribed circle:    
+    
+    
+    i    unit circle    
+    
+    
+    sin(i)    cos(i)    
+    
+    
+    
+    B    (D) a line going through A and with an inclination i.The equation of (D) is:sin(i)*x - cos(i)*y - (sin(i)*xA-cos(i)*yA) = 0Demonstration:a*x+b*x+c=0 is the equation of a line(xA, yA) verifies the equation.B a point that verifies the equation.sin(i)*xB - cos(i)*yB - (sin(i)*xA-cos(i)*yA) = 0sin(i)*(xB-xA)-cos(i)*(yB-yA) = 0(yB-yA)/(xB-xA) = sin(i)/cos(i) = tan(i)i is the inclination of (AB).(AB) and (D) are the same line.    (D)        
+    
+    
+    e    f    
+    
+    
+    g    
+    h    (D1)    (D2)    
+    
+    
+    
+    
+    
+    
+    
+    A    B    C    
+    
+    
+    
+    
+    I    
+    Angles u, v and w:    
+    
+    
+    u    u = (Ix, IA)v = (Ix, IB)w = (Ix, IC)  

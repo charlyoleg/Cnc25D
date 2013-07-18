@@ -36,7 +36,8 @@ import sys, argparse
 ################################################################
 
 def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
-  """For each point of the list, add the x_offset and multiply by x_coefficient to the x coordinate
+  """ For each point of the list, add the x_offset and multiply by x_coefficient to the x coordinate
+      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
   """
   r_outline = []
   for p in ai_outline:
@@ -47,7 +48,8 @@ def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
   return(r_outline)
 
 def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
-  """For each point of the list, add the y_offset and multiply by y_coefficient to the y coordinate
+  """ For each point of the list, add the y_offset and multiply by y_coefficient to the y coordinate
+      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
   """
   r_outline = []
   for p in ai_outline:
@@ -57,7 +59,8 @@ def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
   return(r_outline)
 
 def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient):
-  """For each point of the list, add the offset and multiply by coefficient the coordinates
+  """ For each point of the list, add the offset and multiply by coefficient the coordinates
+      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
   """
   r_outline = []
   for p in ai_outline:
@@ -66,36 +69,45 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
     r_outline.reverse()
   return(r_outline)
 
-def cnc_cut_outline(ai_corner_list, ai_error_msg_id):
+def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   """
-  This function converts a list of points into a FreeCAD closed wire shape that can be extruded afterward.
-  For each input point, you must provide its (X,Y) coordinate and the router_bit radius R.
+  This function converts a list of segments (lines and arcs) into a list of segments (lines and arcs) compatible with a CNC cut.
+  For each input segment, you must provide:
+  - the end point (X,Y) for a line 
+      or a middle point (X,Y) and the end point (X,Y) for an arc 
+  - and the router_bit radius R.
+  The start point of a line or an arc is the last point of the previous segment
   If R=0, the point is an angular corner.
   If R>0, the point is smoothed to fit the constraints of a router_bit radius R.
   If R<0, the point is enlarged to fit the constraints of a router_bit radius R.
+  eg: ai_segment_list = [ [x1,y1,r1], .. [x2,y2,r2], .. [x3,y3,x4,y4,r4], .. ]
+  you can use equally lists or tuples for segment description or segment_list description.
+  If the last point of the last segment is equal to the first point of the first segment, the outline is closed. Otherwise the outline is open.
+  From a programming point of view, ai_segment_list is a tuple of 3-tulpes and/or 5-tuples.
+  The returned list of segments has the same format as the input list of segment of outline_backends.outline_arc_line()
   """
   # use to check is angle is smaller than pi/2
   radian_epsilon = math.pi/1000
   #return Part.Shape
   const_z = 0
-  if(len(ai_corner_list)<3):
-    print("ERR202: Error in {:s}, the number of corners must be bigger than 2. Currently: {:s}".format(ai_error_msg_id, len(ai_corner_list)))
+  if(len(ai_segment_list)<3):
+    print("ERR202: Error in {:s}, the number of segments must be bigger than 2. Currently: {:s}".format(ai_error_msg_id, len(ai_segment_list)))
     #sys.exit(2)
     #return(Part.Shape())
     return([])
   # array initialization
-  p2p_length = [0] * len(ai_corner_list)
-  corner_angle = [0] * len(ai_corner_list)
-  corner_length = [0] * len(ai_corner_list)
-  corner_type = [0] * len(ai_corner_list) # 0:angular, 1:smoothed, 2: enlarged with width-angle, 3: enlarged with sharp angle
-  #pt_vector = [Base.Vector(0,0,0)] * len(ai_corner_list)
-  pt_vector = [(0,0)] * len(ai_corner_list)
+  p2p_length = [0] * len(ai_segment_list)
+  corner_angle = [0] * len(ai_segment_list)
+  corner_length = [0] * len(ai_segment_list)
+  corner_type = [0] * len(ai_segment_list) # 0:angular, 1:smoothed, 2: enlarged with width-angle, 3: enlarged with sharp angle
+  #pt_vector = [Base.Vector(0,0,0)] * len(ai_segment_list)
+  pt_vector = [(0,0)] * len(ai_segment_list)
   # calculate array
-  for pt_idx in range(len(ai_corner_list)):
+  for pt_idx in range(len(ai_segment_list)):
     # tree points to define a corner
-    (pre_pt_x, pre_pt_y, pre_pt_r) = ai_corner_list[pt_idx-2]
-    (cur_pt_x, cur_pt_y, cur_pt_r) = ai_corner_list[pt_idx-1]
-    (post_pt_x, post_pt_y, post_pt_r) = ai_corner_list[pt_idx]
+    (pre_pt_x, pre_pt_y, pre_pt_r) = ai_segment_list[pt_idx-2]
+    (cur_pt_x, cur_pt_y, cur_pt_r) = ai_segment_list[pt_idx-1]
+    (post_pt_x, post_pt_y, post_pt_r) = ai_segment_list[pt_idx]
     # calculate the length between two points
     l_length=math.sqrt((post_pt_x-cur_pt_x)**2+(post_pt_y-cur_pt_y)**2)
     if(l_length==0):
@@ -185,7 +197,7 @@ def cnc_cut_outline(ai_corner_list, ai_error_msg_id):
     if(corner_type[corn_idx-1]==0):
       pass
     elif(corner_type[corn_idx-1]==1):
-      l_AK = abs(ai_corner_list[corn_idx-1][2])*(1-math.sin(corner_angle[corn_idx-1]/2))/math.sin(corner_angle[corn_idx-1])
+      l_AK = abs(ai_segment_list[corn_idx-1][2])*(1-math.sin(corner_angle[corn_idx-1]/2))/math.sin(corner_angle[corn_idx-1])
       #l_3rd_pt = pt_vector[corn_idx-1] + l_pre_direction_2.multiply(l_AK/p2p_length[corn_idx-2]) + l_post_direction_2.multiply(l_AK/p2p_length[corn_idx-1])
       m1 = l_AK/p2p_length[corn_idx-2]
       m2 = l_AK/p2p_length[corn_idx-1]
@@ -207,8 +219,8 @@ def cnc_cut_outline(ai_corner_list, ai_error_msg_id):
       #cur_corner[corn_idx-1] = [Part.Arc(l_pre_vect, l_3rd_pt, l_post_vect)]
       cur_corner[corn_idx-1] = [(l_3rd_pt[0], l_3rd_pt[1], l_post_vect[0], l_post_vect[1])]
     elif(corner_type[corn_idx-1]==3):
-      l_AR = abs(ai_corner_list[corn_idx-1][2])/(2*math.sin(corner_angle[corn_idx-1]/2))
-      l_AV = abs(ai_corner_list[corn_idx-1][2])/(math.cos(corner_angle[corn_idx-1]/2))
+      l_AR = abs(ai_segment_list[corn_idx-1][2])/(2*math.sin(corner_angle[corn_idx-1]/2))
+      l_AV = abs(ai_segment_list[corn_idx-1][2])/(math.cos(corner_angle[corn_idx-1]/2))
       #vec_TK_2 = l_pre_direction_2.multiply(l_AV/p2p_length[corn_idx-2]/2) + l_post_direction_2.multiply(l_AV/p2p_length[corn_idx-1]/2)
       m1 = l_AV/p2p_length[corn_idx-2]/2
       m2 = l_AV/p2p_length[corn_idx-1]/2
