@@ -34,6 +34,7 @@ cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_example.
 3) todo
 - unittest
 - gears design example
+- check tests/macro scripts with cnc25d_api, doc on cnc25d_api, cnc_cut_outline with arcs
 
 4) automation tool
 Fabric or shovel ?

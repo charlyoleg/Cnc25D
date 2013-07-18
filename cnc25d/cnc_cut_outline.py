@@ -41,7 +41,18 @@ def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
   """
   r_outline = []
   for p in ai_outline:
-    r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], p[2]])
+    len_p = len(p)
+    if(len_p==2):
+      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1]])
+    elif(len_p==3):
+      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], p[2]])
+    elif(len_p==4):
+      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], ai_x_offset+ai_x_coefficient*p[2], p[3]])
+    elif(len_p==5):
+      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], ai_x_offset+ai_x_coefficient*p[2], p[3], p[4]])
+    else:
+      print("ERR221: Error, the segment has an unxepected number of items {:d}".format(len_p))
+      sys.exit(2)
   if(ai_x_coefficient<0):
     r_outline.reverse()
   #print("dbg702: r_outline", r_outline)
@@ -53,7 +64,18 @@ def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
   """
   r_outline = []
   for p in ai_outline:
-    r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2]])
+    len_p = len(p)
+    if(len_p==2):
+      r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1]])
+    elif(len_p==3):
+      r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2]])
+    elif(len_p==4):
+      r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2], ai_y_offset+ai_y_coefficient*p[3]])
+    elif(len_p==5):
+      r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2], ai_y_offset+ai_y_coefficient*p[3], p[4]])
+    else:
+      print("ERR226: Error, the segment has an unxepected number of items {:d}".format(len_p))
+      sys.exit(2)
   if(ai_y_coefficient<0):
     r_outline.reverse()
   return(r_outline)
@@ -64,7 +86,18 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
   """
   r_outline = []
   for p in ai_outline:
-    r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1], p[2]])
+    len_p = len(p)
+    if(len_p==2):
+      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1]])
+    elif(len_p==3):
+      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1], p[2]])
+    elif(len_p==4):
+      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1], ai_x_offset+ai_x_coefficient*p[2], ai_y_offset+ai_y_coefficient*p[3]])
+    elif(len_p==5):
+      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1], ai_x_offset+ai_x_coefficient*p[2], ai_y_offset+ai_y_coefficient*p[3], p[4]])
+    else:
+      print("ERR227: Error, the segment has an unxepected number of items {:d}".format(len_p))
+      sys.exit(2)
   if((ai_x_coefficient*ai_y_coefficient)<0):
     r_outline.reverse()
   return(r_outline)
