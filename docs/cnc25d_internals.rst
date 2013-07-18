@@ -60,7 +60,9 @@ To create a new design example, follow those steps:
 - Create the new design example file in the directory *Cnc25D/cnc25d/tests/* with a file name such as *my_new_design_macro.py*
 - Create a wrapper script (eg: *my_new_design_test.py*) in the same directory that imports the cnc25d package to let run the script *my_new_design_macro.py*
 - Add the few lines in the file *Cnc25D/bin/cnc25d_example_generator_src.py* that includes the new script *Cnc25D/cnc25d/tests/my_new_design_macro.py*
-- Regenerate *Cnc25D/bin/cnc25d_example_generator.py* with the command *scr/micropreprocessor.py bin/cnc25d_example_generator_src.py*
+- Regenerate *Cnc25D/bin/cnc25d_example_generator.py* with the command::
+  
+  > scr/micropreprocessor.py bin/cnc25d_example_generator_src.py
 
 3. Python package distribution release
 ======================================
@@ -78,7 +80,7 @@ Texts can be extracted from the *SVG* files with the command::
 
 The generated *txt* files are used for checking spelling and are raw material for the *reStructuredText* files.
 
-The sources of the Sphinx_ documentation are the *reStructuredText* files (*.rst) and the *PNG* files (*.png).
+The sources of the Sphinx_ documentation are only the *reStructuredText* files (\*.rst) and the *PNG* files (\*.png).
 
 .. image:: images/documentation_process.png
 
