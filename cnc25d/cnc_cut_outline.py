@@ -39,22 +39,23 @@ def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
   """ For each point of the list, add the x_offset and multiply by x_coefficient to the x coordinate
       ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
   """
-  r_outline = []
-  for p in ai_outline:
-    len_p = len(p)
-    if(len_p==2):
-      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1]])
-    elif(len_p==3):
-      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], p[2]])
-    elif(len_p==4):
-      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], ai_x_offset+ai_x_coefficient*p[2], p[3]])
-    elif(len_p==5):
-      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], ai_x_offset+ai_x_coefficient*p[2], p[3], p[4]])
-    else:
-      print("ERR221: Error, the segment has an unxepected number of items {:d}".format(len_p))
-      sys.exit(2)
-  if(ai_x_coefficient<0):
-    r_outline.reverse()
+  #r_outline = []
+  #for p in ai_outline:
+  #  len_p = len(p)
+  #  if(len_p==2):
+  #    r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1]])
+  #  elif(len_p==3):
+  #    r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], p[2]])
+  #  elif(len_p==4):
+  #    r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], ai_x_offset+ai_x_coefficient*p[2], p[3]])
+  #  elif(len_p==5):
+  #    r_outline.append([ai_x_offset+ai_x_coefficient*p[0], p[1], ai_x_offset+ai_x_coefficient*p[2], p[3], p[4]])
+  #  else:
+  #    print("ERR221: Error, the segment has an unxepected number of items {:d}".format(len_p))
+  #    sys.exit(2)
+  #if(ai_x_coefficient<0):
+  #  r_outline.reverse()
+  r_outline =  outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, 0, 1)
   #print("dbg702: r_outline", r_outline)
   return(r_outline)
 
@@ -62,44 +63,101 @@ def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
   """ For each point of the list, add the y_offset and multiply by y_coefficient to the y coordinate
       ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
   """
-  r_outline = []
-  for p in ai_outline:
-    len_p = len(p)
-    if(len_p==2):
-      r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1]])
-    elif(len_p==3):
-      r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2]])
-    elif(len_p==4):
-      r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2], ai_y_offset+ai_y_coefficient*p[3]])
-    elif(len_p==5):
-      r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2], ai_y_offset+ai_y_coefficient*p[3], p[4]])
-    else:
-      print("ERR226: Error, the segment has an unxepected number of items {:d}".format(len_p))
-      sys.exit(2)
-  if(ai_y_coefficient<0):
-    r_outline.reverse()
+  #r_outline = []
+  #for p in ai_outline:
+  #  len_p = len(p)
+  #  if(len_p==2):
+  #    r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1]])
+  #  elif(len_p==3):
+  #    r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2]])
+  #  elif(len_p==4):
+  #    r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2], ai_y_offset+ai_y_coefficient*p[3]])
+  #  elif(len_p==5):
+  #    r_outline.append([p[0], ai_y_offset+ai_y_coefficient*p[1], p[2], ai_y_offset+ai_y_coefficient*p[3], p[4]])
+  #  else:
+  #    print("ERR226: Error, the segment has an unxepected number of items {:d}".format(len_p))
+  #    sys.exit(2)
+  #if(ai_y_coefficient<0):
+  #  r_outline.reverse()
+  r_outline =  outline_shift_xy(ai_outline, 0, 1, ai_y_offset, ai_y_coefficient)
   return(r_outline)
 
 def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient):
   """ For each point of the list, add the offset and multiply by coefficient the coordinates
       ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
   """
-  r_outline = []
-  for p in ai_outline:
-    len_p = len(p)
-    if(len_p==2):
-      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1]])
-    elif(len_p==3):
-      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1], p[2]])
-    elif(len_p==4):
-      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1], ai_x_offset+ai_x_coefficient*p[2], ai_y_offset+ai_y_coefficient*p[3]])
-    elif(len_p==5):
-      r_outline.append([ai_x_offset+ai_x_coefficient*p[0], ai_y_offset+ai_y_coefficient*p[1], ai_x_offset+ai_x_coefficient*p[2], ai_y_offset+ai_y_coefficient*p[3], p[4]])
-    else:
-      print("ERR227: Error, the segment has an unxepected number of items {:d}".format(len_p))
-      sys.exit(2)
+  # check the ai_outline format
+  len_first_point = len(ai_outline[0])
+  outline_type = 0
+  if(len_first_point==2):
+    outline_type = 1
+  elif(len_first_point==3):
+    outline_type = 2
+  else:
+    print("ERR327: Error, the first point has an unxepected number of items {:d}".format(len_first_point))
+    sys.exit(2)
+  print("dbg563: outline_type:", outline_type)
+  # check if the outline must be reversed
+  i_outline = list(ai_outline)
+  reverse_outline = False
   if((ai_x_coefficient*ai_y_coefficient)<0):
-    r_outline.reverse()
+    reverse_outline = True
+    i_outline.reverse()
+  # new outline construction
+  r_outline = []
+  new_segment = []
+  for p in i_outline:
+    len_p = len(p)
+    # check segment
+    is_arc = False
+    if(outline_type==1):
+      if(len_p==2):
+        is_arc = False
+      elif(len_p==4):
+        is_arc = True
+      else:
+        print("ERR237: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        sys.exit(2)
+    elif(outline_type==2):
+      if(len_p==3):
+        is_arc = False
+      elif(len_p==5):
+        is_arc = True
+      else:
+        print("ERR247: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        sys.exit(2)
+    else:
+      print("ERR257: Error, the outline_type is unexpected {:d}".format(outline_type))
+      sys.exit(2)
+    # extract segments
+    end_point = []
+    end_point_router_bit = []
+    middle_point = []
+    if(is_arc):
+      middle_point = [p[0], p[1]]
+      end_point = [p[2], p[3]]
+    else:
+      end_point = [p[0], p[1]]
+    if(outline_type==2):
+      if(is_arc):
+        end_point_router_bit = [p[4]]
+      else:
+        end_point_router_bit = [p[2]]
+    # scale segments
+    end_point = [ai_x_offset+ai_x_coefficient*end_point[0], ai_y_offset+ai_y_coefficient*end_point[1]]
+    if(is_arc):
+      middle_point = [ai_x_offset+ai_x_coefficient*middle_point[0], ai_y_offset+ai_y_coefficient*middle_point[1]]
+    # reconstruct segments
+    if(reverse_outline):
+      new_segment.extend(end_point)
+      new_segment.extend(end_point_router_bit)
+      r_outline.append(new_segment)
+      new_segment = middle_point
+    else:
+      new_segment = middle_point
+      new_segment.extend(end_point)
+      new_segment.extend(end_point_router_bit)
+      r_outline.append(new_segment)
   return(r_outline)
 
 def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
@@ -114,42 +172,99 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   If R>0, the point is smoothed to fit the constraints of a router_bit radius R.
   If R<0, the point is enlarged to fit the constraints of a router_bit radius R.
   eg: ai_segment_list = [ [x1,y1,r1], .. [x2,y2,r2], .. [x3,y3,x4,y4,r4], .. ]
-  you can use equally lists or tuples for segment description or segment_list description.
-  If the last point of the last segment is equal to the first point of the first segment, the outline is closed. Otherwise the outline is open.
+  You can use equally lists or tuples for segment description or segment_list description.
+  The first element is the start point of the outline. It must be a tuple of three floats.
+  If the last point of the last segment is equal to the start point, the outline is closed. Otherwise the outline is open.
   From a programming point of view, ai_segment_list is a tuple of 3-tulpes and/or 5-tuples.
   The returned list of segments has the same format as the input list of segment of outline_backends.outline_arc_line()
   """
   # use to check is angle is smaller than pi/2
   radian_epsilon = math.pi/1000
-  #return Part.Shape
-  const_z = 0
-  if(len(ai_segment_list)<3):
-    print("ERR202: Error in {:s}, the number of segments must be bigger than 2. Currently: {:s}".format(ai_error_msg_id, len(ai_segment_list)))
+  # is the outline closed or open?
+  outline_closed = False
+  if((ai_segment_list[0][0]==ai_segment_list[-1][-2])and(ai_segment_list[0][1]==ai_segment_list[-1][-1])):
+    outline_closed = True
+  # number of corners and segments
+  point_nb = len(ai_segment_list)
+  segment_nb = point_nb-1
+  corner_nb = point_nb-2
+  if(outline_closed):
+    corner_nb = point_nb-1
+  # check of the outline size
+  if(segment_nb<1):
+    print("ERR202: Error in {:s}, the number of segments must be bigger than 1. Currently: {:s}".format(ai_error_msg_id, point_nb))
     #sys.exit(2)
     #return(Part.Shape())
     return([])
+  if((segment_nb<3)and(outline_closed)):
+    print("ERR203: Error in {:s}, the number of segments must be bigger than 3 with a closed outline. Currently: {:s}".format(ai_error_msg_id, point_nb))
+    #sys.exit(2)
+    #return(Part.Shape())
+    return([])
+  # check the start point
+  if(len(ai_segment_list[0])!=3):
+    print("ERR564: the start point is not defined with three floats. {:d}".format(len(ai_segment_list[0])))
+    sys.exit(2)
+    #return([])
   # array initialization
-  p2p_length = [0] * len(ai_segment_list)
-  corner_angle = [0] * len(ai_segment_list)
-  corner_length = [0] * len(ai_segment_list)
-  corner_type = [0] * len(ai_segment_list) # 0:angular, 1:smoothed, 2: enlarged with width-angle, 3: enlarged with sharp angle
-  #pt_vector = [Base.Vector(0,0,0)] * len(ai_segment_list)
-  pt_vector = [(0,0)] * len(ai_segment_list)
+  #pt_end = [Base.Vector(0,0,0)] * point_nb
+  #pt_end = [(0,0)] * point_nb
+  pt_end = []
+  pt_request = []
+  #p2p_length = [0] * segment_nb
+  p2p_length = []
+  #corner_angle = [0] * corner_nb
+  corner_angle = []
+  #corner_length = [0] * corner_nb
+  corner_length = []
+  #corner_type = [0] * corner_nb # 0:angular, 1:smoothed, 2: enlarged with obtuse angle, 3: enlarged with acute angle
+  corner_type = []  # 0:angular, 1:smoothed, 2: enlarged with obtuse angle, 3: enlarged with acute angle
+  # segment read offset
+  sro=2
+  if(outline_closed):
+    sro=0
   # calculate array
-  for pt_idx in range(len(ai_segment_list)):
+  # pt_end
+  for pt_idx in range(point_nb):
+    # segment check
+    len_segment = len(ai_segment_list[pt_idx])
+    mid_tuple = ()
+    if(len_segment==3):
+      (end_pt_x, end_pt_y, end_pt_r) = ai_segment_list[pt_idx]
+    elif(len_segment==5):
+      (mid_pt_x, mid_pt_y, end_pt_x, end_pt_y, end_pt_r) = ai_segment_list[pt_idx]
+      mid_tuple = (mid_pt_x, mid_pt_y)
+    else:
+      print("ERR563: Error, the segment is defined with an unexpected number of float {:d}".format(len_segment))
+      sys.exit(2)
+    # create freecad vector for each point
+    #pt_end[pt_idx-1] = Base.Vector(cur_pt_x,cur_pt_y,const_z)
+    #pt_end[pt_idx] = (cur_pt_x,cur_pt_y)
+    pt_end.append((end_pt_x,end_pt_y))
+    pt_request.append(end_pt_r)
+    pt_mid.append(mid_tuple)
+  # p2p_length
+  for pt_idx in range(segment_nb):
     # tree points to define a corner
-    (pre_pt_x, pre_pt_y, pre_pt_r) = ai_segment_list[pt_idx-2]
-    (cur_pt_x, cur_pt_y, cur_pt_r) = ai_segment_list[pt_idx-1]
-    (post_pt_x, post_pt_y, post_pt_r) = ai_segment_list[pt_idx]
+    (cur_pt_x, cur_pt_y) = pt_end[pt_idx]
+    (post_pt_x, post_pt_y) = pt_end[pt_idx+1]
     # calculate the length between two points
     l_length=math.sqrt((post_pt_x-cur_pt_x)**2+(post_pt_y-cur_pt_y)**2)
     if(l_length==0):
-      print("ERR405: l_length is null at point index {:s}.{:d} ({:0.02f}, {:0.02f}) r={:0.02f}".format(ai_error_msg_id, pt_idx, cur_pt_x, cur_pt_y, cur_pt_r))
-      print("dbg405: post_pt_x: %0.2f  post_pt_y: %0.2f  post_pt_r: %0.2f"%(post_pt_x, post_pt_y, post_pt_r))
-      print("dbg415: pre_pt_x: %0.2f  pre_pt_y: %0.2f  pre_pt_r: %0.2f"%(pre_pt_x, pre_pt_y, pre_pt_r))
+      print("ERR405: l_length is null at point index {:s}.{:d} ({:0.02f}, {:0.02f})".format(ai_error_msg_id, pt_idx, cur_pt_x, cur_pt_y))
+      print("dbg405: post_pt_x: %0.2f  post_pt_y: %0.2f"%(post_pt_x, post_pt_y))
       sys.exit(1)
     #print("dbg205: l_length:", l_length)
-    p2p_length[pt_idx-1] = l_length
+    #p2p_length[pt_idx] = l_length
+    p2p_length.append(l_length)
+  # corner_angle, corner_length, corner_type
+  for pt_idx in range(corner_nb):
+    # tree points to define a corner
+    (pre_pt_x, pre_pt_y) = pt_end[pt_idx+sro-2]
+    (cur_pt_x, cur_pt_y) = pt_end[pt_idx+sro-1]
+    (post_pt_x, post_pt_y) = pt_end[pt_idx+sro]
+    cur_pt_r = pt_request[pt_idx+sro-1]
+    l_length = p2p_length[pt_idx]
     # calculate the angle of corners
     # first method to calculate the corner angle
     #l_angle1 = abs(math.atan((pre_pt_y-cur_pt_y)/(pre_pt_x-cur_pt_x))-math.atan((post_pt_y-cur_pt_y)/(post_pt_x-cur_pt_x)))
@@ -165,7 +280,8 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
       sys.exit(1)
     l_angle2 = math.acos((l_length_h**2+l_length**2-l_length_a**2)/(2*l_length_h*l_length))
     #print("dbg206: l_angle2:", l_angle2)
-    corner_angle[pt_idx-1] = l_angle2
+    #corner_angle[pt_idx] = l_angle2
+    corner_angle.append(l_angle2)
     # corner_length
     l_corner_length = 0
     l_corner_type = 0
@@ -187,18 +303,17 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
         l_corner_type = 3
       #print("dbg213: l_enlarged_corner_length:", l_enlarged_corner_length)
       l_corner_length = l_enlarged_corner_length
-    corner_length[pt_idx-1] = l_corner_length
-    corner_type[pt_idx-1] = l_corner_type
-    # create freecad vector for each point
-    #pt_vector[pt_idx-1] = Base.Vector(cur_pt_x,cur_pt_y,const_z)
-    pt_vector[pt_idx-1] = (cur_pt_x,cur_pt_y)
+    #corner_length[pt_idx] = l_corner_length
+    corner_length.append(l_corner_length)
+    #corner_type[pt_idx] = l_corner_type
+    corner_type.append(l_corner_type)
   # check the feasibility and prepare vector list
   pre_vect = []
   post_vect = []
   cur_corner = []
   for corn_idx in range(len(corner_type)):
-    pre_vect.append(pt_vector[corn_idx])
-    post_vect.append(pt_vector[corn_idx])
+    pre_vect.append(pt_end[corn_idx])
+    post_vect.append(pt_end[corn_idx])
     cur_corner.append([])
     if(((corner_length[corn_idx-1]+corner_length[corn_idx-2])>p2p_length[corn_idx-2])
       or ((corner_length[corn_idx]+corner_length[corn_idx-1])>p2p_length[corn_idx-1])):
@@ -208,33 +323,33 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   # build corners
   for corn_idx in range(len(corner_type)):
     #print("dbg442: corn_idx:", corn_idx)
-    #l_pre_direction = pt_vector[corn_idx-2]-pt_vector[corn_idx-1]
-    l_pre_direction = (pt_vector[corn_idx-2][0]-pt_vector[corn_idx-1][0], pt_vector[corn_idx-2][1]-pt_vector[corn_idx-1][1])
+    #l_pre_direction = pt_end[corn_idx-2]-pt_end[corn_idx-1]
+    l_pre_direction = (pt_end[corn_idx-2][0]-pt_end[corn_idx-1][0], pt_end[corn_idx-2][1]-pt_end[corn_idx-1][1])
     #l_pre_direction_1 = l_pre_direction + Base.Vector(0,0,0) # need to duplicate the vector because the method .multiply() change the vector itself
     #l_pre_direction_2 = l_pre_direction + Base.Vector(0,0,0) 
     #l_pre_direction_3 = l_pre_direction + Base.Vector(0,0,0) 
     #l_pre_direction_4 = l_pre_direction + Base.Vector(0,0,0) 
-    #l_post_direction = pt_vector[corn_idx]-pt_vector[corn_idx-1]
-    l_post_direction = (pt_vector[corn_idx][0]-pt_vector[corn_idx-1][0], pt_vector[corn_idx][1]-pt_vector[corn_idx-1][1])
+    #l_post_direction = pt_end[corn_idx]-pt_end[corn_idx-1]
+    l_post_direction = (pt_end[corn_idx][0]-pt_end[corn_idx-1][0], pt_end[corn_idx][1]-pt_end[corn_idx-1][1])
     #l_post_direction_1 = l_post_direction + Base.Vector(0,0,0) # need to duplicate the vector because the method .multiply() change the vector itself
     #l_post_direction_2 = l_post_direction + Base.Vector(0,0,0)
     #l_post_direction_3 = l_post_direction + Base.Vector(0,0,0)
     #l_post_direction_4 = l_post_direction + Base.Vector(0,0,0)
-    #l_pre_vect = pt_vector[corn_idx-1]+l_pre_direction_1.multiply(corner_length[corn_idx-1]/p2p_length[corn_idx-2])
+    #l_pre_vect = pt_end[corn_idx-1]+l_pre_direction_1.multiply(corner_length[corn_idx-1]/p2p_length[corn_idx-2])
     m = corner_length[corn_idx-1]/p2p_length[corn_idx-2]
-    l_pre_vect = (pt_vector[corn_idx-1][0]+m*l_pre_direction[0], pt_vector[corn_idx-1][1]+m*l_pre_direction[1])
-    #l_post_vect = pt_vector[corn_idx-1]+l_post_direction_1.multiply(corner_length[corn_idx-1]/p2p_length[corn_idx-1])
+    l_pre_vect = (pt_end[corn_idx-1][0]+m*l_pre_direction[0], pt_end[corn_idx-1][1]+m*l_pre_direction[1])
+    #l_post_vect = pt_end[corn_idx-1]+l_post_direction_1.multiply(corner_length[corn_idx-1]/p2p_length[corn_idx-1])
     m = corner_length[corn_idx-1]/p2p_length[corn_idx-1]
-    l_post_vect = (pt_vector[corn_idx-1][0]+m*l_post_direction[0], pt_vector[corn_idx-1][1]+m*l_post_direction[1])
-    l_3rd_pt = pt_vector[corn_idx-1]
+    l_post_vect = (pt_end[corn_idx-1][0]+m*l_post_direction[0], pt_end[corn_idx-1][1]+m*l_post_direction[1])
+    l_3rd_pt = pt_end[corn_idx-1]
     if(corner_type[corn_idx-1]==0):
       pass
     elif(corner_type[corn_idx-1]==1):
       l_AK = abs(ai_segment_list[corn_idx-1][2])*(1-math.sin(corner_angle[corn_idx-1]/2))/math.sin(corner_angle[corn_idx-1])
-      #l_3rd_pt = pt_vector[corn_idx-1] + l_pre_direction_2.multiply(l_AK/p2p_length[corn_idx-2]) + l_post_direction_2.multiply(l_AK/p2p_length[corn_idx-1])
+      #l_3rd_pt = pt_end[corn_idx-1] + l_pre_direction_2.multiply(l_AK/p2p_length[corn_idx-2]) + l_post_direction_2.multiply(l_AK/p2p_length[corn_idx-1])
       m1 = l_AK/p2p_length[corn_idx-2]
       m2 = l_AK/p2p_length[corn_idx-1]
-      l_3rd_pt = (pt_vector[corn_idx-1][0] + m1*l_pre_direction[0] + m2*l_post_direction[0], pt_vector[corn_idx-1][1] + m1*l_pre_direction[1] + m2*l_post_direction[1])
+      l_3rd_pt = (pt_end[corn_idx-1][0] + m1*l_pre_direction[0] + m2*l_post_direction[0], pt_end[corn_idx-1][1] + m1*l_pre_direction[1] + m2*l_post_direction[1])
       pre_vect[corn_idx-1] = l_pre_vect
       post_vect[corn_idx-1] = l_post_vect
       #print("dbg415: type:1, l_pre_vect:", l_pre_vect)
@@ -258,14 +373,14 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
       m1 = l_AV/p2p_length[corn_idx-2]/2
       m2 = l_AV/p2p_length[corn_idx-1]/2
       vec_TK_2 = (m1*l_pre_direction[0] + m2*l_post_direction[0], m1*l_pre_direction[1] + m2*l_post_direction[1])
-      #l_ppre_vect = pt_vector[corn_idx-1] + l_pre_direction_3.multiply(l_AR/p2p_length[corn_idx-2]) - l_post_direction_3.multiply(l_AR/p2p_length[corn_idx-1]) + vec_TK_2
+      #l_ppre_vect = pt_end[corn_idx-1] + l_pre_direction_3.multiply(l_AR/p2p_length[corn_idx-2]) - l_post_direction_3.multiply(l_AR/p2p_length[corn_idx-1]) + vec_TK_2
       m1 = l_AR/p2p_length[corn_idx-2]
       m2 = l_AR/p2p_length[corn_idx-1]
-      l_ppre_vect = (pt_vector[corn_idx-1][0] + m1*l_pre_direction[0] - m2*l_post_direction[0] + vec_TK_2[0], pt_vector[corn_idx-1][1] + m1*l_pre_direction[1] - m2*l_post_direction[1] + vec_TK_2[1])
-      #l_ppost_vect = pt_vector[corn_idx-1] - l_pre_direction_4.multiply(l_AR/p2p_length[corn_idx-2]) + l_post_direction_4.multiply(l_AR/p2p_length[corn_idx-1]) + vec_TK_2
+      l_ppre_vect = (pt_end[corn_idx-1][0] + m1*l_pre_direction[0] - m2*l_post_direction[0] + vec_TK_2[0], pt_end[corn_idx-1][1] + m1*l_pre_direction[1] - m2*l_post_direction[1] + vec_TK_2[1])
+      #l_ppost_vect = pt_end[corn_idx-1] - l_pre_direction_4.multiply(l_AR/p2p_length[corn_idx-2]) + l_post_direction_4.multiply(l_AR/p2p_length[corn_idx-1]) + vec_TK_2
       m1 = l_AR/p2p_length[corn_idx-2]
       m2 = l_AR/p2p_length[corn_idx-1]
-      l_ppost_vect = (pt_vector[corn_idx-1][0] - m1*l_pre_direction[0] + m2*l_post_direction[0] + vec_TK_2[0], pt_vector[corn_idx-1][1] - m1*l_pre_direction[1] + m2*l_post_direction[1] + vec_TK_2[1])
+      l_ppost_vect = (pt_end[corn_idx-1][0] - m1*l_pre_direction[0] + m2*l_post_direction[0] + vec_TK_2[0], pt_end[corn_idx-1][1] - m1*l_pre_direction[1] + m2*l_post_direction[1] + vec_TK_2[1])
       pre_vect[corn_idx-1] = l_pre_vect
       post_vect[corn_idx-1] = l_post_vect
       #print("dbg435: type:3, l_pre_vect:", l_pre_vect)
@@ -311,6 +426,7 @@ importing_freecad.importing_freecad()
 import Part
 from FreeCAD import Base 
 #
+import Tkinter
 import outline_backends
 #
 
@@ -468,6 +584,61 @@ def cnc_cut_outline_test2(ai_sw_output_file_base, ai_sw_router_bit_radius, ai_sw
   r_test = 1
   return(r_test)
 
+def cnc_cut_outline_test3(ai_sw_router_bit_radius):
+  """ Third test to check the cnc_cut_outline API
+      It displays the shapes with Tkinter
+  """
+  def outline_a(ai_router_bit_radius):
+    corner_a=[[0,20, 0],
+      [-5,15,0,10,0],
+      [-5,-5,10,0,0],
+      [15,-5,20,0,0]]
+    chichi_horizontal = [[40,0,0],
+      [45,5,50,0,0],
+      [60,-20,ai_router_bit_radius],
+      [70,20,ai_router_bit_radius],
+      [80,-20,ai_router_bit_radius],
+      [90,0,0],
+      [95,5,100,0,0]]
+    chichi_vertical = [[0,100,0],
+      [5,95,0,90,0],
+      [-20,80,ai_router_bit_radius],
+      [20,70,ai_router_bit_radius],
+      [-20,60,ai_router_bit_radius],
+      [0,50,0],
+      [5,45,0,40,0]]
+    r_outline_a1 = []
+    r_outline_a1.extend(outline_shift_xy(corner_a,0,1,0,1))
+    r_outline_a1.extend(outline_shift_x(chichi_horizontal,0,1))
+    r_outline_a1.extend(outline_shift_x(chichi_horizontal,400,-1))
+    r_outline_a1.extend(outline_shift_xy(corner_a,400,-1,0,1))
+    r_outline_a1.extend(outline_shift_x(chichi_vertical,400,-1))
+    r_outline_a1.extend(outline_shift_xy(chichi_vertical,400,-1,300,-1))
+    r_outline_a1.extend(outline_shift_xy(corner_a,400,-1,300,-1))
+    r_outline_a1.extend(outline_shift_xy(chichi_horizontal,400,-1,300,-1))
+    r_outline_a1.extend(outline_shift_y(chichi_horizontal,300,-1))
+    r_outline_a1.extend(outline_shift_xy(corner_a,0,1,300,1))
+    r_outline_a1.extend(outline_shift_y(chichi_vertical,300,-1))
+    r_outline_a1.extend(outline_shift_y(chichi_vertical,0,1))
+    return(r_outline_a1)
+  outline_a1 = cnc_cut_outline(outline_a(0), 'cnc_cut_outline_test3_0')
+  outline_a2 = cnc_cut_outline(outline_a(ai_sw_router_bit_radius), 'cnc_cut_outline_test3_sw_router_bit')
+  # display with Tkinter
+  tk_root = Tkinter.Tk()
+  my_canvas = outline_backends.Two_Canvas(tk_root)
+  # callback function for display_backend
+  def sub_canvas_graphics(ai_angle_position):
+    r_canvas_graphics = []
+    r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_a1, 'tkinter'), 'red', 1))
+    r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_a2, 'tkinter'), 'green', 2))
+    return(r_canvas_graphics)
+  # end of callback function
+  my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
+  tk_root.mainloop()
+  # end of display with Tkinter
+  r_test = 1
+  return(r_test)
+
 ################################################################
 # cnc_cut_outline command line interface
 ################################################################
@@ -486,6 +657,8 @@ def cnc_cut_outline_cli(ai_args=None):
     help='It generates a bunch of shapes, that you should observed afterward.')
   cco_parser.add_argument('--test2','--t2', action='store_true', default=False, dest='sw_test2',
     help='It generates a bunch of shapes, that you should observed afterward.')
+  cco_parser.add_argument('--test3','--t3', action='store_true', default=False, dest='sw_test3',
+    help='It generates a bunch of shapes, that are displayed with Tkinter.')
   # this ensure the possible to use the script with python and freecad
   effective_args=ai_args
   if(effective_args==None):
@@ -502,6 +675,8 @@ def cnc_cut_outline_cli(ai_args=None):
     cnc_cut_outline_test1()
   if(cco_args.sw_test2):
     cnc_cut_outline_test2(cco_args.sw_output_file_base, cco_args.sw_router_bit_radius, cco_args.sw_height)
+  if(cco_args.sw_test3):
+    cnc_cut_outline_test3(cco_args.sw_router_bit_radius)
   print("dbg999: end of script")
   
     
@@ -515,8 +690,9 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("dbg109: I'm main\n")
   #cnc_cut_outline_cli()
   #cnc_cut_outline_cli("--test1".split())
-  cnc_cut_outline_cli("--test2".split())
+  #cnc_cut_outline_cli("--test2".split())
   #cnc_cut_outline_cli("--test1 --test2".split())
+  cnc_cut_outline_cli("--test3".split())
   #make_H_shape(1.0,2.0,'')
 
 

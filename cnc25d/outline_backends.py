@@ -427,6 +427,8 @@ def outline_circle(ai_center, ai_radius, ai_backend):
     r_outline = outline_circle_with_tkinter(ai_center, ai_radius)
   return(r_outline)
 
+# inherited from display_backend
+Two_Canvas = display_backend.Two_Canvas
 
 ################################################################
 # ******** test API ***********
@@ -533,7 +535,8 @@ def outline_arc_line_test1():
   # backend tkinter
   print("dbg704: test1 backend tkinter")
   tk_root = Tkinter.Tk()
-  my_canvas = display_backend.Two_Canvas(tk_root)
+  #my_canvas = display_backend.Two_Canvas(tk_root)
+  my_canvas = Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics(ai_angle_position):
     r_canvas_graphics = []

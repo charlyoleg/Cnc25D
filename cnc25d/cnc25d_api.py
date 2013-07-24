@@ -34,6 +34,7 @@ cnc_cut_outline = cnc_cut_outline.cnc_cut_outline
 # from outline_backends
 outline_arc_line = outline_backends.outline_arc_line
 outline_circle = outline_backends.outline_circle
+Two_Canvas =  outline_backends.Two_Canvas
 
 # from positioning
 place_plank = positioning.place_plank
