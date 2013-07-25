@@ -588,7 +588,8 @@ def make_H_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output
   [xox + 1*ys_xa + 1*ys_xb, xoy + 1*ys_yc + 1*ys_cd, ai_router_bit_r],
   [xox + 1*ys_xa + 0*ys_xb, xoy + 1*ys_yc + 1*ys_cd, ai_router_bit_r],
   [xox + 1*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_router_bit_r],
-  [xox + 0*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_router_bit_r]]
+  [xox + 0*ys_xa + 0*ys_xb, xoy + 2*ys_yc + 1*ys_cd, ai_router_bit_r],
+  [xox + 0*ys_xa + 0*ys_xb, xoy + 0*ys_yc + 0*ys_cd, 0*ai_router_bit_r]]
   ## construction
   myh_outline = cnc_cut_outline(myh_outline, 'h_shape')
   myh_shape = outline_backends.outline_arc_line(myh_outline, 'freecad')
@@ -627,7 +628,8 @@ def make_X_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output
   [xox+1*xys_xa+1*xys_xb, xoy+4*xys_yc, 1*ai_router_bit_r],
   [xox+0*xys_xa+1*xys_xb, xoy+5*xys_yc, 1*ai_router_bit_r],
   [xox+0*xys_xa+0*xys_xb, xoy+6*xys_yc, 2*ai_router_bit_r],
-  [xox+1*xys_xa+0*xys_xb, xoy+3*xys_yc, 1*ai_router_bit_r]]
+  [xox+1*xys_xa+0*xys_xb, xoy+3*xys_yc, 1*ai_router_bit_r],
+  [xox+0*xys_xa+0*xys_xb, xoy+0*xys_yc, 0*ai_router_bit_r]]
   ## construction
   myx_outline = cnc_cut_outline(myx_outline, 'x_shape')
   myx_shape = outline_backends.outline_arc_line(myx_outline, 'freecad')
@@ -672,6 +674,7 @@ def make_M_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output
   myx_outline.extend(outline_shift_y(jonction_a, 1*mh, -1))
   myx_outline.append([0*mw, 1*mh, 0*ai_router_bit_r])
   myx_outline.extend(outline_shift_x(jonction_b, 0*mw, 1))
+  myx_outline.append([0*mw, 0*mh, 0*ai_router_bit_r])
   ## set origine
   myx_outline = outline_shift_xy(myx_outline, mox, 1, moy, 1)
   ## construction
@@ -696,7 +699,7 @@ def cnc_cut_outline_test1():
     make_H_shape( 0,  y_offset, ir, 2, "self_test_cnc_cut_outline_H_r%0.2f.stl"%ir)
     make_X_shape(50,  y_offset, ir, 2, "self_test_cnc_cut_outline_X_r%0.2f.stl"%ir)
     make_M_shape(150,  y_offset, ir, 2, "self_test_cnc_cut_outline_M_r%0.2f.stl"%ir)
-    y_offset += 100
+    y_offset += 200
   r_test = 1
   return(r_test)
 
