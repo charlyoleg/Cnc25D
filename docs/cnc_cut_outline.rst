@@ -110,16 +110,12 @@ Other method with the law of cosines c²=a²+b²-2*a*b*cos(C)
   
   
   The triangles KAI and IAL are similar so AL=AK
-  (LAI)=(IAK)=a/2AI=AO-IO
-  =r/sin(a/2)-r
-  =r*(1-sin(a/2))/sin(a/2)AK
-  =AI/cos(a/2)
-  =r*(1-sin(a/2))/(sin(a/2)*cos(a/2))
-  =r*(1-sin(a/2))*2/sin(a)
-  AJ=AK+AL=(AI+IL)+(AI+IK)
-  =2*AIAI
-  =(AK+AL)/2Kx
-  =Ax+(Gx-Ax)*AK/AG
+  (LAI)=(IAK)=a/2
+  AI=AO-IO=r/sin(a/2)-r=r*(1-sin(a/2))/sin(a/2)
+  AK=AI/cos(a/2)=r*(1-sin(a/2))/(sin(a/2)*cos(a/2))=r*(1-sin(a/2))*2/sin(a)
+  AJ=AK+AL=(AI+IL)+(AI+IK)=2*AI
+  AI=(AK+AL)/2
+  Kx=Ax+(Gx-Ax)*AK/AG
   
 .. image:: images/detailed_arc_third_point_for_coplanar_fitting.png
 
