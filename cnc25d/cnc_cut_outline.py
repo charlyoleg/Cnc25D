@@ -446,9 +446,16 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   The returned list of segments has the same format as the input list of segment of outline_backends.outline_arc_line()
   """
   # is the outline closed or open?
+  #precision_epsilon = 1/1000.0
   outline_closed = False
-  if((ai_segment_list[0][0]==ai_segment_list[-1][-2])and(ai_segment_list[0][1]==ai_segment_list[-1][-1])):
+  if((ai_segment_list[0][0]==ai_segment_list[-1][-3])and(ai_segment_list[0][1]==ai_segment_list[-1][-2])):
+  #if((abs(ai_segment_list[0][0]-ai_segment_list[-1][-3])<precision_epsilon)and(abs(ai_segment_list[0][1]==ai_segment_list[-1][-2])<precision_epsilon)):
     outline_closed = True
+  #print("dbg536: in {:s} outline_closed: {:d}".format(ai_error_msg_id, outline_closed))
+  #print("dbg957: {:0.2f} = {:0.2f}".format(ai_segment_list[0][0], ai_segment_list[-1][-2]))
+  #print("dbg958: {:0.2f} = {:0.2f}".format(ai_segment_list[0][1], ai_segment_list[-1][-1]))
+  #print("dbg967: ", ai_segment_list[0][0], ai_segment_list[-1][-2])
+  #print("dbg968: ", ai_segment_list[0][1], ai_segment_list[-1][-1])
   # number of corners and segments
   point_nb = len(ai_segment_list)
   segment_nb = point_nb-1
@@ -484,7 +491,7 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
     pt_mid.append(mid_elem)
   # check router_bit request of first and last point
   if((pt_request[0]!=0)and(not outline_closed)):
-    print("WARN946: Warning, the router_bit request of the start point of the open outline is not zero: {:0.2f}".format(pt_request[0]))
+    print("WARN946: Warning, in {:s} the router_bit request of the start point of the open outline is not zero: {:0.2f}".format(ai_error_msg_id, pt_request[0]))
     pt_request[0]=0
   # if the outline is open, the router_bit request of the last point has no signification
   # if the outline is closed, the router_bit request of the last point is ignore. and the router_bit request of the first point is used
