@@ -51,6 +51,10 @@ def reverse_outline(ai_outline):
     print("ERR357: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
     sys.exit(2)
   #print("dbg553: outline_type:", outline_type)
+  # check if the outline is closed
+  outline_closed = False
+  if((ai_outline[0][0]==ai_outline[-1][-outline_type-1])and(ai_outline[0][1]==ai_outline[-1][-outline_type])):
+    outline_closed = True
   # outline data extraction
   l_end_point = []
   l_mid_point = []
@@ -81,7 +85,7 @@ def reverse_outline(ai_outline):
     # extract segments
     middle_point = None
     end_point = ()
-    router_bit_request = None
+    end_point_router_bit = None
     if(is_arc):
       middle_point = (p[0], p[1])
       end_point = (p[2], p[3])
@@ -92,9 +96,9 @@ def reverse_outline(ai_outline):
         end_point_router_bit = p[4]
       else:
         end_point_router_bit = p[2]
+      l_router_bit_request.append(end_point_router_bit)
     l_mid_point.append(middle_point)
     l_end_point.append(end_point)
-    l_router_bit_request.append(end_point_router_bit)
   # outline construction
   r_outline = []
   # start point
@@ -115,6 +119,15 @@ def reverse_outline(ai_outline):
         r_outline.append((l_end_point[point_nb-2-i][0], l_end_point[point_nb-2-i][1]))
       else:
         r_outline.append((l_mid_point[point_nb-1-i][0], l_mid_point[point_nb-1-i][1], l_end_point[point_nb-2-i][0], l_end_point[point_nb-2-i][1]))
+  # move the router_bit request if the outline is closed
+  if(outline_closed):
+    if(outline_type==2):
+      if(r_outline[0][2]!=0):
+        print("WARN567: Warning, the last router_bit request of the closed outline is not set to zero: {:0.2f}".format(r_outline[0][2]))
+      r_outline[0]=(r_outline[0][0], r_outline[0][1], r_outline[-1][-1])
+      last_segment =  list(r_outline[-1])
+      last_segment[-1] = 0
+      r_outline[-1] = tuple(last_segment)
   return(r_outline)
 
 def smooth_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_router_bit_request, ai_error_msg_id):
@@ -344,6 +357,10 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
   """ For each point of the list, add the offset and multiply by coefficient the coordinates
       ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
   """
+  # check the parameters
+  if((ai_x_coefficient==0)or(ai_y_coefficient==0)):
+    print("ERR439: Error, a multiplication coefficient is set to zero: {:0.2f}  {:0.2f}".format(ai_x_coefficient, ai_y_coefficient))
+    sys.exit(2)
   # check if the outline must be reversed
   if((ai_x_coefficient*ai_y_coefficient)<0):
     i_outline=reverse_outline(ai_outline)
@@ -426,6 +443,38 @@ def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
   r_outline =  outline_shift_xy(ai_outline, 0, 1, ai_y_offset, ai_y_coefficient)
   return(r_outline)
 
+def outline_close(ai_outline):
+  """ close the input outline and return it
+      The output outline format is the input outline format.
+  """
+  # check the ai_outline format
+  len_first_point = len(ai_outline[0])
+  outline_type = 0
+  if(len_first_point==2):
+    outline_type = 1
+  elif(len_first_point==3):
+    outline_type = 2
+  else:
+    print("ERR957: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
+    sys.exit(2)
+  # check if the outline is already closed
+  outline_closed = False
+  if((ai_outline[0][0]==ai_outline[-1][-outline_type-1])and(ai_outline[0][1]==ai_outline[-1][-outline_type])):
+    outline_closed = True
+    print("WARN421: Warning, the outline is already closed!")
+  # construct the output outline
+  r_outline = ai_outline
+  if(not outline_closed):
+    if(outline_type==1):
+      r_outline.append([ai_outline[0][0], ai_outline[0][1]])
+    elif(outline_type==2):
+      r_outline.append([ai_outline[0][0], ai_outline[0][1], 0])
+  #print("dbg758: r_outline[-1]:", r_outline[-1])
+  return(r_outline)
+
+# add this function to the API
+outline_reverse = reverse_outline
+
 def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   """
   This function converts a list of segments (lines and arcs) into a list of segments (lines and arcs) compatible with a CNC cut.
@@ -491,12 +540,12 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
     pt_mid.append(mid_elem)
   # check router_bit request of first and last point
   if((pt_request[0]!=0)and(not outline_closed)):
-    print("WARN946: Warning, in {:s} the router_bit request of the start point of the open outline is not zero: {:0.2f}".format(ai_error_msg_id, pt_request[0]))
+    print("WARN946: Warning, in {:s}, the router_bit request of the start point of the open outline is not zero: {:0.2f}".format(ai_error_msg_id, pt_request[0]))
     pt_request[0]=0
   # if the outline is open, the router_bit request of the last point has no signification
   # if the outline is closed, the router_bit request of the last point is ignore. and the router_bit request of the first point is used
   if(pt_request[-1]!=0):
-    print("WARN947: Warning, the router_bit request of the last point of the outline is not zero: {:0.2f}".format(pt_request[-1]))
+    print("WARN947: Warning, in {:s}, the router_bit request of the last point of the outline is not zero: {:0.2f}".format(ai_error_msg_id, pt_request[-1]))
     pt_request[-1]=0
   # build outline
   r_outline = []
@@ -732,24 +781,27 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
       It displays the shapes with Tkinter
   """
   def outline_a(ai_router_bit_radius):
-    corner_a=[[0,20, 0],
-      [-5,15,0,10,0],
-      [-5,-5,10,0,0],
-      [15,-5,20,0,0]]
-    chichi_horizontal = [[40,0,0],
-      [45,5,50,0,0],
+    corner_a=[
+      [0,20, ai_router_bit_radius],
+      [-5,15,0,10,ai_router_bit_radius],
+      [-5,-5,10,0,ai_router_bit_radius],
+      [15,-5,20,0,ai_router_bit_radius]]
+    chichi_horizontal = [
+      [40,0,ai_router_bit_radius],
+      [45,5,50,0,ai_router_bit_radius],
       [60,-20,ai_router_bit_radius],
       [70,20,-ai_router_bit_radius],
       [80,-20,ai_router_bit_radius],
-      [90,0,0],
-      [95,5,100,0,0]]
-    chichi_vertical = [[0,100,0],
-      [5,95,0,90,0],
+      [90,0,ai_router_bit_radius],
+      [95,5,100,0,ai_router_bit_radius]]
+    chichi_vertical = [
+      [0,100,ai_router_bit_radius],
+      [5,95,0,90,ai_router_bit_radius],
       [-20,80,ai_router_bit_radius],
       [20,70,-ai_router_bit_radius],
       [-20,60,ai_router_bit_radius],
-      [0,50,0],
-      [5,45,0,40,0]]
+      [0,50,ai_router_bit_radius],
+      [5,45,0,40,ai_router_bit_radius]]
     r_outline_a1 = []
     r_outline_a1.extend(outline_shift_xy(corner_a,0,1,0,1))
     r_outline_a1.extend(outline_shift_x(chichi_horizontal,0,1))
@@ -764,8 +816,16 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
     r_outline_a1.extend(outline_shift_y(chichi_vertical,300,-1))
     r_outline_a1.extend(outline_shift_y(chichi_vertical,0,1))
     return(r_outline_a1)
-  outline_a1 = cnc_cut_outline(outline_a(0), 'cnc_cut_outline_test3_0')
-  outline_a2 = cnc_cut_outline(outline_a(ai_sw_router_bit_radius), 'cnc_cut_outline_test3_sw_router_bit')
+  # outline_a : open, CCW (CCW has no meaning because the outline is open)
+  outline_a1 = cnc_cut_outline(outline_a(0), 'cnc_cut_outline_test3_a1')
+  outline_a2 = cnc_cut_outline(outline_a(ai_sw_router_bit_radius), 'cnc_cut_outline_test3_a2')
+  # outline_b : closed, CCW
+  outline_b1 = outline_shift_x(cnc_cut_outline(outline_close(outline_a(0)), 'cnc_cut_outline_test3_b1'), 500,1)
+  outline_b2 = outline_shift_x(cnc_cut_outline(outline_close(outline_a(ai_sw_router_bit_radius)), 'cnc_cut_outline_test3_b2'), 500,1)
+  # outline_c : closed, CW
+  outline_c1 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(0))), 'cnc_cut_outline_test3_c1'), 500,1)
+  outline_c2 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(ai_sw_router_bit_radius))), 'cnc_cut_outline_test3_c2'), 500,1)
+
   # display with Tkinter
   tk_root = Tkinter.Tk()
   my_canvas = outline_backends.Two_Canvas(tk_root)
@@ -774,6 +834,10 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
     r_canvas_graphics = []
     r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_a1, 'tkinter'), 'red', 1))
     r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_a2, 'tkinter'), 'green', 2))
+    r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_b1, 'tkinter'), 'red', 1))
+    r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_b2, 'tkinter'), 'green', 2))
+    r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_c1, 'tkinter'), 'blue', 1))
+    r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_c2, 'tkinter'), 'green', 2))
     return(r_canvas_graphics)
   # end of callback function
   # measurement the execution time of the callback function

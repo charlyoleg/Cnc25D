@@ -29,6 +29,8 @@ importing_freecad = importing_freecad.importing_freecad
 outline_shift_x = cnc_cut_outline.outline_shift_x
 outline_shift_y = cnc_cut_outline.outline_shift_y
 outline_shift_xy = cnc_cut_outline.outline_shift_xy
+outline_close = cnc_cut_outline.outline_close
+outline_reverse = cnc_cut_outline.outline_reverse
 cnc_cut_outline = cnc_cut_outline.cnc_cut_outline
 
 # from outline_backends
