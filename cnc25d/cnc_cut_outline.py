@@ -802,26 +802,57 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
       [-20,60,ai_router_bit_radius],
       [0,50,ai_router_bit_radius],
       [5,45,0,40,ai_router_bit_radius]]
+    arc_arc_horizontal = [
+      [150,0,ai_router_bit_radius],
+      [155, 5,160,20,ai_router_bit_radius],
+      [165, 5,170, 0,ai_router_bit_radius],
+      [175,15,180,20,ai_router_bit_radius],
+      [185, 5,190, 0,ai_router_bit_radius],
+      [195, 5,200,20,ai_router_bit_radius],
+      [205,18,210, 0,ai_router_bit_radius],
+      [214, -5,225,-10,ai_router_bit_radius],
+      [229, 0,230,10,ai_router_bit_radius],
+      [235,14,240,20,ai_router_bit_radius],
+      [241,10,245,0,ai_router_bit_radius]]
+    line_arc_vertical = [
+      [0,200,ai_router_bit_radius],
+      [10,198,20,190,ai_router_bit_radius],
+      [0,190,ai_router_bit_radius],
+      [10,182,20,180,ai_router_bit_radius],
+      [0,180,ai_router_bit_radius],
+      [10,177,20,170,ai_router_bit_radius],
+      [30,170,ai_router_bit_radius],
+      [32,165,30,160,ai_router_bit_radius],
+      [20,160,ai_router_bit_radius],
+      [15,155, 0,150,ai_router_bit_radius]]
     r_outline_a1 = []
     r_outline_a1.extend(outline_shift_xy(corner_a,0,1,0,1))
     r_outline_a1.extend(outline_shift_x(chichi_horizontal,0,1))
-    r_outline_a1.extend(outline_shift_x(chichi_horizontal,400,-1))
-    r_outline_a1.extend(outline_shift_xy(corner_a,400,-1,0,1))
-    r_outline_a1.extend(outline_shift_x(chichi_vertical,400,-1))
-    r_outline_a1.extend(outline_shift_xy(chichi_vertical,400,-1,300,-1))
-    r_outline_a1.extend(outline_shift_xy(corner_a,400,-1,300,-1))
-    r_outline_a1.extend(outline_shift_xy(chichi_horizontal,400,-1,300,-1))
-    r_outline_a1.extend(outline_shift_y(chichi_horizontal,300,-1))
-    r_outline_a1.extend(outline_shift_xy(corner_a,0,1,300,-1))
-    r_outline_a1.extend(outline_shift_y(chichi_vertical,300,-1))
+    r_outline_a1.extend(outline_shift_x(arc_arc_horizontal,0,1))
+    r_outline_a1.extend(outline_shift_x(arc_arc_horizontal,500,-1))
+    r_outline_a1.extend(outline_shift_x(chichi_horizontal,500,-1))
+    r_outline_a1.extend(outline_shift_xy(corner_a,500,-1,0,1))
+    r_outline_a1.extend(outline_shift_x(chichi_vertical,500,-1))
+    r_outline_a1.extend(outline_shift_x(line_arc_vertical,500,-1))
+    r_outline_a1.extend(outline_shift_xy(line_arc_vertical,500,-1,420,-1))
+    r_outline_a1.extend(outline_shift_xy(chichi_vertical,500,-1,420,-1))
+    r_outline_a1.extend(outline_shift_xy(corner_a,500,-1,420,-1))
+    r_outline_a1.extend(outline_shift_xy(chichi_horizontal,500,-1,420,-1))
+    r_outline_a1.extend(outline_shift_xy(arc_arc_horizontal,500,-1,420,-1))
+    r_outline_a1.extend(outline_shift_y(arc_arc_horizontal,420,-1))
+    r_outline_a1.extend(outline_shift_y(chichi_horizontal,420,-1))
+    r_outline_a1.extend(outline_shift_xy(corner_a,0,1,420,-1))
+    r_outline_a1.extend(outline_shift_y(chichi_vertical,420,-1))
+    r_outline_a1.extend(outline_shift_y(line_arc_vertical,420,-1))
+    r_outline_a1.extend(outline_shift_y(line_arc_vertical,0,1))
     r_outline_a1.extend(outline_shift_y(chichi_vertical,0,1))
     return(r_outline_a1)
   # outline_a : open, CCW (CCW has no meaning because the outline is open)
   outline_a1 = cnc_cut_outline(outline_a(0), 'cnc_cut_outline_test3_a1')
   outline_a2 = cnc_cut_outline(outline_a(ai_sw_router_bit_radius), 'cnc_cut_outline_test3_a2')
   # outline_b : closed, CCW
-  outline_b1 = outline_shift_x(cnc_cut_outline(outline_close(outline_a(0)), 'cnc_cut_outline_test3_b1'), 500,1)
-  outline_b2 = outline_shift_x(cnc_cut_outline(outline_close(outline_a(ai_sw_router_bit_radius)), 'cnc_cut_outline_test3_b2'), 500,1)
+  outline_b1 = outline_shift_x(cnc_cut_outline(outline_close(outline_a(0)), 'cnc_cut_outline_test3_b1'), 600,1)
+  outline_b2 = outline_shift_x(cnc_cut_outline(outline_close(outline_a(ai_sw_router_bit_radius)), 'cnc_cut_outline_test3_b2'), 600,1)
   # outline_c : closed, CW
   outline_c1 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(0))), 'cnc_cut_outline_test3_c1'), 500,1)
   outline_c2 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(ai_sw_router_bit_radius))), 'cnc_cut_outline_test3_c2'), 500,1)
@@ -843,11 +874,11 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   # measurement the execution time of the callback function
   #print("dbg506: time sub_canvas_graphics:", timeit.timeit(stmt='sub_canvas_graphics(0)', number=100))
   #cProfile.run('sub_canvas_graphics(0)')
-  #time_start = time.clock()
-  #for i in range(100):
-  #  tmp = sub_canvas_graphics(i*math.pi/200)
-  #time_stop = time.clock()
-  #print("dbg507: time sub_canvas_graphics:", time_stop-time_start)
+  time_start = time.clock()
+  for i in range(100):
+    tmp = sub_canvas_graphics(i*math.pi/200)
+  time_stop = time.clock()
+  print("dbg507: time sub_canvas_graphics:", time_stop-time_start)
   # end of measurement
   my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
   tk_root.mainloop()
