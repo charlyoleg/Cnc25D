@@ -130,6 +130,16 @@ def reverse_outline(ai_outline):
       r_outline[-1] = tuple(last_segment)
   return(r_outline)
 
+def rotate_point(ai_point, ai_ox, ai_oy, ai_rotation_angle):
+  """ Rotation of the point ai_point of center (ai_ox, ai_oy) and angle ai_rotation_angle
+  """
+  ix = ai_point[0]-ai_ox
+  iy = ai_point[1]-ai_oy
+  pt_x = ai_ox+ix*math.cos(ai_rotation_angle)-iy*math.sin(ai_rotation_angle)
+  pt_y = ai_oy+ix*math.sin(ai_rotation_angle)+iy*math.cos(ai_rotation_angle)
+  r_point = [pt_x, pt_y]
+  return(r_point)
+
 def smooth_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ Generate the corner outline for a smoothed line-line corner
   """
@@ -441,6 +451,72 @@ def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
       ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
   """
   r_outline =  outline_shift_xy(ai_outline, 0, 1, ai_y_offset, ai_y_coefficient)
+  return(r_outline)
+
+def outline_rotate(ai_outline, ai_ox, ai_oy, ai_rotation_angle):
+  """ For each point of the list, apply a rotation of angle ai_rotation_angle and rotation center (ai_ox, ai_oy)
+      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
+  """
+  # check the ai_outline format
+  len_first_point = len(ai_outline[0])
+  outline_type = 0
+  if(len_first_point==2):
+    outline_type = 1
+  elif(len_first_point==3):
+    outline_type = 2
+  else:
+    print("ERR457: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
+    sys.exit(2)
+  #print("dbg453: outline_type:", outline_type)
+  # new outline construction
+  r_outline = []
+  new_segment = []
+  for p in ai_outline:
+    len_p = len(p)
+    # check segment
+    is_arc = False
+    if(outline_type==1):
+      if(len_p==2):
+        is_arc = False
+      elif(len_p==4):
+        is_arc = True
+      else:
+        print("ERR237: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        sys.exit(2)
+    elif(outline_type==2):
+      if(len_p==3):
+        is_arc = False
+      elif(len_p==5):
+        is_arc = True
+      else:
+        print("ERR247: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        sys.exit(2)
+    else:
+      print("ERR257: Error, the outline_type is unexpected {:d}".format(outline_type))
+      sys.exit(2)
+    # extract segments
+    end_point = []
+    end_point_router_bit = []
+    middle_point = []
+    if(is_arc):
+      middle_point = [p[0], p[1]]
+      end_point = [p[2], p[3]]
+    else:
+      end_point = [p[0], p[1]]
+    if(outline_type==2):
+      if(is_arc):
+        end_point_router_bit = [p[4]]
+      else:
+        end_point_router_bit = [p[2]]
+    # rotate points
+    end_point = rotate_point(end_point, ai_ox, ai_oy, ai_rotation_angle)
+    if(is_arc):
+      middle_point = rotate_point(middle_point, ai_ox, ai_oy, ai_rotation_angle)
+    # reconstruct segments
+    new_segment = middle_point
+    new_segment.extend(end_point)
+    new_segment.extend(end_point_router_bit)
+    r_outline.append(tuple(new_segment))
   return(r_outline)
 
 def outline_close(ai_outline):
@@ -856,12 +932,19 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   # outline_c : closed, CW
   outline_c1 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(0))), 'cnc_cut_outline_test3_c1'), 500,1)
   outline_c2 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(ai_sw_router_bit_radius))), 'cnc_cut_outline_test3_c2'), 500,1)
+  # outline_d : closed, CCW, rotate
+  #outline_d1 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(0),500/2,420/2,math.pi/7)), 'cnc_cut_outline_test3_d1'), 600,1,600,1)
+  #outline_d2 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(-1*ai_sw_router_bit_radius),500/2,420/2,math.pi/7)), 'cnc_cut_outline_test3_d2'), 600,1,600,1)
 
   # display with Tkinter
   tk_root = Tkinter.Tk()
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics(ai_angle_position):
+    # outline_d : closed, CCW, rotate
+    outline_d1 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(0),500/2,420/2,math.pi/7+ai_angle_position)), 'cnc_cut_outline_test3_d1'), 600,1,600,1)
+    outline_d2 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(-1*ai_sw_router_bit_radius),500/2,420/2,math.pi/7+ai_angle_position)), 'cnc_cut_outline_test3_d2'), 600,1,600,1)
+    #
     r_canvas_graphics = []
     r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_a1, 'tkinter'), 'red', 1))
     r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_a2, 'tkinter'), 'green', 2))
@@ -869,16 +952,20 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
     r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_b2, 'tkinter'), 'green', 2))
     r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_c1, 'tkinter'), 'blue', 1))
     r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_c2, 'tkinter'), 'green', 2))
+    r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_d1, 'tkinter'), 'red', 1))
+    r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_d2, 'tkinter'), 'green', 2))
     return(r_canvas_graphics)
   # end of callback function
   # measurement the execution time of the callback function
-  #print("dbg506: time sub_canvas_graphics:", timeit.timeit(stmt='sub_canvas_graphics(0)', number=100))
-  #cProfile.run('sub_canvas_graphics(0)')
-  time_start = time.clock()
-  for i in range(100):
-    tmp = sub_canvas_graphics(i*math.pi/200)
-  time_stop = time.clock()
-  print("dbg507: time sub_canvas_graphics:", time_stop-time_start)
+  def measure_the_execution_time_of_the_sub_canvas_graphics_function(ai_repeat_nb):
+    #print("dbg506: time sub_canvas_graphics:", timeit.timeit(stmt='sub_canvas_graphics(0)', number=100))
+    #cProfile.run('sub_canvas_graphics(0)')
+    time_start = time.clock()
+    for i in range(ai_repeat_nb):
+      tmp = sub_canvas_graphics(i*math.pi/200)
+    time_stop = time.clock()
+    print("dbg507: time sub_canvas_graphics:", time_stop-time_start)
+  #measure_the_execution_time_of_the_sub_canvas_graphics_function(100)
   # end of measurement
   my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
   tk_root.mainloop()
@@ -939,7 +1026,8 @@ if __name__ == "__main__":
   #cnc_cut_outline_cli("--test1".split())
   #cnc_cut_outline_cli("--test2".split())
   #cnc_cut_outline_cli("--test1 --test2".split())
-  cnc_cut_outline_cli("--test3".split())
+  #cnc_cut_outline_cli("--test3".split())
+  cnc_cut_outline_cli("--test3 --router_bit_radius=3".split())
   #make_H_shape(1.0,2.0,'')
 
 
