@@ -340,21 +340,6 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
 # ******** API function for outline creation ***********
 ################################################################
 
-def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
-  """ For each point of the list, add the x_offset and multiply by x_coefficient to the x coordinate
-      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
-  """
-  r_outline =  outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, 0, 1)
-  #print("dbg702: r_outline", r_outline)
-  return(r_outline)
-
-def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
-  """ For each point of the list, add the y_offset and multiply by y_coefficient to the y coordinate
-      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
-  """
-  r_outline =  outline_shift_xy(ai_outline, 0, 1, ai_y_offset, ai_y_coefficient)
-  return(r_outline)
-
 def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient):
   """ For each point of the list, add the offset and multiply by coefficient the coordinates
       ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
@@ -424,6 +409,21 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
     new_segment.extend(end_point)
     new_segment.extend(end_point_router_bit)
     r_outline.append(tuple(new_segment))
+  return(r_outline)
+
+def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
+  """ For each point of the list, add the x_offset and multiply by x_coefficient to the x coordinate
+      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
+  """
+  r_outline =  outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, 0, 1)
+  #print("dbg702: r_outline", r_outline)
+  return(r_outline)
+
+def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
+  """ For each point of the list, add the y_offset and multiply by y_coefficient to the y coordinate
+      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
+  """
+  r_outline =  outline_shift_xy(ai_outline, 0, 1, ai_y_offset, ai_y_coefficient)
   return(r_outline)
 
 def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
