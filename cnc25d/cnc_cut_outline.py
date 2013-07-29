@@ -8,6 +8,12 @@ cnc_cut_outline.py provides API functions to design 2.5D parts and create cuboid
 """
 
 ################################################################
+# python behavior
+################################################################
+
+from __future__ import division # to get float division
+
+################################################################
 # header for Python / FreeCAD compatibility
 ################################################################
 
@@ -200,6 +206,110 @@ def smooth_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_ro
       r_outline = [(EX,EY), (IX,IY,FX,FY)]
   return(r_outline)
 
+def arc_center_radius(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id):
+  """ Compute the center of the arc defined by the three points A,B and C
+  """
+  #print("dbg197: ai_error_msg_id: {:s}".format(ai_error_msg_id))
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the arc three points A,B,C
+  AX = ai_arc_pt1[0]
+  AY = ai_arc_pt1[1]
+  BX = ai_arc_pt2[0]
+  BY = ai_arc_pt2[1]
+  CX = ai_arc_pt3[0]
+  CY = ai_arc_pt3[1]
+  # check of the lenght AB, BC, AC
+  AB = math.sqrt((BX-AX)**2+(BY-AY)**2)
+  BC = math.sqrt((CX-BX)**2+(CY-BY)**2)
+  AC = math.sqrt((CX-AX)**2+(CY-AY)**2)
+  if((AB<radian_epsilon)or(BC<radian_epsilon)or(AC<radian_epsilon)):
+    print("ERR632: Error in {:s}, the three arc points ABC are too closed: AB={:0.2f} BC={:0.2f} AC={:0.2f}".format(ai_error_msg_id, AB, BC, AC))
+    sys.exit(2)
+  # calculation of M and N
+  MX = (AX+BX)/2
+  MY = (AY+BY)/2
+  NX = (BX+CX)/2
+  NY = (BY+CY)/2
+  # calculation of e and f
+  cos_e = (BX-AX)/AB
+  sin_e = (BY-AY)/AB
+  cos_f = (CX-BX)/BC
+  sin_f = (CY-BY)/BC
+  # calculation de I
+  #(cos(e)*sin(f)-cos(f)*sin(e))*x = sin(f)*(cos(e)*xM+sin(e)*yM)-sin(e)*(cos(f)*xN+sin(f)*yN)
+  #(sin(e)*cos(f)-sin(f)*cos(e))*y = cos(f)*(cos(e)*xM+sin(e)*yM)-cos(e)*(cos(f)*xN+sin(f)*yN)
+  # ixl = (cos(e)*sin(f)-cos(f)*sin(e))
+  # iyl = (sin(e)*cos(f)-sin(f)*cos(e))
+  # ixk = sin(f)*(cos(e)*xM+sin(e)*yM)-sin(e)*(cos(f)*xN+sin(f)*yN)
+  # iyk = cos(f)*(cos(e)*xM+sin(e)*yM)-cos(e)*(cos(f)*xN+sin(f)*yN)
+  ixl = cos_e*sin_f-cos_f*sin_e
+  iyl = sin_e*cos_f-sin_f*cos_e
+  ixk = sin_f*(cos_e*MX+sin_e*MY)-sin_e*(cos_f*NX+sin_f*NY)
+  iyk = cos_f*(cos_e*MX+sin_e*MY)-cos_e*(cos_f*NX+sin_f*NY)
+  if((abs(ixl)<radian_epsilon)or(abs(iyl)<radian_epsilon)):
+    print("ERR947: Error in {:s}, ixl (= {:0.2f}) or iyl (= {:0.2f}) are too closed to zero!".format(ai_error_msg_id, ixl, iyl))
+    sys.exit(2)
+  IX=ixk/ixl
+  IY=iyk/iyl
+  # check than I is equidistant of A, B and C
+  IA = math.sqrt((AX-IX)**2+(AY-IY)**2)
+  IB = math.sqrt((BX-IX)**2+(BY-IY)**2)
+  IC = math.sqrt((CX-IX)**2+(CY-IY)**2)
+  if((abs(IB-IA)>radian_epsilon)or(abs(IC-IA)>radian_epsilon)):
+    print("ERR748: Error in {:s}, the calculation of the center of the arc A,B,C is wrong! IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, IA, IB, IC))
+    print("dbg253: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}  I= {:0.2f} {:0.2f}".format(AX,AY,BX,BY,CX,CY,IX,IY))
+    print("dbg764: cos_e={:0.2f}  sin_e={:0.2f}  cos_f={:0.2f}  sin_f={:0.2f}".format(cos_e, sin_e, cos_f, sin_f))
+    print("dbg765: ixl={:0.2f} ixk={:0.2f} iyl={:0.2f} iyk={:0.2f}".format(ixl, ixk, iyl, iyk))
+    print("dbg766: MX={:0.2f} MY={:0.2f} NX={:0.2f} NY={:0.2f}".format(MX,MY,NX,NY))
+    sys.exit(2)
+  # return
+  r_arc_center_radius=(IX, IY, IA)
+  return(r_arc_center_radius)
+
+def arc_center_radius_angles(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id):
+  """ Compute the center, radius and angles of the arc defined by the three points A,B and C
+  """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  AX = ai_arc_pt1[0]
+  AY = ai_arc_pt1[1]
+  BX = ai_arc_pt2[0]
+  BY = ai_arc_pt2[1]
+  CX = ai_arc_pt3[0]
+  CY = ai_arc_pt3[1]
+  # calculation of I
+  (IX,IY, arc_radius) = arc_center_radius(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id)
+  # check I is equidistant of A,B,C,D,E
+  IA = math.sqrt((AX-IX)**2+(AY-IY)**2)
+  IB = math.sqrt((BX-IX)**2+(BY-IY)**2)
+  IC = math.sqrt((CX-IX)**2+(CY-IY)**2)
+  if((abs(IA-arc_radius)>radian_epsilon)or(abs(IB-arc_radius)>radian_epsilon)or(abs(IC-arc_radius)>radian_epsilon)):
+    print("ERR841: Error, in {:s}, I is not equidistant from A,B,C. arc_radius={:0.2f} IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, arc_radius, IA, IB, IC))
+    sys.error(2)
+  # calculation of the angle u=(Ix, IA) , v=(Ix, IB), w=(Ix, IC), d=(Ix, ID) and e=(Ix, IE)
+  u = math.atan2(AY-IY, AX-IX)
+  v = math.atan2(BY-IY, BX-IX)
+  w = math.atan2(CY-IY, CX-IX)
+  # calculation of the angle uv=(IA, IB), uw=(IA, IC)
+  uv = math.fmod(v-u+4*math.pi, 2*math.pi)
+  uw = math.fmod(w-u+4*math.pi, 2*math.pi)
+  # check arc direction
+  ccw_ncw = True
+  if(uw>uv):
+    #print("dbg874: arc of circle direction: counter clock wise (CCW)")
+    ccw_ncw = True
+  else:
+    #print("dbg875: arc of circle direction: clock wise (CW)")
+    ccw_ncw = False
+    uv = uv - 2*math.pi
+    uw = uw - 2*math.pi
+  # return
+  r_arc_center_radius_angles=(IX, IY, IA, uw, u, w)
+  return(r_arc_center_radius_angles)
+
+
 def smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ Generate the corner outline for a smoothed line-arc corner
   """
@@ -354,10 +464,67 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   """ Compute the middle point of an arc with new end points
   """
   #print("dbg107: ai_error_msg_id: {:s}  ai_error_msg_idx: {:d}".format(ai_error_msg_id, ai_error_msg_idx))
-  r_middle_point=()
-  # waiting for implementation
-  r_middle_point = (ai_arc_pt2[0], ai_arc_pt2[1])
+  error_msg_id = "{:s}.{:d}".format(ai_error_msg_id, ai_error_msg_idx)
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  AX = ai_arc_pt1[0]
+  AY = ai_arc_pt1[1]
+  BX = ai_arc_pt2[0]
+  BY = ai_arc_pt2[1]
+  CX = ai_arc_pt3[0]
+  CY = ai_arc_pt3[1]
+  DX = ai_new_end1[0]
+  DY = ai_new_end1[1]
+  EX = ai_new_end2[0]
+  EY = ai_new_end2[1]
+  # calculation of I
+  (IX,IY, arc_radius, uw, u, w) = arc_center_radius_angles(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, error_msg_id)
+  # check I is equidistant of A,B,C,D,E
+  IA = math.sqrt((AX-IX)**2+(AY-IY)**2)
+  IB = math.sqrt((BX-IX)**2+(BY-IY)**2)
+  IC = math.sqrt((CX-IX)**2+(CY-IY)**2)
+  ID = math.sqrt((DX-IX)**2+(DY-IY)**2)
+  IE = math.sqrt((EX-IX)**2+(EY-IY)**2)
+  if((abs(IA-arc_radius)>radian_epsilon)or(abs(IB-arc_radius)>radian_epsilon)or(abs(IC-arc_radius)>radian_epsilon)):
+    print("ERR831: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, IA, IB, IC))
+    sys.error(2)
+  if((abs(ID-IA)>radian_epsilon)or(abs(IE-IA)>radian_epsilon)):
+    print("ERR832: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f} ID={:0.2f} IE={:0.2f}".format(ai_error_msg_id, IA, IB, IC, ID, IE))
+    sys.error(2)
+  # calculation of the angles d=(Ix, ID) and e=(Ix, IE)
+  d = math.atan2(DY-IY, DX-IX)
+  e = math.atan2(EY-IY, EX-IX)
+  # calculation of the angles ud=(IA, ID), ue=(IA, IE)
+  if(uw<0):
+    ud = -1*math.fmod(u-d+4*math.pi, 2*math.pi)
+    ue = -1*math.fmod(u-e+4*math.pi, 2*math.pi)
+  else:
+    ud = math.fmod(d-u+4*math.pi, 2*math.pi)
+    ue = math.fmod(e-u+4*math.pi, 2*math.pi)
+  # check if E and F below to the arc segment A,B,C
+  if((abs(uw)<abs(ud)-radian_epsilon)or(abs(uw)<abs(ue)-radian_epsilon)):
+    print("ERR441: Error, in {:s}, E or F are not on the arc segment A,B,C! uw={:0.2f} ud={:0.2f} ue={:0.2f}".format(error_msg_id, uw, ud, ue))
+    print("dbg927: A={:0.2f} {:0.2f}  B={:0.2f} {:0.2f}  C={:0.2f} {:0.2f}  D={:0.2f} {:0.2f}  E={:0.2f} {:0.2f}".format(AX,AY,BX,BY,CX,CY,DX,DY,EX,EY))
+    sys.exit(2)
+  # check the orientation of E,F compare to A,B,C
+  if(abs(ud)>abs(ue)):
+    print("ERR442: Error, in {:s}, E,F have not the same orientation as A,B,C! ud={:0.2f} ue={:0.2f}".format(error_msg_id, ud, ue))
+    sys.exit(2)
+  # calculation of the angle de=(ID, IE)
+  if(uw<0):
+    de = -1*math.fmod(d-e+4*math.pi, 2*math.pi)
+  else:
+    de = math.fmod(e-d+4*math.pi, 2*math.pi)
+  # calculation of the angle f=(Ix, IF)=(Ix, ID)+(ID, IF)
+  f = d + de/2
+  # calculation of F
+  FX = IX+arc_radius*math.cos(f)
+  FY = IY+arc_radius*math.sin(f)
+  # return
+  r_middle_point=(FX, FY)
   return(r_middle_point)
+
 
 ################################################################
 # ******** API function for outline creation ***********
@@ -1021,7 +1188,7 @@ def cnc_cut_outline_cli(ai_args=None):
 
 # with freecad, the script is also main :)
 if __name__ == "__main__":
-  FreeCAD.Console.PrintMessage("dbg109: I'm main\n")
+  #FreeCAD.Console.PrintMessage("dbg109: I'm main\n")
   #cnc_cut_outline_cli()
   #cnc_cut_outline_cli("--test1".split())
   #cnc_cut_outline_cli("--test2".split())
