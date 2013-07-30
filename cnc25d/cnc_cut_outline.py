@@ -36,6 +36,8 @@ from __future__ import division # to get float division
 #
 import math
 import sys, argparse
+#
+from small_geometry import *
 
 ################################################################
 # ******** Sub-functions for the API ***********
@@ -136,16 +138,6 @@ def reverse_outline(ai_outline):
       r_outline[-1] = tuple(last_segment)
   return(r_outline)
 
-def rotate_point(ai_point, ai_ox, ai_oy, ai_rotation_angle):
-  """ Rotation of the point ai_point of center (ai_ox, ai_oy) and angle ai_rotation_angle
-  """
-  ix = ai_point[0]-ai_ox
-  iy = ai_point[1]-ai_oy
-  pt_x = ai_ox+ix*math.cos(ai_rotation_angle)-iy*math.sin(ai_rotation_angle)
-  pt_y = ai_oy+ix*math.sin(ai_rotation_angle)+iy*math.cos(ai_rotation_angle)
-  r_point = [pt_x, pt_y]
-  return(r_point)
-
 def smooth_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ Generate the corner outline for a smoothed line-line corner
   """
@@ -206,110 +198,6 @@ def smooth_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_ro
       r_outline = [(EX,EY), (IX,IY,FX,FY)]
   return(r_outline)
 
-def arc_center_radius(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id):
-  """ Compute the center of the arc defined by the three points A,B and C
-  """
-  #print("dbg197: ai_error_msg_id: {:s}".format(ai_error_msg_id))
-  # use to check is angle is smaller than pi/2
-  radian_epsilon = math.pi/1000
-  # interpretation of the arc three points A,B,C
-  AX = ai_arc_pt1[0]
-  AY = ai_arc_pt1[1]
-  BX = ai_arc_pt2[0]
-  BY = ai_arc_pt2[1]
-  CX = ai_arc_pt3[0]
-  CY = ai_arc_pt3[1]
-  # check of the lenght AB, BC, AC
-  AB = math.sqrt((BX-AX)**2+(BY-AY)**2)
-  BC = math.sqrt((CX-BX)**2+(CY-BY)**2)
-  AC = math.sqrt((CX-AX)**2+(CY-AY)**2)
-  if((AB<radian_epsilon)or(BC<radian_epsilon)or(AC<radian_epsilon)):
-    print("ERR632: Error in {:s}, the three arc points ABC are too closed: AB={:0.2f} BC={:0.2f} AC={:0.2f}".format(ai_error_msg_id, AB, BC, AC))
-    sys.exit(2)
-  # calculation of M and N
-  MX = (AX+BX)/2
-  MY = (AY+BY)/2
-  NX = (BX+CX)/2
-  NY = (BY+CY)/2
-  # calculation of e and f
-  cos_e = (BX-AX)/AB
-  sin_e = (BY-AY)/AB
-  cos_f = (CX-BX)/BC
-  sin_f = (CY-BY)/BC
-  # calculation de I
-  #(cos(e)*sin(f)-cos(f)*sin(e))*x = sin(f)*(cos(e)*xM+sin(e)*yM)-sin(e)*(cos(f)*xN+sin(f)*yN)
-  #(sin(e)*cos(f)-sin(f)*cos(e))*y = cos(f)*(cos(e)*xM+sin(e)*yM)-cos(e)*(cos(f)*xN+sin(f)*yN)
-  # ixl = (cos(e)*sin(f)-cos(f)*sin(e))
-  # iyl = (sin(e)*cos(f)-sin(f)*cos(e))
-  # ixk = sin(f)*(cos(e)*xM+sin(e)*yM)-sin(e)*(cos(f)*xN+sin(f)*yN)
-  # iyk = cos(f)*(cos(e)*xM+sin(e)*yM)-cos(e)*(cos(f)*xN+sin(f)*yN)
-  ixl = cos_e*sin_f-cos_f*sin_e
-  iyl = sin_e*cos_f-sin_f*cos_e
-  ixk = sin_f*(cos_e*MX+sin_e*MY)-sin_e*(cos_f*NX+sin_f*NY)
-  iyk = cos_f*(cos_e*MX+sin_e*MY)-cos_e*(cos_f*NX+sin_f*NY)
-  if((abs(ixl)<radian_epsilon)or(abs(iyl)<radian_epsilon)):
-    print("ERR947: Error in {:s}, ixl (= {:0.2f}) or iyl (= {:0.2f}) are too closed to zero!".format(ai_error_msg_id, ixl, iyl))
-    sys.exit(2)
-  IX=ixk/ixl
-  IY=iyk/iyl
-  # check than I is equidistant of A, B and C
-  IA = math.sqrt((AX-IX)**2+(AY-IY)**2)
-  IB = math.sqrt((BX-IX)**2+(BY-IY)**2)
-  IC = math.sqrt((CX-IX)**2+(CY-IY)**2)
-  if((abs(IB-IA)>radian_epsilon)or(abs(IC-IA)>radian_epsilon)):
-    print("ERR748: Error in {:s}, the calculation of the center of the arc A,B,C is wrong! IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, IA, IB, IC))
-    print("dbg253: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}  I= {:0.2f} {:0.2f}".format(AX,AY,BX,BY,CX,CY,IX,IY))
-    print("dbg764: cos_e={:0.2f}  sin_e={:0.2f}  cos_f={:0.2f}  sin_f={:0.2f}".format(cos_e, sin_e, cos_f, sin_f))
-    print("dbg765: ixl={:0.2f} ixk={:0.2f} iyl={:0.2f} iyk={:0.2f}".format(ixl, ixk, iyl, iyk))
-    print("dbg766: MX={:0.2f} MY={:0.2f} NX={:0.2f} NY={:0.2f}".format(MX,MY,NX,NY))
-    sys.exit(2)
-  # return
-  r_arc_center_radius=(IX, IY, IA)
-  return(r_arc_center_radius)
-
-def arc_center_radius_angles(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id):
-  """ Compute the center, radius and angles of the arc defined by the three points A,B and C
-  """
-  # use to check is angle is smaller than pi/2
-  radian_epsilon = math.pi/1000
-  # interpretation of the input points
-  AX = ai_arc_pt1[0]
-  AY = ai_arc_pt1[1]
-  BX = ai_arc_pt2[0]
-  BY = ai_arc_pt2[1]
-  CX = ai_arc_pt3[0]
-  CY = ai_arc_pt3[1]
-  # calculation of I
-  (IX,IY, arc_radius) = arc_center_radius(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id)
-  # check I is equidistant of A,B,C,D,E
-  IA = math.sqrt((AX-IX)**2+(AY-IY)**2)
-  IB = math.sqrt((BX-IX)**2+(BY-IY)**2)
-  IC = math.sqrt((CX-IX)**2+(CY-IY)**2)
-  if((abs(IA-arc_radius)>radian_epsilon)or(abs(IB-arc_radius)>radian_epsilon)or(abs(IC-arc_radius)>radian_epsilon)):
-    print("ERR841: Error, in {:s}, I is not equidistant from A,B,C. arc_radius={:0.2f} IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, arc_radius, IA, IB, IC))
-    sys.error(2)
-  # calculation of the angle u=(Ix, IA) , v=(Ix, IB), w=(Ix, IC), d=(Ix, ID) and e=(Ix, IE)
-  u = math.atan2(AY-IY, AX-IX)
-  v = math.atan2(BY-IY, BX-IX)
-  w = math.atan2(CY-IY, CX-IX)
-  # calculation of the angle uv=(IA, IB), uw=(IA, IC)
-  uv = math.fmod(v-u+4*math.pi, 2*math.pi)
-  uw = math.fmod(w-u+4*math.pi, 2*math.pi)
-  # check arc direction
-  ccw_ncw = True
-  if(uw>uv):
-    #print("dbg874: arc of circle direction: counter clock wise (CCW)")
-    ccw_ncw = True
-  else:
-    #print("dbg875: arc of circle direction: clock wise (CW)")
-    ccw_ncw = False
-    uv = uv - 2*math.pi
-    uw = uw - 2*math.pi
-  # return
-  r_arc_center_radius_angles=(IX, IY, IA, uw, u, w)
-  return(r_arc_center_radius_angles)
-
-
 def smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ Generate the corner outline for a smoothed line-arc corner
   """
@@ -321,9 +209,93 @@ def smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_po
 def smooth_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ Generate the corner outline for a smoothed arc-arc corner
   """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  AX = ai_pre_point[0]
+  AY = ai_pre_point[1]
+  BX = ai_pre_middle[0]
+  BY = ai_pre_middle[1]
+  CX = ai_current_point[0]
+  CY = ai_current_point[1]
+  DX = ai_post_middle[0]
+  DY = ai_post_middle[1]
+  EX = ai_post_point[0]
+  EY = ai_post_point[1]
+  # calculation of I and J
+  (IX,IY, R1, uw1, u1, w1) = arc_center_radius_angles(ai_pre_point, ai_pre_middle, ai_current_point, ai_error_msg_id)
+  (JX,JY, R2, uw2, u2, w2) = arc_center_radius_angles(ai_current_point, ai_post_middle, ai_post_point, ai_error_msg_id)
+  # arc orientation
+  o1 = math.copysign(1, uw1)
+  o2 = math.copysign(1, uw2)
+  # sign of the tangent angle
+  #tangent_angle = math.fmod( (u2+o2*path.pi/2)-(w1+o1*path.pi/2)+8*math.pi, 2*math.pi) - math.pi
+  tangent_angle = math.fmod( u2-w1+(o2-o1)*math.pi/2+8*math.pi+math.pi, 2*math.pi) - math.pi
   r_outline = []
-  # waiting for implementation
-  r_outline = [(ai_current_point[0], ai_current_point[1])]
+  if(abs(tangent_angle)<radian_epsilon):
+    print("WARN932: Warning in {:s}, the tangent_angle is too flat! the corner doesn't need to be smoothed.".format(ai_error_msg_id))
+    r_outline = [(ai_current_point[0], ai_current_point[1])]
+  elif(abs(tangent_angle)>math.pi-radian_epsilon):
+    print("WARN933: Warning in {:s}, the tangent_angle is too sharp! the corner cannot be smoothed.".format(ai_error_msg_id))
+    r_outline = [(ai_current_point[0], ai_current_point[1])]
+  else:
+    o3 = math.copysign(1, tangent_angle)
+    # calculation of IS and JS
+    R1_plus = o1*o3 # = -1 if the router is outer the arc, else 1
+    R2_plus = o2*o3 # = -1 if the router is outer the arc, else 1
+    IS = R1-R1_plus*ai_router_bit_request
+    JS = R2-R2_plus*ai_router_bit_request
+    #print("dbg147: ai_pre_point", ai_pre_point)
+    #print("dbg247: ai_pre_middle", ai_pre_middle)
+    #print("dbg347: ai_current_point", ai_current_point)
+    #print("dbg447: ai_post_middle", ai_post_middle)
+    #print("dbg547: ai_post_point", ai_post_point)
+    #print("dbg647: ai_router_bit_request", ai_router_bit_request)
+    #print("dbg123: IX={:0.2f} IY={:0.2f} R1={:0.2f} uw1={:0.2f} u1={:0.2f}  w1={:0.2f}".format(IX, IY, R1, uw1, u1, w1))
+    #print("dbg124: JX={:0.2f} JY={:0.2f} R2={:0.2f} uw2={:0.2f} u2={:0.2f}  w2={:0.2f}".format(JX, JY, R2, uw2, u2, w2))
+    #print("dbg125: o1={:0.2f} o2={:0.2f} o3={:0.2f}".format(o1,o2,o3))
+    #print("dbg127: tangent_angle", tangent_angle)
+    #print("dbg126: IS={:0.2f} JS={:0.2f}".format(IS,JS))
+    #print("dbg532: in {:s}, R1={:0.2f} R2={:0.2f} ai_router_bit_request={:0.2f}".format(ai_error_msg_id, R1, R2, ai_router_bit_request))
+    # calculation of the coordiantes of S, the center of the router_bit in the smooth corner
+    bisector_angle = math.fmod(u2-w1+(o2+o1)*math.pi/2 + 9*math.pi, 2*math.pi) - math.pi #(u2+o2*math.pi/2)-(w1-o1*math.pi/2)
+    D_direction = w1 + bisector_angle/2
+    #print("dbg693: bisector_angle {:0.2f}  D_direction {:0.2f}".format(bisector_angle, D_direction))
+    (SX,SY, triangulation_status) = triangulation((IX,IY),IS,(JX,JY),JS,(CX,CY), D_direction, ai_error_msg_id)
+    if(triangulation_status==2):
+      print("WARN693: Warning in {:s}, corner is not smoothed because of a triangulation error!".format(ai_error_msg_id))
+      #print("dbg681: ai_pre_point", ai_pre_point)
+      #print("dbg682: ai_pre_middle", ai_pre_middle)
+      #print("dbg683: ai_current_point", ai_current_point)
+      #print("dbg684: ai_post_middle", ai_post_middle)
+      #print("dbg685: ai_post_point", ai_post_point)
+      #print("dbg686: ai_router_bit_request", ai_router_bit_request)
+      #print("dbg687: IX={:0.2f} IY={:0.2f} R1={:0.2f} uw1={:0.2f} u1={:0.2f}  w1={:0.2f}".format(IX, IY, R1, uw1, u1, w1))
+      #print("dbg688: JX={:0.2f} JY={:0.2f} R2={:0.2f} uw2={:0.2f} u2={:0.2f}  w2={:0.2f}".format(JX, JY, R2, uw2, u2, w2))
+      #print("dbg689: o1={:0.2f} o2={:0.2f} o3={:0.2f}".format(o1,o2,o3))
+      #print("dbg691: tangent_angle", tangent_angle)
+      #print("dbg692: IS={:0.2f} JS={:0.2f}".format(IS,JS))
+      #print("dbg693: in {:s}, R1={:0.2f} R2={:0.2f} ai_router_bit_request={:0.2f}".format(ai_error_msg_id, R1, R2, ai_router_bit_request))
+      r_outline = [(ai_current_point[0], ai_current_point[1])]
+    else:
+      # calculation of the angles xSI and xSJ
+      xSI = math.atan2(IY-SY, IX-SX)+(1+R1_plus)/2*math.pi
+      xSJ = math.atan2(JY-SY, JX-SX)+(1+R2_plus)/2*math.pi
+      router_bit_arc_uw = math.fmod(xSJ-xSI+4*math.pi, 2*math.pi)
+      if(o3<0):
+        router_bit_arc_uw = router_bit_arc_uw - 2*math.pi
+      #print("dbg337: SX {:0.2f}  SY {:0.2f}".format(SX,SY))
+      #print("dbg994: xSI {:0.2f}  xSJ {:0.2f}".format(xSI, xSJ))
+      #print("dbg773: router_bit_arc_uw", router_bit_arc_uw)
+      # calculation of the router_bit arc : pt1, pt2, pt3
+      pt1x = SX + ai_router_bit_request*math.cos(xSI)
+      pt1y = SY + ai_router_bit_request*math.sin(xSI)
+      pt2x = SX + ai_router_bit_request*math.cos(xSI+router_bit_arc_uw/2)
+      pt2y = SY + ai_router_bit_request*math.sin(xSI+router_bit_arc_uw/2)
+      pt3x = SX + ai_router_bit_request*math.cos(xSJ)
+      pt3y = SY + ai_router_bit_request*math.sin(xSJ)
+      r_outline = [(pt1x, pt1y), (pt2x, pt2y, pt3x, pt3y)]
+  # return
   return(r_outline)
 
 def enlarge_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_router_bit_request, ai_error_msg_id):
@@ -488,10 +460,16 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   IE = math.sqrt((EX-IX)**2+(EY-IY)**2)
   if((abs(IA-arc_radius)>radian_epsilon)or(abs(IB-arc_radius)>radian_epsilon)or(abs(IC-arc_radius)>radian_epsilon)):
     print("ERR831: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, IA, IB, IC))
-    sys.error(2)
+    sys.exit(2)
   if((abs(ID-IA)>radian_epsilon)or(abs(IE-IA)>radian_epsilon)):
-    print("ERR832: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f} ID={:0.2f} IE={:0.2f}".format(ai_error_msg_id, IA, IB, IC, ID, IE))
-    sys.error(2)
+    print("ERR832: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f} ID={:0.2f} IE={:0.2f}".format(error_msg_id, IA, IB, IC, ID, IE))
+    print("dbg414: AX {:0.2f}  AY {:0.2f}".format(AX,AY))
+    print("dbg424: BX {:0.2f}  BY {:0.2f}".format(BX,BY))
+    print("dbg434: CX {:0.2f}  CY {:0.2f}".format(CX,CY))
+    print("dbg444: DX {:0.2f}  DY {:0.2f}".format(DX,DY))
+    print("dbg454: EX {:0.2f}  EY {:0.2f}".format(EX,EY))
+    print("dbg464: IX {:0.2f}  IY {:0.2f}".format(IX,IY))
+    sys.exit(2)
   # calculation of the angles d=(Ix, ID) and e=(Ix, IE)
   d = math.atan2(DY-IY, DX-IX)
   e = math.atan2(EY-IY, EX-IX)
@@ -807,21 +785,28 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
     if(tmp_middle_point!=None):
       last_point = previous_point
       next_point = pt_end[corn_idx+1]
-      tmp_middle_point = arc_middle(pt_end[corn_idx], pt_mid[corn_idx+1], pt_end[corn_idx+1], last_point, next_point, ai_error_msg_id, corn_idx+1)
+      tmp_middle_point = arc_middle(pt_end[corn_idx], pt_mid[corn_idx+1], pt_end[corn_idx+1], last_point, next_point, "{:s}.am1".format(ai_error_msg_id), corn_idx+1)
     # following point
     following_point = pt_end[corn_idx+2]
     following_middle_point =  pt_mid[corn_idx+2]
     if(outline_closed and (corn_idx==point_nb-3)):
       following_point = r_outline[0]
       if(following_middle_point!=None):
-        following_middle_point = arc_middle(pt_end[-2], pt_mid[-1], pt_end[-1], pt_end[-2], following_point, ai_error_msg_id, -2)
+        following_middle_point = arc_middle(pt_end[-2], pt_mid[-1], pt_end[-1], pt_end[-2], following_point, "{:s}.am2".format(ai_error_msg_id), -2)
     # compute the corner outline
-    new_corner = cnc_cut_corner(previous_point,tmp_middle_point, pt_end[corn_idx+1], following_middle_point, following_point, pt_request[corn_idx+1], ai_error_msg_id, corn_idx+1)
+    new_corner = cnc_cut_corner(previous_point, tmp_middle_point, pt_end[corn_idx+1], following_middle_point, following_point, pt_request[corn_idx+1], ai_error_msg_id, corn_idx+1)
+    #print("dbg551: previous_point", previous_point)
+    #print("dbg552: tmp_middle_point", tmp_middle_point)
+    #print("dbg553: pt_end[corn_idx+1]", pt_end[corn_idx+1])
+    #print("dbg554: following_middle_point", following_middle_point)
+    #print("dbg555: following_point", following_point)
+    #print("dbg556: pt_request[corn_idx+1]", pt_request[corn_idx+1])
+    #print("dbg557: new_corner", new_corner)
     # recompute the final middle point because it might be out of the arc
     if(pt_mid[corn_idx+1]!=None):
       last_point = (r_outline[-1][-2], r_outline[-1][-1])
       next_point = new_corner[0]
-      new_middle_point = arc_middle(pt_end[corn_idx], pt_mid[corn_idx+1], pt_end[corn_idx+1], last_point, next_point, ai_error_msg_id, corn_idx+1)
+      new_middle_point = arc_middle(pt_end[corn_idx], pt_mid[corn_idx+1], pt_end[corn_idx+1], last_point, next_point, "{:s}.am3".format(ai_error_msg_id), corn_idx+1)
       #print("dbg632: new_middle_point:", new_middle_point)
       #print("dbg534: next_point:", next_point)
       new_corner[0] = (new_middle_point[0], new_middle_point[1], next_point[0], next_point[1])
@@ -833,7 +818,7 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
     next_point=pt_end[-1]
   if(pt_mid[-1]!=None):
     last_point = (r_outline[-1][-2], r_outline[-1][-1])
-    new_middle_point = arc_middle(pt_end[-2], pt_mid[-1], pt_end[-1], last_point, next_point, ai_error_msg_id, -1)
+    new_middle_point = arc_middle(pt_end[-2], pt_mid[-1], pt_end[-1], last_point, next_point, "{:s}.am4".format(ai_error_msg_id), -1)
     last_segment = (new_middle_point[0], new_middle_point[1], next_point[0], next_point[1])
   else:
     last_segment = (next_point[0], next_point[1])
@@ -1047,7 +1032,7 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
       [5,45,0,40,ai_router_bit_radius]]
     arc_arc_horizontal = [
       [150,0,ai_router_bit_radius],
-      [155, 5,160,20,ai_router_bit_radius],
+      [155, 5,160,18,ai_router_bit_radius],
       [165, 5,170, 0,ai_router_bit_radius],
       [175,15,180,20,ai_router_bit_radius],
       [185, 5,190, 0,ai_router_bit_radius],
@@ -1097,8 +1082,8 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   outline_b1 = outline_shift_x(cnc_cut_outline(outline_close(outline_a(0)), 'cnc_cut_outline_test3_b1'), 600,1)
   outline_b2 = outline_shift_x(cnc_cut_outline(outline_close(outline_a(ai_sw_router_bit_radius)), 'cnc_cut_outline_test3_b2'), 600,1)
   # outline_c : closed, CW
-  outline_c1 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(0))), 'cnc_cut_outline_test3_c1'), 500,1)
-  outline_c2 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(ai_sw_router_bit_radius))), 'cnc_cut_outline_test3_c2'), 500,1)
+  #outline_c1 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(0))), 'cnc_cut_outline_test3_c1'), 500,1)
+  #outline_c2 = outline_shift_y(cnc_cut_outline(outline_reverse(outline_close(outline_a(ai_sw_router_bit_radius))), 'cnc_cut_outline_test3_c2'), 500,1)
   # outline_d : closed, CCW, rotate
   #outline_d1 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(0),500/2,420/2,math.pi/7)), 'cnc_cut_outline_test3_d1'), 600,1,600,1)
   #outline_d2 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(-1*ai_sw_router_bit_radius),500/2,420/2,math.pi/7)), 'cnc_cut_outline_test3_d2'), 600,1,600,1)
@@ -1108,6 +1093,17 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics(ai_angle_position):
+    # outline_c : closed, CW
+    # settings for no error
+    delta_x = 0.15
+    delta_y = 0.15
+    # settings for error generation
+    #delta_x = 0.25
+    #delta_y = 0.25
+    outline_c1 = cnc_cut_outline(outline_shift_xy(outline_reverse(outline_close(outline_a(0))),
+      -100, 1.0+delta_x*math.cos(ai_angle_position), 500, 1.0+delta_y*math.sin(ai_angle_position)), 'cnc_cut_outline_test3_c1')
+    outline_c2 = cnc_cut_outline(outline_shift_xy(outline_reverse(outline_close(outline_a(ai_sw_router_bit_radius))),
+      -100, 1.0+delta_x*math.cos(ai_angle_position), 500, 1.0+delta_y*math.sin(ai_angle_position)), 'cnc_cut_outline_test3_c2')
     # outline_d : closed, CCW, rotate
     outline_d1 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(0),500/2,420/2,math.pi/7+ai_angle_position)), 'cnc_cut_outline_test3_d1'), 600,1,600,1)
     outline_d2 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(-1*ai_sw_router_bit_radius),500/2,420/2,math.pi/7+ai_angle_position)), 'cnc_cut_outline_test3_d2'), 600,1,600,1)
