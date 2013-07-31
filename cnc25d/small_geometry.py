@@ -356,4 +356,191 @@ def line_circle_intersection(ai_AB, ai_I, ai_R, ai_C, ai_D_direction, ai_error_m
   # return
   return(r_line_circle_intersection)
 
+def sub_smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
+  """ compute the corner center of a smoothed line-arc corner
+  """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  #AX = ai_pre_point[0]
+  #AY = ai_pre_point[1]
+  CX = ai_current_point[0]
+  CY = ai_current_point[1]
+  #DX = ai_post_middle[0]
+  #DY = ai_post_middle[1]
+  #EX = ai_post_point[0]
+  #EY = ai_post_point[1]
+  # calculation of the AC line equation and J
+  (AClx, ACly, ACkA, lAC, xAC) = line_equation(ai_pre_point, ai_current_point, ai_error_msg_id)
+  (JX,JY, R2, uw2, u2, w2) = arc_center_radius_angles(ai_current_point, ai_post_middle, ai_post_point, ai_error_msg_id)
+  # arc orientation
+  #o1 = math.copysign(1, uw1)
+  o2 = math.copysign(1, uw2)
+  # sign of the tangent angle
+  tangent_angle = math.fmod( u2+o2*math.pi/2-xAC+7*math.pi, 2*math.pi) - math.pi
+  #r_outline = []
+  smooth_status = 0
+  if(abs(tangent_angle)<radian_epsilon):
+    print("WARN942: Warning in {:s}, the tangent_angle is too flat! the corner doesn't need to be smoothed.".format(ai_error_msg_id))
+    #r_outline = [(ai_current_point[0], ai_current_point[1])]
+    smooth_status = 2
+  #elif(abs(tangent_angle)>math.pi-radian_epsilon):
+  #  print("WARN943: Warning in {:s}, the tangent_angle is too sharp! the corner cannot be smoothed.".format(ai_error_msg_id))
+  #  r_outline = [(ai_current_point[0], ai_current_point[1])]
+  else:
+    o3 = math.copysign(1, tangent_angle)
+    # calculation of IS and JS
+    Q1_plus = o3 # = -1 if the router below the line, else 1
+    R2_plus = o2*o3 # = -1 if the router is outer the arc, else 1
+    (QX,QY, ACkQ) = line_distance_point(ai_pre_point, ai_current_point, Q1_plus*ai_router_bit_request, ai_error_msg_id)
+    JS = R2-R2_plus*ai_router_bit_request
+    #print("dbg147: ai_pre_point", ai_pre_point)
+    #print("dbg347: ai_current_point", ai_current_point)
+    #print("dbg447: ai_post_middle", ai_post_middle)
+    #print("dbg547: ai_post_point", ai_post_point)
+    #print("dbg647: ai_router_bit_request", ai_router_bit_request)
+    #print("dbg123: AClx={:0.2f} ACly={:0.2f} ACkA={:0.2f} lAC={:0.2f} xAC={:0.2f}".format(AClx, ACly, ACkA, lAC, xAC))
+    #print("dbg124: JX={:0.2f} JY={:0.2f} R2={:0.2f} uw2={:0.2f} u2={:0.2f}  w2={:0.2f}".format(JX, JY, R2, uw2, u2, w2))
+    #print("dbg125: o2={:0.2f} o3={:0.2f}".format(o2,o3))
+    #print("dbg127: tangent_angle", tangent_angle)
+    #print("dbg126: QS={:0.2f} JS={:0.2f}".format(QS,JS))
+    #print("dbg532: in {:s}, xAC={:0.2f} R2={:0.2f} ai_router_bit_request={:0.2f}".format(ai_error_msg_id, xAC, R2, ai_router_bit_request))
+    # calculation of the coordiantes of S, the center of the router_bit in the smooth corner
+    bisector_angle = math.fmod(u2+o2*math.pi/2-(xAC+math.pi) + 7*math.pi, 2*math.pi) - math.pi
+    D_direction = xAC + bisector_angle/2
+    #print("dbg693: bisector_angle {:0.2f}  D_direction {:0.2f}".format(bisector_angle, D_direction))
+    (SX,SY, line_circle_intersection_status) = line_circle_intersection((AClx, ACly, ACkQ), (JX,JY),JS, (CX,CY), D_direction, ai_error_msg_id)
+    # when the angle is too sharp, the sign of the tangeant angle might be wrong because of calculation imprecition.
+    # in this case, we use the method of try and retry
+    if((line_circle_intersection_status==2)and(abs(tangent_angle)>math.pi-10*radian_epsilon)): # error then retry with -Q1_plus instead of Q1_plus
+      print("WARN682: Warning in {:s}, line_arc corner is smoothed with the other side because of a line_circle_intersection error!".format(ai_error_msg_id))
+      (QX,QY, ACkQ) = line_distance_point(ai_pre_point, ai_current_point, -Q1_plus*ai_router_bit_request, ai_error_msg_id)
+      tmpCX = CX + JS*math.cos(xAC+math.pi)
+      tmpCY = CY + JS*math.sin(xAC+math.pi)
+      (SX,SY, line_circle_intersection_status) = line_circle_intersection((AClx, ACly, ACkQ), (JX,JY),JS, (tmpCX,tmpCY), D_direction, ai_error_msg_id)
+    # end of the retry. Continue the normal calculation recipe
+    if(line_circle_intersection_status==2):
+      print("WARN684: Warning in {:s}, corner is not smoothed because of a line_circle_intersection error!".format(ai_error_msg_id))
+      print("dbg681: ai_pre_point", ai_pre_point)
+      print("dbg683: ai_current_point", ai_current_point)
+      print("dbg684: ai_post_middle", ai_post_middle)
+      print("dbg685: ai_post_point", ai_post_point)
+      print("dbg686: ai_router_bit_request", ai_router_bit_request)
+      print("dbg623: AClx={:0.2f} ACly={:0.2f} ACkA={:0.2f} lAC={:0.2f} xAC={:0.2f}".format(AClx, ACly, ACkA, lAC, xAC))
+      print("dbg688: JX={:0.2f} JY={:0.2f} R2={:0.2f} uw2={:0.2f} u2={:0.2f}  w2={:0.2f}".format(JX, JY, R2, uw2, u2, w2))
+      print("dbg689: o2={:0.2f} o3={:0.2f}".format(o2,o3))
+      print("dbg691: tangent_angle", tangent_angle)
+      print("dbg692: JS={:0.2f}".format(JS))
+      print("dbg711: QX={:0.2f} QY={:0.2f} ACkQ={:0.2f}".format(QX,QY,ACkQ))
+      print("dbg693: in {:s}, xAC={:0.2f} R2={:0.2f} ai_router_bit_request={:0.2f}".format(ai_error_msg_id, xAC, R2, ai_router_bit_request))
+      #r_outline = [(ai_current_point[0], ai_current_point[1])]
+      smooth_status = 2
+      sys.exit(2)
+    else:
+      # calculation of U, the projection of S on AC
+      (UX, UY) = line_point_projection((AClx, ACly, ACkA), (SX,SY), ai_error_msg_id)
+      # calculation of the angles xSU and xSJ
+      #xSU = math.atan2(UY-SY, UX-SX)+(1+Q1_plus)/2*math.pi
+      xSU = math.atan2(UY-SY, UX-SX)
+      xSJ = math.atan2(JY-SY, JX-SX)+(1+R2_plus)/2*math.pi
+      router_bit_arc_uw = math.fmod(xSJ-xSU+4*math.pi, 2*math.pi)
+      if(o3<0):
+        router_bit_arc_uw = router_bit_arc_uw - 2*math.pi
+      #print("dbg337: SX {:0.2f}  SY {:0.2f}".format(SX,SY))
+      #print("dbg994: xSI {:0.2f}  xSJ {:0.2f}".format(xSI, xSJ))
+      #print("dbg773: router_bit_arc_uw", router_bit_arc_uw)
+      smooth_status = 1
+  # return
+  r_sub_smooth_corner_line_arc = (SX, SY, UX, UY, xSU, xSJ, router_bit_arc_uw, smooth_status)
+  return(r_sub_smooth_corner_line_arc)
+
+def sub_smooth_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
+  """ Compute the smooth corner center for a arc-arc corner
+  """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  #AX = ai_pre_point[0]
+  #AY = ai_pre_point[1]
+  #BX = ai_pre_middle[0]
+  #BY = ai_pre_middle[1]
+  CX = ai_current_point[0]
+  CY = ai_current_point[1]
+  #DX = ai_post_middle[0]
+  #DY = ai_post_middle[1]
+  #EX = ai_post_point[0]
+  #EY = ai_post_point[1]
+  # calculation of I and J
+  (IX,IY, R1, uw1, u1, w1) = arc_center_radius_angles(ai_pre_point, ai_pre_middle, ai_current_point, ai_error_msg_id)
+  (JX,JY, R2, uw2, u2, w2) = arc_center_radius_angles(ai_current_point, ai_post_middle, ai_post_point, ai_error_msg_id)
+  # arc orientation
+  o1 = math.copysign(1, uw1)
+  o2 = math.copysign(1, uw2)
+  # sign of the tangent angle
+  #tangent_angle = math.fmod( (u2+o2*path.pi/2)-(w1+o1*path.pi/2)+8*math.pi, 2*math.pi) - math.pi
+  tangent_angle = math.fmod( u2-w1+(o2-o1)*math.pi/2+9*math.pi, 2*math.pi) - math.pi
+  #r_outline = []
+  smooth_status = 0
+  if(abs(tangent_angle)<radian_epsilon):
+    print("WARN932: Warning in {:s}, the tangent_angle is too flat! the corner doesn't need to be smoothed.".format(ai_error_msg_id))
+    #r_outline = [(ai_current_point[0], ai_current_point[1])]
+    smooth_status = 2
+  elif(abs(tangent_angle)>math.pi-radian_epsilon):
+    print("WARN933: Warning in {:s}, the tangent_angle is too sharp! the corner cannot be smoothed.".format(ai_error_msg_id))
+    #r_outline = [(ai_current_point[0], ai_current_point[1])]
+    smooth_status = 2
+  else:
+    o3 = math.copysign(1, tangent_angle)
+    # calculation of IS and JS
+    R1_plus = o1*o3 # = -1 if the router is outer the arc, else 1
+    R2_plus = o2*o3 # = -1 if the router is outer the arc, else 1
+    IS = R1-R1_plus*ai_router_bit_request
+    JS = R2-R2_plus*ai_router_bit_request
+    #print("dbg147: ai_pre_point", ai_pre_point)
+    #print("dbg247: ai_pre_middle", ai_pre_middle)
+    #print("dbg347: ai_current_point", ai_current_point)
+    #print("dbg447: ai_post_middle", ai_post_middle)
+    #print("dbg547: ai_post_point", ai_post_point)
+    #print("dbg647: ai_router_bit_request", ai_router_bit_request)
+    #print("dbg123: IX={:0.2f} IY={:0.2f} R1={:0.2f} uw1={:0.2f} u1={:0.2f}  w1={:0.2f}".format(IX, IY, R1, uw1, u1, w1))
+    #print("dbg124: JX={:0.2f} JY={:0.2f} R2={:0.2f} uw2={:0.2f} u2={:0.2f}  w2={:0.2f}".format(JX, JY, R2, uw2, u2, w2))
+    #print("dbg125: o1={:0.2f} o2={:0.2f} o3={:0.2f}".format(o1,o2,o3))
+    #print("dbg127: tangent_angle", tangent_angle)
+    #print("dbg126: IS={:0.2f} JS={:0.2f}".format(IS,JS))
+    #print("dbg532: in {:s}, R1={:0.2f} R2={:0.2f} ai_router_bit_request={:0.2f}".format(ai_error_msg_id, R1, R2, ai_router_bit_request))
+    # calculation of the coordiantes of S, the center of the router_bit in the smooth corner
+    bisector_angle = math.fmod(u2-w1+(o2+o1)*math.pi/2 + 9*math.pi, 2*math.pi) - math.pi #(u2+o2*math.pi/2)-(w1-o1*math.pi/2)
+    D_direction = w1 + bisector_angle/2
+    #print("dbg693: bisector_angle {:0.2f}  D_direction {:0.2f}".format(bisector_angle, D_direction))
+    (SX,SY, triangulation_status) = triangulation((IX,IY),IS,(JX,JY),JS,(CX,CY), D_direction, ai_error_msg_id)
+    if(triangulation_status==2):
+      print("WARN693: Warning in {:s}, corner is not smoothed because of a triangulation error!".format(ai_error_msg_id))
+      #print("dbg681: ai_pre_point", ai_pre_point)
+      #print("dbg682: ai_pre_middle", ai_pre_middle)
+      #print("dbg683: ai_current_point", ai_current_point)
+      #print("dbg684: ai_post_middle", ai_post_middle)
+      #print("dbg685: ai_post_point", ai_post_point)
+      #print("dbg686: ai_router_bit_request", ai_router_bit_request)
+      #print("dbg687: IX={:0.2f} IY={:0.2f} R1={:0.2f} uw1={:0.2f} u1={:0.2f}  w1={:0.2f}".format(IX, IY, R1, uw1, u1, w1))
+      #print("dbg688: JX={:0.2f} JY={:0.2f} R2={:0.2f} uw2={:0.2f} u2={:0.2f}  w2={:0.2f}".format(JX, JY, R2, uw2, u2, w2))
+      #print("dbg689: o1={:0.2f} o2={:0.2f} o3={:0.2f}".format(o1,o2,o3))
+      #print("dbg691: tangent_angle", tangent_angle)
+      #print("dbg692: IS={:0.2f} JS={:0.2f}".format(IS,JS))
+      #print("dbg693: in {:s}, R1={:0.2f} R2={:0.2f} ai_router_bit_request={:0.2f}".format(ai_error_msg_id, R1, R2, ai_router_bit_request))
+      #r_outline = [(ai_current_point[0], ai_current_point[1])]
+      smooth_status = 2
+    else:
+      # calculation of the angles xSI and xSJ
+      xSI = math.atan2(IY-SY, IX-SX)+(1+R1_plus)/2*math.pi
+      xSJ = math.atan2(JY-SY, JX-SX)+(1+R2_plus)/2*math.pi
+      router_bit_arc_uw = math.fmod(xSJ-xSI+4*math.pi, 2*math.pi)
+      if(o3<0):
+        router_bit_arc_uw = router_bit_arc_uw - 2*math.pi
+      #print("dbg337: SX {:0.2f}  SY {:0.2f}".format(SX,SY))
+      #print("dbg994: xSI {:0.2f}  xSJ {:0.2f}".format(xSI, xSJ))
+      #print("dbg773: router_bit_arc_uw", router_bit_arc_uw)
+      smooth_status = 1
+  #return
+  r_sub_smooth_corner_arc_arc = (SX, SY, xSI, xSJ, router_bit_arc_uw, smooth_status)
+  return(r_sub_smooth_corner_arc_arc)
 
