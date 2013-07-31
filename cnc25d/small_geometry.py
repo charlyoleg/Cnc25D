@@ -227,5 +227,133 @@ def triangulation(ai_A, ai_AC, ai_B, ai_BC, ai_D, ai_D_direction, ai_error_msg_i
   r_C = (CX,CY,r_status)
   return(r_C)
 
+def line_equation(ai_A, ai_B, ai_error_msg_id):
+  """ Given the coordinates of two points, it returns the three coefficient of the line equation, the length of the segment and the inclination
+  """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  AX = ai_A[0]
+  AY = ai_A[1]
+  BX = ai_B[0]
+  BY = ai_B[1]
+  # calculation of the length AB
+  lAB = math.sqrt((BX-AX)**2+(BY-AY)**2)
+  # calculation of the inclination of AB
+  xAB = math.atan2(BY-AY, BX-AX)
+  cos_xAB = (BX-AX)/lAB
+  sin_xAB = (BY-AY)/lAB
+  # calculation of the line equation coefficient : ABlx * x + ABly * y + ABk = 0
+  # ABlx = sin(xAB)
+  ABlx = sin_xAB
+  # ABly = -cos(xAB)
+  ABly = -cos_xAB
+  # ABk = -(ABlx*AX+ABly*AY)
+  ABk = -(ABlx*AX+ABly*AY)
+  # return
+  r_line_equation = (ABlx, ABly, ABk, lAB, xAB)
+  return(r_line_equation)
+
+def line_distance_point(ai_A, ai_B, ai_q, ai_error_msg_id):
+  """ Given the two points A and B and the distance q, what are the coordinates of Q, distance of q from AB
+  """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  AX = ai_A[0]
+  AY = ai_A[1]
+  BX = ai_B[0]
+  BY = ai_B[1]
+  # line equation of AB
+  #(ABlx, ABly, ABkA, lAB, xAB) = line_equation(ai_A, ai_B, ai_error_msg_id)
+  lAB = math.sqrt((BX-AX)**2+(BY-AY)**2)
+  cos_xAB = (BX-AX)/lAB
+  sin_xAB = (BY-AY)/lAB
+  ABlx = sin_xAB
+  ABly = -cos_xAB
+  # calculation of Q
+  # QX = AX+q*cos(xAB+pi/2) = AX-q*sin(xAB)
+  # QY = AX+q*sin(xAB+pi/2) = AX+q*cos(xAB)
+  QX = AX-ai_q*sin_xAB
+  QY = AY+ai_q*cos_xAB
+  ABkQ = -(ABlx*QX+ABly*QY)
+  # return
+  r_Q = (QX, QY, ABkQ)
+  return(r_Q)
+
+def line_point_projection(ai_AB, ai_M, ai_error_msg_id):
+  """ Given the line equation of AB (ABlx, AVly, ABk) and the coordinates of M (MX,MY), returns the coordinates of P, projection of M on AB
+  """
+  # use to check is angle is smaller than pi/2
+  #radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  a = ai_AB[0] # ABlx
+  b = ai_AB[1] # ABly
+  c = ai_AB[2] # ABk
+  MX = ai_M[0]
+  MY = ai_M[1]
+  # calculation of d (MPk, coefficient of the line equation of PM)
+  d = -(b*MX-a*MY) # MPk
+  # calculation of the coordinates of P
+  PX = -(c*a+d*b)
+  PY = d*a-c*b
+  # return
+  r_P = (PX, PY)
+  return(r_P)
+
+def line_circle_intersection(ai_AB, ai_I, ai_R, ai_C, ai_D_direction, ai_error_msg_id):
+  """ Given the line equation (a*x+b*y+c=0) and the circle of center I and radius R, returns the intersection M
+      C define the side of the intersection
+      D_direction is used if C is too closed to the border. Set it to zero if you don't know how to set it.
+  """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # status for error forward
+  line_circle_intersection_status = 0
+  r_line_circle_intersection = (0, 0, line_circle_intersection_status)
+  # interpretation of the input points
+  a = ai_AB[0] # ABlx
+  b = ai_AB[1] # ABly
+  c = ai_AB[2] # ABk
+  IX = ai_I[0]
+  IY = ai_I[1]
+  CX = ai_C[0]
+  CY = ai_C[1]
+  # calculation of the coordinates of P, projection of M on AB
+  (PX, PY) = line_point_projection(ai_AB, ai_I, ai_error_msg_id)
+  # calculation of the coordinates of C2, projection of C on AB
+  (C2X, C2Y) = line_point_projection(ai_AB, ai_C, ai_error_msg_id)
+  # calculation of the length IP
+  #IP = math.sqrt((PX-IX)**2+(PY-IY)**2)
+  IP2 = (PX-IX)**2+(PY-IY)**2
+  IP = math.sqrt(IP2)
+  if(IP>ai_R):
+    # This error might occur when the sign of the tangent is wrong because of calculation impression.
+    # That's why, we need to report the error instead of stopping on this error
+    print("ERR672: Error in {:s}, the line and the circle have no intersection! IP={:0.2f}  ai_R={:0.2f}".format(ai_error_msg_id, IP, ai_R))
+    #sys.exit(2)
+    line_circle_intersection_status=2
+    r_line_circle_intersection = (0, 0, line_circle_intersection_status)
+  else:
+    # calculation of the length PM
+    PM = math.sqrt(ai_R**2-IP2)
+    # calculation of the length C2P
+    C2P = math.sqrt((PX-C2X)**2+(PY-C2Y)**2)
+    cos_i = (C2X-PX)/C2P
+    sin_i = (C2Y-PY)/C2P
+    if(C2P<radian_epsilon):
+      print("WARN348: Warning in {:s}, C is too closed from the board to find the line_circle_intersection!".format(ai_error_msg_id))
+      xAB = math.atan2(a, -b)
+      direction_correlation = math.fmod(ai_D_direction-xAB+5*math.pi, 2*math.pi)-math.pi
+      direction_AB = math.copysign(1, direction_correlation)
+      norm_ab = math.sqrt(a**2+b**2)
+      cos_i = direction_AB * -b / norm_ab
+      sin_i = direction_AB * a / norm_ab
+    # calculation of the coordinates of M
+    MX = PX+cos_i*PM
+    MY = PY+sin_i*PM
+    r_line_circle_intersection = (MX, MY, line_circle_intersection_status)
+  # return
+  return(r_line_circle_intersection)
 
 
