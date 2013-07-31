@@ -330,9 +330,19 @@ def enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_p
 def enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ Generate the corner outline for a enlarged arc-arc corner
   """
-  r_outline = []
-  # waiting for implementation
+  ((MKX,MKY), (GX,GY), (CX,CY), (HX,HY), (NLX,NLY), MG_deep, NH_deep, enlarge_status) = sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id)
   r_outline = [(ai_current_point[0], ai_current_point[1])]
+  if(enlarge_status==1):
+    # corner outline construction
+    r_outline = [(MKX,MKY)]
+    if(MG_deep<0):
+      r_outline.append((GX,GY))
+    if(NH_deep<0):
+      r_outline.append((CX,CY,HX,HY))
+      r_outline.append((NLX,NLY))
+    else:
+      r_outline.append((CX,CY,NLX,NLY))
+  # return
   return(r_outline)
 
 def cnc_cut_corner(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id, ai_error_msg_idx):
@@ -417,15 +427,18 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   else:
     ud = math.fmod(d-u+4*math.pi, 2*math.pi)
     ue = math.fmod(e-u+4*math.pi, 2*math.pi)
+  arc_middle_status = 1
   # check if E and F below to the arc segment A,B,C
   if((abs(uw)<abs(ud)-radian_epsilon)or(abs(uw)<abs(ue)-radian_epsilon)):
     print("ERR441: Error, in {:s}, E or F are not on the arc segment A,B,C! uw={:0.2f} ud={:0.2f} ue={:0.2f}".format(error_msg_id, uw, ud, ue))
     print("dbg927: A={:0.2f} {:0.2f}  B={:0.2f} {:0.2f}  C={:0.2f} {:0.2f}  D={:0.2f} {:0.2f}  E={:0.2f} {:0.2f}".format(AX,AY,BX,BY,CX,CY,DX,DY,EX,EY))
-    sys.exit(2)
+    #sys.exit(2)
+    arc_middle_status = 2
   # check the orientation of E,F compare to A,B,C
   if(abs(ud)>abs(ue)):
     print("ERR442: Error, in {:s}, E,F have not the same orientation as A,B,C! ud={:0.2f} ue={:0.2f}".format(error_msg_id, ud, ue))
-    sys.exit(2)
+    #sys.exit(2)
+    arc_middle_status = 2
   # calculation of the angle de=(ID, IE)
   if(uw<0):
     de = -1*math.fmod(d-e+4*math.pi, 2*math.pi)
@@ -436,6 +449,13 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   # calculation of F
   FX = IX+arc_radius*math.cos(f)
   FY = IY+arc_radius*math.sin(f)
+  # dummy F in case of error
+  if(arc_middle_status==2):
+    print("WARN221: Warning in {:s}, creating a dummy arc because of internal error!".format(error_msg_id))
+    lDE = math.sqrt((EX-DX)**2+(EY-DY)**2)
+    xDE = math.atan2(EY-DY, EX-DX)
+    FX = (DX+EX)/2+math.cos(xDE+math.pi/2)*lDE/4
+    FY = (DY+EY)/2+math.sin(xDE+math.pi/2)*lDE/4
   # return
   r_middle_point=(FX, FY)
   return(r_middle_point)
