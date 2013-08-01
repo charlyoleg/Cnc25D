@@ -330,18 +330,34 @@ def enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_p
 def enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ Generate the corner outline for a enlarged arc-arc corner
   """
-  ((MKX,MKY), (GX,GY), (CX,CY), (HX,HY), (NLX,NLY), MG_deep, NH_deep, enlarge_status) = sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id)
+  ((MKX,MKY), (GX,GY), (CX,CY), (HX,HY), (NLX,NLY), enlarge_type_request_1, enlarge_type_request_2, enlarge_status) = sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id)
   r_outline = [(ai_current_point[0], ai_current_point[1])]
+  #print("dbg101: ai_pre_point:", ai_pre_point)
+  #print("dbg102: ai_pre_middle:", ai_pre_middle)
+  #print("dbg103: ai_current_point:", ai_current_point)
+  #print("dbg104: ai_post_middle:", ai_post_middle)
+  #print("dbg105: ai_post_point:", ai_post_point)
+  #print("dbg106: ai_router_bit_request:", ai_router_bit_request)
+  #print("dbg201: MK: {:0.2f}  {:0.2f}".format(MKX,MKY))
+  #print("dbg202: G: {:0.2f}  {:0.2f}".format(GX,GY))
+  #print("dbg203: C: {:0.2f}  {:0.2f}".format(CX,CY))
+  #print("dbg204: H: {:0.2f}  {:0.2f}".format(HX,HY))
+  #print("dbg205: NL: {:0.2f}  {:0.2f}".format(NLX,NLY))
+  #print("dbg211: enlarge_type_request_1: {:0.2f}".format(enlarge_type_request_1))
+  #print("dbg212: enlarge_type_request_2: {:0.2f}".format(enlarge_type_request_2))
+  #print("dbg213: enlarge_status: {:0.2f}".format(enlarge_status))
   if(enlarge_status==1):
     # corner outline construction
     r_outline = [(MKX,MKY)]
-    if(MG_deep<0):
+    if(enlarge_type_request_1==3):
       r_outline.append((GX,GY))
-    if(NH_deep<0):
+    if(enlarge_type_request_2==3):
       r_outline.append((CX,CY,HX,HY))
       r_outline.append((NLX,NLY))
     else:
       r_outline.append((CX,CY,NLX,NLY))
+    if(enlarge_type_request_1==1): # (enlarge_type_request_2==1)
+      r_outline = [(ai_current_point[0], ai_current_point[1])]
   # return
   return(r_outline)
 
@@ -427,6 +443,10 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   else:
     ud = math.fmod(d-u+4*math.pi, 2*math.pi)
     ue = math.fmod(e-u+4*math.pi, 2*math.pi)
+  # correction because of calculation imprecision
+  if(abs(ud)>2*math.pi-radian_epsilon):
+    print("WARN771: Warning in {:s}, the angle ud is corrected to zero because of presumed calculation imprecision!".format(error_msg_id))
+    ud = 0
   arc_middle_status = 1
   # check if E and F below to the arc segment A,B,C
   if((abs(uw)<abs(ud)-radian_epsilon)or(abs(uw)<abs(ue)-radian_epsilon)):
@@ -451,11 +471,13 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   FY = IY+arc_radius*math.sin(f)
   # dummy F in case of error
   if(arc_middle_status==2):
-    print("WARN221: Warning in {:s}, creating a dummy arc because of internal error!".format(error_msg_id))
-    lDE = math.sqrt((EX-DX)**2+(EY-DY)**2)
-    xDE = math.atan2(EY-DY, EX-DX)
-    FX = (DX+EX)/2+math.cos(xDE+math.pi/2)*lDE/4
-    FY = (DY+EY)/2+math.sin(xDE+math.pi/2)*lDE/4
+    print("ERR221: Error in {:s} during the recalculation of the arc middle point!".format(error_msg_id))
+    sys.exit(2)
+    #print("WARN221: Warning in {:s}, creating a dummy arc because of internal error!".format(error_msg_id))
+    #lDE = math.sqrt((EX-DX)**2+(EY-DY)**2)
+    #xDE = math.atan2(EY-DY, EX-DX)
+    #FX = (DX+EX)/2+math.cos(xDE+math.pi/2)*lDE/4
+    #FY = (DY+EY)/2+math.sin(xDE+math.pi/2)*lDE/4
   # return
   r_middle_point=(FX, FY)
   return(r_middle_point)
@@ -965,6 +987,7 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   """ Third test to check the cnc_cut_outline API
       It displays the shapes with Tkinter
   """
+  print("Run test_3 ...")
   def outline_a(ai_router_bit_radius):
     corner_a=[
       [0,20, ai_router_bit_radius],
@@ -1094,6 +1117,59 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   r_test = 1
   return(r_test)
 
+def cnc_cut_outline_test4(ai_sw_router_bit_radius):
+  """ Fourth test suggests small shapes, useful to develop the cnc_cut_outline API
+      It displays the shapes with Tkinter
+  """
+  print("Run test_4 ...")
+  def outline_t4_a(ai_router_bit_radius):
+    three_arcs=[
+      [0,20, 0],
+      [-5,15,0,10,ai_router_bit_radius],
+      [-5,-5,10,0,ai_router_bit_radius],
+      [15,-5,20,0,0]]
+    arc_arc_horizontal = [
+      [150,0,ai_router_bit_radius],
+      [155, 5,160,18,ai_router_bit_radius],
+      [165, 5,170, 0,ai_router_bit_radius],
+      [175,15,180,20,ai_router_bit_radius],
+      [185, 5,190, 0,ai_router_bit_radius],
+      [195, 5,200,20,ai_router_bit_radius],
+      [205,18,210, 0,ai_router_bit_radius],
+      [214, -5,225,-10,ai_router_bit_radius],
+      [229, 0,230,10,ai_router_bit_radius],
+      [235,14,240,20,ai_router_bit_radius],
+      [241,10,245,0,ai_router_bit_radius]]
+    r_outline_t4_a1=[]
+    r_outline_t4_a1.extend(three_arcs)
+    r_outline_t4_a1.extend(outline_shift_x(arc_arc_horizontal, -100, 1))
+    r_outline_t4_a1.append([250,0,0])
+    return(r_outline_t4_a1)
+  # outline_a
+  outline_a1 = cnc_cut_outline(outline_t4_a(0), 'cnc_cut_outline_test4_a1')
+  outline_a2 = cnc_cut_outline(outline_t4_a(ai_sw_router_bit_radius), 'cnc_cut_outline_test4_a2')
+  # print the outline
+  #for i_segment in outline_a1:
+  #  print("dbg331: outline_a1 i_segment:", len(i_segment), i_segment)
+  #for i_segment in outline_a2:
+  #  print("dbg332: outline_a2 i_segment:", len(i_segment), i_segment)
+
+  # display with Tkinter
+  tk_root = Tkinter.Tk()
+  my_canvas = outline_backends.Two_Canvas(tk_root)
+  # callback function for display_backend
+  def sub_canvas_graphics_t4(ai_angle_position):
+    r_canvas_graphics = []
+    r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_a1, 'tkinter'), 'red', 1))
+    r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_a2, 'tkinter'), 'green', 2))
+    return(r_canvas_graphics)
+  # end of callback function
+  my_canvas.add_canvas_graphic_function(sub_canvas_graphics_t4)
+  tk_root.mainloop()
+  # end of display with Tkinter
+  r_test = 1
+  return(r_test)
+
 ################################################################
 # cnc_cut_outline command line interface
 ################################################################
@@ -1114,6 +1190,8 @@ def cnc_cut_outline_cli(ai_args=None):
     help='It generates a bunch of shapes, that you should observed afterward.')
   cco_parser.add_argument('--test3','--t3', action='store_true', default=False, dest='sw_test3',
     help='It generates a bunch of shapes, that are displayed with Tkinter.')
+  cco_parser.add_argument('--test4','--t4', action='store_true', default=False, dest='sw_test4',
+    help='Small shapes for development, that are displayed with Tkinter.')
   # this ensure the possible to use the script with python and freecad
   effective_args=ai_args
   if(effective_args==None):
@@ -1132,6 +1210,8 @@ def cnc_cut_outline_cli(ai_args=None):
     cnc_cut_outline_test2(cco_args.sw_output_file_base, cco_args.sw_router_bit_radius, cco_args.sw_height)
   if(cco_args.sw_test3):
     cnc_cut_outline_test3(cco_args.sw_router_bit_radius)
+  if(cco_args.sw_test4):
+    cnc_cut_outline_test4(cco_args.sw_router_bit_radius)
   print("dbg999: end of script")
   
     
@@ -1148,7 +1228,8 @@ if __name__ == "__main__":
   #cnc_cut_outline_cli("--test2".split())
   #cnc_cut_outline_cli("--test1 --test2".split())
   #cnc_cut_outline_cli("--test3".split())
-  cnc_cut_outline_cli("--test3 --router_bit_radius=3".split())
+  cnc_cut_outline_cli("--test3 --router_bit_radius=-3".split())
+  #cnc_cut_outline_cli("--test4 --router_bit_radius=-3".split())
   #make_H_shape(1.0,2.0,'')
 
 

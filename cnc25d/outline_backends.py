@@ -100,6 +100,7 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   lbc = math.sqrt((ptcx-ptbx)**2+(ptcy-ptby)**2)
   if(lab<epilon):
     print("ERR811: Error, A and B are almost identical")
+    print("dbg559: pta={:0.2f} {:0.2f}  ptb={:0.2f} {:0.2f}  ptc={:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
     sys.exit(2)
   if(lbc<epilon):
     print("ERR812: Error, B and C are almost identical")
