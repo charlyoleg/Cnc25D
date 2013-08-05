@@ -320,7 +320,7 @@ def line_circle_intersection(ai_AB, ai_I, ai_R, ai_C, ai_D_direction, ai_error_m
   IY = ai_I[1]
   CX = ai_C[0]
   CY = ai_C[1]
-  # calculation of the coordinates of P, projection of M on AB
+  # calculation of the coordinates of P, projection of I on AB
   (PX, PY) = line_point_projection(ai_AB, ai_I, ai_error_msg_id)
   # calculation of the coordinates of C2, projection of C on AB
   (C2X, C2Y) = line_point_projection(ai_AB, ai_C, ai_error_msg_id)
@@ -360,6 +360,37 @@ def line_circle_intersection(ai_AB, ai_I, ai_R, ai_C, ai_D_direction, ai_error_m
     r_line_circle_intersection = (MX, MY, line_circle_intersection_status)
   # return
   return(r_line_circle_intersection)
+
+def line_line_intersection(ai_AB, ai_CD, ai_error_msg_id):
+  """ Given the line equations (a*x+b*y+c=0) of the two lines (AB) and (CD), returns the intersection M
+  """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # status for error forward
+  line_line_intersection_status = 0
+  # interpretation of the input points
+  a1 = ai_AB[0] # ABlx
+  b1 = ai_AB[1] # ABly
+  c1 = ai_AB[2] # ABk
+  a2 = ai_CD[0] # CDlx
+  b2 = ai_CD[1] # CDly
+  c2 = ai_CD[2] # CDk
+  # we have
+  # a1*MX+b1*MY+c1=0
+  # a2*MX+b2*MY+c2=0
+  MX = 0
+  MY = 0
+  determinant = a1*b2-a2*b1
+  if(abs(determinant)<radian_epsilon):
+    print("WARN656: Warning in {:s}, the two lines are parallel!".format(ai_error_msg_id))
+    line_line_intersection_status=2
+  else:
+    MX = (c2*b1-c1*b2)/determinant
+    MY = (c1*a2-c2*a1)/determinant
+  r_line_line_intersection = (MX, MY, line_line_intersection_status)
+  # return
+  #print("dbg947: r_line_line_intersection:", r_line_line_intersection)
+  return(r_line_line_intersection)
 
 def sub_smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ compute the corner center of a smoothed line-arc corner
@@ -549,6 +580,120 @@ def sub_smooth_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_
   r_sub_smooth_corner_arc_arc = (SX, SY, xSI, xSJ, router_bit_arc_uw, smooth_status)
   return(r_sub_smooth_corner_arc_arc)
 
+def sub_enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
+  """ Compute the points related to an enlarged line-arc corner
+  """
+  # use to check is angle is smaller than pi/2
+  radian_epsilon = math.pi/1000
+  # interpretation of the input points
+  #AX = ai_pre_point[0]
+  #AY = ai_pre_point[1]
+  CX = ai_current_point[0]
+  CY = ai_current_point[1]
+  #DX = ai_post_middle[0]
+  #DY = ai_post_middle[1]
+  #EX = ai_post_point[0]
+  #EY = ai_post_point[1]
+  enlarge_status = 0
+  #r_sub_enlarge_corner_line_arc = ((MKX,MKY), (GX,GY), (CX,CY), (HX,HY), (NLX,NLY), enlarge_type_request_1, enlarge_type_request_2, enlarge_status)
+  MKX=0; MKY=0; GX=0; GY=0; HX=0; HY=0; NLX=0; NLY=0; enlarge_type_request_1=0; enlarge_type_request_2=0
+  (SX, SY, UX, UY, xSU, xSJ, router_bit_arc_uw, smooth_status) = sub_smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id)
+  if(smooth_status!=1):
+    print("ERR977: Error in {:s}, the sub smooth corner get an error!".format(ai_error_msg_id))
+    sys.exit(2)
+    enlarge_status = 2
+  else:
+    #print("dbg553: router_bit_arc_uw:", router_bit_arc_uw)
+    if(abs(router_bit_arc_uw)>math.pi):
+      print("ERR877: Error in {:s}, the sub smooth corner is englobed!".format(ai_error_msg_id))
+      sys.exit(2)
+      enlarge_status = 2
+    elif(abs(router_bit_arc_uw)<radian_epsilon):
+      print("WARN878: Warning in {:s}, the corner is too flat to be enlarged with this router_bit radius!")
+      enlarge_status = 2
+      enlarge_type_request_1=1
+      enlarge_type_request_2=1
+    else:
+      corner_orientation = math.copysign(1, router_bit_arc_uw)
+      enlarge_status = 1
+      (SClx, SCly, SCkS, lSC, xSC) = line_equation((SX,SY), (CX,CY), ai_error_msg_id)
+      (FX,FY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkS), (CX,CY),ai_router_bit_request, (SX,SY), xSC+math.pi, ai_error_msg_id)
+      if(line_circle_intersection_status==2):
+        print("ERR739: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        sys.exit(2)
+      (GX,GY, SCkG) = line_distance_point((FX,FY), (CX,CY), -1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
+      (HX,HY, SCkH) = line_distance_point((FX,FY), (CX,CY),  1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
+      #(IX,IY, R1, uw1, u1, w1) = arc_center_radius_angles(ai_pre_point, ai_pre_middle, ai_current_point, ai_error_msg_id)
+      (AClx, ACly, ACkC, lAC, xAC) = line_equation(ai_pre_point, ai_current_point, ai_error_msg_id)
+
+      (JX,JY, R2, uw2, u2, w2) = arc_center_radius_angles(ai_current_point, ai_post_middle, ai_post_point, ai_error_msg_id)
+      #(MX,MY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkG), (IX,IY),R1, ((GX+SX)/2,(GY+SY)/2), xSC+math.pi, ai_error_msg_id)
+      (MX,MY, line_line_intersection_status) = line_line_intersection((SClx, SCly, SCkG), (AClx, ACly, ACkC), ai_error_msg_id)
+
+      #print("dbg321: MX={:0.2f}  MY={:0.2f}  line_circle_intersection={:0.2f}".format(MX, MY, line_circle_intersection_status))
+      if(line_line_intersection_status==2):
+        print("ERR736: Error in {:s} with the line_line_intersection_status!".format(ai_error_msg_id))
+        sys.exit(2)
+        enlarge_status = 2
+      (NX,NY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkH), (JX,JY),R2, ((HX+SX)/2,(HY+SY)/2), xSC+math.pi, ai_error_msg_id)
+      #print("dbg322: NX={:0.2f}  NY={:0.2f}  line_circle_intersection={:0.2f}".format(NX, NY, line_circle_intersection_status))
+      if(line_circle_intersection_status==2):
+        print("ERR733: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        #print("dbg513: G={:0.2f} {:0.2f}  H={:0.2f} {:0.2f}".format(GX, GY, HX, HY))
+        sys.exit(2)
+        enlarge_status = 2
+      # check if arc-arc intersection must be calculated
+      tmp_MG_deep_x = (MX-GX)*(CX-FX)
+      tmp_MG_deep_y = (MY-GY)*(CY-FY)
+      #print("dbg301: tmp_MG_deep_x:", tmp_MG_deep_x)
+      #print("dbg302: tmp_MG_deep_y:", tmp_MG_deep_y)
+      MG_deep = math.copysign(1, tmp_MG_deep_x)
+      if(abs(tmp_MG_deep_x)<abs(tmp_MG_deep_y)):
+        MG_deep = math.copysign(1, tmp_MG_deep_y)
+        #print("dbg303: use Y to get MG_deep")
+      tmp_NH_deep_x = (NX-HX)*(CX-FX)
+      tmp_NH_deep_y = (NY-HY)*(CY-FY)
+      #print("dbg311: tmp_NH_deep_x:", tmp_NH_deep_x)
+      #print("dbg312: tmp_NH_deep_y:", tmp_NH_deep_y)
+      NH_deep = math.copysign(1, tmp_NH_deep_x)
+      if(abs(tmp_NH_deep_x)<abs(tmp_NH_deep_y)):
+        NH_deep = math.copysign(1, tmp_NH_deep_y)
+        #print("dbg313: use Y to get NH_deep")
+      MKX = MX
+      MKY = MY
+      NLX = NX
+      NLY = NY
+      enlarge_type_request_1 = 3
+      enlarge_type_request_2 = 3
+      # compute the arc-arc intersection
+      if(MG_deep>0):
+        #(KX,KY, triangulation_status) = triangulation((IX,IY),R1,(FX,FY),ai_router_bit_request,(GX,GY), xSC+math.pi, ai_error_msg_id)
+        (KX,KY, line_circle_intersection_status) = line_circle_intersection((AClx, ACly, ACkC), (FX,FY),ai_router_bit_request, (GX, GY), xSC+math.pi, ai_error_msg_id)
+
+        if(line_circle_intersection==2):
+          print("ERR536: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
+          sys.exit(2)
+        MKX = KX
+        MKY = KY
+        enlarge_type_request_1 = 2
+      if(NH_deep>0):
+        (LX,LY, triangulation_status) = triangulation((JX,JY),R2, (FX,FY),ai_router_bit_request, (HX,HY), xSC+math.pi, ai_error_msg_id)
+        if(triangulation_status==2):
+          print("ERR533: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
+          sys.exit(2)
+        NLX = LX
+        NLY = LY
+        enlarge_type_request_2 = 2
+      lMN=math.sqrt((NLX-MKX)**2+(NLY-MKY)**2)
+      if(lMN<radian_epsilon):
+        print("WARN667: Warning in {:s}, the angle is too flat to be enlarged!".format(ai_error_msg_id))
+        enlarge_type_request_1 = 1
+        enlarge_type_request_2 = 1
+  # return
+  r_sub_enlarge_corner_line_arc = ((MKX,MKY), (GX,GY), (CX,CY), (HX,HY), (NLX,NLY), enlarge_type_request_1, enlarge_type_request_2, enlarge_status)
+  #print("dbg668: r_sub_enlarge_corner_line_arc:", r_sub_enlarge_corner_line_arc)
+  return(r_sub_enlarge_corner_line_arc)
+
 def sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id):
   """ Compute the points related to an enlarged arc-arc corner
   """
@@ -565,82 +710,95 @@ def sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai
   #DY = ai_post_middle[1]
   #EX = ai_post_point[0]
   #EY = ai_post_point[1]
+  #r_sub_enlarge_corner_arc_arc = ((MKX,MKY), (GX,GY), (CX,CY), (HX,HY), (NLX,NLY), enlarge_type_request_1, enlarge_type_request_2, enlarge_status)
+  MKX=0; MKY=0; GX=0; GY=0; HX=0; HY=0; NLX=0; NLY=0; enlarge_type_request_1=0; enlarge_type_request_2=0
   (SX, SY, xSI, xSJ, router_bit_arc_uw, smooth_status) = sub_smooth_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id)
-  if(abs(router_bit_arc_uw)>math.pi):
-    print("ERR887: Error in {:s}, the sub smooth corner is englobed!".format(ai_error_msg_id))
-    sys.exit(2)
-  #print("dbg553: router_bit_arc_uw:", router_bit_arc_uw)
-  corner_orientation = math.copysign(1, router_bit_arc_uw)
   enlarge_status = 0
-  if(smooth_status==1):
-    enlarge_status = 1
-    (SClx, SCly, SCkS, lSC, xSC) = line_equation((SX,SY), (CX,CY), ai_error_msg_id)
-    (FX,FY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkS), (CX,CY),ai_router_bit_request, (SX,SY), xSC+math.pi, ai_error_msg_id)
-    if(line_circle_intersection_status==2):
-      print("ERR639: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+  if(smooth_status==2):
+    print("ERR927: Error in {:s}, the sub smooth corner gets an error!".format(ai_error_msg_id))
+    sys.exit(2)
+  else:
+    #print("dbg553: router_bit_arc_uw:", router_bit_arc_uw)
+    if(abs(router_bit_arc_uw)>math.pi):
+      print("ERR887: Error in {:s}, the sub smooth corner is englobed!".format(ai_error_msg_id))
       sys.exit(2)
-    (GX,GY, SCkG) = line_distance_point((FX,FY), (CX,CY), -1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
-    (HX,HY, SCkH) = line_distance_point((FX,FY), (CX,CY),  1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
-    (IX,IY, R1, uw1, u1, w1) = arc_center_radius_angles(ai_pre_point, ai_pre_middle, ai_current_point, ai_error_msg_id)
-    (JX,JY, R2, uw2, u2, w2) = arc_center_radius_angles(ai_current_point, ai_post_middle, ai_post_point, ai_error_msg_id)
-    (MX,MY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkG), (IX,IY),R1, ((GX+SX)/2,(GY+SY)/2), xSC+math.pi, ai_error_msg_id)
-    #print("dbg321: MX={:0.2f}  MY={:0.2f}  line_circle_intersection={:0.2f}".format(MX, MY, line_circle_intersection_status))
-    if(line_circle_intersection_status==2):
-      print("ERR636: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
-      sys.exit(2)
-    (NX,NY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkH), (JX,JY),R2, ((HX+SX)/2,(HY+SY)/2), xSC+math.pi, ai_error_msg_id)
-    #print("dbg322: NX={:0.2f}  NY={:0.2f}  line_circle_intersection={:0.2f}".format(NX, NY, line_circle_intersection_status))
-    if(line_circle_intersection_status==2):
-      print("ERR633: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
-      #print("dbg513: G={:0.2f} {:0.2f}  H={:0.2f} {:0.2f}".format(GX, GY, HX, HY))
-      #sys.exit(2)
       enlarge_status = 2
-    # check if arc-arc intersection must be calculated
-    tmp_MG_deep_x = (MX-GX)*(CX-FX)
-    tmp_MG_deep_y = (MY-GY)*(CY-FY)
-    #print("dbg301: tmp_MG_deep_x:", tmp_MG_deep_x)
-    #print("dbg302: tmp_MG_deep_y:", tmp_MG_deep_y)
-    MG_deep = math.copysign(1, tmp_MG_deep_x)
-    if(abs(tmp_MG_deep_x)<abs(tmp_MG_deep_y)):
-      MG_deep = math.copysign(1, tmp_MG_deep_y)
-      #print("dbg303: use Y to get MG_deep")
-    tmp_NH_deep_x = (NX-HX)*(CX-FX)
-    tmp_NH_deep_y = (NY-HY)*(CY-FY)
-    #print("dbg311: tmp_NH_deep_x:", tmp_NH_deep_x)
-    #print("dbg312: tmp_NH_deep_y:", tmp_NH_deep_y)
-    NH_deep = math.copysign(1, tmp_NH_deep_x)
-    if(abs(tmp_NH_deep_x)<abs(tmp_NH_deep_y)):
-      NH_deep = math.copysign(1, tmp_NH_deep_y)
-      #print("dbg313: use Y to get NH_deep")
-    MKX = MX
-    MKY = MY
-    NLX = NX
-    NLY = NY
-    enlarge_type_request_1 = 3
-    enlarge_type_request_2 = 3
-    # compute the arc-arc intersection
-    if(MG_deep>0):
-      (KX,KY, triangulation_status) = triangulation((IX,IY),R1,(FX,FY),ai_router_bit_request,(GX,GY), xSC+math.pi, ai_error_msg_id)
-      if(triangulation_status==2):
-        print("ERR536: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
-        sys.exit(2)
-      MKX = KX
-      MKY = KY
-      enlarge_type_request_1 = 2
-    if(NH_deep>0):
-      (LX,LY, triangulation_status) = triangulation((JX,JY),R2,(FX,FY),ai_router_bit_request,(HX,HY), xSC+math.pi, ai_error_msg_id)
-      if(triangulation_status==2):
-        print("ERR533: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
-        sys.exit(2)
-      NLX = LX
-      NLY = LY
-      enlarge_type_request_2 = 2
-    lMN=math.sqrt((NLX-MKX)**2+(NLY-MKY)**2)
-    if(lMN<radian_epsilon):
-      print("WARN667: Warning in {:s}, the angle is too flat to be enlarged!".format(ai_error_msg_id))
+    elif(abs(router_bit_arc_uw)<radian_epsilon):
+      print("WARN877: Error in {:s}, the corner is too flat to be enlarged with this router_bit radius!".format(ai_error_msg_id))
+      enlarge_status = 2
       enlarge_type_request_1 = 1
       enlarge_type_request_2 = 1
+    else:
+      corner_orientation = math.copysign(1, router_bit_arc_uw)
+      enlarge_status = 1
+      (SClx, SCly, SCkS, lSC, xSC) = line_equation((SX,SY), (CX,CY), ai_error_msg_id)
+      (FX,FY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkS), (CX,CY),ai_router_bit_request, (SX,SY), xSC+math.pi, ai_error_msg_id)
+      if(line_circle_intersection_status==2):
+        print("ERR639: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        sys.exit(2)
+      (GX,GY, SCkG) = line_distance_point((FX,FY), (CX,CY), -1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
+      (HX,HY, SCkH) = line_distance_point((FX,FY), (CX,CY),  1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
+      (IX,IY, R1, uw1, u1, w1) = arc_center_radius_angles(ai_pre_point, ai_pre_middle, ai_current_point, ai_error_msg_id)
+      (JX,JY, R2, uw2, u2, w2) = arc_center_radius_angles(ai_current_point, ai_post_middle, ai_post_point, ai_error_msg_id)
+      (MX,MY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkG), (IX,IY),R1, ((GX+SX)/2,(GY+SY)/2), xSC+math.pi, ai_error_msg_id)
+      #print("dbg321: MX={:0.2f}  MY={:0.2f}  line_circle_intersection={:0.2f}".format(MX, MY, line_circle_intersection_status))
+      if(line_circle_intersection_status==2):
+        print("ERR636: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        sys.exit(2)
+      (NX,NY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkH), (JX,JY),R2, ((HX+SX)/2,(HY+SY)/2), xSC+math.pi, ai_error_msg_id)
+      #print("dbg322: NX={:0.2f}  NY={:0.2f}  line_circle_intersection={:0.2f}".format(NX, NY, line_circle_intersection_status))
+      if(line_circle_intersection_status==2):
+        print("ERR633: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        #print("dbg513: G={:0.2f} {:0.2f}  H={:0.2f} {:0.2f}".format(GX, GY, HX, HY))
+        #sys.exit(2)
+        enlarge_status = 2
+      # check if arc-arc intersection must be calculated
+      tmp_MG_deep_x = (MX-GX)*(CX-FX)
+      tmp_MG_deep_y = (MY-GY)*(CY-FY)
+      #print("dbg301: tmp_MG_deep_x:", tmp_MG_deep_x)
+      #print("dbg302: tmp_MG_deep_y:", tmp_MG_deep_y)
+      MG_deep = math.copysign(1, tmp_MG_deep_x)
+      if(abs(tmp_MG_deep_x)<abs(tmp_MG_deep_y)):
+        MG_deep = math.copysign(1, tmp_MG_deep_y)
+        #print("dbg303: use Y to get MG_deep")
+      tmp_NH_deep_x = (NX-HX)*(CX-FX)
+      tmp_NH_deep_y = (NY-HY)*(CY-FY)
+      #print("dbg311: tmp_NH_deep_x:", tmp_NH_deep_x)
+      #print("dbg312: tmp_NH_deep_y:", tmp_NH_deep_y)
+      NH_deep = math.copysign(1, tmp_NH_deep_x)
+      if(abs(tmp_NH_deep_x)<abs(tmp_NH_deep_y)):
+        NH_deep = math.copysign(1, tmp_NH_deep_y)
+        #print("dbg313: use Y to get NH_deep")
+      MKX = MX
+      MKY = MY
+      NLX = NX
+      NLY = NY
+      enlarge_type_request_1 = 3
+      enlarge_type_request_2 = 3
+      # compute the arc-arc intersection
+      if(MG_deep>0):
+        (KX,KY, triangulation_status) = triangulation((IX,IY),R1,(FX,FY),ai_router_bit_request,(GX,GY), xSC+math.pi, ai_error_msg_id)
+        if(triangulation_status==2):
+          print("ERR536: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
+          sys.exit(2)
+        MKX = KX
+        MKY = KY
+        enlarge_type_request_1 = 2
+      if(NH_deep>0):
+        (LX,LY, triangulation_status) = triangulation((JX,JY),R2,(FX,FY),ai_router_bit_request,(HX,HY), xSC+math.pi, ai_error_msg_id)
+        if(triangulation_status==2):
+          print("ERR533: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
+          sys.exit(2)
+        NLX = LX
+        NLY = LY
+        enlarge_type_request_2 = 2
+      lMN=math.sqrt((NLX-MKX)**2+(NLY-MKY)**2)
+      if(lMN<radian_epsilon):
+        print("WARN667: Warning in {:s}, the angle is too flat to be enlarged!".format(ai_error_msg_id))
+        enlarge_type_request_1 = 1
+        enlarge_type_request_2 = 1
   # return
   r_sub_enlarge_corner_arc_arc = ((MKX,MKY), (GX,GY), (CX,CY), (HX,HY), (NLX,NLY), enlarge_type_request_1, enlarge_type_request_2, enlarge_status)
+  #print("dbg588: r_sub_enlarge_corner_arc_arc:", r_sub_enlarge_corner_arc_arc)
   return(r_sub_enlarge_corner_arc_arc)
 

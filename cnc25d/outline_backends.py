@@ -115,10 +115,10 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   #print("dbg306: cos_f: ", cos_f)
   #print("dbg307: sin_f: ", sin_f)
   if(abs((math.copysign(1, sin_e)*cos_e)-(math.copysign(1,sin_f)*cos_f))<epilon):
-    print("ERR810: Error, A, B, C are colinear. Arc can not be created!")
+    #print("ERR810: Error, A, B, C are colinear. Arc can not be created!")
     #sys.exit(2)
     if(lab>100*epilon):
-      print("WARN810: Arc ABC is replaced by the line AC!")
+      print("WARN810: Arc ABC is replaced by the line AC, because A,B,C are colinear!")
       print("dbg559: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
     r_polyline = []
     r_polyline.append([ptax, ptay])

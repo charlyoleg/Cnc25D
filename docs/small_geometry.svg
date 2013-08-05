@@ -10,7 +10,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="601"
-   height="2238.1562"
+   height="3322.4375"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
@@ -83,7 +83,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="308.1939"
-     inkscape:cy="1428.2117"
+     inkscape:cy="1026.7787"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -93,7 +93,7 @@
      fit-margin-bottom="0"
      inkscape:window-width="1039"
      inkscape:window-height="941"
-     inkscape:window-x="-4"
+     inkscape:window-x="0"
      inkscape:window-y="33"
      inkscape:window-maximized="0"
      inkscape:object-nodes="true"
@@ -121,7 +121,7 @@
        style="fill:none;stroke:#cccccc;stroke-width:0.99999994;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect2985"
        width="600"
-       height="2237.1421"
+       height="3321.4277"
        x="51.42857"
        y="129.50502" />
     <flowRoot
@@ -750,5 +750,90 @@
        d="m 372.50111,792.70364 6.42857,5"
        id="path4809-2"
        inkscape:connector-curvature="0" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3183"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(50.9375,129)"><flowRegion
+         id="flowRegion3185"><rect
+           id="rect3187"
+           width="393.57141"
+           height="132.85704"
+           x="35.714287"
+           y="2076.7278" /></flowRegion><flowPara
+         id="flowPara3189">Line_line_intersection:</flowPara><flowPara
+         id="flowPara3193">(D1): a1*x+b1*y+c1=0</flowPara><flowPara
+         id="flowPara3195">(D2): a2*x+b2*y+c2=0</flowPara><flowPara
+         id="flowPara3197">(D1) and (D2) are parallel if a1*b2-a2*b1=0</flowPara><flowPara
+         id="flowPara3199">The coordinates of M, intersection of (D1) and (D2):</flowPara><flowPara
+         id="flowPara3201">Mx=(c2*b1-c1*b2)/(a1*b2-a2*b1)</flowPara><flowPara
+         id="flowPara3203">My=(c2*a1-c1*a2)/(b1*a2-b2*a1)=(c1*a2-c2*a1)/(a1*b2-a2*b1)</flowPara><flowPara
+         id="flowPara3191" /></flowRoot>    <path
+       style="color:#000000;fill:none;stroke:#d45500;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 117.14286,2402.4375 412.85714,2228.8661"
+       id="path3205"
+       inkscape:connector-curvature="0"
+       transform="translate(50.9375,129)" />
+    <path
+       style="color:#000000;fill:none;stroke:#ff7f2a;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 140,2269.5804 263.57143,112.1428"
+       id="path3207"
+       inkscape:connector-curvature="0"
+       transform="translate(50.9375,129)" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3209"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ff7f2a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(50.9375,129)"><flowRegion
+         id="flowRegion3211"><rect
+           id="rect3213"
+           width="154.28572"
+           height="32.857143"
+           x="145.71428"
+           y="2243.1519"
+           style="fill:#ff7f2a" /></flowRegion><flowPara
+         id="flowPara3215">(D2)</flowPara><flowPara
+         id="flowPara3217">a2*x+b2*y+c2=0</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3219"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#aa4400;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(50.9375,129)"><flowRegion
+         id="flowRegion3221"><rect
+           id="rect3223"
+           width="138.57143"
+           height="68.571426"
+           x="149.28572"
+           y="2386.7231"
+           style="fill:#aa4400" /></flowRegion><flowPara
+         id="flowPara3225">(D1)</flowPara><flowPara
+         id="flowPara3227">a1*x+b1*y*c1=0</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3229"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(50.223214,119.71429)"><flowRegion
+         id="flowRegion3231"><rect
+           id="rect3233"
+           width="27.142857"
+           height="23.571428"
+           x="255"
+           y="2334.5803" /></flowRegion><flowPara
+         id="flowPara3235">M</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3237"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(81.651786,130.42857)"><flowRegion
+         id="flowRegion3239"><rect
+           id="rect3241"
+           width="172.85715"
+           height="37.142857"
+           x="78.571426"
+           y="2431.7231" /></flowRegion><flowPara
+         id="flowPara3243">Line-line intersection</flowPara></flowRoot>    <rect
+       style="fill:none;stroke:#e6e6e6;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4807-2-4"
+       width="332.56128"
+       height="237.06746"
+       x="152.87114"
+       y="2346.1182" />
   </g>
 </svg>
