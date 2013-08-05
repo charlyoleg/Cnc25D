@@ -427,6 +427,23 @@ cnc25d_api_macro.py tests and demonstrates the Cnc25D API.
 Use it as an example of usage of the Cnc25D API when you want to create your own design.
 """
 
+# List of the functions of the Cnc25D API:
+#   cnc25d_api.importing_freecad()
+#   cnc25d_api.outline_shift_x(outline, x-offset, x-coefficient)
+#   cnc25d_api.outline_shift_y(outline, y-offset, y-coefficient)
+#   cnc25d_api.outline_shift_xy(outline, x-offset, x-coefficient, y-offset, y-coefficient)
+#   cnc25d_api.outline_rotate(outline, center-x, center-y, rotation_angle)
+#   cnc25d_api.outline_close(outline)
+#   cnc25d_api.outline_reverse(outline)
+#   cnc25d_api.cnc_cut_outline(outline, mark_string)
+#   cnc25d_api.outline_arc_line(outline, backend)
+#   cnc25d_api.outline_circle((center-x, center-y), radius, backend)
+#   cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor
+#   cnc25d_api.place_plank(freecad_part_object, x-size, y-size, z-size, flip, orientation, x-position, y-position, z-position)
+#   cnc25d_api.export_to_dxf(freecad_part_object, direction_vector, depth, filename)
+#   cnc25d_api.export_xyz_to_dxf(freecad_part_object, x-size, y-size, z-size, x-depth-list, y-depth-list, z-depth-list, filename)
+
+
 # import the Cnc25D API modules
 from cnc25d import cnc25d_api
 # add the FreeCAD library path to the search path
@@ -457,7 +474,7 @@ small_length = 20
 # The first element of an outline is the Start point, defined with its two coordinates.
 # The junction between two segments is called a corner.
 # The cnc25d_api.cnc_cut_outline() function can modify the corners of an outline.
-# For each corner, define is you want to unchange it (r=0), smooth it (r>0) or enlarge it (r<0).
+# For each corner, define is you want to keep it (r=0 =unchanged), smooth it (r>0) or enlarge it (r<0).
 # A line-segment is defined by its last point coordinates and its corner request (r).
 # An arc-segment is defined by its middle point and last point coordinates and its corner request (r).
 # If the router_bit radius is positive, the angle is smoothed for this radius.
@@ -555,7 +572,7 @@ for i_ol in dxf_figures:
   dxf_outline = cnc25d_api.outline_arc_line(i_ol, 'dxfwrite')
   for one_line_or_arc in dxf_outline:
     object_dxf.add(one_line_or_arc)
-one_dxf_circle = cnc25d_api.outline_circle((100,100), 40, 'dxfwrite')
+one_dxf_circle = cnc25d_api.outline_circle((100,100), 40, 'dxfwrite') # create a circle
 object_dxf.add(one_dxf_circle)
 object_dxf.save()
 
@@ -564,12 +581,19 @@ my_freecad_part_outline = cnc25d_api.outline_arc_line(my_outline_for_cnc, 'freec
 my_part_edges = my_freecad_part_outline.Edges
 my_part_wire = Part.Wire(my_part_edges)
 my_part_face = Part.Face(my_part_wire)
-# short version:
-#my_part_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline_fc(my_part_outline, 'api_example').Edges))
 my_part_solid = my_part_face.extrude(Base.Vector(0,0,big_length)) # straight linear extrusion
+# short version:
+my_part_face2 = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline_fc(cnc25d_api.outline_shift_y(my_outline, 4*big_length,0.5), 'freecad_short_version').Edges))
+my_part_solid2 = my_part_face2.extrude(Base.Vector(0,0,big_length)) # straight linear extrusion
+# creation of a circle with the cnc25d workflow
+my_part_face3 = Part.Face(Part.Wire(cnc25d_api.outline_circle((100,100),40, 'freecad').Edges))
+my_part_solid3 = my_part_face3.extrude(Base.Vector(0,0,big_length/2)) # straight linear extrusion
+
 
 # visualize the part with the FreeCAD GUI
 #Part.show(my_part_solid)
+Part.show(my_part_solid2)
+Part.show(my_part_solid3)
 
 # create three my_part and place them using the Cnc25D API function plank_place
 my_part_a = cnc25d_api.place_plank(my_part_solid.copy(), 3*big_length, 2*big_length, 1*big_length, 'i', 'xz', 0, 0, 0)
