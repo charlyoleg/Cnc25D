@@ -24,7 +24,7 @@ setup(
     #"Tkinter >= 0.0.0",
     #"tkMessageBox >= 0.0.0",
     "numpy >= 1.6.1",
-    "matplotlib >= 1.2.1",
+    #"matplotlib >= 1.2.1",  # currently disable because of a bug in matplotlib setup.py about numpy dependency
     "svgwrite >= 1.1.2",
     "dxfwrite >= 1.2.0",
     #"timeit >= 0.0.0",

@@ -57,9 +57,10 @@ The installation instructions are written for the Ubuntu_ systems.
 This is the preferred method for most people.
 
 * First, install FreeCAD_ (version 0.13 or newer), `Python 2`_ and Tkinter_ (which is automatically installed with Python on Ubuntu).
-* Then, install the Cnc25D package with the following command::
+* Then, install the Cnc25D package with the following commands. (The second command is because of a bug in the matplotlib dependency setup)::
 
   > sudo pip install Cnc25D -U
+  > sudo pip install matplotlib -U
 
 * To create an design example, run the following commands::
 
@@ -79,6 +80,7 @@ This method has currently some issues because of PyQt4.
   > virtualenv env_for_cnc25d
   > source env_for_cnc25d/bin/activate
   > pip install Cnc25D -U
+  > pip install matplotlib -U
   > desactive
 
 * Workaround for PyQt4::

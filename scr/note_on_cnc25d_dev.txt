@@ -15,8 +15,24 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 > virtualenv test_cnc25d_distrib
 > source test_cnc25d_distrib/bin/activate
 > pip install path/to/Cnc25D/dist/Cnc25D-0.1.1.tar.gz
+## this installation is done afterward because of a bug in mathplotlib setup.py about numpy dependency
+> pip install matplotlib
+## install PyQt in the virtualenv
 > cp /usr/lib/python2.7/dist-packages/sip.so test_cnc25d_distrib/lib/python2.7/site-packages/
 > cp -a /usr/lib/python2.7/dist-packages/PyQt4 test_cnc25d_distrib/lib/python2.7/site-packages/
+> #sudo apt-get install libqt4-dev
+> #pip install --no-install SIP
+> #pip install --no-install PyQt
+> #cd test_cnc25d_distrib/build/SIP
+> #python configure.py
+> #make
+> #make install
+> #cd test_cnc25d_distrib/myProject/build/PyQt
+> #python configure.py
+> #make
+> #make install
+> #pip install PySide
+## run the cnc25d design example
 > mkdir Tmp
 > cd Tmp
 > cnc25d_example_generator.py
