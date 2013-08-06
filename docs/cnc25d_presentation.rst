@@ -50,11 +50,13 @@ Currently, you can use those following design examples:
 2. Cnc25D Installation
 ======================
 
+The installation instructions are written for the Ubuntu_ systems.
+
 2.1. Install Cnc25D on your system
 ----------------------------------
 This is the preferred method for most people.
 
-* First, install FreeCAD_. You need the version 0.13 or newer.
+* First, install FreeCAD_ (version 0.13 or newer), `Python 2`_ and Tkinter_ (which is automatically installed with Python on Ubuntu).
 * Then, install the Cnc25D package with the following command::
 
   > sudo pip install Cnc25D -U
@@ -79,11 +81,22 @@ This method has currently some issues because of PyQt4.
   > pip install Cnc25D -U
   > desactive
 
+* Workaround for PyQt4::
+
+  > cp /usr/lib/python2.7/dist-packages/sip.so env_for_cnc25d/lib/python2.7/site-packages/
+  > cp -a /usr/lib/python2.7/dist-packages/PyQt4 env_for_cnc25d/lib/python2.7/site-packages/
+
 * To create an design example, run the following commands::
 
   > source env_for_cnc25d/bin/activate
   > cnc25d_example_generator.py
   > python box_wood_frame_example.py
+  > deactivate
+
+* You can also run the generated design example with *freecad*. But *freecad* doesn't get the *virtualenv python package path* and doesn't read the environment variable *PYTHONPATH*. So, you must add the path to the *virtual python package* explicitly::
+
+  > source env_for_cnc25d/bin/activate
+  > freecad -P env_for_cnc25d/lib/python2.7/site-packages box_wood_frame_example.py
   > deactivate
 
 2.3. Work directly with the Cnc25D sources
@@ -262,6 +275,10 @@ Released on 2013-06-04
 * Initial release
 
 
+.. _Ubuntu : http://www.ubuntu.com/
+
+.. _`Python 2` : Python_
+.. _Tkinter : http://docs.python.org/2/library/tkinter.html
 
 .. _Python : http://www.python.org
 .. _FreeCAD : http://www.freecadweb.org

@@ -42,8 +42,8 @@ Don't be afraid, look at the code. It's very simple to hack
 # header for Python / FreeCAD compatibility
 ################################################################
 
-from cnc25d import importing_freecad
-importing_freecad.importing_freecad()
+from cnc25d import cnc25d_api
+cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 

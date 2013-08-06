@@ -21,6 +21,15 @@ setup(
     "datetime >= 0.6.24",
     #"os >= 0.0.0",
     #"errno >= 0.0.0",
+    #"Tkinter >= 0.0.0",
+    #"tkMessageBox >= 0.0.0",
+    "numpy >= 1.6.1",
+    "matplotlib >= 1.2.1",
+    "svgwrite >= 1.1.2",
+    "dxfwrite >= 1.2.0",
+    #"timeit >= 0.0.0",
+    #"cProfile >= 0.0.0",
+    #"time >= 0.0.0",
   ],
 )
 

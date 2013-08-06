@@ -6,7 +6,7 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 - regenerate bin/cnc25d_example_generator.py
 > scr/micropreprocessor.py bin/cnc25d_example_generator_src.py
 - update CHANGES.rst
-- update version number in setup.py
+- update version number and add the dependencies in setup.py
 - update release and version number in docs/conf.py
 - make the distribution
 > python setup.py sdist
@@ -15,10 +15,16 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 > virtualenv test_cnc25d_distrib
 > source test_cnc25d_distrib/bin/activate
 > pip install path/to/Cnc25D/dist/Cnc25D-0.1.1.tar.gz
+> cp /usr/lib/python2.7/dist-packages/sip.so test_cnc25d_distrib/lib/python2.7/site-packages/
+> cp -a /usr/lib/python2.7/dist-packages/PyQt4 test_cnc25d_distrib/lib/python2.7/site-packages/
 > mkdir Tmp
 > cd Tmp
 > cnc25d_example_generator.py
-> box_wood_frame_example.py
+> python box_wood_frame_example.py
+## freecad doesn't get the virtualenv python package path and doesn't read PYTHONPATH. So, you must add the path to the python library explicitly
+> #export PYTHONPATH=$PYTHONPATH:../test_cnc25d_distrib/lib/python2.7/site-packages
+> #freecad box_wood_frame_example.py
+> freecad -P ../test_cnc25d_distrib/lib/python2.7/site-packages box_wood_frame_example.py
 > deactivate
 - upload distribution
 > python setup.py sdist upload
