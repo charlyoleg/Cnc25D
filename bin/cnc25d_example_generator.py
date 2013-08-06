@@ -147,8 +147,8 @@ Don't be afraid, look at the code. It's very simple to hack
 # header for Python / FreeCAD compatibility
 ################################################################
 
-from cnc25d import importing_freecad
-importing_freecad.importing_freecad()
+from cnc25d import cnc25d_api
+cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 
@@ -263,8 +263,8 @@ Look at the code. It's very simple to hack
 # header for Python / FreeCAD compatibility
 ################################################################
 
-from cnc25d import importing_freecad
-importing_freecad.importing_freecad()
+from cnc25d import cnc25d_api
+cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 
@@ -444,6 +444,10 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 #   cnc25d_api.export_xyz_to_dxf(freecad_part_object, x-size, y-size, z-size, x-depth-list, y-depth-list, z-depth-list, filename)
 
 
+################################################################
+# import
+################################################################
+
 # import the Cnc25D API modules
 from cnc25d import cnc25d_api
 # add the FreeCAD library path to the search path
@@ -459,11 +463,23 @@ import svgwrite
 from dxfwrite import DXFEngine
 
 
+################################################################
+# Start programming
+################################################################
+
 # hello message
 print("cnc25d_api_macro.py starts")
 
+################################################################
+# Define your router_bit constraint
+################################################################
+
 # define the CNC router_bit radius
 my_router_bit_radius = 4.0 # in mm
+
+################################################################
+# Design your XY outline of your 2.5D part design
+################################################################
 
 # some design constant
 big_length = 60
@@ -496,6 +512,10 @@ my_outline = [
   [ 0*big_length+0*small_length,  1*big_length+0*small_length,    my_router_bit_radius],
   [ 0*big_length+0*small_length,  0*big_length+0*small_length,  0*my_router_bit_radius]] # The last point is equal to the Start point. The router_bit request must be set to zero.
 
+################################################################
+# Combine your outline and your router_bit constraint
+################################################################
+
 ## use the Cnc25D API function cnc_cut_outline to create a makable outline from the wished outline
 # the second argument is just used to enhance the error, warning and debug messages
 my_outline_for_cnc = cnc25d_api.cnc_cut_outline(my_outline, 'api_example')
@@ -515,6 +535,10 @@ my_outline_for_cnc_closed = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_close(
 #outline_reverse
 # reverse the order of the segments. If the outline is closed, it changes the orientation from CW to CCW and vice versa
 my_outline_for_cnc_reverse = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_reverse(cnc25d_api.outline_shift_x(my_outline, -2*big_length, 0.25)), 'api_example3')
+
+################################################################
+# Display the outline in a Tkinter GUI
+################################################################
 
 ## display my_outline_for_cnc with Tkinter
 print("Display the outlines with Tkinter")
@@ -548,6 +572,10 @@ except OSError as exc:
   else:
     raise
 
+################################################################
+# Write the outline in a SVG file
+################################################################
+
 ## write my_outline_for_cnc in a SVG file
 print("Write the outlines in a SVG file with svgwrite")
 output_svg_file_name =  "{:s}/outlines_with_svgwrite.svg".format(l_output_dir)
@@ -561,6 +589,10 @@ for i_ol in svg_figures:
 one_svg_circle = cnc25d_api.outline_circle((100,100), 40, 'svgwrite') # create a circle
 object_svg.add(one_svg_circle)
 object_svg.save()
+
+################################################################
+# Write the outline in a DXF file
+################################################################
 
 ## write my_outline_for_cnc in a DXF file
 print("Write the outlines in a DXF file with dxfwrite")
@@ -576,6 +608,10 @@ for i_ol in dxf_figures:
 one_dxf_circle = cnc25d_api.outline_circle((100,100), 40, 'dxfwrite') # create a circle
 object_dxf.add(one_dxf_circle)
 object_dxf.save()
+
+################################################################
+# Extrude the outline to make it 3D
+################################################################
 
 ## extrude the outline to make a 3D part with FreeCAD
 my_freecad_part_outline = cnc25d_api.outline_arc_line(my_outline_for_cnc, 'freecad')
@@ -596,6 +632,10 @@ my_part_solid3 = my_part_face3.extrude(Base.Vector(0,0,big_length/2)) # straight
 Part.show(my_part_solid2)
 Part.show(my_part_solid3)
 
+################################################################
+# Create a 3D assembly
+################################################################
+
 # create three my_part and place them using the Cnc25D API function plank_place
 my_part_a = cnc25d_api.place_plank(my_part_solid.copy(), 3*big_length, 2*big_length, 1*big_length, 'i', 'xz', 0, 0, 0)
 my_part_b = cnc25d_api.place_plank(my_part_solid.copy(), 3*big_length, 2*big_length, 1*big_length, 'i', 'zx', 0, 0, big_length)
@@ -608,7 +648,9 @@ my_part_c = cnc25d_api.place_plank(my_part_solid.copy(), 3*big_length, 2*big_len
 my_assembly = Part.makeCompound([my_part_a, my_part_b, my_part_c])
 Part.show(my_assembly)
 
-# generate the output files
+################################################################
+# Generate output files from your 3D design
+################################################################
 
 # my_part in 3D
 print("Generate {:s}/my_part.stl".format(l_output_dir))
@@ -636,6 +678,10 @@ xy_slice_list = [ 0.1+20*i for i in range(12) ]
 xz_slice_list = [ 0.1+20*i for i in range(9) ]
 yz_slice_list = [ 0.1+20*i for i in range(9) ]
 cnc25d_api.export_xyz_to_dxf(my_assembly, 3*big_length, 3*big_length, 4*big_length, xy_slice_list, xz_slice_list, yz_slice_list, "{:s}/my_assembly.dxf".format(l_output_dir))
+
+################################################################
+# End of the script
+################################################################
 
 # bye message
 print("cnc25d_api_macro.py says Bye!")
