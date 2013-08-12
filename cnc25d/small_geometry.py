@@ -1,7 +1,24 @@
 # small_geometry.py
 # a help module for cnc_cut_outline.py, just to avoid to get too big files
 # created by charlyoleg on 2013/07/30
-# license: CC BY SA 3.0
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
 
 """
 small_geometry.py provides sub functions for cnc_cut_outline.py related to the Euclid geometry

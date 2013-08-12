@@ -1,7 +1,24 @@
 # box_wood_frame.py
 # a wood frame for building a shell or a straw house.
 # created by charlyoleg on 2013/05/02
-# license: CC BY SA 3.0
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
 
 """
 box_wood_frame is a parametric design for piece if furniture.
@@ -1118,7 +1135,7 @@ def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
     r_text_report += """
 box_wood_frame design
 piece of furniture for building pile-up shell or straw house
-created by charlyoleg on %s
+created by Cnc25D on %s
 license: CC BY SA 3.0
 """  % (datetime.now().isoformat())
     r_text_report += """

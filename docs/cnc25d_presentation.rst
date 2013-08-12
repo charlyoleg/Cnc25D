@@ -238,7 +238,9 @@ With your browser open the local directory ``file:///.../Cnc25D/docs/_build/html
 5. License
 ==========
 
-The Cnc25D Python package is under the `Creative Commons Attribution-ShareAlike 3.0`_ License (`CC BY-SA 3.0`_) by charlyoleg.
+(C\) Copyright 2013 charlyoleg
+
+The Cnc25D Python package is under `GNU Lesser General Public License`_ version 3 or any latter (LGPL_ v3+).
 
 6. Feedback and contact
 =======================
@@ -293,8 +295,8 @@ Released on 2013-06-04
 .. _`Cnc25D daily built documentation` : https://cnc25d.readthedocs.org
 .. _PyPI : https://pypi.python.org/pypi/Cnc25D
 
-.. _`CC BY-SA 3.0` : http://creativecommons.org/licenses/by-sa/3.0/
-.. _`Creative Commons Attribution-ShareAlike 3.0` : http://creativecommons.org/licenses/by-sa/3.0/
+.. _`GNU Lesser General Public License` : http://www.gnu.org/licenses/translations.html
+.. _`LGPL` : http://www.gnu.org/licenses/translations.html
 
 .. _DXF : http://en.wikipedia.org/wiki/AutoCAD_DXF
 .. _STL : http://en.wikipedia.org/wiki/STL_%28file_format%29

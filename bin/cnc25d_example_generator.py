@@ -3,7 +3,24 @@
 # cnc25d_example_generator.py
 # it generates examples of python scripts that use the cnc25d package
 # created by charlyoleg on 2013/06/03
-# license: CC BY SA 3.0
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
 
 """
 cnc25d_example_generator.py is the unique binary delivered with the Cnc25D distribution. It aims at generating script examples that use the cnc25d package.
@@ -106,7 +123,24 @@ bwf_script_content='''#!/usr/bin/python
 # box_wood_frame_macro.py
 # the macro for a wood frame for building a shell or a straw house.
 # created by charlyoleg on 2013/05/31
-# license: CC BY SA 3.0
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
 
 ################################################################
 # this file intends being included in the file bin/cnc25d_example_generator.py
@@ -222,7 +256,24 @@ gw_script_content='''#!/usr/bin/python
 # gearwheel_macro.py
 # the macro to generate a gearwheel.
 # created by charlyoleg on 2013/06/19
-# license: CC BY SA 3.0
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
 
 ################################################################
 # this file intends being included in the file bin/cnc25d_example_generator.py
@@ -419,7 +470,24 @@ cgf_script_content='''#!/usr/bin/python
 # cnc25d_api_macro.py
 # test and demonstrate the Cnc25D API
 # created by charlyoleg on 2013/06/13
-# license: CC BY SA 3.0
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
 # 
 
 """

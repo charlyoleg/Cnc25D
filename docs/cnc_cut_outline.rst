@@ -17,6 +17,7 @@ Cutting technology:
   - laser cutter (Only 2D: cutting and engraving)
   - water jet (Only 2D with a 3-axis machine)
   - mechanical router_bit (2.5D and 3D depending on shape and router_bit shape)
+  - electrical discharge machining
 
 
 2. 2D path constraints
