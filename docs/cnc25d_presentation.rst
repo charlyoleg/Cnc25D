@@ -251,10 +251,10 @@ For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 
 Release 0.1.3
 -------------
-Released on 2013-08-12
+Released on 2013-08-13
 
-* New API function outline_backends() converts an outline defined by points into an outline of four possible formats: Tkinter display, svgwrite, dxfwrite or FreeCAD Part.
-* API function cnc_cut_outline() supports smoothing and enlarging line-line, line-arc and arc-arc corner.
+* New API function outline_arc_line() converts an outline defined by points into an outline of four possible formats: Tkinter display, svgwrite, dxfwrite or FreeCAD Part.
+* API function cnc_cut_outline() supports smoothing and enlarging line-line, line-arc and arc-arc corners.
 * Additional API functions such as outline_rotate(), outline_reverse()
 * All Cnc25D API function are gathered in the cnc25d_api module
 * Box wood frame design example generates also BRep in addition to STL and DXF.

@@ -50,13 +50,12 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 This is a Python package and there should not preprocessing
 But two files must have the same contents and import is not the solution there. So I've created this small micropreprocessor.py that replace '#include path/to/whatever' to solve the issue.
 2.1) file dependency
-bin/cnc25d_example_generator_src.py includes cnc25d/tests/box_wood_frame_example.py to make bin/cnc25d_example_generator.py
-cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_example.py
+bin/cnc25d_example_generator_src.py includes cnc25d/tests/box_wood_frame_macro.py to make bin/cnc25d_example_generator.py
+cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_macro.py
 
 3) todo
 - unittest
 - gears design example
-- check tests/macro scripts with cnc25d_api, doc on cnc25d_api, cnc_cut_outline with arcs
 
 4) automation tool
 Fabric or shovel ?
