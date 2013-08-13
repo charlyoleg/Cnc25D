@@ -175,13 +175,10 @@ Launch FreeCAD_ and run the design example script from the Python_ console::
 If you are interested in the Cnc25D API and want to create your own design with, create a Python_ script with the following snippet::
 
   # import the FreeCAD library
-  from cnc25d import importing_freecad
-  importing_freecad.importing_freecad()
+  from cnc25d import cnc25d_api
+  cnc25d_api.importing_freecad()
   import Part
   from FreeCAD import Base
-
-  # import the Cnc25D API
-  from cnc25d import cnc_cut_outline, export_2d
 
   # use the cnc_cut_outline function
   my_polygon = [
@@ -189,18 +186,18 @@ If you are interested in the Cnc25D API and want to create your own design with,
     [ 40,  0,    5],
     [ 40, 40,    5],
     [  0, 40,    5]]
-  my_part_face = Part.Face(Part.Wire(cnc_cut_outline.cnc_cut_outline(my_part_outline).Edges))
+  my_part_face = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline(my_part_outline).Edges))
   my_part_solid = my_part_face.extrude(Base.Vector(0,0,20)) 
 
   # use the place_plank function
-  my_part_a = cnc_cut_outline.place_plank(my_part_solid.copy(), 40, 40, 20, 'i', 'xz', 0, 0, 0)
+  my_part_a = cnc25d_api.place_plank(my_part_solid.copy(), 40, 40, 20, 'i', 'xz', 0, 0, 0)
 
   # export your design as DXF
-  export_2d.export_to_dxf(my_part_solid, Base.Vector(0,0,1), 1.0, "my_part.dxf")
+  cnc25d_api.export_to_dxf(my_part_solid, Base.Vector(0,0,1), 1.0, "my_part.dxf")
   xy_slice_list = [ 0.1+4*i for i in range(9) ]
   xz_slice_list = [ 0.1+4*i for i in range(9) ]
   yz_slice_list = [ 0.1+2*i for i in range(9) ]
-  export_2d.export_xyz_to_dxf(my_part_solid, 40, 40, 20, xy_slice_list, xz_slice_list, yz_slice_list, "my_part_scanned.dxf")
+  cnc25d_api.export_xyz_to_dxf(my_part_solid, 40, 40, 20, xy_slice_list, xz_slice_list, yz_slice_list, "my_part_scanned.dxf")
   
 Further documentation at :doc:`cnc25d_api` . Also look at the script example **cnc25d_api_example.py** that you can generate with the executable **cnc25d_example_generator.py**.
 
@@ -254,11 +251,15 @@ For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 
 Release 0.1.3
 -------------
-Released on 2013-07-07
+Released on 2013-08-12
 
-* API function cnc_cut_outline() gets an additional argument *string* to help tracking issues due to the *router_bit radius*.
+* New API function outline_backends() converts an outline defined by points into an outline of four possible formats: Tkinter display, svgwrite, dxfwrite or FreeCAD Part.
+* API function cnc_cut_outline() supports smoothing and enlarging line-line, line-arc and arc-arc corner.
+* Additional API functions such as outline_rotate(), outline_reverse()
+* All Cnc25D API function are gathered in the cnc25d_api module
 * Box wood frame design example generates also BRep in addition to STL and DXF.
 * Box wood frame design example support router_bit radius up to 4.9 mm with all others parameters at default.
+* LGPL v3 is applied to this Python package.
 
 Release 0.1.2
 -------------

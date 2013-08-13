@@ -185,7 +185,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="458.12764"
-     inkscape:cy="389.76677"
+     inkscape:cy="370.47767"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -213,7 +213,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -242,7 +242,7 @@
            height="56.568542"
            x="9.0913725"
            y="8.8746033" /></flowRegion><flowPara
-         id="flowPara2991">Cnc_polygon.svg</flowPara></flowRoot>    <path
+         id="flowPara2991">Cnc_cut_outline.svg</flowPara></flowRoot>    <path
        style="fill:#ffccaa;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 136.37059,73.524366 32.324881,167.46855 155.56349,188.68176 222.23356,85.646199 z"
        id="path2993"

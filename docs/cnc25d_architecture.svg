@@ -526,7 +526,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -973,7 +973,7 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <flowRoot
-       transform="translate(27.496868,528.55682)"
+       transform="translate(11.782582,535.69968)"
        xml:space="preserve"
        id="flowRoot2985-6"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"><flowRegion
@@ -1073,14 +1073,14 @@
        xml:space="preserve"
        id="flowRoot4359"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(-4.4196424,82.678572)"><flowRegion
+       transform="translate(-40.848214,98.392857)"><flowRegion
          id="flowRegion4361"><rect
            id="rect4363"
            width="158.57143"
            height="42.857143"
            x="49.285713"
            y="1138.8125" /></flowRegion><flowPara
-         id="flowPara4365">Design workflow</flowPara></flowRoot>    <flowRoot
+         id="flowPara4365">Cnc25D design workflow</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4367"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1104,7 +1104,7 @@
            height="54.285713"
            x="146.42857"
            y="988.8125" /></flowRegion><flowPara
-         id="flowPara4381"></flowPara></flowRoot>    <flowRoot
+         id="flowPara4381" /></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4389"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1295,5 +1295,47 @@
            x="273.57144"
            y="1213.0983"
            style="font-style:italic;-inkscape-font-specification:Sans Italic" /></flowRegion><flowPara
-         id="flowPara4676">2D output</flowPara></flowRoot>  </g>
+         id="flowPara4676">2D output</flowPara></flowRoot>    <rect
+       style="fill:none;stroke:#e6e6e6;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4074"
+       width="550"
+       height="472.14282"
+       x="12.857142"
+       y="100.24107"
+       transform="translate(-6.5625,-3.75)"
+       inkscape:export-filename="images/cnc25d_file_dependency.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:none;stroke:#e6e6e6;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4074-1"
+       width="509.99997"
+       height="292.85712"
+       x="17.008928"
+       y="618.27679"
+       inkscape:export-filename="images/cnc25d_file_dependency.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4094"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-6.5625,-3.75)"><flowRegion
+         id="flowRegion4096"><rect
+           id="rect4098"
+           width="145"
+           height="17.857143"
+           x="31.428572"
+           y="893.09821" /></flowRegion><flowPara
+         id="flowPara4100">outline_backends api</flowPara></flowRoot>    <rect
+       style="fill:none;stroke:#e6e6e6;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4074-1-5"
+       width="578.57141"
+       height="317.85712"
+       x="-0.8481881"
+       y="940.77686"
+       inkscape:export-filename="images/cnc25d_design_workflow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
 </svg>
