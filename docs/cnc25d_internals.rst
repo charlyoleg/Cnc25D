@@ -44,6 +44,7 @@ Cnc25D Internals
       micropreprocessor.py                        # lets generate cnc25d_example_generator.py
       note_on_cnc25d_dev.txt                      # notes for developers 
 
+.. image:: images/cnc25d_file_dependency.png
 
 2. Design example generation
 ============================

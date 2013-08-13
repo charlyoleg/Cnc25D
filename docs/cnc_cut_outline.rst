@@ -58,6 +58,8 @@ For fitting not coplanar shapes, we need to enlarge inner corners.
 
 For fitting two coplanar shapes, the inner and outer corners must be smoothed.
 
+This section details the calculation related to *smoothed line-line corner*. To get the calculation related to *smoothed line-arc corner* and *smoothed arc-arc corner*, check the *SVG* files *docs/smooth_corner_line_arc.svg* and *docs/smooth_corner_arc_arc.svg*.
+
 .. image:: images/detailed_coplanar_fitting.png
 
 ::
@@ -129,6 +131,8 @@ Other method with the law of cosines c²=a²+b²-2*a*b*cos(C)
 =============================
 
 For fitting two not-coplanar shapes, the inner corners must be enlarged.
+
+This section details the calculation related to *enlarged line-line corner*. To get the calculation related to *enlarged line-arc corner* and *enlarged arc-arc corner*, check the *SVG* file *docs/enlarge_corner_arc_arc.svg*.
 
 4.1.1. Case of an inner obtuse angle
 ------------------------------------
