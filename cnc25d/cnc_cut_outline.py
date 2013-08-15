@@ -754,7 +754,7 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   segment_nb = point_nb-1
   # check of the outline size
   if(segment_nb<1):
-    print("ERR202: Error in {:s}, the number of segments must be bigger than 1. Currently: {:s}".format(ai_error_msg_id, point_nb))
+    print("ERR202: Error in {:s}, the number of segments must be bigger than 1. Currently: {:s}".format(ai_error_msg_id, segment_nb))
     sys.exit(2)
   if((segment_nb<3)and(outline_closed)):
     print("ERR203: Error in {:s}, the number of segments must be bigger than 3 with a closed outline. Currently: {:s}".format(ai_error_msg_id, point_nb))
@@ -847,6 +847,75 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
     last_segment = (next_point[0], next_point[1])
   r_outline.append(last_segment)
   # function return
+  return(r_outline)
+
+def unstable_smooth_curve(ai_polyline, ai_initial_tangent, ai_precision, ai_router_bit_request, ai_error_msg_id):
+  """
+  This function computes a serie of N arcs that pass through the (N+1) points defined by the N line-segments of ai_polyline.
+  ai_polyline is an outline of format B, that contains only lines (no arcs) (list of list of 2 floats).
+  ai_initial_tangent is the tangent of the wished curve at the first-point of the outline ai_polyline.
+  ai_precision defined when a line should be generated instead of an arc because the tangent and the new segment are almost collinear.
+  ai_router_bit_request is just used to warn if the radius_of_curvature is smaller than the router_bit. Because this function can not know on which side of the outline is the material, those warnings might be irrelevant. If you don't want this feature, just set it to 0, this disables these warnings.
+  ai_error_msg_id is a string, that can help you to track bugs and erros.
+  The function returns an outline of format B containing only arcs
+  """
+  # define the angle precision to know when to use a line instead of an arc
+  #radian_epsilon = 1/1000.0
+  radian_epsilon = ai_precision
+  # check if the input outline is closed
+  outline_closed = False
+  if((ai_polyline[0][0]==ai_polyline[-1][-2])and(ai_polyline[0][1]==ai_polyline[-1][-1])):
+  #if((abs(ai_polyline[0][0]-ai_polyline[-1][-2])<radian_epsilon)and(abs(ai_polyline[0][1]==ai_polyline[-1][-1])<radian_epsilon)):
+    outline_closed = True
+    print("WARN994: Warning in {:s}, the curve to smooth is closed and this will be ignored by the unstable_smooth_curve() function".format(ai_error_msg_id))
+  # number of corners and segments
+  point_nb = len(ai_polyline)
+  # check the outline point number
+  if(point_nb<2):
+    print("ERR209: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb))
+    sys.exit(2)
+  # check if the first point is valid
+  first_point_len = len(ai_polyline[0])
+  if(first_point_len!=2):
+    print("ERR219: Error in {:s}, the first-point of ai_polyline must have exactly 2 elements. Currently: {:d}".format(ai_error_msg_id, first_point_len))
+    sys.exit(2)
+  # processing initialization
+  ti = ai_initial_tangent
+  r_outline = []
+  r_outline.append(ai_polyline[0]) # first-point
+  # processing incrementation
+  for i in range(point_nb-1):
+    # error message
+    i_error_msg_id = "{:s}.{:d}".format(ai_error_msg_id, i)
+    # check the validity of the new segment
+    segment_len = len(ai_polyline[i+1])
+    if(segment_len!=2):
+      print("ERR229: Error in {:s}, the ai_polyline segment length must be exactly 2. Currently: {:d}".format(i_error_msg_id, segment_len))
+      sys.exit(2)
+    # geometrical data
+    AX = ai_polyline[i][0]
+    AY = ai_polyline[i][1]
+    CX = ai_polyline[i+1][0]
+    CY = ai_polyline[i+1][1]
+    # calculation of the inclination of AC
+    lAC = math.sqrt((CX-AX)**2+(CY-AY)**2)
+    iAC = math.atan2((CY-AY)/lAC, (CX-AX)/lAC)
+    rti = math.fmod(ti-iAC+5*math.pi, 2*math.pi)-math.pi # angle (AC, tangent) between [-pi,pi]
+    if(abs(rti)>math.pi-radian_epsilon):
+      print("ERR239: Error in {:s}, AC and the tangent Ti are collinear and in opposite direction. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+      sys.exit(2)
+    if(abs(rti)>math.pi/3):
+      print("WARN249: Warning in {:s}, AC and the tangent Ti are doing a large angle. Add itermediate points to remove this warning. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+    if(abs(rti)<radian_epsilon):
+      print("WARN259: Warning in {:s}, AC and the tangent Ti are almost identical. A line is generated for this segment. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+      r_outline.append([CX, CY]) # create a line-segment
+      ti = iAC
+    else:
+      (BX, BY, nti) = curve_arc(AX, AY, CX, CY, ti, ai_router_bit_request, i_error_msg_id)
+      r_outline.append([BX, BY, CX, CY]) # create an arc-segment
+      ti = nti
+  print("dbg536: the last tangent inclination ti: {:0.2f}".format(ti))
+  # return
   return(r_outline)
 
 ################################################################
@@ -1228,6 +1297,43 @@ def cnc_cut_outline_test4(ai_sw_router_bit_radius):
   r_test = 1
   return(r_test)
 
+def cnc_cut_outline_test5(ai_sw_router_bit_radius):
+  """ Fifth test suggests small curves, useful to develop smooth_curve()
+      It displays the shapes with Tkinter
+  """
+  radian_precision = math.pi/100
+  print("Run test_5  with ai_sw_router_bit_radius={:0.2f} ...".format(ai_sw_router_bit_radius))
+  first_curve=[
+    [20,0],
+    [22,10],
+    [25,20],
+    [32,30],
+    [35,40],
+    [36,50],
+    [36,60]]
+  # outline_a
+  outline_b1 = first_curve
+  outline_b2 = unstable_smooth_curve(first_curve, math.pi/2, radian_precision, ai_sw_router_bit_radius, 'cnc_cut_outline_test5_a2')
+  # print the outline
+  #for i_segment in outline_a2:
+  #  print("dbg332: outline_a2 i_segment:", len(i_segment), i_segment)
+
+  # display with Tkinter
+  tk_root = Tkinter.Tk()
+  my_canvas = outline_backends.Two_Canvas(tk_root)
+  # callback function for display_backend
+  def sub_canvas_graphics_t5(ai_angle_position):
+    r_canvas_graphics = []
+    r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_b1, 'tkinter'), 'green', 2))
+    r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_b2, 'tkinter'), 'red', 1))
+    return(r_canvas_graphics)
+  # end of callback function
+  my_canvas.add_canvas_graphic_function(sub_canvas_graphics_t5)
+  tk_root.mainloop()
+  # end of display with Tkinter
+  r_test = 1
+  return(r_test)
+
 ################################################################
 # cnc_cut_outline command line interface
 ################################################################
@@ -1250,6 +1356,8 @@ def cnc_cut_outline_cli(ai_args=None):
     help='It generates a bunch of shapes, that are displayed with Tkinter.')
   cco_parser.add_argument('--test4','--t4', action='store_true', default=False, dest='sw_test4',
     help='Small shapes for development, that are displayed with Tkinter.')
+  cco_parser.add_argument('--test5','--t5', action='store_true', default=False, dest='sw_test5',
+    help='Small shapes to development smooth_curve, that are displayed with Tkinter.')
   # this ensure the possible to use the script with python and freecad
   effective_args=ai_args
   if(effective_args==None):
@@ -1270,6 +1378,8 @@ def cnc_cut_outline_cli(ai_args=None):
     cnc_cut_outline_test3(cco_args.sw_router_bit_radius)
   if(cco_args.sw_test4):
     cnc_cut_outline_test4(cco_args.sw_router_bit_radius)
+  if(cco_args.sw_test5):
+    cnc_cut_outline_test5(cco_args.sw_router_bit_radius)
   print("dbg999: end of script")
   
     
@@ -1286,8 +1396,9 @@ if __name__ == "__main__":
   #cnc_cut_outline_cli("--test2".split())
   #cnc_cut_outline_cli("--test1 --test2".split())
   #cnc_cut_outline_cli("--test3".split())
-  cnc_cut_outline_cli("--test3 --router_bit_radius=2".split()) # --router_bit_radius=2 > no warning ; --router_bit_radius=3 > backends warnings
+#  cnc_cut_outline_cli("--test3 --router_bit_radius=2".split()) # --router_bit_radius=2 > no warning ; --router_bit_radius=3 > backends warnings
   #cnc_cut_outline_cli("--test4 --router_bit_radius=-3".split())
+  cnc_cut_outline_cli("--test5 --router_bit_radius=3".split())
   #make_H_shape(1.0,2.0,'')
 
 

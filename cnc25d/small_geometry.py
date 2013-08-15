@@ -819,3 +819,66 @@ def sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai
   #print("dbg588: r_sub_enlarge_corner_arc_arc:", r_sub_enlarge_corner_arc_arc)
   return(r_sub_enlarge_corner_arc_arc)
 
+def curve_arc(ai_AX, ai_AY, ai_CX, ai_CY, ai_At, ai_router_bit_request, ai_error_msg_id):
+  """ Given the start-point (A), the end-point (C) and the arc tangent (At) at (A), return the middle-point (B) and the arc tangent (Ct) at (C)
+  """
+  # use to check if the calculation is possible
+  radian_epsilon = math.pi/1000
+  # line equation of (AC)
+  (AClx, ACly, ACk, lAC, xAC) = line_equation((ai_AX, ai_AY), (ai_CX, ai_CY), ai_error_msg_id)
+  # calcultion of I the middle of [AC]
+  IX = (ai_AX+ai_CX)/2
+  IY = (ai_AY+ai_CY)/2
+  # line equation of the bisection (OI) of [AC]
+  OIlx = ACly
+  OIly = -1*AClx
+  OIk = -1*(OIlx*IX+OIly*IY)
+  # line equation of (OA)
+  # Tangent(A) equation (sin(At), -cos(At), K)
+  # OA is perpendicular to Tangent(A)
+  OAlx = math.cos(ai_At)
+  OAly = math.sin(ai_At)
+  OAk = -1*(OAlx*ai_AX+OAly*ai_AY)
+  # O intersection of (OI) and (OA). It's the center of the arc
+  (OX, OY, line_line_intersection_status) = line_line_intersection((OIlx, OIly, OIk),(OAlx, OAly, OAk), ai_error_msg_id)
+  if(line_line_intersection_status==2):
+    print("ERR374: Error in {:s}, the tangent and AC are collinear!".format(ai_error_msg_id))
+    sys.exit(2)
+  # verification of the distance OA and OC
+  lOA = math.sqrt((ai_AX-OX)**2+(ai_AY-OY)**2)
+  lOC = math.sqrt((ai_CX-OX)**2+(ai_CY-OY)**2)
+  #print("dbg354: ai_AX={:0.2f}  ai_AY={:0.2f}".format(ai_AX, ai_AY))
+  #print("dbg355: ai_CX={:0.2f}  ai_CY={:0.2f}".format(ai_CX, ai_CY))
+  #print("dbg356: IX={:0.2f}  IY={:0.2f}".format(IX, IY))
+  #print("dbg357: OX={:0.2f}  OY={:0.2f}".format(OX, OY))
+  if(abs(lOC-lOA)>radian_epsilon):
+    print("ERR375: Error in {:s}, O is not equidistant from A and C! lOA={:0.2f} l_OC={:0.2f}".format(ai_error_msg_id, lOA, lOC))
+    sys.exit(2)
+  if(lOA<ai_router_bit_request):
+    print("WARN446: Warning in {:s}, the radius_of_curvature is smaller than the router_bit_request! lOA={:0.2f} rbr={:0.2f}".format(ai_error_msg_id, lOA, ai_router_bit_request))
+  # calculation of the angle (Ox, OA)
+  xOA = math.atan2((ai_AY-OY)/lOA, (ai_AX-OX)/lOA)
+  # calculation of the angle (Ox, OC)
+  xOC = math.atan2((ai_CY-OY)/lOC, (ai_CX-OX)/lOC)
+  # arc orientation = sign of the angle (At,AC)
+  AtAC = math.fmod(xAC-ai_At+5*math.pi, 2*math.pi) - math.pi
+  # calculation of the angle AOC
+  AOC = 0
+  if(AtAC>0):
+    AOC = math.fmod(xOC-xOA+4*math.pi, 2*math.pi)
+  else:
+    AOC = -1*math.fmod(xOA-xOC+4*math.pi, 2*math.pi)
+  if(abs(AOC)<radian_epsilon):
+    print("WARN776: Warning in {:s}, the angle AOC is really small!".format(ai_error_msg_id))
+  # calculation of B
+  xOB = xOA + AOC/2
+  BX = OX+lOA*math.cos(xOB)
+  BY = OY+lOA*math.sin(xOB)
+  # calculation of the tangent inclination Ct in C
+  Ct = xOC + math.copysign(math.pi/2, AtAC)
+  # return
+  r_curve_arc = (BX, BY, Ct)
+  return(r_curve_arc)
+
+
+
