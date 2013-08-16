@@ -30,7 +30,7 @@ to be used by the design examples or external scripts
 ################################################################
 
 import importing_freecad
-import cnc_cut_outline
+import cnc_outline
 import outline_backends
 import positioning
 import export_2d
@@ -43,13 +43,15 @@ import export_2d
 importing_freecad = importing_freecad.importing_freecad
 
 # from cnc_cut_outline
-outline_shift_x = cnc_cut_outline.outline_shift_x
-outline_shift_y = cnc_cut_outline.outline_shift_y
-outline_shift_xy = cnc_cut_outline.outline_shift_xy
-outline_rotate = cnc_cut_outline.outline_rotate
-outline_close = cnc_cut_outline.outline_close
-outline_reverse = cnc_cut_outline.outline_reverse
-cnc_cut_outline = cnc_cut_outline.cnc_cut_outline
+outline_shift_x = cnc_outline.outline_shift_x
+outline_shift_y = cnc_outline.outline_shift_y
+outline_shift_xy = cnc_outline.outline_shift_xy
+outline_rotate = cnc_outline.outline_rotate
+outline_close = cnc_outline.outline_close
+outline_reverse = cnc_outline.outline_reverse
+cnc_cut_outline = cnc_outline.cnc_cut_outline
+smooth_outline_c_curve = cnc_outline.smooth_outline_c_curve
+smooth_outline_b_curve = cnc_outline.smooth_outline_b_curve
 
 # from outline_backends
 outline_arc_line = outline_backends.outline_arc_line

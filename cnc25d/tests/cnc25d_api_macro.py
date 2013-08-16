@@ -113,6 +113,15 @@ my_outline = [
   [ 0*big_length+0*small_length,  1*big_length+0*small_length,    my_router_bit_radius],
   [ 0*big_length+0*small_length,  0*big_length+0*small_length,  0*my_router_bit_radius]] # The last point is equal to the Start point. The router_bit request must be set to zero.
 
+my_curve=[
+  [20,0],
+  [22,10],
+  [25,20],
+  [29,30],
+  [35,40],
+  [43,50],
+  [60,60]]
+
 ################################################################
 # Combine your outline and your router_bit constraint
 ################################################################
@@ -136,6 +145,9 @@ my_outline_for_cnc_closed = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_close(
 #outline_reverse
 # reverse the order of the segments. If the outline is closed, it changes the orientation from CW to CCW and vice versa
 my_outline_for_cnc_reverse = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_reverse(cnc25d_api.outline_shift_x(my_outline, -2*big_length, 0.25)), 'api_example3')
+# curve
+radian_precision = math.pi/100
+my_curve_for_cnc = cnc25d_api.smooth_outline_b_curve(my_curve, radian_precision, my_router_bit_radius, 'api_example4')
 
 ################################################################
 # Display the outline in a Tkinter GUI
@@ -157,6 +169,8 @@ def sub_canvas_graphics(ai_angle_position):
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc_closed, 'tkinter'), 'blue', 1))
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc_reverse, 'tkinter'), 'blue', 1))
   r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_circle((100,100), 40, 'tkinter'), 'orange', 1)) # create a circle
+  r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(my_curve, 'tkinter'), 'green', 2))
+  r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_curve_for_cnc, 'tkinter'), 'blue', 1))
   return(r_canvas_graphics)
 # end of callback function
 my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
