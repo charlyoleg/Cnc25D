@@ -880,5 +880,172 @@ def curve_arc(ai_AX, ai_AY, ai_CX, ai_CY, ai_At, ai_router_bit_request, ai_error
   r_curve_arc = (BX, BY, Ct)
   return(r_curve_arc)
 
+def unstable_smooth_outline_b_curve(ai_polyline, ai_initial_tangent, ai_precision, ai_router_bit_request, ai_error_msg_id):
+  """
+  This function computes a serie of N arcs that pass through the (N+1) points defined by the N line-segments of ai_polyline.
+  ai_polyline is an outline of format B, that contains only lines (no arcs) (list of list of 2 floats).
+  ai_initial_tangent is the tangent of the wished curve at the first-point of the outline ai_polyline.
+  ai_precision defined when a line should be generated instead of an arc because the tangent and the new segment are almost collinear.
+  ai_router_bit_request is just used to warn if the radius_of_curvature is smaller than the router_bit. Because this function can not know on which side of the outline is the material, those warnings might be irrelevant. If you don't want this feature, just set it to 0, this disables these warnings.
+  ai_error_msg_id is a string, that can help you to track bugs and erros.
+  The function returns an outline of format B containing only arcs
+  """
+  # define the angle precision to know when to use a line instead of an arc
+  #radian_epsilon = 1/1000.0
+  radian_epsilon = ai_precision
+  # check if the input outline is closed
+  outline_closed = False
+  if((ai_polyline[0][0]==ai_polyline[-1][-2])and(ai_polyline[0][1]==ai_polyline[-1][-1])):
+  #if((abs(ai_polyline[0][0]-ai_polyline[-1][-2])<radian_epsilon)and(abs(ai_polyline[0][1]==ai_polyline[-1][-1])<radian_epsilon)):
+    outline_closed = True
+    print("WARN994: Warning in {:s}, the curve to smooth is closed and this will be ignored by the unstable_smooth_curve() function".format(ai_error_msg_id))
+  # number of corners and segments
+  point_nb = len(ai_polyline)
+  # check the outline point number
+  if(point_nb<2):
+    print("ERR209: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb))
+    sys.exit(2)
+  # check if the first point is valid
+  first_point_len = len(ai_polyline[0])
+  if(first_point_len!=2):
+    print("ERR219: Error in {:s}, the first-point of ai_polyline must have exactly 2 elements. Currently: {:d}".format(ai_error_msg_id, first_point_len))
+    sys.exit(2)
+  # processing initialization
+  ti = ai_initial_tangent
+  r_outline = []
+  r_outline.append(ai_polyline[0]) # first-point
+  # processing incrementation
+  for i in range(point_nb-1):
+    # error message
+    i_error_msg_id = "{:s}.{:d}".format(ai_error_msg_id, i)
+    # check the validity of the new segment
+    segment_len = len(ai_polyline[i+1])
+    if(segment_len!=2):
+      print("ERR229: Error in {:s}, the ai_polyline segment length must be exactly 2. Currently: {:d}".format(i_error_msg_id, segment_len))
+      sys.exit(2)
+    # geometrical data
+    AX = ai_polyline[i][0]
+    AY = ai_polyline[i][1]
+    CX = ai_polyline[i+1][0]
+    CY = ai_polyline[i+1][1]
+    # calculation of the inclination of AC
+    lAC = math.sqrt((CX-AX)**2+(CY-AY)**2)
+    iAC = math.atan2((CY-AY)/lAC, (CX-AX)/lAC)
+    rti = math.fmod(ti-iAC+5*math.pi, 2*math.pi)-math.pi # angle (AC, tangent) between [-pi,pi]
+    if(abs(rti)>math.pi-radian_epsilon):
+      print("ERR239: Error in {:s}, AC and the tangent Ti are collinear and in opposite direction. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+      sys.exit(2)
+    if(abs(rti)>math.pi/3):
+      print("WARN249: Warning in {:s}, AC and the tangent Ti are doing a large angle. Add itermediate points to remove this warning. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+    if(abs(rti)<radian_epsilon):
+      print("WARN259: Warning in {:s}, AC and the tangent Ti are almost identical. A line is generated for this segment. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+      r_outline.append([CX, CY]) # create a line-segment
+      ti = iAC
+    else:
+      (BX, BY, nti) = curve_arc(AX, AY, CX, CY, ti, ai_router_bit_request, i_error_msg_id)
+      r_outline.append([BX, BY, CX, CY]) # create an arc-segment
+      ti = nti
+  print("dbg536: the last tangent inclination ti: {:0.2f}".format(ti))
+  # return
+  return(r_outline)
+
+def sub_smooth_outline_c_curve(ai_polyline, ai_precision, ai_router_bit_request, ai_error_msg_id):
+  """
+  This function computes a serie of 2N arcs that pass through the (N+1) points defined by the N line-segments of ai_polyline.
+  ai_polyline is an outline of format C, (list of list of 3 floats).
+  ai_precision defined when a line should be generated instead of an arc because the tangent and the new segment are almost collinear.
+  ai_router_bit_request is just used to warn if the radius_of_curvature is smaller than the router_bit. Because this function can not know on which side of the outline is the material, those warnings might be irrelevant. If you don't want this feature, just set it to 0, this disables these warnings.
+  ai_error_msg_id is a string, that can help you to track bugs and erros.
+  The function returns an outline of format B containing only arcs
+  """
+  # define the angle precision to know when to use a line instead of an arc
+  #radian_epsilon = 1/1000.0
+  radian_epsilon = ai_precision
+  # check if the input outline is closed
+  outline_closed = False
+  if((ai_polyline[0][0]==ai_polyline[-1][0])and(ai_polyline[0][1]==ai_polyline[-1][1])):
+  #if((abs(ai_polyline[0][0]-ai_polyline[-1][-2])<radian_epsilon)and(abs(ai_polyline[0][1]==ai_polyline[-1][-1])<radian_epsilon)):
+    outline_closed = True
+    #print("WARN694: Warning in {:s}, the curve to smooth is closed and this will be ignored by the unstable_smooth_curve() function".format(ai_error_msg_id))
+  # number of corners and segments
+  point_nb = len(ai_polyline)
+  # check the outline point number
+  if(point_nb<2):
+    print("ERR609: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb))
+    sys.exit(2)
+  # check if the first point is valid
+  first_point_len = len(ai_polyline[0])
+  if(first_point_len!=3):
+    print("ERR619: Error in {:s}, the first-point of ai_polyline must have exactly 3 elements. Currently: {:d}".format(ai_error_msg_id, first_point_len))
+    sys.exit(2)
+  # processing initialization
+  r_outline = []
+  r_outline.append((ai_polyline[0][0], ai_polyline[0][1])) # first-point
+  # processing incrementation
+  for i in range(point_nb-1):
+    # error message
+    i_error_msg_id = "{:s}.{:d}".format(ai_error_msg_id, i)
+    # check the validity of the new segment
+    segment_len = len(ai_polyline[i+1])
+    if(segment_len!=3):
+      print("ERR629: Error in {:s}, the ai_polyline segment length must be exactly 3. Currently: {:d}".format(i_error_msg_id, segment_len))
+      sys.exit(2)
+    # geometrical data
+    AX = ai_polyline[i][0]
+    AY = ai_polyline[i][1]
+    xAt = ai_polyline[i][2]
+    EX = ai_polyline[i+1][0]
+    EY = ai_polyline[i+1][1]
+    xEt = ai_polyline[i+1][2]
+    # calculation of the inclination of AE
+    lAE = math.sqrt((EX-AX)**2+(EY-AY)**2)
+    xAE = math.atan2((EY-AY)/lAE, (EX-AX)/lAE)
+    # calculation of the inclination of AC
+    AtAE = math.fmod(xAt-xAE+5*math.pi, 2*math.pi)-math.pi # angle (AE, tangent) between [-pi,pi]
+    xAC = math.fmod(xAE + AtAE/2 + 5*math.pi, 2*math.pi) - math.pi
+    AClx = math.sin(xAC)
+    ACly = -1*math.cos(xAC)
+    ACk = -1*(AClx*AX+ACly*AY)
+    # calculation of the inclination of EC
+    EtEA = math.fmod(xEt-xAE+5*math.pi, 2*math.pi)-math.pi # angle (AE, tangent) between [-pi,pi]
+    xEC = math.fmod(xAE+math.pi + EtEA/2 + 5*math.pi, 2*math.pi) - math.pi
+    EClx = math.sin(xEC)
+    ECly = -1*math.cos(xEC)
+    ECk = -1*(EClx*EX+ECly*EY)
+    # check if the segment must be an arc or a line
+    if(abs(AtAE)>math.pi/2):
+      print("ERR639: Error in {:s}, the angle between AC and the tangent xAt is larger than pi/2. It doesn't look like a feasible curbe. xAC={:0.2f}  xAt={:0.2f}".format(i_error_msg_id, xAC, xAt))
+      sys.exit(2)
+    if(abs(EtEA)>math.pi/2):
+      print("ERR638: Error in {:s}, the angle between EC and the tangent et is larger than pi/2. It doesn't look like a feasible curbe. xEC={:0.2f}  xEt={:0.2f}".format(i_error_msg_id, xEC, xEt))
+      sys.exit(2)
+    if(abs(AtAE)>math.pi/3):
+      print("WARN649: Warning in {:s}, AC and the tangent xAt are doing a large angle. Add itermediate points to remove this warning. xAC={:0.2f}  xAt={:0.2f}".format(i_error_msg_id, xAC, xAt))
+    if(abs(EtEA)>math.pi/3):
+      print("WARN648: Warning in {:s}, EC and the tangent xEt are doing a large angle. Add itermediate points to remove this warning. xEC={:0.2f}  xEt={:0.2f}".format(i_error_msg_id, xEC, xEt))
+    if((abs(AtAE)<radian_epsilon)or(abs(EtEA)<radian_epsilon)):
+      print("WARN659: Warning in {:s}, (xAC, xAt) or (xEC, xEt) are almost identical. A line is generated for this segment. xAC={:0.2f}  xAt={:0.2f} xEC={:0.2f}  xEt={:0.2f} ".format(i_error_msg_id, xAC, xAt, xEC, xEt))
+      r_outline.append((EX, EY)) # create a line-segment
+    elif((AtAE*EtEA)>0):
+      print("WARN669: Warning in {:s}, xAt and xEt are not one the side of (AE). It look like an inflexion. A line is generated for this segment. xAC={:0.2f}  xAt={:0.2f} xEC={:0.2f} xEt={:0.2f} ".format(i_error_msg_id, xAC, xAt, xEC, xEt))
+      r_outline.append((EX, EY)) # create a line-segment
+    else:
+      # C intersection of (AC) and (EC). it is the junction point between the two arcs
+      (CX, CY, line_line_intersection_status) = line_line_intersection((AClx, ACly, ACk),(EClx, ECly, ECk), ai_error_msg_id)
+      if(line_line_intersection_status==2):
+        print("ERR324: Error in {:s}, AC and EC are collinear!".format(ai_error_msg_id))
+        sys.exit(2)
+      (BX, BY, xCt) = curve_arc(AX, AY, CX, CY, xAt, ai_router_bit_request, i_error_msg_id)
+      if(abs(math.fmod(xCt-xAE+5*math.pi, 2*math.pi)-math.pi)>radian_epsilon):
+        print("ERR325: Error in {:s}, the first arc tangent in C is not parallel to AE! xCt={:0.2f} xAE={:0.2f}".format(ai_error_msg_id, xCt, xAE))
+        sys.exit(2)
+      (DX, DY, xEt2) = curve_arc(CX, CY, EX, EY, xAE, ai_router_bit_request, i_error_msg_id)
+      if(abs(math.fmod(xEt2-xEt+5*math.pi, 2*math.pi)-math.pi)>radian_epsilon):
+        print("ERR326: Error in {:s}, the second arc tangent in E is different from xEt! xEt={:0.2f} xEt2={:0.2f}".format(ai_error_msg_id, xEt, xEt2))
+        sys.exit(2)
+      r_outline.append((BX, BY, CX, CY)) # create the first arc-segment
+      r_outline.append((DX, DY, EX, EY)) # create the second arc-segment
+  # return
+  return(r_outline)
 
 

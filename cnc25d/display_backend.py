@@ -102,6 +102,7 @@ def compute_scale_coef(ai_extremum, ai_canvas_size):
   (min_x, min_y, max_x, max_y) = ai_extremum
   (canvas_width, canvas_height, margin_x, margin_y) = ai_canvas_size
   r_scale_coef = (1, 0, 1, 0)
+  #print("dbg663:", max_x, min_x, max_y, min_y)
   if(((max_x-min_x)>0)and((max_y-min_y)>0)):
     lx = (canvas_width-2*margin_x)/float(max_x-min_x)
     ly = (canvas_height-2*margin_y)/float(max_y-min_y)
