@@ -21,7 +21,7 @@ Cnc25D Internals
     cnc25d/                             # the main package
       __init__.py
       importing_freecad.py              # lets import the FreeCAD libraries
-      cnc_cut_outline.py                # cnc25d API to design parts
+      cnc_outline.py                    # cnc25d API to design parts
       export_2d.py                      # cnc25d API to export DXF or SVG
       box_wood_frame.py                 # box_wood_frame design example
       tests/                       # contains the test files of the cnc25d package

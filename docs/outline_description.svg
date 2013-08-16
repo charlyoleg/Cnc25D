@@ -40,8 +40,8 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="276.64826"
-     inkscape:cy="792.23443"
+     inkscape:cx="302.91223"
+     inkscape:cy="1888.755"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -66,7 +66,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -154,7 +154,7 @@
            height="54.285717"
            x="20"
            y="35.276783" /></flowRegion><flowPara
-         id="flowPara3785">The cnc_cut_outline module helps to create and modify outlines.</flowPara></flowRoot>    <path
+         id="flowPara3785">The cnc_outline module helps to create and modify outlines.</flowPara></flowRoot>    <path
        style="color:#000000;fill:none;stroke:#ff0000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 173.05803,371.4375 27.14286,-18.57143 -26.42857,-27.14285 c -3.02167,-36.99572 25.68025,-28.40139 37.85714,-17.14286 l 35,39.28571 c 8.32903,29.0989 30.988,10.64001 30.71429,2.85715 -10.32442,-8.33333 -12.48954,-16.66667 0,-25 l 42.85714,10.71428 -37.85714,35 -46.42857,-0.71428 -5,25.71428"
        id="path3787"
@@ -450,7 +450,7 @@
            x="32.324883"
            y="453.81839" /></flowRegion><flowPara
          id="flowPara4041">If the last point is equal to the first point, the outline is closed. Otherwise the outline is open.</flowPara><flowPara
-         id="flowPara4047">The orientation of a closed outline can be counter-clock-wise (CCW) or clock-wise (CW). This orientation should not have any consequence on the functions of the cnc_cut_outline module.</flowPara></flowRoot>    <path
+         id="flowPara4047">The orientation of a closed outline can be counter-clock-wise (CCW) or clock-wise (CW). This orientation should not have any consequence on the functions of the cnc_outline module.</flowPara></flowRoot>    <path
        style="color:#000000;fill:none;stroke:#ff0000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 144.28571,693.84821 -38.57142,-32.14285 c -1.56056,-38.0451 23.06304,-41.95026 48.57142,-14.28572 30.87622,-35.6236 46.58491,-11.96129 41.42858,12.85714 z"
        id="path4049"
@@ -630,11 +630,11 @@
            height="824.28571"
            x="21.785715"
            y="971.34821" /></flowRegion><flowPara
-         id="flowPara4679">The cnc_cut_outline module uses two outline formats: with or without corner router_bit radius request.</flowPara><flowPara
+         id="flowPara4679">The cnc_outline module uses two outline formats: with or without corner router_bit radius request.</flowPara><flowPara
          id="flowPara4689" /><flowPara
          id="flowPara4683">outline format without corner router_bit request:</flowPara><flowPara
          id="flowPara4685">- input format of outline_backends.outline_arc_line()</flowPara><flowPara
-         id="flowPara4687">- returned format of cnc_cut_outline.cnc_cut_outline()</flowPara><flowPara
+         id="flowPara4687">- returned format of cnc_outline.cnc_cut_outline()</flowPara><flowPara
          id="flowPara4691">- The Start point </flowPara><flowPara
          id="flowPara4695">  = list of two floats</flowPara><flowPara
          id="flowPara4697">  = coordinates x and y of the Start point</flowPara><flowPara
@@ -647,7 +647,7 @@
          id="flowPara4709">In summary, this is a list of list of 2 or 4 floats. The first element of the global list is a list of 2 floats.</flowPara><flowPara
          id="flowPara4711" /><flowPara
          id="flowPara4713">outline format with corner router_bit request:</flowPara><flowPara
-         id="flowPara4717">- input format of cnc_cut_outline.cnc_cut_outline()</flowPara><flowPara
+         id="flowPara4717">- input format of cnc_outline.cnc_cut_outline()</flowPara><flowPara
          id="flowPara4741">- The corner router_bit radius request is a float. If the float is positive, the corner is requested to be smoothed with this radius. If the float is negative, the corner is requested to be enlarged with a radius equal to the absolute value of this float. If the float is equal to zero, the corner is requested to be unchanged and to keep its angular shape.</flowPara><flowPara
          id="flowPara4719">- The Start point </flowPara><flowPara
          id="flowPara4721">  = list of three floats</flowPara><flowPara

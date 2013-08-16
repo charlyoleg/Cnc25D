@@ -515,9 +515,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="358.40634"
-     inkscape:cy="1382.5879"
+     inkscape:zoom="1.979899"
+     inkscape:cx="306.77996"
+     inkscape:cy="681.68018"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -540,7 +540,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -633,14 +633,14 @@
        xml:space="preserve"
        id="flowRoot3009"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(-41.994172,47.092095)"><flowRegion
+       transform="translate(-29.137029,48.520666)"><flowRegion
          id="flowRegion3011"><rect
            id="rect3013"
            width="153.54318"
            height="28.284271"
            x="103.03556"
            y="213.93558" /></flowRegion><flowPara
-         id="flowPara3015">cnc_cut_outline.py</flowPara></flowRoot>    <flowRoot
+         id="flowPara3015">cnc_outline.py</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3017"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1054,14 +1054,15 @@
        xml:space="preserve"
        id="flowRoot3009-3"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(-25.473675,912.89029)"><flowRegion
+       transform="translate(-47.365269,902.89029)"><flowRegion
          id="flowRegion3011-4"><rect
            id="rect3013-4"
-           width="153.54318"
-           height="28.284271"
+           width="157.11461"
+           height="35.427128"
            x="103.03556"
            y="213.93558" /></flowRegion><flowPara
-         id="flowPara3015-0">cnc_cut_outline</flowPara></flowRoot>    <flowRoot
+         id="flowPara3295">cnc_cut_outline</flowPara><flowPara
+         id="flowPara3299">smooth_outline_c_curve</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3033-2"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1133,13 +1134,13 @@
          id="flowPara4397">lines and arcs</flowPara><flowPara
          id="flowPara4399">for cnc</flowPara></flowRoot>    <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 77.667266,1091.7533 23.475154,32.1142"
+       d="m 77.667266,1091.7533 22.760864,23.5428"
        id="path3068-48-8-9"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 131.23869,1126.9431 53.22528,-64.6821"
+       d="m 141.95298,1114.086 42.51099,-51.825"
        id="path3068-48-8-6"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />

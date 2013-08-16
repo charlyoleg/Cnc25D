@@ -146,7 +146,7 @@ outline format B example::
 -----------------------------------
 
 
-| ``cnc_cut_outline.`` **cnc_cut_outline(** *list, string* **)**
+| ``cnc25d_api.`` **cnc_cut_outline(** *list, string* **)**
 |   Return a *list*.
 
 3.4.1. cnc_cut_outline purpose
@@ -228,9 +228,9 @@ The *outline help functions* accept as argument the *Cnc25D outline format A* an
 3.5.1. outline_shift
 ^^^^^^^^^^^^^^^^^^^^
 
-| ``cnc_cut_outline.`` **outline_shift_x(** *list, x-offset, x-factor* **)**
-| ``cnc_cut_outline.`` **outline_shift_y(** *list, y-offset, y-factor* **)**
-| ``cnc_cut_outline.`` **outline_shift_xy(** *list, x-offset, x-factor, y-offset, y-factor* **)**
+| ``cnc25d_api.`` **outline_shift_x(** *list, x-offset, x-factor* **)**
+| ``cnc25d_api.`` **outline_shift_y(** *list, y-offset, y-factor* **)**
+| ``cnc25d_api.`` **outline_shift_xy(** *list, x-offset, x-factor, y-offset, y-factor* **)**
 |   Return a list that defines a sub-sequence of outline.
 
 The definition an outline can be quiet long and tedious. It might be useful to split a long list of points into several small sequences and concatenate them into one big list using the *.append()* and *.extend()* methods. Often it happens that sub-sequence patterns appear several times in one outline either shifted or mirrored. The functions *outline_shift_x*, *outline_shift_y* and outline_shift_xy can be use to help the reuse of outline sub sequences. Let's look at the following example.
@@ -397,7 +397,7 @@ The function *importing_freecad()* looks for the FreeCAD modules using a locatio
 5.2. place_plank()
 ------------------
 
-| ``cnc_cut_outline.`` **place_plank(** *FreeCAD.Part.Object, x-size, y-size, z-size, flip, orientation, x-position, y-position, z-posistion* **)**
+| ``cnc25d_api.`` **place_plank(** *FreeCAD.Part.Object, x-size, y-size, z-size, flip, orientation, x-position, y-position, z-posistion* **)**
 |   Return a *FreeCAD.Part.Object*
 
 FreeCAD provides the usual *rotate* and *translate* methods to place an object in a construction-assembly. Even if those methods are mathematically straight forward, they might require many *tries and errors* to find out the correct rotation to apply to an object to place it correctly in an assembly. The *place_plank()* function provides an alternative to the *rotate* method when you want to place a object in a cuboid assembly.

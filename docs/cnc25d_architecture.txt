@@ -102,6 +102,9 @@
     
       
     
+    
+      
+    
   
   
   
@@ -122,7 +125,7 @@
     
     
     
-    cnc25d_architecture.svg    display_backend.py    outline_backends.py    cnc_cut_outline.py    box_wood frame.py    gearwheel.py    export_2d.py    importing_freecad.py    
+    cnc25d_architecture.svg    display_backend.py    outline_backends.py    cnc_outline.py    box_wood frame.py    gearwheel.py    export_2d.py    importing_freecad.py    
     
     
     
@@ -147,7 +150,7 @@
     cnc25d file dependency    positioning.py    
     cnc25d_api.py    
     
-    outline_backends    cnc_cut_outline    export_2d.py    positioning    Design workflow    wished outlines oflines and arcsand router_bitconstraints        outlines oflines and arcsfor cnc    
+    outline_backends    cnc_cut_outlinesmooth_outline_c_curve    export_2d.py    positioning    Cnc25D design workflow    wished outlines oflines and arcsand router_bitconstraints        outlines oflines and arcsfor cnc    
     
     
     dxf, svg files    
@@ -159,4 +162,8 @@
     Tkinter display    
     
     
-    cnc25d_api    design script    3D output    2D output  
+    cnc25d_api    design script    3D output    2D output    
+    
+    outline_backends api    
+    small_geometry.py    
+  
