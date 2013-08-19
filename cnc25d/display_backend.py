@@ -320,6 +320,45 @@ class Two_Canvas():
       self.crop_limit = compute_crop_limit(selected_area, canvas_a_size, self.scale_coef_a)
       #print("dbg986: self.crop_limit:", self.crop_limit)
 
+  def action_canvas_b_mouse_button_press(self, event):
+    """ Start of the length measurement in canvas_b
+    """
+    self.mouse_bx1 = event.x
+    self.mouse_by1 = event.y
+    self.mouse_bx2 = self.mouse_bx1
+    self.mouse_by2 = self.mouse_by1
+    self.canvas_b_mouse_press = 1
+    #print("dbg877: mouse_bx1, mouse_by1:", self.mouse_bx1, self.mouse_by1)
+
+  def action_canvas_b_mouse_button_motion(self, event):
+    """ widget action in canvas_b
+    """
+    self.mouse_bx2 = event.x
+    self.mouse_by2 = event.y
+
+  def action_canvas_b_mouse_button_release(self, event):
+    """ End of the length measurement
+        It computes and display the length in the log
+    """
+    self.mouse_bx2 = event.x
+    self.mouse_by2 = event.y
+    self.canvas_b_mouse_press = 0
+    #print("dbg878: mouse_bx2, mouse_by2:", self.mouse_bx2, self.mouse_by2)
+    if(self.scale_coef_b==None):
+      print("WARN663: Warning, scale_coef_b is not computed yet!")
+    else:
+      (lx, kx, ly, ky) = self.scale_coef_b
+      p1x = (self.mouse_bx1-kx)/lx
+      p1y = (self.mouse_by1-ky)/ly
+      p2x = (self.mouse_bx2-kx)/lx
+      p2y = (self.mouse_by2-ky)/ly
+      length_measurement = math.sqrt((p2x-p1x)**2+(p2y-p1y)**2)
+      if(length_measurement>0):
+        angle_measurement = math.atan2((p2y-p1y)/length_measurement, (p2x-p1x)/length_measurement)
+        self.measurement_id += 1
+        print("Info: measurement {:2d} : lenght: {:0.3f}  angle: {:0.3f}".format(self.measurement_id, length_measurement, angle_measurement))
+        print("P1x: {:0.2f}  P1y: {:0.2f}  P2x: {:0.2f}  P2y: {:0.2f}".format(p1x, p1y, p2x, p2y))
+
   def simulation_step(self):
     """ Time simulation main function
     """
@@ -384,12 +423,14 @@ class Two_Canvas():
       canvas_b_size = (canvas_b_width, canvas_b_height, 2, 2)
       #print("dbg768: self.crop_limit:", self.crop_limit)
       #print("dbg763: canvas_b_size:", canvas_b_size)
-      scale_coef_b = compute_scale_coef(self.crop_limit, canvas_b_size)
+      self.scale_coef_b = compute_scale_coef(self.crop_limit, canvas_b_size)
       #print("dbg854: scale_coef_b:", scale_coef_b)
-      canvas_b_graphics = scale_outline(crop_graphics, scale_coef_b)
+      canvas_b_graphics = scale_outline(crop_graphics, self.scale_coef_b)
       #print("dbg986: canvas_b_graphics:", canvas_b_graphics)
       self.draw_canvas(self.canvas_b, canvas_b_graphics, self.overlay)
       #self.canvas_b.create_line((5,5,canvas_b_width-5,canvas_b_height-5), fill='yellow', width=3)
+      if(self.canvas_b_mouse_press==1):
+        self.canvas_b.create_line(self.mouse_bx1, self.mouse_by1, self.mouse_bx2, self.mouse_by2, fill='red', width=2)
 
   def action_button_overlay(self):
     """ Toggle the overlay visibility
@@ -423,6 +464,9 @@ class Two_Canvas():
     #self.canvas_b.columnconfigure(0, weight=1)
     #self.canvas_b.rowconfigure(0, weight=1)
     self.canvas_b.pack(fill=Tkinter.BOTH, expand=1) # with Toplevel parent, it seems you need to use pack to resisze the canvas !
+    self.canvas_b.bind("<ButtonPress-1>", self.action_canvas_b_mouse_button_press)
+    self.canvas_b.bind("<B1-Motion>", self.action_canvas_b_mouse_button_motion)
+    self.canvas_b.bind("<ButtonRelease-1>", self.action_canvas_b_mouse_button_release)
     self.frame_b.protocol("WM_DELETE_WINDOW", self.hide_zoom_frame) # change the behaviour of the window X button
 
   def hide_zoom_frame(self):
@@ -654,6 +698,13 @@ class Two_Canvas():
     self.canvas_a_mouse_press = 0
     self.scale_coef_a = None
     self.crop_limit = (0,0,0,0)
+    self.mouse_bx1 = 0
+    self.mouse_by1 = 0
+    self.mouse_bx2 = 0
+    self.mouse_by2 = 0
+    self.canvas_b_mouse_press = 0
+    self.measurement_id = 0
+    self.scale_coef_b = None
     #
     self.curve_graphic_function = []
     self.curve_points = []
