@@ -889,7 +889,7 @@ def approximate_curve_tangent(ai_polyline, ai_error_msg_id):
     if(abs(tangent_inclination2_diff)>math.pi/3):
       print("ERR315: Error in {:s}, the tangent_inclination is changing too fast for a curve approximation. tangent_inclination: {:0.2f}  tangent_inclination2: {:0.2f}".format(ai_error_msg_id, tangent_inclination, tangent_inclination2))
       sys.exit(2)
-    tangent_inclination = math.fmod(tangent_inclination-tangent_inclination2_diff/2 + 5*math.pi, 2*math.pi) - math.pi
+    tangent_inclination = math.fmod(tangent_inclination-1*tangent_inclination2_diff/2 + 5*math.pi, 2*math.pi) - math.pi
   r_outline.append((ai_polyline[0][0], ai_polyline[0][1], tangent_inclination)) # first-point
   # processing incrementation
   for i in range(point_nb-2):
@@ -915,7 +915,7 @@ def approximate_curve_tangent(ai_polyline, ai_error_msg_id):
     if(abs(tangent_inclination2_diff)>math.pi/3):
       print("ERR315: Error in {:s}, the tangent_inclination is changing too fast for a curve approximation. tangent_inclination: {:0.2f}  tangent_inclination2: {:0.2f}".format(ai_error_msg_id, tangent_inclination, tangent_inclination2))
       sys.exit(2)
-    tangent_inclination = math.fmod(tangent_inclination-tangent_inclination2_diff/2 + 5*math.pi, 2*math.pi) - math.pi
+    tangent_inclination = math.fmod(tangent_inclination-1*tangent_inclination2_diff/2 + 5*math.pi, 2*math.pi) - math.pi
   r_outline.append((ai_polyline[-1][0], ai_polyline[-1][1], tangent_inclination)) # end-point
   # return
   return(r_outline)
