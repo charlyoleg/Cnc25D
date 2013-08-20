@@ -55,7 +55,10 @@ If you find bugs, will suggest fix or want new features report it in the `GitHub
 
 For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 
+If you want to support financially this project, you can make a donation on my `CardanCo website`_.
+
 .. _`Cnc25D GitHub repository` : https://github.com/charlyoleg/Cnc25D
 .. _`GitHub issue tracker` : https://github.com/charlyoleg/Cnc25D/issues
+.. _`CardanCo website` : http://www.cardanco.com/donation.html
 
 
