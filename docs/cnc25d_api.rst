@@ -46,6 +46,8 @@ Get a 3D scanning of your assembly with cnc25d_api.export_xyz_to_dxf()
   cnc25d_api.outline_close(outline_AB)
   cnc25d_api.outline_reverse(outline_AB)
   cnc25d_api.cnc_cut_outline(outline_A, mark_string)
+  cnc25d_api.smooth_outline_c_curve(outline_C, angle_precision, router_bit_request, mark_string)
+  cnc25d_api.smooth_outline_b_curve(outline_B, angle_precision, router_bit_request, mark_string)
   cnc25d_api.outline_arc_line(outline_B, backend)
   cnc25d_api.outline_circle((center-x, center-y), radius, backend)
   cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor

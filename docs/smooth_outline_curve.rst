@@ -1,5 +1,5 @@
 ====================
-Smooth outline curve
+Smooth Outline Curve
 ====================
 
 1. Curve approximation
