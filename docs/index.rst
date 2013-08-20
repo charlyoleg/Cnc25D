@@ -16,6 +16,7 @@ Contents:
    box_wood_frame_design
    cnc25d_internals
    cnc_cut_outline
+   smooth_outline_curve
    place_plank
    box_wood_frame_conception
 

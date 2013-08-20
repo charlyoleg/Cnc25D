@@ -79,8 +79,11 @@ Cnc25D outline vocabulary:
 - *rbrr* : the router_bit radius request (how to transform a corner to do it millable by a router_bit of radius R?)
 - closed outline: *True* if the end-point of the last segment is equal to the first-point
 - outline orientation: *Counter Clock Wise* (CCW) or *Clock Wise* (CW) (this has a meaning only for closed outline)
+- curved outline: outline representing a curve. The outline approximates the curve with some discrete points.
+- tangent inclination: angle between the (Ox) direction and the oriented tangent of a point of an oriented curve.
 - outline format A: pythonic description of an outline used as argument by the function cnc25d_api.cnc_cut_outline()
 - outline format B: pythonic description of an outline returned by cnc25d_api.cnc_cut_outline() and used as argument by cnc25d_api.outline_arc_line()
+- outline format C: pythonic description of a curved-outline used as argument by the function cnc25d_api.smooth_outline_c_curve()
 
 .. image:: images/closed_outline.png
 
@@ -110,10 +113,10 @@ The *outline format A* can be defined with *list* or *tuple*. The orientation of
 outline format A example::
 
   outline_A = [
-    [  0,  0, 10]           # first-point
-    [ 50,  0, 15]           # horizontal line
-    [ 43, 43,  0,  50, 20]  # arc
-    [  0,  0,  0]]          # vertical line and close the outline
+    [  0,  0, 10],            # first-point
+    [ 50,  0, 15],            # horizontal line
+    [ 43, 43,  0,  50, 20],   # arc
+    [  0,  0,  0]]            # vertical line and close the outline
 
 .. image:: images/outline_format_A_example.png
 
@@ -135,21 +138,47 @@ The *outline format B* can be defined with *list* or *tuple*. The orientation of
 outline format B example::
 
   outline_B = [
-    [  0,  0]           # first-point
-    [ 50,  0]           # horizontal line
-    [ 43, 43,  0,  50]  # arc
-    [  0,  0]]          # vertical line and close the outline
+    [  0,  0],            # first-point
+    [ 50,  0],            # horizontal line
+    [ 43, 43,  0,  50],   # arc
+    [  0,  0]]            # vertical line and close the outline
 
 .. image:: images/outline_format_B_example.png
 
-3.4. The function Cnc_cut_outline()
+3.4. Cnc25D outline format C
+----------------------------
+
+In short, the *Cnc25D outline format C* is a list of list of 3 floats.
+
+The purpose of the *Cnc25D outline format C* is to define a curved-outline with points and tangents. This is an extension of the *outline format B*, where the *tangent inclination* is added at each point. This format must be preferred to described a curved-outline.
+
+Each element of the *outline format C* list is a curve sampling point. It is defines by a list of 3 floats: X-coordinate, Y-coordinate and the *tangent inclination angle*. The first element of the *outline format C* list is the *first-point*. The outline is oriented from the *first-point* to its last point. The *tangent inclination* is the angle (included in [-pi, pi]) between the (Ox) direction vector and the oriented curve tangent at the considered sampling point.
+
+The *outline format C* can be defined with *list* or *tuple*.
+
+outline format C example (the X,Y coordinates and the tangent inclination angle are rounded for a better readability)::
+
+  outline_C = [
+    [ 10,  0, math.pi/6],    # first-point
+    [ 20,  5, math.pi/3],           
+    [ 30, 15, math.pi/2],
+    [ 40, 20, math.pi/4],
+    [ 50, 22, math.pi/8]]
+
+.. image:: images/outline_format_C_example.png
+
+The *Cnc25D outline format C* is used as argument by the function *cnc25d_api.smooth_outline_c_curve()*.
+
+If the curved-outline contains one or several inflexion points, it is recommended to chose those points as sampling points. Thus the function *cnc25d_api.smooth_outline_c_curve()* is able to smooth the entire curved-outline. Otherwise segments containing an inflexion point are leave as line by the function *cnc25d_api.smooth_outline_c_curve()*.
+
+3.5. The function Cnc_cut_outline()
 -----------------------------------
 
 
 | ``cnc25d_api.`` **cnc_cut_outline(** *list, string* **)**
 |   Return a *list*.
 
-3.4.1. cnc_cut_outline purpose
+3.5.1. cnc_cut_outline purpose
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If you work with 3-axis CNC, your free XY-path gets actually some constraints due to the router_bit diameter. Real inner angle can not be manufacture and must be replaced either by a smoothed angle or an enlarged angle.
 
@@ -159,7 +188,7 @@ The *cnc_cut_outline* function aims at converting an outline defined by a list o
 
 Look at the :doc:`cnc_cut_outline` chapter to get more information on when you should enlarge and when you should smooth a corner angle.
 
-3.4.2. cnc_cut_outline usage
+3.5.2. cnc_cut_outline usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The cnc_cut_outline() function provides three possibilites as corner transformation: smooth, unchange, enlarge.
@@ -198,7 +227,7 @@ If the requested *router_bit radius* is too large, the corner transformation may
 
   WARN301: Warning, corner plank_z_side.1 can not be smoothed or enlarged because edges are too short! 
 
-3.4.3. Alternative enlarged corner
+3.5.3. Alternative enlarged corner
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As the problematic of enlarging a corner doesn't have a unique solution, you may want an other *enlarging corner* than the default one proposed by *cnc_cut_outline()*. For example, you may want to enlarge a corner without milling one of the adjacent segment. By changing the input outline, you can achieve it:
@@ -210,8 +239,48 @@ For comparison, the default result would be:
 .. image:: images/default_enlarged_corner.png
 
 
+3.6. The function smooth_outline_c_curve()
+------------------------------------------
 
-3.5. Other outline help functions
+
+| ``cnc25d_api.`` **smooth_outline_c_curve(** *list, float, float, string* **)**
+|   Return a *list*.
+
+It reads a *format C outline* and returns a *format B outline* with the following characteristics:
+
+- the outline is made out of arcs
+- the outline goes through the sampling points
+- the outline tangent at the sampling points has the requested direction (a.k.a. tangent inclination)
+- the outline tangent is continuous
+
+With an input *format C outline* of (N+1) points (i.e. N segement), the function *smooth_outline_c_curve()* returns a *format B outline* of 2*N arcs. If a segment contains an inflexion point, the arcs are replace by a line. If input points are aligned or almost aligned, arcs are also replaces by lines.
+
+If the input curve contains *inflexion* points, choose these points as sampling points. This way, the function *smooth_outline_c_curve()* can returns an approximated outline containing only arcs. In this case, the outline tangent is continuous along the full path.
+
+To approximate a mathematical or free-hand curve, it is better to use arcs than lines because with arcs you can keep the property of continuous tangent. Most of the 3-axis CNC can handle arcs at the motor driving level. So this function helps you to integrate your curve into a high quality workflow.
+
+*float* **ai_precision**: defines the minimal angle to consider that points are not aligned and arcs must be created. Typical value: pi/1000.
+
+*flaot* **ai_router_bit_request**: defines the minimal *radius of curvature* of the returned outline. If a computed arc has a radius smaller than *ai_router_bit_request*, a warning message is printed without changing the returned outline. Set *ai_router_bit_request* to your *router_bit radius*. If you get warnings, create a more regular curve or choose a smaller router_bit.
+
+*string* **ai_error_msg_id**: this string is added in the error message and helps you to track bugs.
+
+.. image:: images/approximating_curve.png
+
+For more details on the implementation of *smooth_outline_c_curve()*, read the chapter :doc:`smooth_outline_curve`
+
+3.7. The function smooth_outline_b_curve()
+------------------------------------------
+
+
+| ``cnc25d_api.`` **smooth_outline_b_curve(** *list, float, float, string* **)**
+|   Return a *list*.
+
+It reads a *format B outline* and returns a *format B outline* with the same characteristics as *smooth_outline_c_curve()*.
+
+The function *smooth_outline_b_curve()* guests the curve tangent at each sampling point according to the previous and following sampling points and then computes the approximated outline with arcs using *smooth_outline_c_curve()*. The result is poorer than using *smooth_outline_c_curve()* because the curve tangents are approximated. Use this function only when you can not get the tangent inclinations at the sampling points.
+
+3.8. Other outline help functions
 ---------------------------------
 
 *Cnc25D outline format A* and *B* reduce the description of an outline to the 2D coordinates of points. That's a drastic reduction of the amount of Data and still keeping the description accurate. But for complex outlines, a large list of point coordinates might become unreadable. It is preferable, to split a large list into comprehensive smaller sub-paths and then concatenate them. Often patterns will be used several times for an outline with some slight modifications like position (of course), scale, mirror or rotation. This is the purpose of the *outline help functions*.
@@ -225,7 +294,7 @@ The *outline help functions* accept as argument the *Cnc25D outline format A* an
   cnc25d_api.outline_close(outline_AB)
   cnc25d_api.outline_reverse(outline_AB)
 
-3.5.1. outline_shift
+3.8.1. outline_shift
 ^^^^^^^^^^^^^^^^^^^^
 
 | ``cnc25d_api.`` **outline_shift_x(** *list, x-offset, x-factor* **)**
@@ -266,7 +335,7 @@ If we want to define this outline brutally, we must create a list of 28 points. 
 
 This code is easier to maintain.
 
-3.5.2. outline_rotate
+3.8.2. outline_rotate
 ^^^^^^^^^^^^^^^^^^^^^
 
 ::
@@ -276,7 +345,7 @@ This code is easier to maintain.
 
 It applies a rotation of center (x,y) and angle *rotation_angle* to each points of the input outline.
 
-3.5.2. outline_close
+3.8.3. outline_close
 ^^^^^^^^^^^^^^^^^^^^
 
 ::
@@ -286,7 +355,7 @@ It applies a rotation of center (x,y) and angle *rotation_angle* to each points 
 
 If the input outline is open, it closes it with a straight line (from the end-point of the last segment to the first-point).
 
-3.5.3. outline_reverse
+3.8.4. outline_reverse
 ^^^^^^^^^^^^^^^^^^^^^^
 
 ::
