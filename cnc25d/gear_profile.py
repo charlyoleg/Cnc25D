@@ -64,9 +64,9 @@ gear_profile_parser = argparse.ArgumentParser(description='Command line interfac
 # first gear_profile parameters
 gear_profile_parser.add_argument('--gear_type','--gt', action='store', default='ee', dest='sw_gear_type',
   help="Select the type of gear. Possible values: 'ee', 'ie', 'ce', 'ei' and 'ce'. Default: 'ee'")
-gear_profile_parser.add_argument('--gear_tooth_nb','--gtn', action='store', type=int, default=17, dest='sw_gear_tooth_nb',
+gear_profile_parser.add_argument('--gear_tooth_nb','--gtn', action='store', type=int, default=0, dest='sw_gear_tooth_nb',
   help="Set the number of teeth of the first gear_profile.")
-gear_profile_parser.add_argument('--gear_module','--gm', action='store', type=float, default=1.0, dest='sw_gear_module',
+gear_profile_parser.add_argument('--gear_module','--gm', action='store', type=float, default=0.0, dest='sw_gear_module',
   help="Set the module of the gear. It influences the gear_profile diameters.")
 gear_profile_parser.add_argument('--gear_primitive_diameter','--gpd', action='store', type=float, default=0.0, dest='sw_gear_primitive_diameter',
   help="If not set to zero, redefine the gear module to get this primitive diameter of the first gear_profile. Default: 0. If cremailliere, it redefines the length.")
@@ -81,9 +81,9 @@ gear_profile_parser.add_argument('--gear_addendum_height_pourcentage','--gahp', 
 gear_profile_parser.add_argument('--gear_dedendum_height_pourcentage','--gdhp', action='store', type=float, default=100.0, dest='sw_gear_dedendum_height_pourcentage',
   help="Set the dedendum height of the first gear_profile in pourcentage of the tooth half height. Default: 100.0%%")
 gear_profile_parser.add_argument('--gear_hollow_height_pourcentage','--ghhp', action='store', type=float, default=25.0, dest='sw_gear_hollow_height_pourcentage',
-  help="Set the hollow height of the first gear_profile in pourcentage of the tooth half height. Default: 25.0%%")
-gear_profile_parser.add_argument('--gear_router_bit_radius','--grr', action='store', type=float, default=1.0, dest='sw_gear_router_bit_radius',
-  help="Set the router_bit radius used to create the gear hollow of the first gear_profile. Default: 1.0")
+  help="Set the hollow height of the first gear_profile in pourcentage of the tooth half height. The hollow is a clear space for the top of the teeth of the other gearwheel. Default: 25.0%%")
+gear_profile_parser.add_argument('--gear_router_bit_radius','--grr', action='store', type=float, default=0.1, dest='sw_gear_router_bit_radius',
+  help="Set the router_bit radius used to create the gear hollow of the first gear_profile. Default: 0.1")
 gear_profile_parser.add_argument('--gear_initial_angle','--gia', action='store', type=float, default=0.0, dest='sw_gear_initial_angle',
   help="Set the gear reference angle (in Radian). Default: 0.0")
 # gear contact parameters
@@ -92,9 +92,9 @@ gear_profile_parser.add_argument('--second_gear_position_angle','--sgpa', action
 gear_profile_parser.add_argument('--second_gear_additional_axe_length','--sgaal', action='store', type=float, default=0.0, dest='sw_second_gear_additional_axe_length',
   help="Set an additional value for the inter-axe length between the first and the second gear_profiles. Default: 0.0")
 gear_profile_parser.add_argument('--gear_force_angle','--gfa', action='store', type=float, default=0.0, dest='sw_gear_force_angle',
-  help="If not set to zero, redefine the second_gear_additional_axe_length to get this force angle at the gear contact. Default: 0.0")
+  help="If not set to zero, redefine the gear_base_diameter to get this force angle at the gear contact. Default: 0.0")
 # second gear_profile parameters
-gear_profile_parser.add_argument('--second_gear_tooth_nb','--sgtn', action='store', type=int, default=17, dest='sw_second_gear_tooth_nb',
+gear_profile_parser.add_argument('--second_gear_tooth_nb','--sgtn', action='store', type=int, default=0, dest='sw_second_gear_tooth_nb',
   help="Set the number of teeth of the second gear_profile.")
 gear_profile_parser.add_argument('--second_gear_primitive_diameter','--sgpd', action='store', type=float, default=0.0, dest='sw_second_gear_primitive_diameter',
   help="If not set to zero, redefine the gear module to get this primitive diameter of the second gear_profile. Default: 0.0. If cremailliere, it redefines the length.")
@@ -102,19 +102,19 @@ gear_profile_parser.add_argument('--second_gear_base_diameter','--sgbd', action=
   help="If not set to zero, redefine the base diameter of the second gear_profile. Default: 0.0. If cremailliere, it redefines the tooth slope angle.")
 gear_profile_parser.add_argument('--second_gear_tooth_half_height','--sgthh', action='store', type=float, default=0.0, dest='sw_second_gear_tooth_half_height',
   help="If not set to zero, redefine the tooth half height of the second gear_profile. Default: 0.0")
-gear_profile_parser.add_argument('--second_gear_addendum_dedendum_parity','--sgadp', action='store', type=float, default=50.0, dest='sw_second_gear_addendum_dedendum_parity',
-  help="Set the addendum / dedendum parity of the second gear_profile. Default: 50.0%%")
+gear_profile_parser.add_argument('--second_gear_addendum_dedendum_parity','--sgadp', action='store', type=float, default=0.0, dest='sw_second_gear_addendum_dedendum_parity',
+  help="Overwrite the addendum / dedendum parity of the second gear_profile if different from 0.0. Default: 0.0%%")
 gear_profile_parser.add_argument('--second_gear_addendum_height_pourcentage','--sgahp', action='store', type=float, default=100.0, dest='sw_second_gear_addendum_height_pourcentage',
   help="Set the addendum height of the second gear_profile in pourcentage of the tooth half height. Default: 100.0%%")
 gear_profile_parser.add_argument('--second_gear_dedendum_height_pourcentage','--sgdhp', action='store', type=float, default=100.0, dest='sw_second_gear_dedendum_height_pourcentage',
   help="Set the dedendum height of the second gear_profile in pourcentage of the tooth half height. Default: 100.0%%")
 gear_profile_parser.add_argument('--second_gear_hollow_height_pourcentage','--sghhp', action='store', type=float, default=25.0, dest='sw_second_gear_hollow_height_pourcentage',
-  help="Set the hollow height of the second gear_profile in pourcentage of the tooth half height. Default: 25.0%%")
-gear_profile_parser.add_argument('--second_gear_router_bit_radius','--sgrr', action='store', type=float, default=1.0, dest='sw_second_gear_router_bit_radius',
-  help="Set the router_bit radius used to create the gear hollow of the second gear_profile. Default: 1.0")
+  help="Set the hollow height of the second gear_profile in pourcentage of the tooth half height. The hollow is a clear space for the top of the teeth of the other gearwheel. Default: 25.0%%")
+gear_profile_parser.add_argument('--second_gear_router_bit_radius','--sgrr', action='store', type=float, default=0.0, dest='sw_second_gear_router_bit_radius',
+  help="If not zero, overwrite the router_bit radius used to create the gear hollow of the second gear_profile. Default: 0.0")
 # portion parameter
 gear_profile_parser.add_argument('--portion_tooth_nb','--ptn', action='store', type=int, default=0, dest='sw_portion_tooth_nb',
-  help="If not set to zero, cut a portion of the first gear_profile according to this portion tooth number. Default: 0")
+  help="If not set to zero, cut a portion of the first gear_profile according to this portion tooth number. If negative move CW otherwise CCW. Default: 0")
 # part split parameter
 gear_profile_parser.add_argument('--part_split','--ps', action='store', type=int, default=1, dest='sw_part_split',
   help="Split the first gear_profile in N (=part_split) parts that can be glued together to create the gear wheel. Two series of N parts are created. N=1 doesn't split the gear_profile. Default: 1")
@@ -183,7 +183,178 @@ def gear_profile(
   The main function of the script.
   It generates a gear_profile according to the function arguments
   """
-  ## check parameter coherence
+  ## epsilon for rounding
+  radian_epsilon = math.pi/1000
+  ## set internal
+  # gear_type
+  g1_type = None
+  g2_type = None
+  if(ai_gear_type=='ee'):
+    g1_type = 'e'
+    g2_type = 'e'
+  elif(ai_gear_type=='ie'):
+    g1_type = 'i'
+    g2_type = 'e'
+  elif(ai_gear_type=='ei'):
+    g1_type = 'e'
+    g2_type = 'i'
+  elif(ai_gear_type=='ce'):
+    g1_type = 'c'
+    g2_type = 'e'
+  elif(ai_gear_type=='ec'):
+    g1_type = 'e'
+    g2_type = 'c'
+  else:
+    print("ERR111: Error, the gear_type {:s} is not valid!".format(ai_gear_type))
+    sys.exit(2)
+  # tooth_nb
+  g1_n = ai_gear_tooth_nb
+  if(g1_n==0):
+    print("ERR112: Error, the gear_tooth_nb must be set!")
+    sys.exit(2)
+  if(g1_n<3):
+    print("ERR113: Error, the gear_tooth_nb {:d} must be equal or bigger than 3!".format(g1_n))
+    sys.exit(2)
+  g2_n = ai_second_gear_tooth_nb
+  g2_exist = False
+  if(g2_n!=0):
+    g2_exist = True
+  if(g2_exist and (g1_n<3)):
+    print("ERR114: Error, the second_gear_tooth_nb {:d} must be equal or bigger than 3!".format(g2_n))
+    sys.exit(2)
+  # module
+  g1_m = 1
+  g1_m_set = False
+  if(ai_gear_module>0):
+    g1_m = ai_gear_module
+    g1_m_set = True
+  if(ai_gear_primitive_diameter>0):
+    if(g1_m_set):
+      print("ERR115: Error, the gear_module is already set to {:0.2f}!".format(g1_m))
+      sys.exit(2)
+    else:
+      g1_m = ai_gear_primitive_diameter/g1_n
+      g1_m_set = True
+  if(ai_second_gear_primitive_diameter>0):
+    if(not g2_exist):
+      print("ERR116: Error, set second_gear_tooth_nb to use second_gear_primitive_diameter")
+      sys.exit(2)
+    elif(g1_m_set):
+      print("ERR117: Error, the gear_module is already set to {:0.2f}!".format(g1_m))
+      sys.exit(2)
+    else:
+      g1_m = ai_second_gear_primitive_diameter/g2_n
+      g1_m_set = True
+  g2_m = g1_m
+  # primitive radius
+  g1_pr = g1_m*g1_n/2
+  g2_pr = g2_m*g2_n/2
+  # addendum_dedendum_parity
+  g1_adp = float(ai_gear_addendum_dedendum_parity)/100
+  if((g1_adp<=0)or(g1_adp>=1)):
+    print("ERR118: Error, the gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(ai_gear_addendum_dedendum_parity))
+    sys.exit(2)
+  g2_adp = 1-g1_adp
+  if(ai_second_gear_addendum_dedendum_parity>0):
+    if(not g2_exist):
+      print("ERR119: Error, set second_gear_tooth_nb to use second_gear_addendum_dedendum_parity")
+      sys.exit(2)
+    else:
+      print("WARN211: Warning, second_gear_addendum_dedendum_parity is used for irregular cases.")
+      g2_adp = ai_second_gear_addendum_dedendum_parity
+  if((g2_adp<=0)or(g2_adp>=1)):
+    print("ERR119: Error, the second_gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(ai_second_gear_addendum_dedendum_parity))
+    sys.exit(2)
+  # inter-axe additional length
+  aal = ai_second_gear_additional_axe_length
+  if(aal>0):
+    if(not g2_exist):
+      print("ERR120: Error, set second_gear_tooth_nb to use second_gear_additional_axe_length")
+      sys.exit(2)
+    else:
+      print("WARN212: Warning, second_gear_additional_axe_length is used for irregular cases.")
+  # tooth_height
+  g1_thh = g1_m
+  if(ai_gear_tooth_half_height>0):
+    g1_thh = ai_gear_tooth_half_height
+  g1_a_delta = g1_thh*float(ai_gear_addendum_height_pourcentage)/100 # addendum delta
+  g1_d_delta = g1_thh*float(ai_gear_dedendum_height_pourcentage)/100 # dedendum delta
+  g1_ar = g1_pr + g1_a_delta # addendum radius
+  g1_dr = g1_pr - g1_d_delta # dedendum radius
+  g2_thh = g2_m
+  if(ai_second_gear_tooth_half_height>0):
+    g2_thh = ai_second_gear_tooth_half_height
+  g2_a_delta = g2_thh*float(ai_second_gear_addendum_height_pourcentage)/100 # addendum delta
+  g2_d_delta = g2_thh*float(ai_second_gear_dedendum_height_pourcentage)/100 # dedendum delta
+  g2_ar = g2_pr + g2_a_delta # addendum radius
+  g2_dr = g2_pr - g2_d_delta # dedendum radius
+  if(g1_a_delta>aal+g2_d_delta):
+    print("WARN213: Warning, the addendum {:0.2f} of the first gear is too big, other the dedendum {:0.2f} of the other gear is too small (second_gear_additional_axe_length={:0.2f})!".format(g1_a_delta, g2_d_delta, aal))
+  if(g2_a_delta>aal+g1_d_delta):
+    print("WARN214: Warning, the addendum {:0.2f} of the second gear is too big, other the dedendum {:0.2f} of the other gear is too small (second_gear_additional_axe_length={:0.2f})!".format(g2_a_delta, g1_d_delta, aal))
+  if(g1_a_delta+g2_a_delta<aal):
+    print("WARN215: Warning, the (second_gear_additional_axe_length {:0.2f} is too big compare to the addendum {:0.2f} and {:0.2f}!".format(aal, g1_a_delta, g2_a_delta))
+  # base radius
+  g1_br = g1_dr
+  g1_br_set = False
+  if(ai_gear_base_diameter>0):
+    g1_br = ai_gear_base_diameter
+    g1_br_set = True
+  if(ai_second_gear_base_diameter>0):
+    if(not g2_exist):
+      print("ERR121: Error, set second_gear_tooth_nb to use second_gear_base_diameter")
+      sys.exit(2)
+    elif(g1_br_set):
+      print("ERR122: Error, gear_base_diameter is already set to {:0.2f}".format(g1_br*2))
+      sys.exit(2)
+    else:
+      g1_br = ai_second_gear_base_diameter*g1_n/g2_n
+      g1_br_set = True
+  if(ai_gear_force_angle>0):
+    if(g1_br_set):
+      print("ERR123: Error, gear_base_diameter is already set to {:0.2f}".format(g1_br*2))
+      sys.exit(2)
+    else:
+      g1_br = g1_pr*math.cos(ai_gear_force_angle)
+      g1_br_set = True
+  g2_br = g1_br*g2_n/g1_n
+  if(g1_br>g1_dr):
+    print("WARN216: Warning, g1_br {:0.2f} is bigger than g1_dr {:0.2f}".format(g1_br, g1_dr))
+  if(g2_exist and (g2_br>g2_dr)):
+    print("WARN217: Warning, g2_br {:0.2f} is bigger than g2_dr {:0.2f}".format(g2_br, g2_dr))
+  # initial position
+  g1_ia = ai_gear_initial_angle
+  g1_ix = ai_center_position_x
+  g1_iy = ai_center_position_y
+  g1g2_a = ai_second_gear_position_angle
+  g2_ia = 0 # will be computed later
+  g2_ix = ai_center_position_x + (g1_pr+g2_pr+aal)*math.cos(g1g2_a)
+  g2_iy = ai_center_position_y + (g1_pr+g2_pr+aal)*math.sin(g1g2_a)
+  # router_bit radius
+  g1_rbr = ai_gear_router_bit_radius
+  g2_rbr = g1_rbr
+  if(ai_second_gear_router_bit_radius>0):
+    if(not g2_exist):
+      print("ERR124: Error, set second_gear_tooth_nb to use second_gear_router_bit_radius")
+      sys.exit(2)
+    else:
+      g2_rbr = ai_second_gear_router_bit_radius
+  # hollow
+  g1_h_delta = g1_thh*float(ai_gear_hollow_height_pourcentage)/100
+  if(g1_h_delta<g1_rbr):
+    print("WARN218: Warning, g1_h_delta {:0.2f} is smaller than the router_bit_radius {:0.2f}. gear_hollow_height_pourcentage {:0.2f} should be set to {:0.2f}".format(g1_h_delta, g1_rbr, ai_gear_hollow_height_pourcentage, 100.0*g1_rbr/g1_thh))
+    g1_h_delta = g1_rbr + 10*radian_epsilon
+  g2_h_delta = g2_thh*float(ai_second_gear_hollow_height_pourcentage)/100
+  if(g2_exist):
+    if(g2_h_delta<g2_rbr):
+      print("WARN219: Warning, g2_h_delta {:0.2f} is smaller than the second_router_bit_radius {:0.2f}. second_gear_hollow_height_pourcentage {:0.2f} should be set to {:0.2f}".format(g2_h_delta, g2_rbr, ai_second_gear_hollow_height_pourcentage, 100.0*g2_rbr/g2_thh))
+      g2_h_delta = g2_rbr + 10*radian_epsilon
+  g1_hr = g1_dr - g1_h_delta
+  g2_hr = g2_dr - g2_h_delta
+  ## compute the real_force_angle and the tooth_contact_path
+  if(g2_exist):
+    real_force_angle = math.acos(g1_br*(g1_n+g2_n)/((g1_pr+g2_pr+aal)*g1_n))
+    print("INFO051: Real Force Angle = {:0.2f} radian ({:0.2f} degree)".format(real_force_angle, real_force_angle*180/math.pi))
 
   r_gw = 1
   return(r_gw)

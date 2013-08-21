@@ -249,6 +249,13 @@ For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 7. Releases
 ===========
 
+Release 0.1.4
+-------------
+Released on 2013-09-01
+
+* New API function smooth_outline_c_curve() approximates a curve defined by points and tangents with arcs.
+* gear_profile.py generates and simulates gear-profiles
+
 Release 0.1.3
 -------------
 Released on 2013-08-13
