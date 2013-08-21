@@ -50,6 +50,8 @@ import os, errno
 #
 import Part
 from FreeCAD import Base
+#
+import small_geometry # use some well-tested functions from the internal of the cnc25d_api
 
 ################################################################
 # gear_profile_argparse
@@ -142,6 +144,29 @@ gear_profile_parser.add_argument('--self_test_enable','--ste', action='store_tru
   help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
     
 ################################################################
+# help functions (including involute_to_circle)
+################################################################
+
+def involute_to_circle(ai_center, ai_base_radius, ai_initial_angle, ai_orientation, ai_altitude, ai_thickness):
+  """ Compute the coordinates of the intersection (P) of an involute_to_circle curve and a circle of raidus ai_altitude
+      ai_center: center of the base circle and of the other circle (O)
+      ai_base_radius: radius of the base circle (B)
+      ai_initial_angle : angle (xOS) with (S) start of of the involute_to_circle
+      ai_orientation: orienation of the involute_to_circle: 1=CCW -1=CW
+      ai_altitude: radius of the other circle
+      ai_thickness: offset apply to intersection point. The offset is applied perpendiculary to the tangent. Positive if move away from (O). Negative if move closer to (O)
+      it returns: the Cartesian coordinates of (P), the angle (xOP), the tangent inclination (xPt)
+  """
+
+  px = 0
+  py = 0
+  pa = 0
+  tangent_inclination = 0
+  # return
+  r_itc(px, py, pa, tangent_inclination)
+  return(r_itc)
+
+################################################################
 # the most important function to be used in other scripts
 ################################################################
 
@@ -185,6 +210,7 @@ def gear_profile(
   """
   ## epsilon for rounding
   radian_epsilon = math.pi/1000
+  rd = 1 # rotation direction 1:CCW -1:CW  just use for some initial static calculation
   ## set internal
   # gear_type
   g1_type = None
@@ -233,7 +259,7 @@ def gear_profile(
       print("ERR115: Error, the gear_module is already set to {:0.2f}!".format(g1_m))
       sys.exit(2)
     else:
-      g1_m = ai_gear_primitive_diameter/g1_n
+      g1_m = float(ai_gear_primitive_diameter)/g1_n
       g1_m_set = True
   if(ai_second_gear_primitive_diameter>0):
     if(not g2_exist):
@@ -243,12 +269,12 @@ def gear_profile(
       print("ERR117: Error, the gear_module is already set to {:0.2f}!".format(g1_m))
       sys.exit(2)
     else:
-      g1_m = ai_second_gear_primitive_diameter/g2_n
+      g1_m = float(ai_second_gear_primitive_diameter)/g2_n
       g1_m_set = True
   g2_m = g1_m
   # primitive radius
-  g1_pr = g1_m*g1_n/2
-  g2_pr = g2_m*g2_n/2
+  g1_pr = float(g1_m*g1_n)/2
+  g2_pr = float(g2_m*g2_n)/2
   # addendum_dedendum_parity
   g1_adp = float(ai_gear_addendum_dedendum_parity)/100
   if((g1_adp<=0)or(g1_adp>=1)):
@@ -308,7 +334,7 @@ def gear_profile(
       print("ERR122: Error, gear_base_diameter is already set to {:0.2f}".format(g1_br*2))
       sys.exit(2)
     else:
-      g1_br = ai_second_gear_base_diameter*g1_n/g2_n
+      g1_br = float(ai_second_gear_base_diameter*g1_n)/g2_n
       g1_br_set = True
   if(ai_gear_force_angle>0):
     if(g1_br_set):
@@ -317,7 +343,7 @@ def gear_profile(
     else:
       g1_br = g1_pr*math.cos(ai_gear_force_angle)
       g1_br_set = True
-  g2_br = g1_br*g2_n/g1_n
+  g2_br = float(g1_br*g2_n)/g1_n
   if(g1_br>g1_dr):
     print("WARN216: Warning, g1_br {:0.2f} is bigger than g1_dr {:0.2f}".format(g1_br, g1_dr))
   if(g2_exist and (g2_br>g2_dr)):
@@ -353,8 +379,53 @@ def gear_profile(
   g2_hr = g2_dr - g2_h_delta
   ## compute the real_force_angle and the tooth_contact_path
   if(g2_exist):
-    real_force_angle = math.acos(g1_br*(g1_n+g2_n)/((g1_pr+g2_pr+aal)*g1_n))
+    #print("dbg311: g1_br:", g1_br)
+    real_force_angle = math.acos(float(g1_br*(g1_n+g2_n))/((g1_pr+g2_pr+aal)*g1_n))
     print("INFO051: Real Force Angle = {:0.2f} radian ({:0.2f} degree)".format(real_force_angle, real_force_angle*180/math.pi))
+    # coordinate of C (intersection of axe-line and force-line)
+    AC = float((g1_pr+g2_pr+aal)*g1_n)/(g1_n+g2_n)
+    CX = g1_ix + math.cos(g1g2_a)*AC
+    CY = g1_iy + math.sin(g1g2_a)*AC
+    # force line equation
+    real_force_inclination = g1g2_a + rd*(math.pi/2 - real_force_angle) # angle (Ox, force)
+    Flx = math.sin(real_force_inclination)
+    Fly = -1*math.cos(real_force_inclination)
+    Fk = -1*(Flx*CX+Fly*CY)
+    # F2: intersection of the force line and the addendum_circle_1
+    S2X = CX + g1_pr*math.cos(g1g2_a+rd*math.pi/2) # S2: define the side of the intersection line-circle
+    S2Y = CY + g1_pr*math.sin(g1g2_a+rd*math.pi/2)
+    (F2X,F2Y, line_circle_intersection_status) = small_geometry.line_circle_intersection((Flx, Fly, Fk), (g1_ix,g1_iy),g1_ar, (S2X,S2Y), real_force_inclination, "F2 calcultation")
+    if(line_circle_intersection_status==2):
+      print("ERR125: Error, you not get the intersection of the force line and the addendum_circle_1")
+      sys.exit(2)
+    # F1: intersection of the force line and the addendum_circle_2
+    S1X = CX + g2_pr*math.cos(g1g2_a-rd*math.pi/2) # S1: define the side of the intersection line-circle
+    S1Y = CY + g2_pr*math.sin(g1g2_a-rd*math.pi/2)
+    (F1X,F1Y, line_circle_intersection_status) = small_geometry.line_circle_intersection((Flx, Fly, Fk), (g2_ix,g2_iy),g2_ar, (S1X,S1Y), real_force_inclination+math.pi, "F1 calcultation")
+    if(line_circle_intersection_status==2):
+      print("ERR126: Error, you not get the intersection of the force line and the addendum_circle_2")
+      sys.exit(2)
+    # length of F1F2
+    F1F2 = math.sqrt((F2X-F1X)**2+(F2Y-F1Y)**2)
+    print("INFO052: length of the tooth contact path: {:0.2f}".format(F1F2))
+    # angle (F1AF2)
+    AF1 = float(math.sqrt((F1X-g1_ix)**2+(F1Y-g1_iy)**2))
+    xAF1 = math.atan2((F1Y-g1_iy)/AF1, (F1X-g1_ix)/AF1)
+    AF2 = float(g1_ar)
+    xAF2 = math.atan2((F2Y-g1_iy)/AF2, (F2X-g1_ix)/AF2)
+    F1AF2 = abs(math.fmod(xAF2-xAF1+5*math.pi, 2*math.pi)-math.pi)
+    F1AF2p = F1AF2*g1_n/(2*math.pi)
+    print("INFO053: tooth contact path angle from gearwheel1: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length".format(F1AF2, F1AF2*180/math.pi, F1AF2p*100))
+    # angle (F1EF2)
+    EF2 = float(math.sqrt((F2X-g2_ix)**2+(F2Y-g2_iy)**2))
+    xEF2 = math.atan2((F2Y-g2_iy)/EF2, (F2X-g2_ix)/EF2)
+    EF1 = float(g2_ar)
+    xEF1 = math.atan2((F1Y-g2_iy)/EF1, (F1X-g2_ix)/EF1)
+    F1EF2 = abs(math.fmod(xEF2-xEF1+5*math.pi, 2*math.pi)-math.pi)
+    F1EF2p = F1EF2*g2_n/(2*math.pi)
+    print("INFO054: tooth contact path angle from gearwheel2: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length".format(F1EF2, F1EF2*180/math.pi, F1EF2p*100))
+
+
 
   r_gw = 1
   return(r_gw)
