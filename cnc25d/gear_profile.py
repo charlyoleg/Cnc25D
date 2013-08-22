@@ -147,24 +147,103 @@ gear_profile_parser.add_argument('--self_test_enable','--ste', action='store_tru
 # help functions (including involute_to_circle)
 ################################################################
 
-def involute_to_circle(ai_center, ai_base_radius, ai_initial_angle, ai_orientation, ai_altitude, ai_thickness):
+def involute_to_circle(ai_center, ai_base_radius, ai_initial_angle, ai_orientation, ai_parameter):
+  """ Compute the Cartesian coordinates of P a point of an involute_to_circle curve with the parameter u
+      ai_center: center of the base circle (O)
+      ai_base_radius: radius of the base circle (B)
+      ai_initial_angle : angle (xOS) with (S) start of of the involute_to_circle
+      ai_orientation: orienation of the involute_to_circle: 1=CCW -1=CW
+      it returns: the Cartesian coordinates of (P) and the tangent inclination (xPt)
+  """
+  # use notation of the documentation
+  OX = ai_center[0]
+  OY = ai_center[1]
+  B = ai_base_radius
+  s = ai_initial_angle
+  rd = ai_orientation
+  u = ai_parameter
+  # check the parameter
+  if(u<0):
+    print("ERR099: Error, the parameter of the involute_to_circle must be positive {:0.2f}".format(u))
+    sys.exit(2)
+  # involute_to_circle of center (0,0), radius 1 and initial_angle = 0 with the parameter u
+  px0 = math.cos(u)+u*sin(u)
+  py0 = rd*(math.sin(u)-u*cos(u))
+  ti0 = math.fmod(rd*u+math.pi, 2*math.pi) - math.pi # =u translated in [-pi,pi[
+  # involute_to_circle of center (OX,OY), radius B and initial_angle = s with the parameter u
+  px = OX+math.cos(s)*B*px0-math.sin(s)*B*py0
+  py = OX+math.sin(s)*B*px0+math.cos(s)*B*py0
+  ti = ti0
+  # return
+  r_itc=(px, py, ti)
+  return(r_itc)
+
+def search_point_of_involute_to_circle(ai_center, ai_base_radius, ai_initial_angle, ai_orientation, ai_altitude, ai_step, ai_precision):
   """ Compute the coordinates of the intersection (P) of an involute_to_circle curve and a circle of raidus ai_altitude
       ai_center: center of the base circle and of the other circle (O)
       ai_base_radius: radius of the base circle (B)
       ai_initial_angle : angle (xOS) with (S) start of of the involute_to_circle
       ai_orientation: orienation of the involute_to_circle: 1=CCW -1=CW
       ai_altitude: radius of the other circle
-      ai_thickness: offset apply to intersection point. The offset is applied perpendiculary to the tangent. Positive if move away from (O). Negative if move closer to (O)
-      it returns: the Cartesian coordinates of (P), the angle (xOP), the tangent inclination (xPt)
+      ai_step: initial increment of the parameter to converge to (P)
+      ai_precision: required precision to get closer to ai_altitude
+      it returns: the paramter u, the angle (xOP), the Cartesian coordinates of (P), the tangent inclination (xPt)
   """
-
-  px = 0
-  py = 0
-  pa = 0
-  tangent_inclination = 0
+  # use notation of the documentation
+  OX = ai_center[0]
+  OY = ai_center[1]
+  B = ai_base_radius
+  s = ai_initial_angle
+  rd = ai_orientation
+  R = ai_altitude
+  # check the paramter
+  if(R<B):
+    print("ERR098: Error, the altitude {:0.2f} is smaller than the base_diameter {:0.2f}".format(R, B))
+    sys.exit(2)
+  # converge to P
+  u = 0
+  step = ai_step
+  error = -2*ai_precision
+  iteration_cnt = 0
+  while(abs(error)>ai_precision):
+    iteration_cnt += 1
+    print("dbg351: iteration_cnt: {:d}  u: {:0.2f}  step: {:0.2f}  error: {:0.2f}".format(iteration_cnt, u, error))
+    (px, py, ti) = involute_to_circle((OX,OY), B, s, rd, u)
+    OP = math.sqrt((px-OX)**2+(py-OY)**2)
+    sign_old_error = math.copysign(1, error)
+    error = OP-R
+    sign_new_error = math.copysign(1, error)
+    if(sign_old_error*sign_new_error<0):
+      step = step/2
+    if(sign_new_error<0):
+      u=u+step
+    else:
+      u=u-step
+  # we get u, px, py and ti
+  # calcultation of a = angle (xOP)
+  a = math.atan2((py-OY)/OP, (px-OX)/OP)
   # return
-  r_itc(px, py, pa, tangent_inclination)
-  return(r_itc)
+  r_spoitc = (u, a, px, py, ti)
+  return(r_spoitc)
+
+def sample_of_gear_tooth_profile(ai_center, ai_base_radius, ai_initial_angle, ai_orientation, ai_thickness_offset, ai_parameter):
+  """ Compute the Cartesian coordinates of Q a point of a gear_tooth_profile with the parameter u
+      ai_center: center of the base circle (O)
+      ai_base_radius: radius of the base circle (B)
+      ai_initial_angle : angle (xOS) with (S) start of of the involute_to_circle
+      ai_orientation: orienation of the involute_to_circle: 1=CCW -1=CW
+      ai_thickness_offset: translation apply to P. The translation is perpendicular to the tangent. Positive if move away from (O). Negative if move closer to (O)
+      it returns: the Cartesian coordinates of (Q) and the tangent inclination (xPt)
+  """
+  (px, py, ti) = involute_to_circle(ai_center, ai_base_radius, ai_initial_angle, ai_orientation, ai_parameter)
+  #rd = ai_orientation
+  #qx = px + ai_thickness_offset*math.cos(ti-rd*math.pi/2) # cos(a-pi/2)=sin(a)   cos(a+pi/2)=-sin(a)
+  #qy = py + ai_thickness_offset*math.sin(ti-rd*math.pi/2) # sin(a-pi/2)=-cos(a)  sin(a+pi/2)=cos(a)
+  qx = px + ai_orientation*ai_thickness_offset*math.sin(ti)
+  qy = py - ai_orientation*ai_thickness_offset*math.cos(ti)
+  # return
+  r_sogtp = (qx, qy, ti)
+  return(r_sogtp)
 
 ################################################################
 # the most important function to be used in other scripts
