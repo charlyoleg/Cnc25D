@@ -10,6 +10,7 @@ Cnc25D API
 .. _`FreeCAD API` : http://free-cad.sourceforge.net/api/index.html
 
 .. image:: images/cnc25d_design_workflow.png
+.. image:: images/cnc25d_workflow_data_evolution.png
 
 The Cnc25D methodology
 ----------------------

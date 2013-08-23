@@ -54,8 +54,26 @@ bin/cnc25d_example_generator_src.py includes cnc25d/tests/box_wood_frame_macro.p
 cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_macro.py
 
 3) todo
-- unittest
-- gears design example
++ unittest
++ more design examples
+- gear_profile
+-- gearwheel (aka spur)
+-- gearring (aka annulus)
+-- gearbar (aka rack)
+-- epicyclic
+-- gearlever
+-- split_gearwheel
+- clock
+- fan
+- lock
+- automated door
+- press
+- water pump
+- heliostat
+-- mobile antenna
+-- mobile catapult game
+
+
 
 4) automation tool
 Fabric or shovel ?

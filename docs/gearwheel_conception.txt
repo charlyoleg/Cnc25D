@@ -105,7 +105,7 @@
     intern-extern    
     intern-extern    
     
-    cremailliere-extern    extern-cremailliere    
+    linear-extern    extern-linear    
     
     gear definition:    - tooth_number- module- gear router_bit diameter    positioning:    
     

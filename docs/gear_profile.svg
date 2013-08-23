@@ -24,7 +24,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="305.72098"
-     inkscape:cy="588.4979"
+     inkscape:cy="1814.345"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -32,10 +32,10 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="998"
-     inkscape:window-height="981"
-     inkscape:window-x="870"
-     inkscape:window-y="41"
+     inkscape:window-width="1148"
+     inkscape:window-height="1005"
+     inkscape:window-x="614"
+     inkscape:window-y="32"
      inkscape:window-maximized="0"
      inkscape:snap-center="true"
      inkscape:object-nodes="true"
@@ -179,7 +179,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -233,11 +233,12 @@
        transform="translate(58.176555,165.80047)"><flowRegion
          id="flowRegion3573"><rect
            id="rect3575"
-           width="156.57364"
-           height="29.294424"
+           width="168.0022"
+           height="46.437275"
            x="49.497475"
            y="172.25356" /></flowRegion><flowPara
-         id="flowPara3577">extern gearwheel</flowPara></flowRoot>    <g
+         id="flowPara3577">external gear</flowPara><flowPara
+         id="flowPara3640">(a.k.a. gearwheel or spur)</flowPara></flowRoot>    <g
        inkscape:label="Gear24"
        transform="translate(472.38694,330.19623)"
        id="g3597"
@@ -266,11 +267,12 @@
        transform="translate(366.3395,277.36173)"><flowRegion
          id="flowRegion3573-9"><rect
            id="rect3575-0"
-           width="156.57364"
-           height="29.294424"
+           width="175.14507"
+           height="46.437275"
            x="49.497475"
            y="172.25356" /></flowRegion><flowPara
-         id="flowPara3577-2">internal gearwheel</flowPara></flowRoot>    <rect
+         id="flowPara3577-2">internal gearwheel</flowPara><flowPara
+         id="flowPara3642">(a.k.a. gearring or annulus)</flowPara></flowRoot>    <rect
        style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3692"
        width="15.714286"
@@ -363,7 +365,7 @@
        y="490.7435" />
     <path
        style="color:#000000;fill:#ffb380;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 184.33827,485.26862 15.71428,-27.85714 9.64285,0 15.71428,27.85711 c 2.24466,2.66649 4.74638,4.62606 9.64287,0 l 15.71429,-27.85711 9.64286,0 15.71429,27.85711 c 2.27462,1.6914 4.12796,4.1411 9.64285,0 l 15.7143,-27.85711 9.64285,0 15.7143,27.85711 c 3.54719,2.99617 6.76908,3.06459 9.64285,0 l 15.71429,-27.85711 9.64286,-3e-5 15.71429,27.85714 -3e-5,13.57146 -193.92857,-0.35714 z"
+       d="m 137.19541,462.41148 15.71428,-27.85714 9.64285,0 15.71428,27.85711 c 2.24466,2.66649 4.74638,4.62606 9.64287,0 l 15.71429,-27.85711 9.64286,0 15.71429,27.85711 c 2.27462,1.6914 4.12796,4.1411 9.64285,0 l 15.7143,-27.85711 9.64285,0 15.7143,27.85711 c 3.54719,2.99617 6.76908,3.06459 9.64285,0 l 15.71429,-27.85711 9.64286,-3e-5 15.71429,27.85714 -3e-5,13.57146 -193.92857,-0.35714 z"
        id="path3787"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccccccccccccc" />
@@ -385,14 +387,15 @@
        xml:space="preserve"
        id="flowRoot3810"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(124.84662,31.450178)"><flowRegion
+       transform="translate(77.703763,8.5930351)"><flowRegion
          id="flowRegion3812"><rect
            id="rect3814"
-           width="149.50258"
-           height="19.192898"
+           width="189.50256"
+           height="39.907177"
            x="62.629459"
            y="477.82471" /></flowRegion><flowPara
-         id="flowPara3816">cremailliere</flowPara></flowRoot>    <rect
+         id="flowPara3816">linear gear</flowPara><flowPara
+         id="flowPara3644">(a.k.a. gearbar or rack)</flowPara></flowRoot>    <rect
        style="fill:none;stroke:#cccccc;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3818"
        width="522.24884"
@@ -533,7 +536,7 @@
            height="25.680737"
            x="457.47546"
            y="177.42545" /></flowRegion><flowPara
-         id="flowPara4204">ce=cremailliere-extern</flowPara></flowRoot>    <flowRoot
+         id="flowPara4204">le=linear-extern</flowPara></flowRoot>    <flowRoot
        transform="translate(-87.242154,786.96192)"
        xml:space="preserve"
        id="flowRoot4198-2"
@@ -544,7 +547,7 @@
            height="25.680737"
            x="457.47546"
            y="177.42545" /></flowRegion><flowPara
-         id="flowPara4204-7">ec=extern-cremailliere</flowPara></flowRoot>    <path
+         id="flowPara4204-7">el=extern-linear</flowPara></flowRoot>    <path
        style="opacity:0.5;fill:#d7f4ee;stroke:#2ca089;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 477.89161,929.76936 9.623,-3.39819 -49.9117,-59.47022 -5.0158,8.88775 z"
        id="path4178-4"
@@ -1059,7 +1062,7 @@
            x="199.64285"
            y="1808.4777"
            style="fill:#4d4d4d" /></flowRegion><flowPara
-         id="flowPara6029">cremailliere_length</flowPara><flowPara
+         id="flowPara6029">gearbar_length</flowPara><flowPara
          id="flowPara6031">(= gear_primitive_diameter)</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot6033"
@@ -1184,7 +1187,7 @@
        height="337.35251"
        x="66.481873"
        y="1687.6189"
-       inkscape:export-filename="images/cremailliere_profile_definition.png"
+       inkscape:export-filename="images/gearbar_profile_definition.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <flowRoot
@@ -1198,7 +1201,7 @@
            height="28.002314"
            x="10.135269"
            y="238.16225" /></flowRegion><flowPara
-         id="flowPara4266-5">Cremailliere profile definition</flowPara></flowRoot>    <path
+         id="flowPara4266-5">gearbar profile definition</flowPara></flowRoot>    <path
        style="color:#000000;fill:none;stroke:#00ffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 309.10668,1071.2712 c 0,0 18.91288,8.6487 27.52666,14.3947 8.20409,5.4727 16.05398,11.6803 22.72843,18.9404 6.25884,6.8081 11.47448,14.6136 15.9099,22.7284 4.8884,8.9435 11.61675,28.2842 11.61675,28.2842"
        id="path6629"
@@ -1599,7 +1602,7 @@
            x="97.984795"
            y="2825.189" /></flowRegion><flowPara
          id="flowPara8471">Gearwheel profile choice flow:</flowPara><flowPara
-         id="flowPara8479">1. type: extern, intern, cremailliere</flowPara><flowPara
+         id="flowPara8479">1. type: extern, intern, linear</flowPara><flowPara
          id="flowPara8473">2. tooth_nb</flowPara><flowPara
          id="flowPara8475">3. module (or primitive diameter ...)</flowPara><flowPara
          id="flowPara8477">4. other parameters</flowPara><flowPara
