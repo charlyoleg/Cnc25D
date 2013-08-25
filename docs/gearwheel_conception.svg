@@ -23,8 +23,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.9899495"
-     inkscape:cx="239.52565"
-     inkscape:cy="4902.5737"
+     inkscape:cx="246.68655"
+     inkscape:cy="2284.2583"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -32,11 +32,11 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
+     inkscape:window-width="876"
+     inkscape:window-height="964"
      inkscape:window-x="0"
-     inkscape:window-y="24"
-     inkscape:window-maximized="1"
+     inkscape:window-y="87"
+     inkscape:window-maximized="0"
      inkscape:object-paths="true"
      inkscape:snap-intersection-paths="false"
      inkscape:snap-global="false"
@@ -415,7 +415,7 @@
            height="38.57143"
            x="42.142857"
            y="171.99107" /></flowRegion><flowPara
-         id="flowPara3052">1.2. axe parameters</flowPara></flowRoot>    <flowRoot
+         id="flowPara3052">1.2. axle parameters</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3054"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1170,7 +1170,7 @@
            x="472.70474"
            y="817.05499"
            style="fill:#00aa00" /></flowRegion><flowPara
-         id="flowPara4459">position_additional_axe_length</flowPara></flowRoot>    <path
+         id="flowPara4459">position_additional_axis_length</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 291.15282,1302.3872 29.5627,101.2299"
        id="path4461"
@@ -1214,7 +1214,7 @@
            height="32.324883"
            x="52.527931"
            y="1654.1791" /></flowRegion><flowPara
-         id="flowPara3433">axe type:</flowPara></flowRoot>    <flowRoot
+         id="flowPara3433">axle type:</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3437"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1225,7 +1225,7 @@
            height="36.36552"
            x="44.446712"
            y="1851.1588" /></flowRegion><flowPara
-         id="flowPara3443">axe router_bit diameter</flowPara></flowRoot>    <rect
+         id="flowPara3443">axle router_bit diameter</flowPara></flowRoot>    <rect
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3445"
        width="63.63961"
@@ -1351,7 +1351,7 @@
            x="237.38585"
            y="1836.0065" /></flowRegion><flowPara
          id="flowPara5238">cylindrical</flowPara><flowPara
-         id="flowPara5240">axe_diameter</flowPara></flowRoot>    <flowRoot
+         id="flowPara5240">axle_diameter</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot5242"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1363,8 +1363,8 @@
            x="423.25391"
            y="1844.0876" /></flowRegion><flowPara
          id="flowPara5248">square</flowPara><flowPara
-         id="flowPara5250">axe_width</flowPara><flowPara
-         id="flowPara5252">axe_height</flowPara></flowRoot>    <flowRoot
+         id="flowPara5250">axle_width</flowPara><flowPara
+         id="flowPara5252">axle_height</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot5254"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1375,7 +1375,7 @@
            height="48.487305"
            x="279.81226"
            y="1953.1842" /></flowRegion><flowPara
-         id="flowPara5260">Torque transmission with mis-aligned axes</flowPara></flowRoot>    <path
+         id="flowPara5260">Torque transmission with mis-aligned axles</flowPara></flowRoot>    <path
        sodipodi:type="arc"
        style="fill:#008000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="path5262"
@@ -1732,10 +1732,11 @@
            height="109.09653"
            x="45.456863"
            y="2912.5315" /></flowRegion><flowPara
-         id="flowPara5699">- wheel hollow internal diameter</flowPara><flowPara
-         id="flowPara5701">- wheel hollow external diameter</flowPara><flowPara
-         id="flowPara5703">- leg number</flowPara><flowPara
-         id="flowPara5705">- leg width</flowPara><flowPara
+         id="flowPara5699">- leg number</flowPara><flowPara
+         id="flowPara3532">- leg width</flowPara><flowPara
+         id="flowPara3534">- leg angle</flowPara><flowPara
+         id="flowPara3530">- wheel hollow internal diameter</flowPara><flowPara
+         id="flowPara5705">- wheel hollow external diameter</flowPara><flowPara
          id="flowPara5707">- wheel hollow router_bit diameter</flowPara></flowRoot>    <g
        id="g4942-7-1"
        transform="matrix(2.0317476,0,0,2.0317476,388.11178,2830.7105)"
@@ -2865,7 +2866,7 @@
          id="flowPara3703-5">- holder_position_radius</flowPara><flowPara
          id="flowPara3705-8">- holder_position_angle_offset</flowPara><flowPara
          id="flowPara3707-4">- holder_number</flowPara><flowPara
-         id="flowPara11385">- holder_inter_axe_length</flowPara><flowPara
+         id="flowPara11385">- holder_inter_axis_length</flowPara><flowPara
          id="flowPara11387">- holder_skin_thickness_radius</flowPara><flowPara
          id="flowPara11389">- holder_crenel_width</flowPara><flowPara
          id="flowPara11391">- holder_crenel_depth</flowPara></flowRoot>  </g>

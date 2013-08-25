@@ -21,12 +21,9 @@
 
 
 """
-gearwheel.py is a parametric generator of gear-wheels.
-It's actually a single function with the design parameters as input.
-The function writes STL, DXF and SVG files if an output basename is given as argument.
-The function can also display a small Tk windows for gear simulation.
-Finally, the backends used are: FreeCAD (for GUI rendering, STL and DXF export), mozman dxfwrite, mozman svgwrite and Tkinter.
-The function return the gear-wheel as FreeCAD Part object.
+gearwheel.py is a parametric generator of gearwheels.
+The main function return the gear-wheel as FreeCAD Part object.
+You can also simulate or view of the gearwheel and get a DXF, SVG or BRep or the gearwheel
 """
 
 ################################################################
@@ -47,174 +44,138 @@ import math
 import sys, argparse
 from datetime import datetime
 import os, errno
+import re
+import Tkinter # to display the outline in a small GUI
 #
 import Part
 from FreeCAD import Base
+# 3rd parties
+import svgwrite
+from dxfwrite import DXFEngine
+# cnc25d
+import gear_profile
 
 ################################################################
-# gearwheel_argparse
+# gearwheel argparse
 ################################################################
 
-"""
-The gearwheel_parser defines and structures the arguments of gearwheel().
-It's mostly used for debug and non-regression test.
-Argument default values are defined here.
-"""
-gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')
-# first gearwheel parameters
-gearwheel_parser.add_argument('--gear_type','--gt', action='store', default='ee', dest='sw_gear_type',
-  help="Select the type of gear. Possible values: 'ee', 'ie', 'ce', 'ei' and 'ce'. Default: 'ee'")
-gearwheel_parser.add_argument('--gear_tooth_nb','--gtn', action='store', type=int, default=17, dest='sw_gear_tooth_nb',
-  help="Set the number of teeth of the first gearwheel.")
-gearwheel_parser.add_argument('--gear_module','--gm', action='store', type=float, default=1.0, dest='sw_gear_module',
-  help="Set the module of the gear. It influences the gearwheel diameters.")
-gearwheel_parser.add_argument('--gear_primitive_diameter','--gpd', action='store', type=float, default=0.0, dest='sw_gear_primitive_diameter',
-  help="If not set to zero, redefine the gear module to get this primitive diameter of the first gearwheel. Default: 0. If cremailliere, it redefines the length.")
-gearwheel_parser.add_argument('--gear_base_diameter','--gbd', action='store', type=float, default=0.0, dest='sw_gear_base_diameter',
-  help="If not set to zero, redefine the base diameter of the first gearwheel. Default: 0. If cremailliere, it redefines the tooth slope angle.")
-gearwheel_parser.add_argument('--gear_tooth_half_height','--gthh', action='store', type=float, default=0.0, dest='sw_gear_tooth_half_height',
-  help="If not set to zero, redefine the tooth half height of the first gearwheel. Default: 0.0")
-gearwheel_parser.add_argument('--gear_addendum_dedendum_parity','--gadp', action='store', type=float, default=50.0, dest='sw_gear_addendum_dedendum_parity',
-  help="Set the addendum / dedendum parity of the first gearwheel. Default: 50.0%%")
-gearwheel_parser.add_argument('--gear_addendum_height_pourcentage','--gahp', action='store', type=float, default=100.0, dest='sw_gear_addendum_height_pourcentage',
-  help="Set the addendum height of the first gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
-gearwheel_parser.add_argument('--gear_dedendum_height_pourcentage','--gdhp', action='store', type=float, default=100.0, dest='sw_gear_dedendum_height_pourcentage',
-  help="Set the dedendum height of the first gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
-gearwheel_parser.add_argument('--gear_hollow_height_pourcentage','--ghhp', action='store', type=float, default=25.0, dest='sw_gear_hollow_height_pourcentage',
-  help="Set the hollow height of the first gearwheel in pourcentage of the tooth half height. Default: 25.0%%")
-gearwheel_parser.add_argument('--gear_router_bit_radius','--grr', action='store', type=float, default=1.0, dest='sw_gear_router_bit_radius',
-  help="Set the router_bit radius used to create the gear hollow of the first gearwheel. Default: 1.0")
-gearwheel_parser.add_argument('--gear_initial_angle','--gia', action='store', type=float, default=0.0, dest='sw_gear_initial_angle',
-  help="Set the gear reference angle (in Radian). Default: 0.0")
-# gear contact parameters
-gearwheel_parser.add_argument('--second_gear_position_angle','--sgpa', action='store', type=float, default=0.0, dest='sw_second_gear_position_angle',
-  help="Angle in Radian that sets the postion on the second gearwheel. Default: 0.0")
-gearwheel_parser.add_argument('--second_gear_additional_axe_length','--sgaal', action='store', type=float, default=0.0, dest='sw_second_gear_additional_axe_length',
-  help="Set an additional value for the inter-axe length between the first and the second gearwheels. Default: 0.0")
-gearwheel_parser.add_argument('--gear_force_angle','--gfa', action='store', type=float, default=0.0, dest='sw_gear_force_angle',
-  help="If not set to zero, redefine the second_gear_additional_axe_length to get this force angle at the gear contact. Default: 0.0")
-# second gearwheel parameters
-gearwheel_parser.add_argument('--second_gear_tooth_nb','--sgtn', action='store', type=int, default=17, dest='sw_second_gear_tooth_nb',
-  help="Set the number of teeth of the second gearwheel.")
-gearwheel_parser.add_argument('--second_gear_primitive_diameter','--sgpd', action='store', type=float, default=0.0, dest='sw_second_gear_primitive_diameter',
-  help="If not set to zero, redefine the gear module to get this primitive diameter of the second gearwheel. Default: 0.0. If cremailliere, it redefines the length.")
-gearwheel_parser.add_argument('--second_gear_base_diameter','--sgbd', action='store', type=float, default=0.0, dest='sw_second_gear_base_diameter',
-  help="If not set to zero, redefine the base diameter of the second gearwheel. Default: 0.0. If cremailliere, it redefines the tooth slope angle.")
-gearwheel_parser.add_argument('--second_gear_tooth_half_height','--sgthh', action='store', type=float, default=0.0, dest='sw_second_gear_tooth_half_height',
-  help="If not set to zero, redefine the tooth half height of the second gearwheel. Default: 0.0")
-gearwheel_parser.add_argument('--second_gear_addendum_dedendum_parity','--sgadp', action='store', type=float, default=50.0, dest='sw_second_gear_addendum_dedendum_parity',
-  help="Set the addendum / dedendum parity of the second gearwheel. Default: 50.0%%")
-gearwheel_parser.add_argument('--second_gear_addendum_height_pourcentage','--sgahp', action='store', type=float, default=100.0, dest='sw_second_gear_addendum_height_pourcentage',
-  help="Set the addendum height of the second gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
-gearwheel_parser.add_argument('--second_gear_dedendum_height_pourcentage','--sgdhp', action='store', type=float, default=100.0, dest='sw_second_gear_dedendum_height_pourcentage',
-  help="Set the dedendum height of the second gearwheel in pourcentage of the tooth half height. Default: 100.0%%")
-gearwheel_parser.add_argument('--second_gear_hollow_height_pourcentage','--sghhp', action='store', type=float, default=25.0, dest='sw_second_gear_hollow_height_pourcentage',
-  help="Set the hollow height of the second gearwheel in pourcentage of the tooth half height. Default: 25.0%%")
-gearwheel_parser.add_argument('--second_gear_router_bit_radius','--sgrr', action='store', type=float, default=1.0, dest='sw_second_gear_router_bit_radius',
-  help="Set the router_bit radius used to create the gear hollow of the second gearwheel. Default: 1.0")
-# simulation
-gearwheel_parser.add_argument('--simulation_enable','--se', action='store_true', default=False, dest='sw_simulation_enable',
-  help='It display a Tk window where you can observe the gear running. Check with your eyes if the geometry is working.')
-gearwheel_parser.add_argument('--simulation_zoom','--sz', action='store', type=float, default=4.0, dest='sw_simulation_zoom',
-  help="Set the zoom factor for the zoom window. Usually you choose a value between 1.0 and 4.0 depending on your gearwheel diameters. Default: 4.0")
-# axe parameters
-gearwheel_parser.add_argument('--axe_type','--at', action='store', default='none', dest='sw_axe_type',
-  help="Select the type of axe for the first gearwheel. Possible values: 'none', 'cylinder' and 'rectangle'. Default: 'none'")
-gearwheel_parser.add_argument('--axe_size_1','--as1', action='store', type=float, default=10.0, dest='sw_axe_size_1',
-  help="Set the axe cylinder diameter or the axe rectangle width of the first gearwheel. Default: 10.0")
-gearwheel_parser.add_argument('--axe_size_2','--as2', action='store', type=float, default=10.0, dest='sw_axe_size_2',
-  help="Set the axe rectangle height of the first gearwheel. Default: 10.0")
-gearwheel_parser.add_argument('--axe_router_bit_radius','--arr', action='store', type=float, default=1.0, dest='sw_axe_router_bit_radius',
-  help="Set the router_bit radius of the first gearwheel rectangle axe. Default: 1.0")
-# portion parameter
-gearwheel_parser.add_argument('--portion_tooth_nb','--ptn', action='store', type=int, default=0, dest='sw_portion_tooth_nb',
-  help="If not set to zero, cut a portion of the first gearwheel according to this portion tooth number. Default: 0")
-# wheel hollow parameters
-gearwheel_parser.add_argument('--wheel_hollow_internal_diameter','--whid', action='store', type=float, default=0.0, dest='sw_wheel_hollow_internal_diameter',
-  help="If not set to zero, create wheel hollows of the first gearwheel with this internal diameter. Default: 0.0")
-gearwheel_parser.add_argument('--wheel_hollow_external_diameter','--whed', action='store', type=float, default=0.0, dest='sw_wheel_hollow_external_diameter',
-  help="Set the wheel hollow external diameter of the first gearwheel. It must be bigger than the wheel_hollow_internal_diameter and smaller than the gear bottom diameter. Default: 0.0")
-gearwheel_parser.add_argument('--wheel_hollow_leg_number','--whln', action='store', type=int, default=1, dest='sw_wheel_hollow_leg_number',
-  help="Set the number of legs for the wheel hollow of the first gearwheel. The legs are uniform distributed. The first leg is centered on the gear reference angle (gear_initial_angle). Default: 1")
-gearwheel_parser.add_argument('--wheel_hollow_leg_width','--whlw', action='store', type=float, default=10.0, dest='sw_wheel_hollow_leg_width',
-  help="Set the wheel hollow leg width of the first gearwheel. Default: 10.0")
-gearwheel_parser.add_argument('--wheel_hollow_router_bit_radius','--whrr', action='store', type=float, default=1.0, dest='sw_wheel_hollow_router_bit_radius',
-  help="Set the router_bit radius of the wheel hollow of the first gearwheel. Default: 1.0")
-# part split parameter
-gearwheel_parser.add_argument('--part_split','--ps', action='store', type=int, default=1, dest='sw_part_split',
-  help="Split the first gearwheel in N (=part_split) parts that can be glued together to create the gear wheel. Two series of N parts are created. N=1 doesn't split the gearwheel. Default: 1")
-# center position parameters
-gearwheel_parser.add_argument('--center_position_x','--cpx', action='store', type=float, default=0.0, dest='sw_center_position_x',
-  help="Set the x-position of the first gearwheel center. Default: 0.0")
-gearwheel_parser.add_argument('--center_position_y','--cpy', action='store', type=float, default=0.0, dest='sw_center_position_y',
-  help="Set the y-position of the first gearwheel center. Default: 0.0")
-# firt gearwheel extrusion (currently only linear extrusion is possible)
-gearwheel_parser.add_argument('--gearwheel_height','--gwh', action='store', type=float, default=1.0, dest='sw_gearwheel_height',
-  help="Set the height of the linear extrusion of the first gearwheel. Default: 1.0")
-# cnc router_bit constraint
-gearwheel_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=1.0, dest='sw_cnc_router_bit_radius',
-  help="Set the minimum router_bit radius of the first gearwheel. It increases gear_router_bit_radius, axe_router_bit_radius and wheel_hollow_router_bit_radius if needed. Default: 1.0")
-# manufacturing technology related
-gearwheel_parser.add_argument('--gear_tooth_resolution','--gtr', action='store', type=int, default=3, dest='sw_gear_tooth_resolution',
-  help="It sets the number of intermediate points of the gear tooth profile. Default: 3")
-gearwheel_parser.add_argument('--gear_skin_thickness','--gst', action='store', type=float, default=0.0, dest='sw_gear_skin_thickness',
-  help="Add or remove radial thickness on the gear tooth profile. Default: 0.0")
-# output
-gearwheel_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
-  help="If not set to the empty string (the default value), it generates a bunch of design files starting with this basename.")
-# self_test
-gearwheel_parser.add_argument('--self_test_enable','--ste', action='store_true', default=False, dest='sw_self_test_enable',
-  help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
+def gearwheel_add_argument(ai_parser):
+  """
+  Add arguments relative to the gearwheel in addition to the argument of gear_profile_add_argument()
+  This function intends to be used by the gearwheel_cli, gearwheel_self_test
+  """
+  r_parser = ai_parser
+  ### axle
+  gearwheel_parser.add_argument('--axle_type','--at', action='store', default='none', dest='sw_axle_type',
+    help="Select the type of axle for the first gearwheel. Possible values: 'none', 'circle' and 'rectangle'. Default: 'none'")
+  gearwheel_parser.add_argument('--axle_x_width','--axw', action='store', type=float, default=10.0, dest='sw_axle_x_width',
+    help="Set the axle cylinder diameter or the axle rectangle x-width of the first gearwheel. Default: 10.0")
+  gearwheel_parser.add_argument('--axle_y_width','--ayw', action='store', type=float, default=10.0, dest='sw_axle_y_widtth',
+    help="Set the axle rectangle y-width of the first gearwheel. Default: 10.0")
+  gearwheel_parser.add_argument('--axle_router_bit_radius','--arr', action='store', type=float, default=1.0, dest='sw_axle_router_bit_radius',
+    help="Set the router_bit radius of the first gearwheel rectangle axle. Default: 1.0")
+  ### wheel-hollow = legs
+  gearwheel_parser.add_argument('--wheel_hollow_leg_number','--whln', action='store', type=int, default=1, dest='sw_wheel_hollow_leg_number',
+    help="Set the number of legs for the wheel-hollow of the first gearwheel. The legs are uniform distributed. The first leg is centered on the leg_angle. 0 means no wheel-hollow  Default: 0")
+  gearwheel_parser.add_argument('--wheel_hollow_leg_width','--whlw', action='store', type=float, default=10.0, dest='sw_wheel_hollow_leg_width',
+    help="Set the wheel-hollow leg width of the first gearwheel. Default: 10.0")
+  gearwheel_parser.add_argument('--wheel_hollow_leg_angle','--whla', action='store', type=float, default=0.0, dest='sw_wheel_hollow_leg_angle',
+    help="Set the wheel-hollow leg-angle of the first gearwheel. Default: 0.0")
+  gearwheel_parser.add_argument('--wheel_hollow_internal_diameter','--whid', action='store', type=float, default=20.0, dest='sw_wheel_hollow_internal_diameter',
+    help="Set the wheel-hollow internal diameter of the first gearwheel. Default: 20.0")
+  gearwheel_parser.add_argument('--wheel_hollow_external_diameter','--whed', action='store', type=float, default=30.0, dest='sw_wheel_hollow_external_diameter',
+    help="Set the wheel-hollow external diameter of the first gearwheel. It must be bigger than the wheel_hollow_internal_diameter and smaller than the gear bottom diameter. Default: 30.0")
+  gearwheel_parser.add_argument('--wheel_hollow_router_bit_radius','--whrr', action='store', type=float, default=1.0, dest='sw_wheel_hollow_router_bit_radius',
+    help="Set the router_bit radius of the wheel-hollow of the first gearwheel. Default: 1.0")
+  ### cnc router_bit constraint
+  gearwheel_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=1.0, dest='sw_cnc_router_bit_radius',
+    help="Set the minimum router_bit radius of the first gearwheel. It increases gear_router_bit_radius, axle_router_bit_radius and wheel_hollow_router_bit_radius if needed. Default: 1.0")
+  # return
+  return(r_parser)
+
     
 ################################################################
 # the most important function to be used in other scripts
 ################################################################
 
 def gearwheel(
-      ai_gear_type,
-      ai_gear_tooth_nb,
-      ai_gear_module,
-      ai_gear_primitive_diameter,
-      ai_gear_base_diameter,
-      ai_gear_tooth_half_height,
-      ai_gear_addendum_dedendum_parity,
-      ai_gear_addendum_height_pourcentage,
-      ai_gear_dedendum_height_pourcentage,
-      ai_gear_hollow_height_pourcentage,
-      ai_gear_router_bit_radius,
-      ai_gear_initial_angle,
-      ai_second_gear_position_angle,
-      ai_second_gear_additional_axe_length,
-      ai_gear_force_angle,
-      ai_second_gear_tooth_nb,
-      ai_second_gear_primitive_diameter,
-      ai_second_gear_base_diameter,
-      ai_second_gear_tooth_half_height,
-      ai_second_gear_addendum_dedendum_parity,
-      ai_second_gear_addendum_height_pourcentage,
-      ai_second_gear_dedendum_height_pourcentage,
-      ai_second_gear_hollow_height_pourcentage,
-      ai_second_gear_router_bit_radius,
-      ai_simulation_enable,
-      ai_simulation_zoom,
-      ai_axe_type,
-      ai_axe_size_1,
-      ai_axe_size_2,
-      ai_axe_router_bit_radius,
-      ai_portion_tooth_nb,
-      ai_wheel_hollow_internal_diameter,
-      ai_wheel_hollow_external_diameter,
-      ai_wheel_hollow_leg_number,
-      ai_wheel_hollow_leg_width,
-      ai_wheel_hollow_router_bit_radius,
-      ai_part_split,
-      ai_center_position_x,
-      ai_center_position_y,
-      ai_gearwheel_height,
-      ai_cnc_router_bit_radius,
-      ai_gear_tooth_resolution,
-      ai_gear_skin_thickness,
-      ai_output_file_basename):
+      ##### from gear_profile
+      ### first gear
+      # general
+      #ai_gear_type = 'e',
+      ai_gear_tooth_nb = 0,
+      ai_gear_module = 0.0,
+      ai_gear_primitive_diameter = 0.0,
+      ai_gear_addendum_dedendum_parity = 50.0,
+      # tooth height
+      ai_gear_tooth_half_height = 0.0,
+      ai_gear_addendum_height_pourcentage = 100.0,
+      ai_gear_dedendum_height_pourcentage = 100.0,
+      ai_gear_hollow_height_pourcentage = 25.0,
+      ai_gear_router_bit_radius = 0.1,
+      # positive involute
+      ai_gear_base_diameter = 0.0,
+      ai_gear_force_angle = 0.0,
+      ai_gear_tooth_resolution = 3,
+      ai_gear_skin_thickness = 0.0,
+      # negative involute (if zero, negative involute = positive involute)
+      ai_gear_base_diameter_n = 0.0,
+      ai_gear_force_angle_n = 0.0,
+      ai_gear_tooth_resolution_n = 0,
+      ai_gear_skin_thickness_n = 0.0,
+      ### second gear
+      # general
+      ai_second_gear_type = 'e',
+      ai_second_gear_tooth_nb = 0,
+      ai_second_gear_primitive_diameter = 0.0,
+      ai_second_gear_addendum_dedendum_parity = 0.0,
+      # tooth height
+      ai_second_gear_tooth_half_height = 0.0,
+      ai_second_gear_addendum_height_pourcentage = 100.0,
+      ai_second_gear_dedendum_height_pourcentage = 100.0,
+      ai_second_gear_hollow_height_pourcentage = 25.0,
+      ai_second_gear_router_bit_radius = 0.0,
+      # positive involute
+      ai_second_gear_base_diameter = 0.0,
+      ai_second_gear_tooth_resolution = 0,
+      ai_second_gear_skin_thickness = 0.0,
+      # negative involute (if zero, negative involute = positive involute)
+      ai_second_gear_base_diameter_n = 0.0,
+      ai_second_gear_tooth_resolution_n = 0,
+      ai_second_gear_skin_thickness_n = 0.0,
+      ### position
+      # first gear position
+      ai_center_position_x = 0.0,
+      ai_center_position_y = 0.0,
+      ai_gear_initial_angle = 0.0,
+      # second gear position
+      ai_second_gear_position_angle = 0.0,
+      ai_second_gear_additional_axis_length = 0.0,
+      ### portion
+      #ai_portion_tooth_nb = 0,
+      #ai_portion_first_end = 0,
+      #ai_portion_last_end =0,
+      ### output
+      ai_gear_profile_height = 1.0,
+      ai_simulation_enable = False,
+      ai_output_file_basename = '',
+      ##### from gearwheel
+      ### axle
+      ai_axle_type                = 'circle',
+      ai_axle_x_width             = 10.0,
+      ai_axle_y_width             = 10.0,
+      ai_axle_router_bit_radius   = 1.0,
+      ### wheel-hollow = legs
+      ai_wheel_hollow_leg_number        = 0,
+      ai_wheel_hollow_leg_width         = 10.0,
+      ai_wheel_hollow_leg_angle         = 0.0,
+      ai_wheel_hollow_internal_diameter = 20.0,
+      ai_wheel_hollow_external_diameter = 30.0,
+      ai_wheel_hollow_router_bit_radius = 1.0,
+      ### cnc router_bit constraint
+      ai_cnc_router_bit_radius          = '1.0',
+      ### view the gearwheel with tkinter
+      ai_tkinter_view = False):
   """
   The main function of the script.
   It generates a gearwheel according to the function arguments
@@ -228,56 +189,94 @@ def gearwheel(
 # gearwheel argparse_to_function
 ################################################################
 
-def gearwheel_argparse(ai_gw_args):
+def gearwheel_argparse_wrapper(ai_gw_args):
   """
   wrapper function of gearwheel() to call it using the gearwheel_parser.
   gearwheel_parser is mostly used for debug and non-regression tests.
   """
+  # view the gearwheel with Tkinter as default action
+  tkinter_view = True
+  if(ai_gp_args.sw_simulation_enable or (ai_gp_args.sw_output_file_basename!='')):
+    tkinter_view = False
+  # wrapper
   r_gw = gearwheel(
-            ai_gw_args.sw_gear_type,
-            ai_gw_args.sw_gear_tooth_nb,
-            ai_gw_args.sw_gear_module,
-            ai_gw_args.sw_gear_primitive_diameter,
-            ai_gw_args.sw_gear_base_diameter,
-            ai_gw_args.sw_gear_tooth_half_height,
-            ai_gw_args.sw_gear_addendum_dedendum_parity,
-            ai_gw_args.sw_gear_addendum_height_pourcentage,
-            ai_gw_args.sw_gear_dedendum_height_pourcentage,
-            ai_gw_args.sw_gear_hollow_height_pourcentage,
-            ai_gw_args.sw_gear_router_bit_radius,
-            ai_gw_args.sw_gear_initial_angle,
-            ai_gw_args.sw_second_gear_position_angle,
-            ai_gw_args.sw_second_gear_additional_axe_length,
-            ai_gw_args.sw_gear_force_angle,
-            ai_gw_args.sw_second_gear_tooth_nb,
-            ai_gw_args.sw_second_gear_primitive_diameter,
-            ai_gw_args.sw_second_gear_base_diameter,
-            ai_gw_args.sw_second_gear_tooth_half_height,
-            ai_gw_args.sw_second_gear_addendum_dedendum_parity,
-            ai_gw_args.sw_second_gear_addendum_height_pourcentage,
-            ai_gw_args.sw_second_gear_dedendum_height_pourcentage,
-            ai_gw_args.sw_second_gear_hollow_height_pourcentage,
-            ai_gw_args.sw_second_gear_router_bit_radius,
-            ai_gw_args.sw_simulation_enable,
-            ai_gw_args.sw_simulation_zoom,
-            ai_gw_args.sw_axe_type,
-            ai_gw_args.sw_axe_size_1,
-            ai_gw_args.sw_axe_size_2,
-            ai_gw_args.sw_axe_router_bit_radius,
-            ai_gw_args.sw_portion_tooth_nb,
-            ai_gw_args.sw_wheel_hollow_internal_diameter,
-            ai_gw_args.sw_wheel_hollow_external_diameter,
-            ai_gw_args.sw_wheel_hollow_leg_number,
-            ai_gw_args.sw_wheel_hollow_leg_width,
-            ai_gw_args.sw_wheel_hollow_router_bit_radius,
-            ai_gw_args.sw_part_split,
-            ai_gw_args.sw_center_position_x,
-            ai_gw_args.sw_center_position_y,
-            ai_gw_args.sw_gearwheel_height,
-            ai_gw_args.sw_cnc_router_bit_radius,
-            ai_gw_args.sw_gear_tooth_resolution,
-            ai_gw_args.sw_gear_skin_thickness,
-            ai_gw_args.sw_output_file_basename)
+           ##### from gear_profile
+           ### first gear
+           # general
+           #ai_gear_type                      = ai_gw_args.sw_gear_type,
+           ai_gear_tooth_nb                  = ai_gw_args.sw_gear_tooth_nb,
+           ai_gear_module                    = ai_gw_args.sw_gear_module,
+           ai_gear_primitive_diameter        = ai_gw_args.sw_gear_primitive_diameter,
+           ai_gear_addendum_dedendum_parity  = ai_gw_args.sw_gear_addendum_dedendum_parity,
+           # tooth height
+           ai_gear_tooth_half_height           = ai_gw_args.sw_gear_tooth_half_height,
+           ai_gear_addendum_height_pourcentage = ai_gw_args.sw_gear_addendum_height_pourcentage,
+           ai_gear_dedendum_height_pourcentage = ai_gw_args.sw_gear_dedendum_height_pourcentage,
+           ai_gear_hollow_height_pourcentage   = ai_gw_args.sw_gear_hollow_height_pourcentage,
+           ai_gear_router_bit_radius           = ai_gw_args.sw_gear_router_bit_radius,
+           # positive involute
+           ai_gear_base_diameter       = ai_gw_args.sw_gear_base_diameter,
+           ai_gear_force_angle         = ai_gw_args.sw_gear_force_angle,
+           ai_gear_tooth_resolution    = ai_gw_args.sw_gear_tooth_resolution,
+           ai_gear_skin_thickness      = ai_gw_args.sw_gear_skin_thickness,
+           # negative involute (if zero, negative involute = positive involute)
+           ai_gear_base_diameter_n     = ai_gw_args.sw_gear_base_diameter_n,
+           ai_gear_force_angle_n       = ai_gw_args.sw_gear_force_angle_n,
+           ai_gear_tooth_resolution_n  = ai_gw_args.sw_gear_tooth_resolution_n,
+           ai_gear_skin_thickness_n    = ai_gw_args.sw_gear_skin_thickness_n,
+           ### second gear
+           # general
+           ai_second_gear_type                     = ai_gw_args.sw_second_gear_type,
+           ai_second_gear_tooth_nb                 = ai_gw_args.sw_second_gear_tooth_nb,
+           ai_second_gear_primitive_diameter       = ai_gw_args.sw_second_gear_primitive_diameter,
+           ai_second_gear_addendum_dedendum_parity = ai_gw_args.sw_second_gear_addendum_dedendum_parity,
+           # tooth height
+           ai_second_gear_tooth_half_height            = ai_gw_args.sw_second_gear_tooth_half_height,
+           ai_second_gear_addendum_height_pourcentage  = ai_gw_args.sw_second_gear_addendum_height_pourcentage,
+           ai_second_gear_dedendum_height_pourcentage  = ai_gw_args.sw_second_gear_dedendum_height_pourcentage,
+           ai_second_gear_hollow_height_pourcentage    = ai_gw_args.sw_second_gear_hollow_height_pourcentage,
+           ai_second_gear_router_bit_radius            = ai_gw_args.sw_second_gear_router_bit_radius,
+           # positive involute
+           ai_second_gear_base_diameter      = ai_gw_args.sw_second_gear_base_diameter,
+           ai_second_gear_tooth_resolution   = ai_gw_args.sw_second_gear_tooth_resolution,
+           ai_second_gear_skin_thickness     = ai_gw_args.sw_second_gear_skin_thickness,
+           # negative involute (if zero, negative involute = positive involute)
+           ai_second_gear_base_diameter_n    = ai_gw_args.sw_second_gear_base_diameter_n,
+           ai_second_gear_tooth_resolution_n = ai_gw_args.sw_second_gear_tooth_resolution_n,
+           ai_second_gear_skin_thickness_n   = ai_gw_args.sw_second_gear_skin_thickness_n,
+           ### position
+           # first gear position
+           ai_center_position_x                    = ai_gw_args.sw_center_position_x,
+           ai_center_position_y                    = ai_gw_args.sw_center_position_y,
+           ai_gear_initial_angle                   = ai_gw_args.sw_gear_initial_angle,
+           # second gear position
+           ai_second_gear_position_angle           = ai_gw_args.sw_second_gear_position_angle,
+           ai_second_gear_additional_axe_length    = ai_gw_args.sw_second_gear_additional_axe_length,
+           ### portion
+           #ai_portion_tooth_nb     = ai_gw_args.sw_cut_portion[0],
+           #ai_portion_first_end    = ai_gw_args.sw_cut_portion[1],
+           #ai_portion_last_end     = ai_gw_args.sw_cut_portion[2],
+           ### output
+           ai_gear_profile_height  = ai_gw_args.sw_gear_profile_height,
+           ai_simulation_enable    = run_simulation,    # ai_gw_args.sw_simulation_enable,
+           ai_output_file_basename = ai_gw_args.sw_output_file_basename,
+           ##### from gearwheel
+           ### axle
+           ai_axle_type                = ai_gw_args.sw_axle_type,
+           ai_axle_x_width             = ai_gw_args.axle_x_width,
+           ai_axle_y_width             = ai_gw_args.axle_y_width,
+           ai_axle_router_bit_radius   = ai_gw_args.axle_router_bit_radius,
+           ### wheel-hollow = legs
+           ai_wheel_hollow_leg_number        = ai_gw_args.ai_wheel_hollow_leg_number,
+           ai_wheel_hollow_leg_width         = ai_gw_args.ai_wheel_hollow_leg_width,
+           ai_wheel_hollow_leg_angle         = ai_gw_args.ai_wheel_hollow_leg_angle,
+           ai_wheel_hollow_internal_diameter = ai_gw_args.ai_wheel_hollow_internal_diameter,
+           ai_wheel_hollow_external_diameter = ai_gw_args.ai_wheel_hollow_external_diameter,
+           ai_wheel_hollow_router_bit_radius = ai_gw_args.ai_wheel_hollow_router_bit_radius,
+           ### cnc router_bit constraint
+           ai_cnc_router_bit_radius          = ai_gw_args.ai_cnc_router_bit_radius,
+           ### view the gearwheel with tkinter
+           ai_tkinter_view = tkinter_view)
   return(r_gw)
 
 ################################################################
@@ -320,13 +319,16 @@ def gearwheel_self_test():
     ["cremailliere"                                     , "--gear_type ce --gear_tooth_nb 3 --second_gear_tooth_nb 20 --gear_primitive_diameter 15 --gear_base_diameter 20 --simulation_enable"],
     ["cremailliere with angle"                          , "--gear_type ce --gear_tooth_nb 12 --second_gear_tooth_nb 20 --gear_primitive_diameter 40 --gear_base_diameter 20 --gear_initial_angle {:f} --simulation_enable".format(40*math.pi/180)]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
+  gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gear_profile().')
+  gearwheel_parser = gear_profile.gear_profile_add_argument(gearwheel_parser, 1)
+  gearwheel_parser = gearwheel_add_argument(gearwheel_parser)
   for i in range(len(test_case_switch)):
     l_test_switch = test_case_switch[i][1]
     print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
     l_args = l_test_switch.split()
     #print("dbg414: l_args:", l_args)
     st_args = gearwheel_parser.parse_args(l_args)
-    r_gwst = gearwheel_argparse(st_args)
+    r_gwst = gearwheel_argparse_wrapper(st_args)
   return(r_gwst)
 
 ################################################################
@@ -336,6 +338,13 @@ def gearwheel_self_test():
 def gearwheel_cli():
   """ command line interface of gearwheel.py when it is used in standalone
   """
+  # gearwheel parser
+  gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')
+  gearwheel_parser = gear_profile.gear_profile_add_argument(gearwheel_parser, 1)
+  gearwheel_parser = gearwheel_add_argument(gearwheel_parser)
+  # switch for self_test
+  gearwheel_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
+  help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
   # this ensure the possible to use the script with python and freecad
   # You can not use argparse and FreeCAD together, so it's actually useless !
   # Running this script, FreeCAD will just use the argparse default values
@@ -350,10 +359,10 @@ def gearwheel_cli():
   #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
   gw_args = gearwheel_parser.parse_args(effective_args)
   print("dbg111: start making gearwheel")
-  if(gw_args.sw_self_test_enable):
+  if(gw_args.sw_run_self_test):
     r_gw = gearwheel_self_test()
   else:
-    r_gw = gearwheel_argparse(gw_args)
+    r_gw = gearwheel_argparse_wrapper(gw_args)
   print("dbg999: end of script")
   return(r_gw)
 
