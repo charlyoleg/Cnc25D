@@ -469,6 +469,7 @@ def outline_arc_line(ai_segments, ai_backend):
   else: # circle outline
     if(len(ai_segments)!=3):
       print("ERR658: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_segments)))
+      print("dbg368: ai_segments:", ai_segments)
       sys.exit(2)
     r_outline = outline_circle((ai_segments[0], ai_segments[1]), ai_segments[2], ai_backend)
   return(r_outline)

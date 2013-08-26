@@ -87,7 +87,7 @@ def check_outline_format(ai_outline):
       sys.exit(2)
   else: # circle outline
     if(len(ai_outline)!=3):
-      print("ERR658: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_outline)))
+      print("ERR758: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_outline)))
       sys.exit(2)
     r_outline_type = 0
   return(r_outline_type)
