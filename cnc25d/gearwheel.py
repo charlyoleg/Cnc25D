@@ -31,7 +31,7 @@ You can also simulate or view of the gearwheel and get a DXF, SVG or BRep or the
 ################################################################
 
 import cnc25d_api
-cnc25d_api.importing_freecad()
+#cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 #FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
@@ -42,16 +42,16 @@ cnc25d_api.importing_freecad()
 
 import math
 import sys, argparse
-from datetime import datetime
-import os, errno
-import re
-import Tkinter # to display the outline in a small GUI
+#from datetime import datetime
+#import os, errno
+#import re
+#import Tkinter # to display the outline in a small GUI
 #
-import Part
-from FreeCAD import Base
+#import Part
+#from FreeCAD import Base
 # 3rd parties
-import svgwrite
-from dxfwrite import DXFEngine
+#import svgwrite
+#from dxfwrite import DXFEngine
 # cnc25d
 import gear_profile
 
@@ -158,7 +158,7 @@ def gearwheel(
       ### output
       ai_gear_profile_height = 1.0,
       ai_simulation_enable = False,
-      ai_output_file_basename = '',
+      #ai_output_file_basename = '',
       ##### from gearwheel
       ### axle
       ai_axle_type                = 'circle',
@@ -175,14 +175,95 @@ def gearwheel(
       ### cnc router_bit constraint
       ai_cnc_router_bit_radius          = '1.0',
       ### view the gearwheel with tkinter
-      ai_tkinter_view = False):
+      ai_tkinter_view = False,
+      ai_output_file_basename = ''):
   """
   The main function of the script.
   It generates a gearwheel according to the function arguments
   """
   ## check parameter coherence
 
-  r_gw = 1
+  ## get the gear_profile
+  gear_profile_B = gear_profile.gear_profile(
+                        ### first gear
+                        # general
+                        ai_gear_type                      = 'e',
+                        ai_gear_tooth_nb                  = ai_gear_tooth_nb,
+                        ai_gear_module                    = ai_gear_module,
+                        ai_gear_primitive_diameter        = ai_gear_primitive_diameter,
+                        ai_gear_addendum_dedendum_parity  = ai_gear_addendum_dedendum_parity,
+                        # tooth height
+                        ai_gear_tooth_half_height           = ai_gear_tooth_half_height,
+                        ai_gear_addendum_height_pourcentage = ai_gear_addendum_height_pourcentage,
+                        ai_gear_dedendum_height_pourcentage = ai_gear_dedendum_height_pourcentage,
+                        ai_gear_hollow_height_pourcentage   = ai_gear_hollow_height_pourcentage,
+                        ai_gear_router_bit_radius           = ai_gear_router_bit_radius,
+                        # positive involute
+                        ai_gear_base_diameter       = ai_gear_base_diameter,
+                        ai_gear_force_angle         = ai_gear_force_angle,
+                        ai_gear_tooth_resolution    = ai_gear_tooth_resolution,
+                        ai_gear_skin_thickness      = ai_gear_skin_thickness,
+                        # negative involute (if zero, negative involute = positive involute)
+                        ai_gear_base_diameter_n     = ai_gear_base_diameter_n,
+                        ai_gear_force_angle_n       = ai_gear_force_angle_n,
+                        ai_gear_tooth_resolution_n  = ai_gear_tooth_resolution_n,
+                        ai_gear_skin_thickness_n    = ai_gear_skin_thickness_n,
+                        ### second gear
+                        # general
+                        ai_second_gear_type                     = ai_second_gear_type,
+                        ai_second_gear_tooth_nb                 = ai_second_gear_tooth_nb,
+                        ai_second_gear_primitive_diameter       = ai_second_gear_primitive_diameter,
+                        ai_second_gear_addendum_dedendum_parity = ai_second_gear_addendum_dedendum_parity,
+                        # tooth height
+                        ai_second_gear_tooth_half_height            = ai_second_gear_tooth_half_height,
+                        ai_second_gear_addendum_height_pourcentage  = ai_second_gear_addendum_height_pourcentage,
+                        ai_second_gear_dedendum_height_pourcentage  = ai_second_gear_dedendum_height_pourcentage,
+                        ai_second_gear_hollow_height_pourcentage    = ai_second_gear_hollow_height_pourcentage,
+                        ai_second_gear_router_bit_radius            = ai_second_gear_router_bit_radius,
+                        # positive involute
+                        ai_second_gear_base_diameter      = ai_second_gear_base_diameter,
+                        ai_second_gear_tooth_resolution   = ai_second_gear_tooth_resolution,
+                        ai_second_gear_skin_thickness     = ai_second_gear_skin_thickness,
+                        # negative involute (if zero, negative involute = positive involute)
+                        ai_second_gear_base_diameter_n    = ai_second_gear_base_diameter_n,
+                        ai_second_gear_tooth_resolution_n = ai_second_gear_tooth_resolution_n,
+                        ai_second_gear_skin_thickness_n   = ai_second_gear_skin_thickness_n,
+                        ### position
+                        # first gear position
+                        ai_center_position_x                    = ai_center_position_x,
+                        ai_center_position_y                    = ai_center_position_y,
+                        ai_gear_initial_angle                   = ai_gear_initial_angle,
+                        # second gear position
+                        ai_second_gear_position_angle           = ai_second_gear_position_angle,
+                        ai_second_gear_additional_axis_length   = ai_second_gear_additional_axis_length,
+                        ### portion
+                        ai_portion_tooth_nb     = 0,
+                        ai_portion_first_end    = 0,
+                        ai_portion_last_end     = 0,
+                        ### output
+                        ai_gear_profile_height  = ai_gear_profile_height,
+                        ai_simulation_enable    = ai_simulation_enable,    # ai_simulation_enable,
+                        ai_output_file_basename = '')
+
+  ## axle
+  axle_figure = []
+
+  ## wheel hollow (a.k.a legs)
+  wheel_hollow_figure = []
+
+  ## design output
+  gw_figure = [gear_profile_B]
+  gw_figure.extend(axle_figure)
+  gw_figure.extend(wheel_hollow_figure)
+
+  # display with Tkinter
+  if(ai_tkinter_view):
+    cnc25d_api.figure_simple_display(gw_figure)
+  # generate output file
+  cnc25d_api.generate_output_file(gw_figure, ai_output_file_basename, ai_gear_profile_height)
+
+  # return the gearwheel as FreeCAD Part object
+  r_gw = cnc25d_api.figure_to_freecad_25d_part(gw_figure, ai_gear_profile_height)
   return(r_gw)
 
 ################################################################
@@ -259,7 +340,7 @@ def gearwheel_argparse_wrapper(ai_gw_args):
            ### output
            ai_gear_profile_height  = ai_gw_args.sw_gear_profile_height,
            ai_simulation_enable    = ai_gw_args.sw_simulation_enable,    # ai_gw_args.sw_simulation_enable,
-           ai_output_file_basename = ai_gw_args.sw_output_file_basename,
+           #ai_output_file_basename = ai_gw_args.sw_output_file_basename,
            ##### from gearwheel
            ### axle
            ai_axle_type                = ai_gw_args.sw_axle_type,
@@ -275,8 +356,9 @@ def gearwheel_argparse_wrapper(ai_gw_args):
            ai_wheel_hollow_router_bit_radius = ai_gw_args.sw_wheel_hollow_router_bit_radius,
            ### cnc router_bit constraint
            ai_cnc_router_bit_radius          = ai_gw_args.sw_cnc_router_bit_radius,
-           ### view the gearwheel with tkinter
-           ai_tkinter_view = tkinter_view)
+           ### design output : view the gearwheel with tkinter or write files
+           ai_tkinter_view = tkinter_view,
+           ai_output_file_basename = ai_gw_args.sw_output_file_basename)
   return(r_gw)
 
 ################################################################
@@ -322,6 +404,7 @@ def gearwheel_self_test():
   gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gear_profile().')
   gearwheel_parser = gear_profile.gear_profile_add_argument(gearwheel_parser, 1)
   gearwheel_parser = gearwheel_add_argument(gearwheel_parser)
+  gearwheel_parser = cnc25d_api.generate_output_file_add_argument(gearwheel_parser)
   for i in range(len(test_case_switch)):
     l_test_switch = test_case_switch[i][1]
     print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
@@ -335,26 +418,29 @@ def gearwheel_self_test():
 # gearwheel command line interface
 ################################################################
 
-def gearwheel_cli():
+def gearwheel_cli(ai_args=None):
   """ command line interface of gearwheel.py when it is used in standalone
   """
   # gearwheel parser
   gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')
   gearwheel_parser = gear_profile.gear_profile_add_argument(gearwheel_parser, 1)
   gearwheel_parser = gearwheel_add_argument(gearwheel_parser)
+  gearwheel_parser = cnc25d_api.generate_output_file_add_argument(gearwheel_parser)
   # switch for self_test
   gearwheel_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
   help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
   # this ensure the possible to use the script with python and freecad
   # You can not use argparse and FreeCAD together, so it's actually useless !
   # Running this script, FreeCAD will just use the argparse default values
-  arg_index_offset=0
-  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-    arg_index_offset=1
-    if(len(sys.argv)>=2):
-      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-        arg_index_offset=2
-  effective_args = sys.argv[arg_index_offset+1:]
+  effective_args = ai_args
+  if(effective_args==None):
+    arg_index_offset=0
+    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
+      arg_index_offset=1
+      if(len(sys.argv)>=2):
+        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
+          arg_index_offset=2
+    effective_args = sys.argv[arg_index_offset+1:]
   #print("dbg115: effective_args:", str(effective_args))
   #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
   gw_args = gearwheel_parser.parse_args(effective_args)
@@ -373,7 +459,8 @@ def gearwheel_cli():
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearwheel.py says hello!\n")
-  my_gw = gearwheel_cli()
+  #my_gw = gearwheel_cli()
+  my_gw = gearwheel_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto2".split())
   #Part.show(my_gw)
 
 

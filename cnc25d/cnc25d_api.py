@@ -34,6 +34,7 @@ import cnc_outline
 import outline_backends
 import positioning
 import export_2d
+import design_output
 
 ################################################################
 # api function alias
@@ -70,6 +71,9 @@ export_to_dxf = export_2d.export_to_dxf
 export_to_svg = export_2d.export_to_svg
 export_xyz_to_dxf = export_2d.export_xyz_to_dxf
 
+# from design_output
+generate_output_file_add_argument = design_output.generate_output_file_add_argument
+generate_output_file = design_output.generate_output_file
 
 ################################################################
 # function combinations

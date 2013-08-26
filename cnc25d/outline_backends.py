@@ -499,7 +499,7 @@ def figure_simple_display(ai_figure):
 def write_figure_in_svg(ai_figure, ai_filename):
   """ Generate the SVG file ai_filename from the figure ai_figure (list of format B outline)
   """
-  print("Generate the SVG file {:s}".format(ai_filename))
+  print("Generate with mozman svgwrite the SVG file {:s}".format(ai_filename))
   object_svg = svgwrite.Drawing(filename = ai_filename)
   for i_ol in ai_figure:
     svg_outline = outline_arc_line(i_ol, 'svgwrite')
@@ -511,7 +511,7 @@ def write_figure_in_svg(ai_figure, ai_filename):
 def write_figure_in_dxf(ai_figure, ai_filename):
   """ Generate the DXF file ai_filename from the figure ai_figure (list of format B outline)
   """
-  print("Generate the DXF file {:s}".format(ai_filename))
+  print("Generate with mozman dxfwrite the DXF file {:s}".format(ai_filename))
   object_dxf = DXFEngine.drawing(ai_filename)
   #object_dxf.add_layer("my_dxf_layer")
   for i_ol in ai_figure:
@@ -564,7 +564,7 @@ def figure_to_freecad_25d_part(ai_figure, ai_extrude_height):
     wire_part = []
     for i in range(outline_nb):
       wire = Part.Wire(outline_arc_line(ai_figure[i], 'freecad').Edges)
-      wire_part.append(inner_face.extrude(Base.Vector(0,0,ai_extrude_height)))
+      wire_part.append(wire.extrude(Base.Vector(0,0,ai_extrude_height)))
     r_part = Part.makeCompound(wire_part)
   # return
   return(r_part)
@@ -781,6 +781,6 @@ def outline_backends_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("outline_backends.py says hello!\n")
   # select your script behavior
-  outline_backends_cli()
-  #outline_backends_cli("--test1".split())
+  #outline_backends_cli()
+  outline_backends_cli("--test1".split())
 

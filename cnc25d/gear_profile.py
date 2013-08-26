@@ -31,7 +31,7 @@ The function gear_profile() returns an format B outline that can be easily inclu
 ################################################################
 
 import cnc25d_api
-cnc25d_api.importing_freecad()
+#cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 #FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
@@ -44,15 +44,15 @@ cnc25d_api.importing_freecad()
 import math
 import sys, argparse
 #from datetime import datetime
-import os, errno
-import re
+#import os, errno
+#import re
 import Tkinter # to display the outline in a small GUI
 # FreeCAD
-import Part
-from FreeCAD import Base
+#import Part
+#from FreeCAD import Base
 # 3rd parties
-import svgwrite
-from dxfwrite import DXFEngine
+#import svgwrite
+#from dxfwrite import DXFEngine
 # cnc25d
 import small_geometry # use some well-tested functions from the internal of the cnc25d_api
 
@@ -66,7 +66,7 @@ gp_radian_epsilon = math.pi/1000
 ################################################################
 
 def gear_profile_add_argument(ai_parser, ai_variant=0):
-  """ Add arguments relative to the gear_profile to a parser
+  """ Add the argparse switches relative to the gear_profile
       This function intends to be used by the gear_profile_cli, gear_profile_self_test and also gearwheel, gearring, gearbar ...
       ai_variant let's you remove some arguments:
       0:all for gear_profile_cli() and gear_profile_self_test()
@@ -176,9 +176,9 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
   # simulation
   r_parser.add_argument('--simulation_enable','--se', action='store_true', default=False, dest='sw_simulation_enable',
     help='It display a Tk window where you can observe the gear running. Check with your eyes if the geometry is working.')
-  # output file
-  r_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
-    help="If not  the empty_string (the default value), it outputs the (first) gear in file(s) depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, no-extension uses FreeCAD and you get .brep and .dxf")
+  # output file : added later
+  #r_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
+  #  help="If not  the empty_string (the default value), it outputs the (first) gear in file(s) depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, no-extension uses FreeCAD and you get .brep and .dxf")
   # return
   return(r_parser)
     
@@ -1077,60 +1077,11 @@ def gear_profile(
     # end of callback function
     my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
     tk_root.mainloop()
+    del (my_canvas, tk_root) # because Tkinter could be used again later in this script
 
   ### output files
-  if(ai_output_file_basename!=''):
-    # create the output directory if needed
-    l_output_dir = os.path.dirname(ai_output_file_basename)
-    if(l_output_dir==''):
-      l_output_dir='.'
-    #print("dbg448: l_output_dir:", l_output_dir)
-    #l_output_basename = os.path.basename(ai_output_file_basename)
-    #print("dbg449: l_output_basename:", l_output_basename)
-    # mkdir -p directory if needed
-    print("dbg450: try to create the output directory: {:s}".format(l_output_dir))
-    try:
-      os.makedirs(l_output_dir)
-    except OSError as exc:
-      if exc.errno == errno.EEXIST and os.path.isdir(l_output_dir):
-        pass
-      else:
-        raise
-
-    # mozman dxfwrite
-    if(re.search('\.dxf$', ai_output_file_basename)):
-      print("Generate {:s} with mozman dxfwrite".format(ai_output_file_basename))
-      object_dxf = DXFEngine.drawing(ai_output_file_basename)
-      #object_dxf.add_layer("my_dxf_layer")
-      dxf_figures = [g1_outline_B]
-      for i_ol in dxf_figures:
-        dxf_outline = cnc25d_api.outline_arc_line(i_ol, 'dxfwrite')
-        for one_line_or_arc in dxf_outline:
-          object_dxf.add(one_line_or_arc)
-      object_dxf.save()
-
-    # mozman svgwrite
-    elif(re.search('\.svg$', ai_output_file_basename)):
-      print("Generate {:s} with mozman svgwrite".format(ai_output_file_basename))
-      object_svg = svgwrite.Drawing(filename = ai_output_file_basename)
-      svg_figures = [g1_outline_B]
-      for i_ol in svg_figures:
-        svg_outline = cnc25d_api.outline_arc_line(i_ol, 'svgwrite')
-        for one_line_or_arc in svg_outline:
-          object_svg.add(one_line_or_arc)
-      object_svg.save()
-
-    # FreeCAD
-    else:
-      print("Generate {:s}.brep with FreeCAD".format(ai_output_file_basename))
-      g1_outline_freecad = cnc25d_api.outline_arc_line(g1_outline_B, 'freecad')
-      g1_wire = Part.Wire(g1_outline_freecad.Edges)
-      #g1_face = Part.Face(g1_wire)
-      g1_part = g1_wire.extrude(Base.Vector(0,0,ai_gear_profile_height))
-      g1_part.exportBrep("{:s}.brep".format(ai_output_file_basename))
-      print("Generate {:s}.dxf with FreeCAD".format(ai_output_file_basename))
-      # slice g1_part  in the XY plan at a height of ai_gear_profile_height/2
-      cnc25d_api.export_to_dxf(g1_part, Base.Vector(0,0,1), ai_gear_profile_height/2, "{:s}.dxf".format(ai_output_file_basename))
+  gp_figure = [g1_outline_B] # select the outlines to be writen in files
+  cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height)
 
   r_gp = g1_outline_B
   return(r_gp)
@@ -1253,6 +1204,7 @@ def gear_profile_self_test():
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gear_profile_parser = argparse.ArgumentParser(description='Command line interface for the function gear_profile().')
   gear_profile_parser = gear_profile_add_argument(gear_profile_parser, 0)
+  gear_profile_parser = cnc25d_api.generate_output_file_add_argument(gear_profile_parser)
   for i in range(len(test_case_switch)):
     l_test_switch = test_case_switch[i][1]
     print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
@@ -1266,25 +1218,28 @@ def gear_profile_self_test():
 # gear_profile command line interface
 ################################################################
 
-def gear_profile_cli():
+def gear_profile_cli(ai_args=None):
   """ command line interface of gear_profile.py when it is used in standalone
   """
   # gear_profile parser
   gear_profile_parser = argparse.ArgumentParser(description='Command line interface for the function gear_profile().')
   gear_profile_parser = gear_profile_add_argument(gear_profile_parser, 0)
+  gear_profile_parser = cnc25d_api.generate_output_file_add_argument(gear_profile_parser)
   # add switch for self_test
   gear_profile_parser.add_argument('--run_self_test','--rst', action='store_true', default=False, dest='sw_run_self_test',
     help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
   # this ensure the possible to use the script with python and freecad
   # You can not use argparse and FreeCAD together, so it's actually useless !
   # Running this script, FreeCAD will just use the argparse default values
-  arg_index_offset=0
-  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-    arg_index_offset=1
-    if(len(sys.argv)>=2):
-      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-        arg_index_offset=2
-  effective_args = sys.argv[arg_index_offset+1:]
+  effective_args = ai_args
+  if(effective_args==None):
+    arg_index_offset=0
+    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
+      arg_index_offset=1
+      if(len(sys.argv)>=2):
+        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
+          arg_index_offset=2
+    effective_args = sys.argv[arg_index_offset+1:]
   #print("dbg115: effective_args:", str(effective_args))
   #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
   gp_args = gear_profile_parser.parse_args(effective_args)
@@ -1303,6 +1258,7 @@ def gear_profile_cli():
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gear_profile.py says hello!\n")
-  my_gp = gear_profile_cli()
+  #my_gp = gear_profile_cli()
+  my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1".split())
 
 
