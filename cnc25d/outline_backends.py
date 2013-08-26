@@ -56,6 +56,7 @@ import Tkinter
 import display_backend
 import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate
 import export_2d # just for test enhancement
+import design_output # just for get_effective_args()
 import os, errno # to create the output directory
 
 
@@ -752,20 +753,7 @@ def outline_backends_cli(ai_args=None):
   ob_parser = argparse.ArgumentParser(description='Test the outline_backends API.')
   ob_parser.add_argument('--test1','--t1', action='store_true', default=False, dest='sw_test1',
     help='Run outline_arc_line_test1()')
-  # this ensure the possible to use the script with python and freecad
-  # You can not use argparse and FreeCAD together, so it's actually useless !
-  # Running this script, FreeCAD will just use the argparse default values
-  effective_args = ai_args
-  if(effective_args==None):
-    arg_index_offset=0
-    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-      arg_index_offset=1
-      if(len(sys.argv)>=2):
-        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-          arg_index_offset=2
-    effective_args = sys.argv[arg_index_offset+1:]
-  #print("dbg115: effective_args:", str(effective_args))
-  #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
+  effective_args = design_output.get_effective_args(ai_args)
   ob_args = ob_parser.parse_args(effective_args)
   r_obc = 0
   print("dbg111: start testing outline_backends.py")

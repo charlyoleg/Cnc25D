@@ -54,6 +54,7 @@ from __future__ import division # to get float division
 import math
 import sys, argparse
 #
+import design_output # just for get_effective_args()
 from small_geometry import *
 
 ################################################################
@@ -1447,16 +1448,7 @@ def cnc_cut_outline_cli(ai_args=None):
     help='Small shapes for development, that are displayed with Tkinter.')
   cco_parser.add_argument('--test5','--t5', action='store_true', default=False, dest='sw_test5',
     help='Small shapes to development smooth_curve, that are displayed with Tkinter.')
-  # this ensure the possible to use the script with python and freecad
-  effective_args=ai_args
-  if(effective_args==None):
-    arg_index_offset=0
-    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-      arg_index_offset=1
-      if(len(sys.argv)>=2):
-        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-          arg_index_offset=2
-    effective_args = sys.argv[arg_index_offset+1:]
+  effective_args = design_output.get_effective_args(ai_args)
   cco_args = cco_parser.parse_args(effective_args)
   print("dbg111: start testing cnc_cut_outline.py")
   if(cco_args.sw_test1):

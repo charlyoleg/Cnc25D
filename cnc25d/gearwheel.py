@@ -47,8 +47,8 @@ import sys, argparse
 #import re
 #import Tkinter # to display the outline in a small GUI
 #
-#import Part
-#from FreeCAD import Base
+import Part
+from FreeCAD import Base
 # 3rd parties
 #import svgwrite
 #from dxfwrite import DXFEngine
@@ -263,7 +263,8 @@ def gearwheel(
   cnc25d_api.generate_output_file(gw_figure, ai_output_file_basename, ai_gear_profile_height)
 
   # return the gearwheel as FreeCAD Part object
-  r_gw = cnc25d_api.figure_to_freecad_25d_part(gw_figure, ai_gear_profile_height)
+  #r_gw = cnc25d_api.figure_to_freecad_25d_part(gw_figure, ai_gear_profile_height)
+  r_gw = 1 # this is to spare the freecad computation time during debuging
   return(r_gw)
 
 ################################################################
@@ -429,20 +430,7 @@ def gearwheel_cli(ai_args=None):
   # switch for self_test
   gearwheel_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
   help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
-  # this ensure the possible to use the script with python and freecad
-  # You can not use argparse and FreeCAD together, so it's actually useless !
-  # Running this script, FreeCAD will just use the argparse default values
-  effective_args = ai_args
-  if(effective_args==None):
-    arg_index_offset=0
-    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-      arg_index_offset=1
-      if(len(sys.argv)>=2):
-        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-          arg_index_offset=2
-    effective_args = sys.argv[arg_index_offset+1:]
-  #print("dbg115: effective_args:", str(effective_args))
-  #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
+  effective_args = cnc25d_api.get_effective_args(ai_args)
   gw_args = gearwheel_parser.parse_args(effective_args)
   print("dbg111: start making gearwheel")
   if(gw_args.sw_run_self_test):
@@ -460,7 +448,8 @@ def gearwheel_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearwheel.py says hello!\n")
   #my_gw = gearwheel_cli()
-  my_gw = gearwheel_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto2".split())
+  #my_gw = gearwheel_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto2".split())
+  my_gw = gearwheel_cli("--gear_tooth_nb 17".split())
   #Part.show(my_gw)
 
 

@@ -36,6 +36,7 @@ import sys, argparse
 import Tkinter
 #import tkMessageBox
 import matplotlib.pyplot
+import design_output # just for get_effective_args()
 
 ################################################################
 # global variable
@@ -879,20 +880,7 @@ def display_backends_cli(ai_args=None):
     help='Run two_canvas_class_test1() with a static graphic')
   db_parser.add_argument('--test2','--t2', action='store_true', default=False, dest='sw_test2',
     help='Run two_canvas_class_test2() with a dynamic graphic')
-  # this ensure the possible to use the script with python and freecad
-  # You can not use argparse and FreeCAD together, so it's actually useless !
-  # Running this script, FreeCAD will just use the argparse default values
-  effective_args = ai_args
-  if(effective_args==None):
-    arg_index_offset=0
-    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-      arg_index_offset=1
-      if(len(sys.argv)>=2):
-        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-          arg_index_offset=2
-    effective_args = sys.argv[arg_index_offset+1:]
-  #print("dbg115: effective_args:", str(effective_args))
-  #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
+  effective_args = design_output.get_effective_args(ai_args)
   db_args = db_parser.parse_args(effective_args)
   r_dbc = 0
   print("dbg111: start testing display_backends.py")

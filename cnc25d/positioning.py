@@ -42,6 +42,7 @@ import Part
 from FreeCAD import Base
 import math
 import sys, argparse
+import design_output # just for get_effective_args()
 
 ################################################################
 # Positioning API
@@ -150,16 +151,7 @@ def positioning_cli(ai_args=None):
   posi_parser = argparse.ArgumentParser(description='Test the positioning API')
   posi_parser.add_argument('--test1','--t1', action='store_true', default=False, dest='sw_test1',
     help='First test to check place_plank.')
-  # this ensure the possible to use the script with python and freecad
-  effective_args=ai_args
-  if(effective_args==None):
-    arg_index_offset=0
-    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-      arg_index_offset=1
-      if(len(sys.argv)>=2):
-        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-          arg_index_offset=2
-    effective_args = sys.argv[arg_index_offset+1:]
+  effective_args = design_output.get_effective_args(ai_args)
   posi_args = posi_parser.parse_args(effective_args)
   print("dbg111: start testing positioning.py")
   if(posi_args.sw_test1):

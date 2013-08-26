@@ -113,6 +113,27 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height):
     # return
     return(0)
 
+def get_effective_args(ai_default_args):
+  """ Find the args to be processed by the parser.
+      Use sys.argv, but if empty then use ai_default_args
+      let run your script with python and freecad
+  """
+  # this ensure the possible to use the script with python and freecad
+  # You can not use argparse and FreeCAD together, so it's actually useless !
+  # Running this script, FreeCAD will just use the argparse default values
+  arg_index_offset=0
+  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
+    arg_index_offset=1
+    if(len(sys.argv)>=2):
+      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
+        arg_index_offset=2
+  r_effective_args = sys.argv[arg_index_offset+1:]
+  if(len(r_effective_args)==0):
+    r_effective_args = ai_default_args
+  #print("dbg115: r_effective_args:", str(r_effective_args))
+  #FreeCAD.Console.PrintMessage("dbg116: r_effective_args: %s\n"%(str(r_effective_args)))
+  return(r_effective_args)
+
 ################################################################
 # test-functions
 ################################################################

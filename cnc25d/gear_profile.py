@@ -1228,20 +1228,7 @@ def gear_profile_cli(ai_args=None):
   # add switch for self_test
   gear_profile_parser.add_argument('--run_self_test','--rst', action='store_true', default=False, dest='sw_run_self_test',
     help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
-  # this ensure the possible to use the script with python and freecad
-  # You can not use argparse and FreeCAD together, so it's actually useless !
-  # Running this script, FreeCAD will just use the argparse default values
-  effective_args = ai_args
-  if(effective_args==None):
-    arg_index_offset=0
-    if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-      arg_index_offset=1
-      if(len(sys.argv)>=2):
-        if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-          arg_index_offset=2
-    effective_args = sys.argv[arg_index_offset+1:]
-  #print("dbg115: effective_args:", str(effective_args))
-  #FreeCAD.Console.PrintMessage("dbg116: effective_args: %s\n"%(str(effective_args)))
+  effective_args = cnc25d_api.get_effective_args(ai_args)
   gp_args = gear_profile_parser.parse_args(effective_args)
   print("dbg111: start making gear_profile")
   if(gp_args.sw_run_self_test):
@@ -1258,7 +1245,7 @@ def gear_profile_cli(ai_args=None):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gear_profile.py says hello!\n")
-  #my_gp = gear_profile_cli()
-  my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1".split())
+  my_gp = gear_profile_cli()
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1".split())
 
 

@@ -74,6 +74,7 @@ export_xyz_to_dxf = export_2d.export_xyz_to_dxf
 # from design_output
 generate_output_file_add_argument = design_output.generate_output_file_add_argument
 generate_output_file = design_output.generate_output_file
+get_effective_args = design_output.get_effective_args
 
 ################################################################
 # function combinations
