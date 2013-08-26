@@ -54,6 +54,9 @@ import svgwrite
 from dxfwrite import DXFEngine
 import Tkinter
 import display_backend
+import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate
+import export_2d # just for test enhancement
+import os, errno # to create the output directory
 
 
 ################################################################
@@ -384,58 +387,11 @@ def outline_circle_with_tkinter(ai_center, ai_radius):
   r_outline = tuple(circle_polyline_tk)
   return(r_outline)
 
-################################################################
-# ******** outline creation API ***************
-################################################################
-
-def outline_arc_line(ai_segments, ai_backend):
-  """ Generates the arcs and lines outline according to the selected backend
-      Possible backend: freecad, mozman dxfwrite, mozman svgwrite, Tkinter.
-      ai_segments is a list of segments (ie line or arc)
-      a segment starts from the last point of the previous segment.
-      a line is defined by a list of two floats [x-end, y-end]
-      an arc is defined by a list of four floats [x-mid, y-mid, x-end, y-end]
-      The first element of ai_segments is the starting point, i.e. a list of two floats [x-start, y-start]
-      If the last point [x-end, y-end] of the last segment is equal to [x-start, y-start] the outline is closed.
-      ai_segments can be made with lists or tuples or a mix of both.
-      From a programming point of view, ai_segments is a tuple of 2-tulpes and/or 4-tuples.
-      eg: ai_segments = [ [x1,y1], .. [x2,y2], .. [x3,y3,x4,y4], .. ]
-  """
-  r_outline = ''
-  #print("dbg204: len(ai_segments):", len(ai_segments))
-  #print("dbg205: ai_backend:", ai_backend)
-  # general checks on ai_segments
-  if(len(ai_segments)<2):
-    print("ERR402: Error, the segment list must contain at least 2 elements. Currently, len(ai_segments) = {:d}".format(len(ai_segments)))
-    sys.exit(2)
-  if(len(ai_segments[0])!=2):
-    print("ERR403: Error, the first element of the segment list must have 2 elements. Currently, len(ai_segments[0]) = {:d}".format(len(ai_segments[0])))
-    sys.exit(2)
-  for i in range(len(ai_segments)):
-    if((len(ai_segments[i])!=2)and(len(ai_segments[i])!=4)):
-      print("ERR405: Error, the length of the segment {:d} must be 2 or 4. Currently len(ai_segments[i]) = {:d}".format(i, len(ai_segments[i])))
-      sys.exit(2)
-  # check if the outline is closed
-  outline_closed = False
-  if((ai_segments[0][0]==ai_segments[-1][-2])and(ai_segments[0][1]==ai_segments[-1][-1])):
-    #print("dbg207: the outline is closed.")
-    outline_closed = True
-  # select backend
-  if(ai_backend=='freecad'):
-    r_outline = outline_arc_line_with_freecad(ai_segments, outline_closed)
-  elif(ai_backend=='svgwrite'):
-    r_outline = outline_arc_line_with_svgwrite(ai_segments, outline_closed)
-  elif(ai_backend=='dxfwrite'):
-    r_outline = outline_arc_line_with_dxfwrite(ai_segments, outline_closed)
-  elif(ai_backend=='tkinter'):
-    r_outline = outline_arc_line_with_tkinter(ai_segments, outline_closed)
-  return(r_outline)
-
 def outline_circle(ai_center, ai_radius, ai_backend):
   """ Generates a circle according to the selected backend.
       Possible backend: freecad, mozman dxfwrite, mozman svgwrite, Tkinter.
   """
-  r_outline = ''
+  #r_outline = ''
   # check the radius
   if(ai_radius<=0):
     print("ERR409: Error, the radius is negative or null!")
@@ -444,16 +400,176 @@ def outline_circle(ai_center, ai_radius, ai_backend):
   if(ai_backend=='freecad'):
     r_outline = Part.Circle(Base.Vector(ai_center[0], ai_center[1], 0), Base.Vector(0,0,1), ai_radius).toShape()
   elif(ai_backend=='svgwrite'):
-    r_outline = svgwrite.shapes.Circle(center=(ai_center[0], ai_center[1]), r=ai_radius)
-    r_outline.fill('green', opacity=0.25).stroke('black', width=1)
+    svg_circle = svgwrite.shapes.Circle(center=(ai_center[0], ai_center[1]), r=ai_radius)
+    svg_circle.fill('green', opacity=0.25).stroke('black', width=1)
+    r_outline = [svg_circle] # circle wrapped in list to help the integration in the function write_figure_in_svg()
   elif(ai_backend=='dxfwrite'):
-    r_outline = DXFEngine.circle(radius=ai_radius, center=(ai_center[0], ai_center[1]))
+    dxf_circle = DXFEngine.circle(radius=ai_radius, center=(ai_center[0], ai_center[1]))
+    r_outline = [dxf_circle] # circle wrapped in list to help the integration in the function write_figure_in_dxf()
   elif(ai_backend=='tkinter'):
     r_outline = outline_circle_with_tkinter(ai_center, ai_radius)
   return(r_outline)
 
+################################################################
+# ******** outline creation API ***************
+################################################################
+
+### outline level function
+
+def outline_arc_line(ai_segments, ai_backend):
+  """ Generates the arcs and lines outline according to the selected backend
+      Possible backend: freecad, mozman dxfwrite, mozman svgwrite, Tkinter.
+      ai_segments is a list of segments (ie line or arc)
+      If ai_segments is a list/tuple of list/tuple, it's a list of segments (ie line or arc)
+      a segment starts from the last point of the previous segment.
+      a line is defined by a list of two floats [x-end, y-end]
+      an arc is defined by a list of four floats [x-mid, y-mid, x-end, y-end]
+      The first element of ai_segments is the starting point, i.e. a list of two floats [x-start, y-start]
+      If the last point [x-end, y-end] of the last segment is equal to [x-start, y-start] the outline is closed.
+      ai_segments can be made with lists or tuples or a mix of both.
+      From a programming point of view, ai_segments is a tuple of 2-tulpes and/or 4-tuples.
+      eg: ai_segments = [ [x1,y1], .. [x2,y2], .. [x3,y3,x4,y4], .. ]
+      If ai_segments is a list/tuple of three int/float, it's a circle
+  """
+  r_outline = ''
+  #print("dbg204: len(ai_segments):", len(ai_segments))
+  #print("dbg205: ai_backend:", ai_backend)
+  # check is ai_segments is a list or a tuple
+  if(not isinstance(ai_segments, (tuple, list))):
+    print("ERR337: Error, ai_segments must be a list or a tuple")
+    sys.exit(2)
+  # check if the outline is a circle or a general outline
+  if(isinstance(ai_segments[0], (tuple, list))): # general outline
+    # checks on ai_segments for general outline
+    if(len(ai_segments)<2):
+      print("ERR402: Error, the segment list must contain at least 2 elements. Currently, len(ai_segments) = {:d}".format(len(ai_segments)))
+      sys.exit(2)
+    if(len(ai_segments[0])!=2):
+      print("ERR403: Error, the first element of the segment list must have 2 elements. Currently, len(ai_segments[0]) = {:d}".format(len(ai_segments[0])))
+      sys.exit(2)
+    for i in range(len(ai_segments)):
+      if((len(ai_segments[i])!=2)and(len(ai_segments[i])!=4)):
+        print("ERR405: Error, the length of the segment {:d} must be 2 or 4. Currently len(ai_segments[i]) = {:d}".format(i, len(ai_segments[i])))
+        sys.exit(2)
+    # check if the outline is closed
+    outline_closed = False
+    if((ai_segments[0][0]==ai_segments[-1][-2])and(ai_segments[0][1]==ai_segments[-1][-1])):
+      #print("dbg207: the outline is closed.")
+      outline_closed = True
+    # select backend
+    if(ai_backend=='freecad'):
+      r_outline = outline_arc_line_with_freecad(ai_segments, outline_closed)
+    elif(ai_backend=='svgwrite'):
+      r_outline = outline_arc_line_with_svgwrite(ai_segments, outline_closed)
+    elif(ai_backend=='dxfwrite'):
+      r_outline = outline_arc_line_with_dxfwrite(ai_segments, outline_closed)
+    elif(ai_backend=='tkinter'):
+      r_outline = outline_arc_line_with_tkinter(ai_segments, outline_closed)
+  else: # circle outline
+    if(len(ai_segments)!=3):
+      print("ERR658: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_segments)))
+      sys.exit(2)
+    r_outline = outline_circle((ai_segments[0], ai_segments[1]), ai_segments[2], ai_backend)
+  return(r_outline)
+
 # inherited from display_backend
 Two_Canvas = display_backend.Two_Canvas
+
+### figure level functions
+
+def figure_simple_display(ai_figure):
+  """ Display the figure with red lines in the Tkinter Two_Canvas GUI
+      If you want a finer control on the way outlines are displayed (color, width, overlay), you need to work at the outline level (not figure level)
+  """
+  print("Figure simple display with Tkinter")
+  tk_root = Tkinter.Tk()
+  fsd_canvas = Two_Canvas(tk_root)
+  # callback function for display_backend
+  def sub_fsd_canvas_graphics(ai_angle_position):
+    r_canvas_graphics = []
+    for ol in ai_figure:
+      rotated_ol = cnc_outline.outline_rotate(ol, 0, 0, ai_angle_position) # rotation of center (0,0) and angle ai_angle_position
+      r_canvas_graphics.append(('graphic_lines', outline_arc_line(rotated_ol, 'tkinter'), 'red', 1))
+    return(r_canvas_graphics)
+  # end of callback function
+  fsd_canvas.add_canvas_graphic_function(sub_fsd_canvas_graphics)
+  tk_root.mainloop()
+  return(0)
+
+def write_figure_in_svg(ai_figure, ai_filename):
+  """ Generate the SVG file ai_filename from the figure ai_figure (list of format B outline)
+  """
+  print("Generate the SVG file {:s}".format(ai_filename))
+  object_svg = svgwrite.Drawing(filename = ai_filename)
+  for i_ol in ai_figure:
+    svg_outline = outline_arc_line(i_ol, 'svgwrite')
+    for one_line_or_arc in svg_outline:
+      object_svg.add(one_line_or_arc)
+  object_svg.save()
+  return(0)
+
+def write_figure_in_dxf(ai_figure, ai_filename):
+  """ Generate the DXF file ai_filename from the figure ai_figure (list of format B outline)
+  """
+  print("Generate the DXF file {:s}".format(ai_filename))
+  object_dxf = DXFEngine.drawing(ai_filename)
+  #object_dxf.add_layer("my_dxf_layer")
+  for i_ol in ai_figure:
+    dxf_outline = outline_arc_line(i_ol, 'dxfwrite')
+    for one_line_or_arc in dxf_outline:
+      object_dxf.add(one_line_or_arc)
+  object_dxf.save()
+  return(0)
+
+def figure_to_freecad_25d_part(ai_figure, ai_extrude_height):
+  """ the first outline of the figure ai_figure is the outer line of the part
+      the other outlines are holes in the part
+      If one outline is not closed, only wire (not face) are extruded
+      the height of the extrusion is ai_extrude_height
+      It returns a FreeCAD Part object
+      If you want to make more complex fuse and cut combinations, you need to work at the outline level (not figure level)
+  """
+  # extra length to remove skin during 3D cut operation
+  remove_skin_extra = 10.0
+  # check the number of outlines
+  outline_nb = len(ai_figure)
+  if(outline_nb<1):
+    print("ERR876: Error, the figure doesn't contain any outlines!")
+    sys.exit(2)
+  # check if one outline is not closed
+  face_nwire = True
+  for ol in ai_figure:
+    if(isinstance(ol[0], (list,tuple))): # it's a general outline (not a circle)
+      #print("dbg663: outline with {:d} segments".format(len(ol)-1))
+      if((ol[0][0]!=ol[-1][0])or(ol[0][1]!=ol[-1][1])):
+        face_nwire = False
+  # create the FreeCAD part
+  if(face_nwire): # generate a real solid part
+    outer_face = Part.Face(Part.Wire(outline_arc_line(ai_figure[0], 'freecad').Edges))
+    outer_solid = outer_face.extrude(Base.Vector(0,0,ai_extrude_height)) # straight linear extrusion
+    if(outline_nb>2): # holes need to be cut from outer_solid
+      inner_solid = []
+      for i in range(outline_nb-1):
+        inner_face = Part.Face(Part.Wire(outline_arc_line(ai_figure[i+1], 'freecad').Edges))
+        inner_solid.append(inner_face.extrude(Base.Vector(0,0,ai_extrude_height+2*remove_skin_extra))) # straight linear extrusion
+      #inner_hole = Part.makeCompound(inner_solid) # not satisfying result with overlap holes
+      inner_hole = inner_solid[0]
+      for i in range(outline_nb-2):
+        inner_hole = inner_hole.fuse(inner_solid[i+1])
+      inner_hole.translate(Base.Vector(0,0,-remove_skin_extra))
+      r_part = outer_solid.cut(inner_hole)
+    else:
+      r_part = outer_solid
+  else: # generate a simple extrusion of wires
+    wire_part = []
+    for i in range(outline_nb):
+      wire = Part.Wire(outline_arc_line(ai_figure[i], 'freecad').Edges)
+      wire_part.append(inner_face.extrude(Base.Vector(0,0,ai_extrude_height)))
+    r_part = Part.makeCompound(wire_part)
+  # return
+  return(r_part)
+    
+    
 
 ################################################################
 # ******** test API ***********
@@ -529,9 +645,19 @@ def outline_arc_line_test1():
   l_test_face = Part.Face(Part.Wire(r_ol.Edges))
   r_test_solid = l_test_face.extrude(Base.Vector(0,0,1)) # straight linear extrusion
   Part.show(r_test_solid)
+  # create the output directory
+  l_output_dir = "test_output"
+  print("Create the output directory: {:s}".format(l_output_dir))
+  try:
+    os.makedirs(l_output_dir)
+  except OSError as exc:
+    if exc.errno == errno.EEXIST and os.path.isdir(l_output_dir):
+      pass
+    else:
+      raise
   # backend svgwrite
   print("dbg702: test1 backend svgwrite")
-  output_svg_file_name =  "outline_arc_line_test1_00.svg"
+  output_svg_file_name =  "{:s}/outline_arc_line_test1_00.svg".format(l_output_dir)
   object_svg = svgwrite.Drawing(filename = output_svg_file_name)
   #output_file_idx = 0
   for i_ol in l_ols:
@@ -543,11 +669,11 @@ def outline_arc_line_test1():
       object_svg.add(one_line_or_arc)
     #object_svg.save()
   one_circle = outline_circle(l_circle_center, l_circle_radius, 'svgwrite')
-  object_svg.add(one_circle)
+  object_svg.add(one_circle[0])
   object_svg.save()
   # backend dxfwrite
   print("dbg703: test1 backend dxfwrite")
-  output_dxf_file_name =  "outline_arc_line_test1_00.dxf"
+  output_dxf_file_name =  "{:s}/outline_arc_line_test1_00.dxf".format(l_output_dir)
   object_dxf = DXFEngine.drawing(output_dxf_file_name)
   #object_dxf.add_layer(default_dxf_layer_name)
   for i_ol in l_ols:
@@ -555,7 +681,7 @@ def outline_arc_line_test1():
     for one_line_or_arc in dxf_outline:
       object_dxf.add(one_line_or_arc)
   one_circle = outline_circle(l_circle_center, l_circle_radius, 'dxfwrite')
-  object_dxf.add(one_circle)
+  object_dxf.add(one_circle[0])
   object_dxf.save()
   # backend tkinter
   print("dbg704: test1 backend tkinter")
@@ -572,6 +698,46 @@ def outline_arc_line_test1():
   # end of callback function
   my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
   tk_root.mainloop()
+  del (my_canvas, tk_root) # because Tkinter will be used again later in this script
+  ### test the figure-level functions
+  wfl_outer_rectangle_B = [
+    [-60, -40],
+    [ 60, -40],
+    [ 60,  40],
+    [-60,  40],
+    [-60, -40]]
+  
+  wfl_inner_square_B = [
+    [-10, -10],
+    [ 10, -10],
+    [ 10,  10],
+    [-10,  10],
+    [-10, -10]]
+  
+  wfl_inner_circle1 = [30,0, 15]
+  wfl_inner_circle2 = [40,0, 10]
+  
+  wfl_figure = [wfl_outer_rectangle_B, wfl_inner_square_B, wfl_inner_circle1, wfl_inner_circle2]
+  
+  # display the figure
+  figure_simple_display(wfl_figure)
+  
+  wfl_extrude_height = 20.0
+  # create a FreeCAD part
+  wfl_part = figure_to_freecad_25d_part(wfl_figure, wfl_extrude_height)
+  
+  # output file with mozman
+  print("Generate {:s}/obt1_with_mozman.svg".format(l_output_dir))
+  write_figure_in_svg(wfl_figure, "{:s}/obt1_with_mozman.svg".format(l_output_dir))
+  print("Generate {:s}/obt1_with_mozman.dxf".format(l_output_dir))
+  write_figure_in_dxf(wfl_figure, "{:s}/obt1_with_mozman.dxf".format(l_output_dir))
+
+  # wfl_part in 3D BRep
+  print("Generate {:s}/obt1_part.brep".format(l_output_dir))
+  wfl_part.exportBrep("{:s}/obt1_part.brep".format(l_output_dir))
+  # wfl_part in 2D DXF
+  print("Generate {:s}/obt1_part.dxf".format(l_output_dir))
+  export_2d.export_to_dxf(wfl_part, Base.Vector(0,0,1), wfl_extrude_height/2, "{:s}/obt1_part.dxf".format(l_output_dir)) # slice wfl_part in the XY plan at a height of wfl_extrude_height/2
   #
   r_test = 1
   return(r_test)
@@ -615,6 +781,6 @@ def outline_backends_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("outline_backends.py says hello!\n")
   # select your script behavior
-  #outline_backends_cli()
-  outline_backends_cli("--test1".split())
+  outline_backends_cli()
+  #outline_backends_cli("--test1".split())
 

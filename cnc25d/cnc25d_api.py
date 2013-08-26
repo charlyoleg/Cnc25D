@@ -55,8 +55,12 @@ smooth_outline_b_curve = cnc_outline.smooth_outline_b_curve
 
 # from outline_backends
 outline_arc_line = outline_backends.outline_arc_line
-outline_circle = outline_backends.outline_circle
+#outline_circle = outline_backends.outline_circle # included now in outline_arc_line()
 Two_Canvas =  outline_backends.Two_Canvas
+figure_simple_display = outline_backends.figure_simple_display
+write_figure_in_svg = outline_backends.write_figure_in_svg
+write_figure_in_dxf = outline_backends.write_figure_in_dxf
+figure_to_freecad_25d_part =  outline_backends.figure_to_freecad_25d_part
 
 # from positioning
 place_plank = positioning.place_plank

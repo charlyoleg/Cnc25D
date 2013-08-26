@@ -655,7 +655,8 @@ class Two_Canvas():
     #
     self.button_quit = Tkinter.Button(self.frame_button_options)
     self.button_quit["text"] = "Quit",
-    self.button_quit["command"] = self.frame_a.quit
+    #self.button_quit["command"] = self.frame_a.quit
+    self.button_quit["command"] = self.tktop.destroy
     self.button_quit.pack(side=Tkinter.LEFT)
     #
     ## second window with canvas_b
@@ -669,6 +670,7 @@ class Two_Canvas():
   def __init__(self, winParent):
     """ Initiate the class Two_Canvas by creating the windows, initializing the class variables and starting the time simulation
     """
+    self.tktop = winParent # used to destroy the app when quit
     self.frame_a = Tkinter.Frame(winParent)
     winParent.title("cnc25d display backend main")
     #self.frame_a.pack()

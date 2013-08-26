@@ -60,21 +60,44 @@ from small_geometry import *
 # ******** Sub-functions for the API ***********
 ################################################################
 
+def check_outline_format(ai_outline):
+  """ check the input format and return the outline_type with the code:
+      0: format-B circle,  1: format-B general outline (all outline except circle), 2: format-A
+  """
+  r_outline_type = -1
+  # check if it is a format-B circle
+  if(not isinstance(ai_outline, (tuple, list))):
+    print("ERR937: Error, ai_outline must be a list or a tuple")
+    sys.exit(2)
+  # check if the outline is a circle or a general outline
+  if(isinstance(ai_outline[0], (tuple, list))): # general outline
+    # checks on ai_outline for general outline
+    if(len(ai_outline)<2):
+      print("ERR402: Error, the segment list must contain at least 2 elements. Currently, len(ai_outline) = {:d}".format(len(ai_outline)))
+      sys.exit(2)
+    # check the first point
+    len_first_point = len(ai_outline[0])
+    if(len_first_point==2):
+      r_outline_type = 1
+    elif(len_first_point==3):
+      r_outline_type = 2
+    else:
+      print("ERR457: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
+      sys.exit(2)
+  else: # circle outline
+    if(len(ai_outline)!=3):
+      print("ERR658: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_outline)))
+      sys.exit(2)
+    r_outline_type = 0
+  return(r_outline_type)
+
 def reverse_outline(ai_outline):
   """ reverse an outline
       ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
       the output format is the input format
   """
   # check the ai_outline format
-  len_first_point = len(ai_outline[0])
-  outline_type = 0
-  if(len_first_point==2):
-    outline_type = 1
-  elif(len_first_point==3):
-    outline_type = 2
-  else:
-    print("ERR357: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
-    sys.exit(2)
+  outline_type = check_outline_format(ai_outline)
   #print("dbg553: outline_type:", outline_type)
   # check if the outline is closed
   outline_closed = False
@@ -526,14 +549,9 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   r_middle_point=(FX, FY)
   return(r_middle_point)
 
-
-################################################################
-# ******** API function for outline creation ***********
-################################################################
-
-def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient):
+def general_outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient):
   """ For each point of the list, add the offset and multiply by coefficient the coordinates
-      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
+      ai_outline can be list of segments with the format-A or format-B except circle
   """
   # check the parameters
   if((ai_x_coefficient==0)or(ai_y_coefficient==0)):
@@ -545,15 +563,7 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
   else:
     i_outline=ai_outline
   # check the ai_outline format
-  len_first_point = len(i_outline[0])
-  outline_type = 0
-  if(len_first_point==2):
-    outline_type = 1
-  elif(len_first_point==3):
-    outline_type = 2
-  else:
-    print("ERR457: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
-    sys.exit(2)
+  outline_type = check_outline_format(i_outline)
   #print("dbg453: outline_type:", outline_type)
   # new outline construction
   r_outline = []
@@ -606,35 +616,12 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
     r_outline.append(tuple(new_segment))
   return(r_outline)
 
-def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
-  """ For each point of the list, add the x_offset and multiply by x_coefficient to the x coordinate
-      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
-  """
-  r_outline =  outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, 0, 1)
-  #print("dbg702: r_outline", r_outline)
-  return(r_outline)
-
-def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
-  """ For each point of the list, add the y_offset and multiply by y_coefficient to the y coordinate
-      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
-  """
-  r_outline =  outline_shift_xy(ai_outline, 0, 1, ai_y_offset, ai_y_coefficient)
-  return(r_outline)
-
-def outline_rotate(ai_outline, ai_ox, ai_oy, ai_rotation_angle):
+def general_outline_rotate(ai_outline, ai_ox, ai_oy, ai_rotation_angle):
   """ For each point of the list, apply a rotation of angle ai_rotation_angle and rotation center (ai_ox, ai_oy)
-      ai_outline can be list of segments with the input format of cnc_cut_outline.cnc_cut_outline() or with the input format of outline_backends.outline_arc_line()
+      ai_outline can be list of segments with the format-A or with the format-B except circle
   """
   # check the ai_outline format
-  len_first_point = len(ai_outline[0])
-  outline_type = 0
-  if(len_first_point==2):
-    outline_type = 1
-  elif(len_first_point==3):
-    outline_type = 2
-  else:
-    print("ERR457: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
-    sys.exit(2)
+  outline_type = check_outline_format(ai_outline)
   #print("dbg453: outline_type:", outline_type)
   # new outline construction
   r_outline = []
@@ -687,37 +674,91 @@ def outline_rotate(ai_outline, ai_ox, ai_oy, ai_rotation_angle):
     r_outline.append(tuple(new_segment))
   return(r_outline)
 
+################################################################
+# ******** API function for outline creation ***********
+################################################################
+
+def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient):
+  """ For each point of the list, add the offset and multiply by coefficient the coordinates
+      ai_outline can be list of segments with the format-A (input of cnc_cut_outline.cnc_cut_outline()) or format-B (input of outline_backends.outline_arc_line())
+  """
+  outline_type = check_outline_format(ai_outline)
+  if(outline_type==0): # it's a format-B circle
+    if(abs(ai_x_coefficient)!=abs(ai_y_coefficient)):
+      print("WARN358: Warning, circle is scaled with different scale along x and y! {:0.2f} {:0.2f}".format(ai_x_coefficient, ai_y_coefficient))
+    circle_center_x = ai_outline[0]
+    circle_center_y = ai_outline[1]
+    circle_radius = ai_outline[2]
+    r_outline = (ai_x_offset+ai_x_coefficient*circle_center_x, ai_y_offset+ai_y_coefficient*circle_center_y, circle_radius)
+  else: # format-A or format-A general outline
+    r_outline = general_outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient)
+  return(r_outline)
+
+def outline_shift_x(ai_outline, ai_x_offset, ai_x_coefficient):
+  """ For each point of the list, add the x_offset and multiply by x_coefficient to the x coordinate
+      ai_outline can be list of segments with the format-A or with the format-B
+  """
+  r_outline =  outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, 0, 1)
+  #print("dbg702: r_outline", r_outline)
+  return(r_outline)
+
+def outline_shift_y(ai_outline, ai_y_offset, ai_y_coefficient):
+  """ For each point of the list, add the y_offset and multiply by y_coefficient to the y coordinate
+      ai_outline can be list of segments with the format-A or with the format-B
+  """
+  r_outline =  outline_shift_xy(ai_outline, 0, 1, ai_y_offset, ai_y_coefficient)
+  return(r_outline)
+
+def outline_rotate(ai_outline, ai_ox, ai_oy, ai_rotation_angle):
+  """ For each point of the list, apply a rotation of angle ai_rotation_angle and rotation center (ai_ox, ai_oy)
+      ai_outline can be list of segments with the format-A or with the format-B
+  """
+  outline_type = check_outline_format(ai_outline)
+  if(outline_type==0): # it's a format-B circle
+    circle_center_x = ai_outline[0]
+    circle_center_y = ai_outline[1]
+    circle_radius = ai_outline[2]
+    rotated_circle_center = rotate_point((circle_center_x, circle_center_y), ai_ox, ai_oy, ai_rotation_angle)
+    r_outline = (rotated_circle_center[0], rotated_circle_center[1], circle_radius)
+  else: # format-A or format-A general outline
+    r_outline = general_outline_rotate(ai_outline, ai_ox, ai_oy, ai_rotation_angle)
+  return(r_outline)
+
 def outline_close(ai_outline):
   """ close the input outline and return it
       The output outline format is the input outline format.
+      It works with the format-A or the format-B
   """
   # check the ai_outline format
-  len_first_point = len(ai_outline[0])
-  outline_type = 0
-  if(len_first_point==2):
-    outline_type = 1
-  elif(len_first_point==3):
-    outline_type = 2
-  else:
-    print("ERR957: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
-    sys.exit(2)
-  # check if the outline is already closed
-  outline_closed = False
-  if((ai_outline[0][0]==ai_outline[-1][-outline_type-1])and(ai_outline[0][1]==ai_outline[-1][-outline_type])):
-    outline_closed = True
-    print("WARN421: Warning, the outline is already closed!")
-  # construct the output outline
+  outline_type = check_outline_format(ai_outline)
   r_outline = ai_outline
-  if(not outline_closed):
-    if(outline_type==1):
-      r_outline.append([ai_outline[0][0], ai_outline[0][1]])
-    elif(outline_type==2):
-      r_outline.append([ai_outline[0][0], ai_outline[0][1], 0])
-  #print("dbg758: r_outline[-1]:", r_outline[-1])
+  if(outline_type!=0): # general outline (not a circle)
+    # check if the outline is already closed
+    outline_closed = False
+    if((ai_outline[0][0]==ai_outline[-1][-outline_type-1])and(ai_outline[0][1]==ai_outline[-1][-outline_type])):
+      outline_closed = True
+      print("WARN421: Warning, the outline is already closed!")
+    # construct the output outline
+    if(not outline_closed):
+      if(outline_type==1):
+        r_outline.append([ai_outline[0][0], ai_outline[0][1]])
+      elif(outline_type==2):
+        r_outline.append([ai_outline[0][0], ai_outline[0][1], 0])
+    #print("dbg758: r_outline[-1]:", r_outline[-1])
   return(r_outline)
 
 # add this function to the API
-outline_reverse = reverse_outline
+def outline_reverse(ai_outline):
+  """ reverse an outline to make the last point becomes the first point
+      It handles correctly the middle point of arcs.
+      it supports format-A and format-B including circle
+  """
+  # check the ai_outline format
+  outline_type = check_outline_format(ai_outline)
+  r_outline = ai_outline
+  if(outline_type!=0): # general outline (not a circle)
+    r_outline = reverse_outline(ai_outline)
+  return(r_outline)
 
 def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   """

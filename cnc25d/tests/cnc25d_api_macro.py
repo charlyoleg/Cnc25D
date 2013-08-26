@@ -60,8 +60,8 @@ from FreeCAD import Base
 import os, errno # to create the output directory
 import math # to get the pi number
 import Tkinter # to display the outline in a small GUI
-import svgwrite
-from dxfwrite import DXFEngine
+#import svgwrite
+#from dxfwrite import DXFEngine
 
 
 ################################################################
@@ -150,6 +150,10 @@ radian_precision = math.pi/100
 my_curve_for_cnc = cnc25d_api.smooth_outline_b_curve(my_curve, radian_precision, my_router_bit_radius, 'api_example4')
 
 ################################################################
+# ********** Work at outline-level ***********
+################################################################
+
+################################################################
 # Display the outline in a Tkinter GUI
 ################################################################
 
@@ -168,13 +172,15 @@ def sub_canvas_graphics(ai_angle_position):
   r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc_rotated, 'tkinter'), 'green', 2))
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc_closed, 'tkinter'), 'blue', 1))
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc_reverse, 'tkinter'), 'blue', 1))
-  r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_circle((100,100), 40, 'tkinter'), 'orange', 1)) # create a circle
+  #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_circle((100,100), 40, 'tkinter'), 'orange', 1)) # create a circle (obsolete)
+  r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((100, 100, 40), 'tkinter'), 'orange', 1)) # create a circle
   r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(my_curve, 'tkinter'), 'green', 2))
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_curve_for_cnc, 'tkinter'), 'blue', 1))
   return(r_canvas_graphics)
 # end of callback function
 my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
 tk_root.mainloop()
+del (my_canvas, tk_root) # because Tkinter will be used again later in this script
 
 #
 l_output_dir = "test_output"
@@ -194,16 +200,9 @@ except OSError as exc:
 ## write my_outline_for_cnc in a SVG file
 print("Write the outlines in a SVG file with svgwrite")
 output_svg_file_name =  "{:s}/outlines_with_svgwrite.svg".format(l_output_dir)
-print("Generate the file {:s}".format(output_svg_file_name))
-object_svg = svgwrite.Drawing(filename = output_svg_file_name)
-svg_figures = [my_outline_for_cnc, my_outline_for_cnc_rotated]
-for i_ol in svg_figures:
-  svg_outline = cnc25d_api.outline_arc_line(i_ol, 'svgwrite')
-  for one_line_or_arc in svg_outline:
-    object_svg.add(one_line_or_arc)
-one_svg_circle = cnc25d_api.outline_circle((100,100), 40, 'svgwrite') # create a circle
-object_svg.add(one_svg_circle)
-object_svg.save()
+my_circle = (100, 100, 40)
+svg_figures = [my_outline_for_cnc, my_outline_for_cnc_rotated, my_circle] # figure = list of (format B) outlines
+cnc25d_api.write_figure_in_svg(svg_figures, output_svg_file_name)
 
 ################################################################
 # Write the outline in a DXF file
@@ -212,17 +211,8 @@ object_svg.save()
 ## write my_outline_for_cnc in a DXF file
 print("Write the outlines in a DXF file with dxfwrite")
 output_dxf_file_name =  "{:s}/outlines_with_dxfwrite.dxf".format(l_output_dir)
-print("Generate the file {:s}".format(output_dxf_file_name))
-object_dxf = DXFEngine.drawing(output_dxf_file_name)
-#object_dxf.add_layer("my_dxf_layer")
-dxf_figures = [my_outline_for_cnc, my_outline_for_cnc_rotated]
-for i_ol in dxf_figures:
-  dxf_outline = cnc25d_api.outline_arc_line(i_ol, 'dxfwrite')
-  for one_line_or_arc in dxf_outline:
-    object_dxf.add(one_line_or_arc)
-one_dxf_circle = cnc25d_api.outline_circle((100,100), 40, 'dxfwrite') # create a circle
-object_dxf.add(one_dxf_circle)
-object_dxf.save()
+dxf_figures = [my_outline_for_cnc, my_outline_for_cnc_rotated, my_circle] # figure = list of (format B) outlines
+cnc25d_api.write_figure_in_dxf(dxf_figures, output_dxf_file_name)
 
 ################################################################
 # Extrude the outline to make it 3D
@@ -238,7 +228,8 @@ my_part_solid = my_part_face.extrude(Base.Vector(0,0,big_length)) # straight lin
 my_part_face2 = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline_fc(cnc25d_api.outline_shift_y(my_outline, 4*big_length,0.5), 'freecad_short_version').Edges))
 my_part_solid2 = my_part_face2.extrude(Base.Vector(0,0,big_length)) # straight linear extrusion
 # creation of a circle with the cnc25d workflow
-my_part_face3 = Part.Face(Part.Wire(cnc25d_api.outline_circle((100,100),40, 'freecad').Edges))
+#my_part_face3 = Part.Face(Part.Wire(cnc25d_api.outline_circle((100,100),40, 'freecad').Edges))
+my_part_face3 = Part.Face(Part.Wire(cnc25d_api.outline_arc_line((100, 100, 40), 'freecad').Edges))
 my_part_solid3 = my_part_face3.extrude(Base.Vector(0,0,big_length/2)) # straight linear extrusion
 
 
@@ -283,9 +274,9 @@ cnc25d_api.export_to_dxf(my_part_solid, Base.Vector(0,0,1), 1.0, "{:s}/my_part.d
 print("Generate {:s}/my_assembly.stl".format(l_output_dir))
 my_assembly.exportStl("{:s}/my_assembly.stl".format(l_output_dir))
 print("Generate {:s}/my_assembly.brep".format(l_output_dir))
-my_part_solid.exportBrep("{:s}/my_assembly.brep".format(l_output_dir))
+my_assembly.exportBrep("{:s}/my_assembly.brep".format(l_output_dir))
 #print("Generate {:s}/my_assembly.step".format(l_output_dir))
-#my_part_solid.exportStep("{:s}/my_assembly.step".format(l_output_dir))
+#my_assembly.exportStep("{:s}/my_assembly.step".format(l_output_dir))
 
 # my_assembly sliced and projected in 2D DXF
 print("Generate {:s}/my_assembly.dxf".format(l_output_dir))
@@ -293,6 +284,46 @@ xy_slice_list = [ 0.1+20*i for i in range(12) ]
 xz_slice_list = [ 0.1+20*i for i in range(9) ]
 yz_slice_list = [ 0.1+20*i for i in range(9) ]
 cnc25d_api.export_xyz_to_dxf(my_assembly, 3*big_length, 3*big_length, 4*big_length, xy_slice_list, xz_slice_list, yz_slice_list, "{:s}/my_assembly.dxf".format(l_output_dir))
+
+################################################################
+# ********** Work at figure-level ***********
+################################################################
+
+wfl_outer_rectangle_A = [
+  [-60, -40, 10],
+  [ 60, -40,  5],
+  [ 60,  40,  5],
+  [-60,  40,  5],
+  [-60, -40,  0]]
+wfl_outer_rectangle_B = cnc25d_api.cnc_cut_outline(wfl_outer_rectangle_A, "wfl_outer_rectangle_A") # convert from format-A to format-B
+
+wfl_inner_square_A = [
+  [-10, -10, -5],
+  [ 10, -10, -4],
+  [ 10,  10, -3],
+  [-10,  10, -2],
+  [-10, -10,  0]]
+wfl_inner_square_B = cnc25d_api.cnc_cut_outline(wfl_inner_square_A, "wfl_inner_square_B")  # convert from format-A to format-B
+
+wfl_inner_circle1 = [30,0, 15]
+wfl_inner_circle2 = [40,0, 10]
+
+wfl_figure = [wfl_outer_rectangle_B, wfl_inner_square_B, wfl_inner_circle1, wfl_inner_circle2]
+
+# display the figure
+cnc25d_api.figure_simple_display(wfl_figure)
+
+wfl_extrude_height = 20.0
+# create a FreeCAD part
+wfl_part = cnc25d_api.figure_to_freecad_25d_part(wfl_figure, wfl_extrude_height)
+
+# wfl_part in 3D BRep
+print("Generate {:s}/wfl_part.brep".format(l_output_dir))
+wfl_part.exportBrep("{:s}/wfl_part.brep".format(l_output_dir))
+# wfl_part in 2D DXF
+print("Generate {:s}/wfl_part.dxf".format(l_output_dir))
+cnc25d_api.export_to_dxf(wfl_part, Base.Vector(0,0,1), wfl_extrude_height/2, "{:s}/wfl_part.dxf".format(l_output_dir)) # slice wfl_part in the XY plan at a height of wfl_extrude_height/2
+
 
 ################################################################
 # End of the script
