@@ -19,7 +19,7 @@ The function *smooth_outline_c_curve()* use the double-arc solution to approxima
 
 Given two points, A and E, and their tangent directions, you can construct two arcs that are joined in C with a common tangent direction (parallel to the line (AE)) and with the first arc that starts in A with the requested tangent direction and the second arc that ends in E with the requested tangent direction.
 
-.. image:: images/three_equivalent_definitions_of_an_arc.png
+.. image:: images/equivalent_definitions_of_an_arc.png
 .. image:: images/double_arc.png
 .. image:: images/double_arc_construction_of_C.png
 
