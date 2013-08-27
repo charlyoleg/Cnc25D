@@ -204,6 +204,7 @@ def involute_to_circle(ai_center, ai_base_radius, ai_initial_angle, ai_orientati
   # check the parameter
   if(u<0):
     print("ERR099: Error, the parameter of the involute_to_circle must be positive {:0.8f}".format(u))
+    print("dbg887: ai_center {:0.2f} {:0.2f}  ai_base_radius {:0.2f}  ai_initial_angle {:0.2f}  ai_orientation {:d}  ai_parameter {:0.2f}".format(ai_center[0], ai_center[1], ai_base_radius, ai_initial_angle, ai_orientation, ai_parameter))
     sys.exit(2)
   # involute_to_circle of center (0,0), radius 1 and initial_angle = 0 with the parameter u
   px0 = math.cos(u)+u*math.sin(u)

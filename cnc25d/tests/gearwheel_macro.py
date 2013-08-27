@@ -86,7 +86,7 @@ import Part
 ##### from gear_profile
 ### first gear
 # general
-#ai_gear_type                      = gw_gear_type
+#gw_gear_type                      = gw_gear_type
 gw_gear_tooth_nb                  = 18
 gw_gear_module                    = 10.0
 gw_gear_primitive_diameter        = 0
@@ -136,13 +136,13 @@ gw_gear_initial_angle                   = 0.0
 gw_second_gear_position_angle           = 0.0
 gw_second_gear_additional_axis_length   = 0.0
 ### portion
-#ai_portion_tooth_nb     = gw_cut_portion[0]
-#ai_portion_first_end    = gw_cut_portion[1]
-#ai_portion_last_end     = gw_cut_portion[2]
+#gw_portion_tooth_nb     = gw_portion_tooth_nb
+#gw_portion_first_end    = gw_portion_first_end
+#gw_portion_last_end     = gw_portion_last_end
 ### output
 gw_gear_profile_height  = 20.0
 gw_simulation_enable    = False    # gw_simulation_enable
-#ai_output_file_basename = gw_output_file_basename
+#gw_output_file_basename = gw_output_file_basename
 ##### from gearwheel
 ### axle
 gw_axle_type                = 'rectangle'
