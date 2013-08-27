@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # box_wood_frame_test.py
 # test the box_wood_frame_macro.py which is included in bin/cnc25d_example_generator.py

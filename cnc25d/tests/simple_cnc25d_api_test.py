@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # simple_cnc25d_api_test.py
 # test the simple_cnc25d_api_macro.py which is included in bin/cnc25d_example_generator.py

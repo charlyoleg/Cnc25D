@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # cnc25d_api_macro.py
 # test and demonstrate the Cnc25D API

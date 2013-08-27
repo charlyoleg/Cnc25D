@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # gear_profile_test.py
 # test the gear_profile_macro.py which is included in bin/cnc25d_example_generator.py

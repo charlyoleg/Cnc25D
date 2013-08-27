@@ -150,12 +150,12 @@ gw_axle_x_width             = 20.0
 gw_axle_y_width             = 15.0
 gw_axle_router_bit_radius   = 3.0
 ### wheel-hollow = legs
-gw_wheel_hollow_leg_number        = 5
+gw_wheel_hollow_leg_number        = 7
 gw_wheel_hollow_leg_width         = 10.0
 gw_wheel_hollow_leg_angle         = 0.0
 gw_wheel_hollow_internal_diameter = 40.0
 gw_wheel_hollow_external_diameter = 125.0
-gw_wheel_hollow_router_bit_radius = 10.0
+gw_wheel_hollow_router_bit_radius = 5.0
 ### cnc router_bit constraint
 gw_cnc_router_bit_radius          = 1.0
 ### design output : view the gearwheel with tkinter or write files
