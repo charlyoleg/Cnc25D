@@ -1246,7 +1246,8 @@ def gear_profile_cli(ai_args=None):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gear_profile.py says hello!\n")
-  my_gp = gear_profile_cli()
+  #my_gp = gear_profile_cli()
+  my_gp = gear_profile_cli("--gear_tooth_nb 17".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1".split())
 
 
