@@ -83,66 +83,87 @@ import Part
 # choose the values of the parameters by editing this file
 # feature request : create a GUI with PyQt4 to edit those parameter values
 
-# gear parameters
-gw_gear_type = 'ee'
-gw_gear_tooth_nb = 17
-gw_gear_module = 3.0
-gw_gear_primitive_diameter = 0.0
-gw_gear_base_diameter = 16.0
-gw_gear_tooth_half_height = 5.0
-gw_gear_addendum_dedendum_parity = 50.0
+##### from gear_profile
+### first gear
+# general
+#ai_gear_type                      = gw_gear_type
+gw_gear_tooth_nb                  = 18
+gw_gear_module                    = 10.0
+gw_gear_primitive_diameter        = 0
+gw_gear_addendum_dedendum_parity  = 50.0
+# tooth height
+gw_gear_tooth_half_height           = 0 # 10.0
 gw_gear_addendum_height_pourcentage = 100.0
 gw_gear_dedendum_height_pourcentage = 100.0
-gw_gear_hollow_height_pourcentage = 25.0
-gw_gear_router_bit_radius = 2.0
-gw_gear_initial_angle = 0*math.pi
-# gear contact parameters
-gw_second_gear_position_angle = 0*math.pi
-gw_second_gear_additional_axe_length = 0.0
-gw_gear_force_angle = 20*math.pi/180
-# second gear parameters
-gw_second_gear_tooth_nb = 14
-gw_second_gear_primitive_diameter = 0.0
-gw_second_gear_base_diameter = 14.0
-gw_second_gear_tooth_half_height = 5.0
-gw_second_gear_addendum_dedendum_parity = 50.0
-gw_second_gear_addendum_height_pourcentage = 100.0
-gw_second_gear_dedendum_height_pourcentage = 100.0
-gw_second_gear_hollow_height_pourcentage = 25.0
-gw_second_gear_router_bit_radius = 2.0
-# simulation
-gw_simulation_enable = True
-gw_simulation_zoom = 4.0
-# axe parameters
-gw_axe_type = "square"
-gw_axe_size_1 = 30.0
-gw_axe_size_2 = 5.0
-gw_axe_router_bit_radius = 4.0
-# portion parameter
-gw_portion_tooth_nb = 0
-# wheel hollow parameters
-gw_wheel_hollow_internal_diameter = 30.0
-gw_wheel_hollow_external_diameter = 60.0
-gw_wheel_hollow_leg_number = 3
-gw_wheel_hollow_leg_width = 5.0
-gw_wheel_hollow_router_bit_radius = 4.0
-# part split parameter
-gw_part_split = 0
-# center position parameters
-gw_center_position_x = 0.0
-gw_center_position_y = 0.0
-# gearwheel linear extrusion
-gw_gearwheel_height = 1.0
-# cnc router_bit constraint
-gw_cnc_router_bit_radius = 2.0
-# manufacturing technology related
-gw_gear_tooth_resolution = 5
-gw_gear_skin_thickness = 0.0
-# output
+gw_gear_hollow_height_pourcentage   = 25.0
+gw_gear_router_bit_radius           = 3.0
+# positive involute
+gw_gear_base_diameter       = 0
+gw_gear_force_angle         = 0
+gw_gear_tooth_resolution    = 2
+gw_gear_skin_thickness      = 0
+# negative involute (if zero, negative involute = positive involute)
+gw_gear_base_diameter_n     = 0
+gw_gear_force_angle_n       = 0
+gw_gear_tooth_resolution_n  = 0
+gw_gear_skin_thickness_n    = 0
+### second gear
+# general
+gw_second_gear_type                     = 'e'
+gw_second_gear_tooth_nb                 = 25
+gw_second_gear_primitive_diameter       = 0
+gw_second_gear_addendum_dedendum_parity = 0 # 50.0
+# tooth height
+gw_second_gear_tooth_half_height            = 0
+gw_second_gear_addendum_height_pourcentage  = 100.0
+gw_second_gear_dedendum_height_pourcentage  = 100.0
+gw_second_gear_hollow_height_pourcentage    = 25.0
+gw_second_gear_router_bit_radius            = 0
+# positive involute
+gw_second_gear_base_diameter      = 0
+gw_second_gear_tooth_resolution   = 0
+gw_second_gear_skin_thickness     = 0
+# negative involute (if zero, negative involute = positive involute)
+gw_second_gear_base_diameter_n    = 0
+gw_second_gear_tooth_resolution_n = 0
+gw_second_gear_skin_thickness_n   = 0
+### position
+# first gear position
+gw_center_position_x                    = 0.0
+gw_center_position_y                    = 0.0
+gw_gear_initial_angle                   = 0.0
+# second gear position
+gw_second_gear_position_angle           = 0.0
+gw_second_gear_additional_axis_length   = 0.0
+### portion
+#ai_portion_tooth_nb     = gw_cut_portion[0]
+#ai_portion_first_end    = gw_cut_portion[1]
+#ai_portion_last_end     = gw_cut_portion[2]
+### output
+gw_gear_profile_height  = 20.0
+gw_simulation_enable    = False    # gw_simulation_enable
+#ai_output_file_basename = gw_output_file_basename
+##### from gearwheel
+### axle
+gw_axle_type                = 'rectangle'
+gw_axle_x_width             = 20.0
+gw_axle_y_width             = 15.0
+gw_axle_router_bit_radius   = 3.0
+### wheel-hollow = legs
+gw_wheel_hollow_leg_number        = 5
+gw_wheel_hollow_leg_width         = 10.0
+gw_wheel_hollow_leg_angle         = 0.0
+gw_wheel_hollow_internal_diameter = 40.0
+gw_wheel_hollow_external_diameter = 125.0
+gw_wheel_hollow_router_bit_radius = 10.0
+### cnc router_bit constraint
+gw_cnc_router_bit_radius          = 1.0
+### design output : view the gearwheel with tkinter or write files
+gw_tkinter_view = True
 gw_output_file_basename = "" # set a not-empty string if you want to generate the output files
-#gw_output_file_basename = "my_output_dir/" 
-#gw_output_file_basename = "my_output_dir/my_output_basename" 
-#gw_output_file_basename = "my_output_basename" 
+#gw_output_file_basename = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
+#gw_output_file_basename = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
+#gw_output_file_basename = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
 
 
 
@@ -151,50 +172,84 @@ gw_output_file_basename = "" # set a not-empty string if you want to generate th
 ################################################################
 
 my_gw = gearwheel.gearwheel(
-          gw_gear_type,
-          gw_gear_tooth_nb,
-          gw_gear_module,
-          gw_gear_primitive_diameter,
-          gw_gear_base_diameter,
-          gw_gear_tooth_half_height,
-          gw_gear_addendum_dedendum_parity,
-          gw_gear_addendum_height_pourcentage,
-          gw_gear_dedendum_height_pourcentage,
-          gw_gear_hollow_height_pourcentage,
-          gw_gear_router_bit_radius,
-          gw_gear_initial_angle,
-          gw_second_gear_position_angle,
-          gw_second_gear_additional_axe_length,
-          gw_gear_force_angle,
-          gw_second_gear_tooth_nb,
-          gw_second_gear_primitive_diameter,
-          gw_second_gear_base_diameter,
-          gw_second_gear_tooth_half_height,
-          gw_second_gear_addendum_dedendum_parity,
-          gw_second_gear_addendum_height_pourcentage,
-          gw_second_gear_dedendum_height_pourcentage,
-          gw_second_gear_hollow_height_pourcentage,
-          gw_second_gear_router_bit_radius,
-          gw_simulation_enable,
-          gw_simulation_zoom,
-          gw_axe_type,
-          gw_axe_size_1,
-          gw_axe_size_2,
-          gw_axe_router_bit_radius,
-          gw_portion_tooth_nb,
-          gw_wheel_hollow_internal_diameter,
-          gw_wheel_hollow_external_diameter,
-          gw_wheel_hollow_leg_number,
-          gw_wheel_hollow_leg_width,
-          gw_wheel_hollow_router_bit_radius,
-          gw_part_split,
-          gw_center_position_x,
-          gw_center_position_y,
-          gw_gearwheel_height,
-          gw_cnc_router_bit_radius,
-          gw_gear_tooth_resolution,
-          gw_gear_skin_thickness,
-          gw_output_file_basename)
+            ##### from gear_profile
+            ### first gear
+            # general
+            #ai_gear_type                      = gw_gear_type,
+            ai_gear_tooth_nb                  = gw_gear_tooth_nb,
+            ai_gear_module                    = gw_gear_module,
+            ai_gear_primitive_diameter        = gw_gear_primitive_diameter,
+            ai_gear_addendum_dedendum_parity  = gw_gear_addendum_dedendum_parity,
+            # tooth height
+            ai_gear_tooth_half_height           = gw_gear_tooth_half_height,
+            ai_gear_addendum_height_pourcentage = gw_gear_addendum_height_pourcentage,
+            ai_gear_dedendum_height_pourcentage = gw_gear_dedendum_height_pourcentage,
+            ai_gear_hollow_height_pourcentage   = gw_gear_hollow_height_pourcentage,
+            ai_gear_router_bit_radius           = gw_gear_router_bit_radius,
+            # positive involute
+            ai_gear_base_diameter       = gw_gear_base_diameter,
+            ai_gear_force_angle         = gw_gear_force_angle,
+            ai_gear_tooth_resolution    = gw_gear_tooth_resolution,
+            ai_gear_skin_thickness      = gw_gear_skin_thickness,
+            # negative involute (if zero, negative involute = positive involute)
+            ai_gear_base_diameter_n     = gw_gear_base_diameter_n,
+            ai_gear_force_angle_n       = gw_gear_force_angle_n,
+            ai_gear_tooth_resolution_n  = gw_gear_tooth_resolution_n,
+            ai_gear_skin_thickness_n    = gw_gear_skin_thickness_n,
+            ### second gear
+            # general
+            ai_second_gear_type                     = gw_second_gear_type,
+            ai_second_gear_tooth_nb                 = gw_second_gear_tooth_nb,
+            ai_second_gear_primitive_diameter       = gw_second_gear_primitive_diameter,
+            ai_second_gear_addendum_dedendum_parity = gw_second_gear_addendum_dedendum_parity,
+            # tooth height
+            ai_second_gear_tooth_half_height            = gw_second_gear_tooth_half_height,
+            ai_second_gear_addendum_height_pourcentage  = gw_second_gear_addendum_height_pourcentage,
+            ai_second_gear_dedendum_height_pourcentage  = gw_second_gear_dedendum_height_pourcentage,
+            ai_second_gear_hollow_height_pourcentage    = gw_second_gear_hollow_height_pourcentage,
+            ai_second_gear_router_bit_radius            = gw_second_gear_router_bit_radius,
+            # positive involute
+            ai_second_gear_base_diameter      = gw_second_gear_base_diameter,
+            ai_second_gear_tooth_resolution   = gw_second_gear_tooth_resolution,
+            ai_second_gear_skin_thickness     = gw_second_gear_skin_thickness,
+            # negative involute (if zero, negative involute = positive involute)
+            ai_second_gear_base_diameter_n    = gw_second_gear_base_diameter_n,
+            ai_second_gear_tooth_resolution_n = gw_second_gear_tooth_resolution_n,
+            ai_second_gear_skin_thickness_n   = gw_second_gear_skin_thickness_n,
+            ### position
+            # first gear position
+            ai_center_position_x                    = gw_center_position_x,
+            ai_center_position_y                    = gw_center_position_y,
+            ai_gear_initial_angle                   = gw_gear_initial_angle,
+            # second gear position
+            ai_second_gear_position_angle           = gw_second_gear_position_angle,
+            ai_second_gear_additional_axis_length   = gw_second_gear_additional_axis_length,
+            ### portion
+            #ai_portion_tooth_nb     = gw_cut_portion[0],
+            #ai_portion_first_end    = gw_cut_portion[1],
+            #ai_portion_last_end     = gw_cut_portion[2],
+            ### output
+            ai_gear_profile_height  = gw_gear_profile_height,
+            ai_simulation_enable    = gw_simulation_enable,    # gw_simulation_enable,
+            #ai_output_file_basename = gw_output_file_basename,
+            ##### from gearwheel
+            ### axle
+            ai_axle_type                = gw_axle_type,
+            ai_axle_x_width             = gw_axle_x_width,
+            ai_axle_y_width             = gw_axle_y_width,
+            ai_axle_router_bit_radius   = gw_axle_router_bit_radius,
+            ### wheel-hollow = legs
+            ai_wheel_hollow_leg_number        = gw_wheel_hollow_leg_number,
+            ai_wheel_hollow_leg_width         = gw_wheel_hollow_leg_width,
+            ai_wheel_hollow_leg_angle         = gw_wheel_hollow_leg_angle,
+            ai_wheel_hollow_internal_diameter = gw_wheel_hollow_internal_diameter,
+            ai_wheel_hollow_external_diameter = gw_wheel_hollow_external_diameter,
+            ai_wheel_hollow_router_bit_radius = gw_wheel_hollow_router_bit_radius,
+            ### cnc router_bit constraint
+            ai_cnc_router_bit_radius          = gw_cnc_router_bit_radius,
+            ### design output : view the gearwheel with tkinter or write files
+            ai_tkinter_view = gw_tkinter_view,
+            ai_output_file_basename = gw_output_file_basename)
 
-#Part.show(my_gw)
+Part.show(my_gw)
 

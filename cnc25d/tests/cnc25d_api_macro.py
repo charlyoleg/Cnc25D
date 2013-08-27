@@ -66,7 +66,7 @@ cnc25d_api.importing_freecad()
 import Part
 from FreeCAD import Base
 #
-import os, errno # to create the output directory
+#import os, errno # to create the output directory
 import math # to get the pi number
 import Tkinter # to display the outline in a small GUI
 #import svgwrite
@@ -194,13 +194,7 @@ del (my_canvas, tk_root) # because Tkinter will be used again later in this scri
 #
 l_output_dir = "test_output"
 print("Create the output directory: {:s}".format(l_output_dir))
-try:
-  os.makedirs(l_output_dir)
-except OSError as exc:
-  if exc.errno == errno.EEXIST and os.path.isdir(l_output_dir):
-    pass
-  else:
-    raise
+cnc25d_api.mkdir_p(l_output_dir)
 
 ################################################################
 # Write the outline in a SVG file

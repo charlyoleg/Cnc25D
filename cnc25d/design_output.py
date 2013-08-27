@@ -43,7 +43,8 @@ importing_freecad.importing_freecad()
 import math
 import sys, argparse
 #from datetime import datetime
-import os, errno
+#import os, errno
+import os
 import re
 #import Tkinter # to display the outline in a small GUI
 # FreeCAD

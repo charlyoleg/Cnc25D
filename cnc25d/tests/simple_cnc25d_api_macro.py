@@ -85,7 +85,7 @@ print("simple_cnc25d_api_macro.py starts")
 ################################################################
 
 # define the CNC router_bit radius
-my_router_bit_radius = 4.0 # in mm
+#router_bit_radius = 4.0 # in mm
 
 ################################################################
 # Design your XY outline of your 2.5D part design
