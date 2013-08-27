@@ -65,6 +65,8 @@ To create a new design example, follow those steps:
   
   > scr/micropreprocessor.py bin/cnc25d_example_generator_src.py
 
+.. image:: images/design_script_example_generation.png
+
 3. Python package distribution release
 ======================================
 
