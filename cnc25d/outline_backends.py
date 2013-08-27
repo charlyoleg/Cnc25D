@@ -495,6 +495,7 @@ def figure_simple_display(ai_figure):
   # end of callback function
   fsd_canvas.add_canvas_graphic_function(sub_fsd_canvas_graphics)
   tk_root.mainloop()
+  #del (tk_root, fsd_canvas)
   return(0)
 
 def write_figure_in_svg(ai_figure, ai_filename):

@@ -1083,7 +1083,7 @@ def gear_profile(
   gp_figure = [g1_outline_B] # select the outlines to be writen in files
   cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height)
 
-  r_gp = g1_outline_B
+  r_gp = (g1_outline_B, g1_high_parameters)
   return(r_gp)
 
 ################################################################
