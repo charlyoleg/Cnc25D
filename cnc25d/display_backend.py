@@ -36,7 +36,7 @@ import sys, argparse
 import Tkinter
 #import tkMessageBox
 import matplotlib.pyplot
-import design_output # just for get_effective_args()
+import design_help # just for get_effective_args()
 
 ################################################################
 # global variable
@@ -880,7 +880,7 @@ def display_backends_cli(ai_args=None):
     help='Run two_canvas_class_test1() with a static graphic')
   db_parser.add_argument('--test2','--t2', action='store_true', default=False, dest='sw_test2',
     help='Run two_canvas_class_test2() with a dynamic graphic')
-  effective_args = design_output.get_effective_args(ai_args)
+  effective_args = design_help.get_effective_args(ai_args)
   db_args = db_parser.parse_args(effective_args)
   r_dbc = 0
   print("dbg111: start testing display_backends.py")

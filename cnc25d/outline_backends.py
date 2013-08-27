@@ -56,8 +56,7 @@ import Tkinter
 import display_backend
 import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate
 import export_2d # just for test enhancement
-import design_output # just for get_effective_args()
-import os, errno # to create the output directory
+import design_help # just for get_effective_args() and mkdir_p
 
 
 ################################################################
@@ -650,13 +649,7 @@ def outline_arc_line_test1():
   # create the output directory
   l_output_dir = "test_output"
   print("Create the output directory: {:s}".format(l_output_dir))
-  try:
-    os.makedirs(l_output_dir)
-  except OSError as exc:
-    if exc.errno == errno.EEXIST and os.path.isdir(l_output_dir):
-      pass
-    else:
-      raise
+  design_help.mkdir_p(l_output_dir)
   # backend svgwrite
   print("dbg702: test1 backend svgwrite")
   output_svg_file_name =  "{:s}/outline_arc_line_test1_00.svg".format(l_output_dir)
@@ -754,7 +747,7 @@ def outline_backends_cli(ai_args=None):
   ob_parser = argparse.ArgumentParser(description='Test the outline_backends API.')
   ob_parser.add_argument('--test1','--t1', action='store_true', default=False, dest='sw_test1',
     help='Run outline_arc_line_test1()')
-  effective_args = design_output.get_effective_args(ai_args)
+  effective_args = design_help.get_effective_args(ai_args)
   ob_args = ob_parser.parse_args(effective_args)
   r_obc = 0
   print("dbg111: start testing outline_backends.py")

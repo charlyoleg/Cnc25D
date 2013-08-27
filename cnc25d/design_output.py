@@ -55,6 +55,7 @@ from FreeCAD import Base
 # cnc25d
 import outline_backends
 import export_2d
+import design_help
 
 
 ################################################################
@@ -80,20 +81,9 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height):
   if(ai_output_filename!=''):
     # create the output directory if needed
     l_output_dir = os.path.dirname(ai_output_filename)
-    if(l_output_dir==''):
-      l_output_dir='.'
-    #print("dbg448: l_output_dir:", l_output_dir)
+    design_help.mkdir_p(l_output_dir)
     #l_output_basename = os.path.basename(ai_output_filename)
     #print("dbg449: l_output_basename:", l_output_basename)
-    # mkdir -p directory if needed
-    print("dbg450: try to create the output directory: {:s}".format(l_output_dir))
-    try:
-      os.makedirs(l_output_dir)
-    except OSError as exc:
-      if exc.errno == errno.EEXIST and os.path.isdir(l_output_dir):
-        pass
-      else:
-        raise
     # mozman dxfwrite
     if(re.search('\.dxf$', ai_output_filename)):
       #print("Generate {:s} with mozman dxfwrite".format(ai_output_filename))
@@ -112,27 +102,6 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height):
       export_2d.export_to_dxf(freecad_part, Base.Vector(0,0,1), ai_height/2, "{:s}.dxf".format(ai_output_filename))
     # return
     return(0)
-
-def get_effective_args(ai_default_args):
-  """ Find the args to be processed by the parser.
-      Use sys.argv, but if empty then use ai_default_args
-      let run your script with python and freecad
-  """
-  # this ensure the possible to use the script with python and freecad
-  # You can not use argparse and FreeCAD together, so it's actually useless !
-  # Running this script, FreeCAD will just use the argparse default values
-  arg_index_offset=0
-  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-    arg_index_offset=1
-    if(len(sys.argv)>=2):
-      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-        arg_index_offset=2
-  r_effective_args = sys.argv[arg_index_offset+1:]
-  if(len(r_effective_args)==0):
-    r_effective_args = ai_default_args
-  #print("dbg115: r_effective_args:", str(r_effective_args))
-  #FreeCAD.Console.PrintMessage("dbg116: r_effective_args: %s\n"%(str(r_effective_args)))
-  return(r_effective_args)
 
 ################################################################
 # test-functions

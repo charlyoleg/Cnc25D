@@ -225,8 +225,10 @@ my_part_wire = Part.Wire(my_part_edges)
 my_part_face = Part.Face(my_part_wire)
 my_part_solid = my_part_face.extrude(Base.Vector(0,0,big_length)) # straight linear extrusion
 # short version:
-my_part_face2 = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline_fc(cnc25d_api.outline_shift_y(my_outline, 4*big_length,0.5), 'freecad_short_version').Edges))
-my_part_solid2 = my_part_face2.extrude(Base.Vector(0,0,big_length)) # straight linear extrusion
+#my_part_face2 = Part.Face(Part.Wire(cnc25d_api.cnc_cut_outline_fc(cnc25d_api.outline_shift_y(my_outline, 4*big_length,0.5), 'freecad_short_version').Edges))
+#my_part_solid2 = my_part_face2.extrude(Base.Vector(0,0,big_length)) # straight linear extrusion
+my_part2_B = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_shift_y(my_outline, 4*big_length,0.5), 'freecad_short_version')
+my_part_solid2 = cnc25d_api.figure_to_freecad_25d_part([my_part2_B], big_length)
 # creation of a circle with the cnc25d workflow
 #my_part_face3 = Part.Face(Part.Wire(cnc25d_api.outline_circle((100,100),40, 'freecad').Edges))
 my_part_face3 = Part.Face(Part.Wire(cnc25d_api.outline_arc_line((100, 100, 40), 'freecad').Edges))
