@@ -54,7 +54,7 @@ import svgwrite
 from dxfwrite import DXFEngine
 import Tkinter
 import display_backend
-import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate
+import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate and closed()
 import export_2d # just for test enhancement
 import design_help # just for get_effective_args() and mkdir_p
 
@@ -540,11 +540,13 @@ def figure_to_freecad_25d_part(ai_figure, ai_extrude_height):
     sys.exit(2)
   # check if one outline is not closed
   face_nwire = True
-  for ol in ai_figure:
+  for oli in range(len(ai_figure)):
+    ol = ai_figure[oli]
     if(isinstance(ol[0], (list,tuple))): # it's a general outline (not a circle)
       #print("dbg663: outline with {:d} segments".format(len(ol)-1))
-      if((ol[0][0]!=ol[-1][0])or(ol[0][1]!=ol[-1][1])):
+      if((ol[0][0]!=ol[-1][-2])or(ol[0][1]!=ol[-1][-1])):
         face_nwire = False
+        print("WARN504: Warning, the outline {:d} is not closed! Only wire can be extruded.".format(oli+1))
   # create the FreeCAD part
   if(face_nwire): # generate a real solid part
     outer_face = Part.Face(Part.Wire(outline_arc_line(ai_figure[0], 'freecad').Edges))

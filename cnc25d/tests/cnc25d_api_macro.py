@@ -29,20 +29,29 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 """
 
 # List of the functions of the Cnc25D API:
-#   cnc25d_api.importing_freecad()
-#   cnc25d_api.outline_shift_x(outline, x-offset, x-coefficient)
-#   cnc25d_api.outline_shift_y(outline, y-offset, y-coefficient)
-#   cnc25d_api.outline_shift_xy(outline, x-offset, x-coefficient, y-offset, y-coefficient)
-#   cnc25d_api.outline_rotate(outline, center-x, center-y, rotation_angle)
-#   cnc25d_api.outline_close(outline)
-#   cnc25d_api.outline_reverse(outline)
-#   cnc25d_api.cnc_cut_outline(outline, mark_string)
-#   cnc25d_api.outline_arc_line(outline, backend)
-#   cnc25d_api.outline_circle((center-x, center-y), radius, backend)
+#   cnc25d_api.importing_freecad() => 0
+#   cnc25d_api.outline_shift_x(outline-AB, x-offset, x-coefficient) => outline-AB
+#   cnc25d_api.outline_shift_y(outline-AB, y-offset, y-coefficient) => outline-AB
+#   cnc25d_api.outline_shift_xy(outline-AB, x-offset, x-coefficient, y-offset, y-coefficient) => outline-AB
+#   cnc25d_api.outline_rotate(outline-AB, center-x, center-y, rotation_angle) => outline-AB
+#   cnc25d_api.outline_close(outline-AB) => outline-AB
+#   cnc25d_api.outline_reverse(outline-AB) => outline-AB
+#   cnc25d_api.cnc_cut_outline(outline-A, error_mark_string) => outline-B
+#   cnc25d_api.smooth_outline_c_curve(outline-C, precision, router_bit_radius, error_mark_string) => outline-B
+#   cnc25d_api.smooth_outline_b_curve(outline-B, precision, router_bit_radius, error_mark_string) => outline-B
+#   cnc25d_api.outline_arc_line(outline-B, backend) => Tkinter or svgwrite or dxfwrite or FreeCAD stuff
 #   cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor
-#   cnc25d_api.place_plank(freecad_part_object, x-size, y-size, z-size, flip, orientation, x-position, y-position, z-position)
-#   cnc25d_api.export_to_dxf(freecad_part_object, direction_vector, depth, filename)
-#   cnc25d_api.export_xyz_to_dxf(freecad_part_object, x-size, y-size, z-size, x-depth-list, y-depth-list, z-depth-list, filename)
+#   cnc25d_api.figure_simple_display(figure) => 0
+#   cnc25d_api.write_figure_in_svg(figure, filename) => 0
+#   cnc25d_api.write_figure_in_dxf(figure, filename) => 0
+#   cnc25d_api.figure_to_freecad_25d_part(figure, extrusion_height) => freecad_part_object
+#   cnc25d_api.place_plank(freecad_part_object, x-size, y-size, z-size, flip, orientation, x-position, y-position, z-position) => freecad_part_object
+#   cnc25d_api.export_to_dxf(freecad_part_object, direction_vector, depth, filename) => 0
+#   cnc25d_api.export_xyz_to_dxf(freecad_part_object, x-size, y-size, z-size, x-depth-list, y-depth-list, z-depth-list, filename) => 0
+#   cnc25d_api.mkdir_p(directory) => 0
+#   cnc25d_api.get_effective_args(default_args) => [args]
+#   cnc25d_api.generate_output_file_add_argument(argparse_parser) => argparse_parser
+#   cnc25d_api.generate_output_file(figure, filename, extrusion_height) => 0
 
 
 ################################################################

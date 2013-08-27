@@ -796,10 +796,10 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   segment_nb = point_nb-1
   # check of the outline size
   if(segment_nb<1):
-    print("ERR202: Error in {:s}, the number of segments must be bigger than 1. Currently: {:s}".format(ai_error_msg_id, segment_nb))
+    print("ERR202: Error in {:s}, the number of segments must be bigger than 1. Currently: {:d}".format(ai_error_msg_id, segment_nb))
     sys.exit(2)
-  if((segment_nb<3)and(outline_closed)):
-    print("ERR203: Error in {:s}, the number of segments must be bigger than 3 with a closed outline. Currently: {:s}".format(ai_error_msg_id, point_nb))
+  if((segment_nb<2)and(outline_closed)):
+    print("ERR203: Error in {:s}, the number of segments must be bigger than 2 with a closed outline. Currently: {:d}".format(ai_error_msg_id, point_nb))
     sys.exit(2)
   # check the start point
   if(len(ai_segment_list[0])!=3):
