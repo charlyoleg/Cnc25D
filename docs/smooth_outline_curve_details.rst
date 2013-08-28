@@ -1,6 +1,6 @@
-====================
-Smooth Outline Curve
-====================
+============================
+Smooth Outline Curve Details
+============================
 
 1. Curve approximation
 ======================

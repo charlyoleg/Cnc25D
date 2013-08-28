@@ -1,17 +1,17 @@
-=================
-Plank Positioning
-=================
+=========================
+Plank Positioning Details
+=========================
 
-1. Plank definition
-===================
+Plank definition
+================
 
 .. image:: images/plank_with_cuts.png
 
 We call plank a 3D shape with a rectangular cuboid as construction base. The rectangular cuboid is defined by the three values: length, width and height with the relations: length > width > height.
 With addition ad-hoc conventions, any shape can be considered as a plank.
 
-2. Plank reference frame
-========================
+Plank reference frame
+=====================
 
 .. image:: images/plank_reference_frame.png
 
@@ -24,8 +24,8 @@ We choose the reference frame such as:
 - the main part of the plank has positive coordinates (x,y,z) in this reference frame
 - (O,x,y,z) is orthonormal direct.
 
-3. Plank flip possibilities
-===========================
+Plank flip possibilities
+========================
 
 According to the plank reference frame definition, there are four possibilities to place the plank within this reference frame.
 
@@ -37,8 +37,8 @@ According to the plank reference frame definition, there are four possibilities 
     
 Notice that z-flip is equivalent to the combination of x-flip and y-flip.    
 
-4. Plank orientation possibilities
-==================================
+Plank orientation possibilities
+===============================
 
 We focus only on cuboid construction. Namely each plank of the construction is parallel to one of the 3 axis X, Y and Z of a given orthogonal reference frame.
 
@@ -51,8 +51,8 @@ Considering a simple plank (just a rectangular cuboid wihtout cut), the position
 .. image:: images/orientation_possibility_5.png
 .. image:: images/orientation_possibility_6.png
 
-5. Plank position in a cuboid construction    
-==========================================    
+Plank position in a cuboid construction    
+=======================================    
 
 The position of a plank (or assimilated) in a cuboid construction can be defined by three operations:
 

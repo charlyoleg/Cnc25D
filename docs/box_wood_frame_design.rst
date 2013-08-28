@@ -2,8 +2,8 @@
 Box Wood Frame Design
 =====================
 
-1. Box wood frame presentation
-==============================
+Box wood frame presentation
+===========================
 
 *Box wood frame* is the name of this piece of furniture:
 
@@ -23,8 +23,8 @@ This *pile-up* functionality has several goals:
 
 The *Box wood frame* design uses complex and precise recessed fittings to assemble the planks. So the cuts of the planks must be done with a CNC_ or with a manual `wood router`_ and templates. Then the planks can be glued together.
 
-2. Box wood frame creation
-==========================
+Box wood frame creation
+=======================
 
 After installing FreeCAD_ and the Python package Cnc25D_ as described at the paragraph :ref:`cnc25d_installation`, run the executable *cnc25d_example_generator.py* in the directory where you want to create the *Box wood frame*::
 
@@ -44,97 +44,97 @@ Your *Box wood frame* has been generated with the default parameters. You may wa
 
 Now you get the *Box wood frame* design files according to your parameters.
 
-3. Box wood frame parameters
-============================
+Box wood frame parameters
+=========================
 
-3.1. bwf_box_width
-------------------
+bwf_box_width
+-------------
 bwf_box_width default value : 400.0
 
 .. image:: images/bwf_parameter_box_width.png
 
-3.2. bwf_box_depth
-------------------
+bwf_box_depth
+-------------
 bwf_box_depth default value : 400.0
 
 .. image:: images/bwf_parameter_box_depth.png
 
 **recommendation:** Keep bwf_box_depth = bwf_box_width to get more pile up possibilities.
 
-3.3. bwf_box_height
--------------------
+bwf_box_height
+--------------
 bwf_box_height default value : 400.0
 
 .. image:: images/bwf_parameter_box_height.png
 
-3.4. bwf_fitting_height
------------------------
+bwf_fitting_height
+------------------
 bwf_fitting_height default value : 30.0
 
 .. image:: images/bwf_parameter_fitting_height.png
 
-3.5. bwf_h_plank_width
-----------------------
+bwf_h_plank_width
+-----------------
 bwf_h_plank_width default value : 50.0
 
 .. image:: images/bwf_parameter_h_plank_width.png
 
-3.6. bwf_v_plank_width
-----------------------
+bwf_v_plank_width
+-----------------
 bwf_v_plank_width default value : 30.0
 
 .. image:: images/bwf_parameter_v_plank_width.png
 
-3.7. bwf_plank_height
----------------------
+bwf_plank_height
+----------------
 bwf_plank_height default value : 20.0
 
 .. image:: images/bwf_parameter_plank_height.png
 
-3.8. bwf_d_plank_width
-----------------------
+bwf_d_plank_width
+-----------------
 bwf_d_plank_width default value : 30.0
 
 .. image:: images/bwf_parameter_d_plank_width.png
 
-3.9. bwf_d_plank_height
------------------------
+bwf_d_plank_height
+------------------
 bwf_d_plank_height default value : 10.0
 
 .. image:: images/bwf_parameter_d_plank_height.png
 
-3.10. bwf_crenel_depth
-----------------------
+bwf_crenel_depth
+----------------
 bwf_crenel_depth default value : 5.0
 
 .. image:: images/bwf_parameter_crenel_depth.png
 
-3.11. bwf_wall_diagonal_size
-----------------------------
+bwf_wall_diagonal_size
+----------------------
 bwf_wall_diagonal_size default value : 50.0
 
 .. image:: images/bwf_parameter_wall_diagonal_size.png
 
-3.12. bwf_tobo_diagonal_size
-----------------------------
+bwf_tobo_diagonal_size
+----------------------
 bwf_tobo_diagonal_size default value : 100.0
 
 .. image:: images/bwf_parameter_tobo_diagonal_size.png
 
-3.13. bwf_diagonal_lining_top_height
-------------------------------------
+bwf_diagonal_lining_top_height
+------------------------------
 bwf_diagonal_lining_top_height default value : 20.0
 
 .. image:: images/bwf_parameter_diagonal_lining_top_height.png
 
-3.14. bwf_diagonal_lining_bottom_height
----------------------------------------
+bwf_diagonal_lining_bottom_height
+---------------------------------
 bwf_diagonal_lining_bottom_height default value : 20.0
 
 .. image:: images/bwf_parameter_diagonal_lining_bottom_height.png
 
-3.15. bwf_module_width
-----------------------
+bwf_module_width
+----------------
 bwf_module_width default value : 1
 
 bwf_module_width = 1
@@ -153,30 +153,30 @@ bwf_module_width = 5
 
 .. image:: images/bwf_parameter_module_width_5.png
 
-3.16. bwf_router_bit_radius
----------------------------
+bwf_router_bit_radius
+---------------------
 bwf_router_bit_radius default value : 2.0
 
 .. image:: images/bwf_parameter_router_bit_radius.png
 
-3.17. bwf_cutting_extra
------------------------
+bwf_cutting_extra
+-----------------
 bwf_cutting_extra default value : 2.0
 
 .. image:: images/bwf_parameter_cutting_extra.png
 
 **Note:** The parameter *bwf_cutting_extra* doesn't affect the cnc cutting plan. It just help to see the junction between the plans.
 
-3.18. bwf_slab_thickness
-------------------------
+bwf_slab_thickness
+------------------
 bwf_slab_thickness default value : 5.0
 
 The slabs are the skin of your *box wood frame*. Set the slab thickness to the available plywood thickness of your supplier. Try to keep this relation::
 
   bwf_plank_height > bwf_d_plank_height + bwf_slab_thickness
 
-3.19. bwf_output_file_basename
-------------------------------
+bwf_output_file_basename
+------------------------
 bwf_output_file_basename default value : ""
 
 Set the parameter *bwf_output_file_basename* to a not-empty string if you want to generate the output files. The *box_wood_frame_example.py* generates many files. These files can be generated in a directory or be identified by a common basename. The generated text file *text_report.txt* described all generated files.
@@ -188,13 +188,13 @@ Output file base name example::
   bwf_output_file_basename = "my_output_basename" 
 
 
-4. Box wood frame conception
-============================
+Box wood frame conception
+=========================
 
 The notes relative to process of conception of the *Box wood frame* are available in the chapter :doc:`box_wood_frame_conception`.
 
-5. Box wood frame manufacturing
-===============================
+Box wood frame manufacturing
+============================
 As you can see in the design files, the outline of the planks are quiet complex. Those many recessed fittings enable a solid assembly. To cut the planks precisely according to design files you have two methods:
 
 - Use a 3-axis CNC_

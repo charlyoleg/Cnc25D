@@ -10,15 +10,19 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   :numbered:
 
    cnc25d_presentation
-   cnc25d_api
-   cnc_cut_outline
-   smooth_outline_curve
-   place_plank
+   cnc25d_api_overview
+   cnc25d_api_outline_creation
+   cnc_cut_outline_details
+   smooth_outline_curve_details
+   cnc25d_api_outline_utilization
+   cnc25d_api_working_with_freecad
+   place_plank_details
    cnc25d_internals
    box_wood_frame_design
-   box_wood_frame_conception
+   box_wood_frame_conception_details
 
 Indices and tables
 ==================

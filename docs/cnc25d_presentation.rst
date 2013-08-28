@@ -13,11 +13,11 @@ The Python package cnc25d proposes an API and design examples related to those t
 
 .. image:: images/part_25d.png
 
-1. Cnc25D Python package content
-================================
+Cnc25D Python package content
+=============================
 
-1.1. Generic functions
-----------------------
+Generic functions
+-----------------
 
 In the Cnc25D Python package, you find functions that help you design parts to be made by a 3-axis CNC, to assemble those parts and to create DXF 2D plans of your design. In particular you get those functions:
 
@@ -30,8 +30,8 @@ DXF_ is 2D and is the most common design exchange file format. Usually, your CNC
 
 You can also output your design in the 3D STL_ format and use MeshLab_ to view and inspect your parts and design.
 
-1.2. Design examples
---------------------
+Design examples
+---------------
 
 The Cnc25D Python package comes also with some design examples, which are probably for most of the users the most useful things.
 
@@ -47,13 +47,13 @@ Currently, you can use those following design examples:
 
 .. _cnc25d_installation :
 
-2. Cnc25D Installation
-======================
+Cnc25D Installation
+===================
 
 The installation instructions are written for the Ubuntu_ systems.
 
-2.1. Install Cnc25D on your system
-----------------------------------
+Install Cnc25D on your system
+-----------------------------
 This is the preferred method for most people.
 
 * First, install FreeCAD_ (version 0.13 or newer), `Python 2`_ and Tkinter_ (which is automatically installed with Python on Ubuntu).
@@ -69,8 +69,8 @@ This is the preferred method for most people.
   > python box_wood_frame_example.py
 
 
-2.2. Install Cnc25D in a virtual environment
---------------------------------------------
+Install Cnc25D in a virtual environment
+---------------------------------------
 This method has currently some issues because of PyQt4.
 
 * First, install FreeCAD_ on your system (not in a *virtual environment*). You need the version 0.13 or newer.
@@ -101,8 +101,8 @@ This method has currently some issues because of PyQt4.
   > freecad -P env_for_cnc25d/lib/python2.7/site-packages box_wood_frame_example.py
   > deactivate
 
-2.3. Work directly with the Cnc25D sources
-------------------------------------------
+Work directly with the Cnc25D sources
+-------------------------------------
 Instead of installing the Cnc25D package, you clone the `Cnc25D GitHub repository`_ and work directly with it. This is the preferred method for the programmers::
 
   > cd directory/where/I/want/to/work
@@ -113,11 +113,11 @@ Example of usage::
   > cd Cnc25D/cnc25d
   > python box_wood_frame.py
 
-3. Cnc25D Usage
-===============
+Cnc25D Usage
+============
 
-3.1. Use a design example
--------------------------
+Use a design example
+--------------------
 
 After installing Cnc25D, you get the executable **cnc25d_example_generator.py**. When you run this script, it asks you for each design example if you want to generate the script example. Answer 'y' or 'yes' if you want to get the script example. **cnc25d_example_generator.py** can generates the following Python_ script examples:
 
@@ -136,20 +136,20 @@ These scripts are the design examples. Edit one of these scripts, modify the par
 
 This documentation contains one chapter per design examples that explains in particulary the parameter list.
 
-3.2. Use a design example within FreeCAD
-----------------------------------------
+Use a design example within FreeCAD
+-----------------------------------
 In the upper method, we have modified the design example script and then run it to get all the final design files. Even if we can iterate this method, this can be tedious as the generation of all the files requires time. So, probably we want to change a parameter value and just check the 3D result of the assembly. For this purpose, we use FreeCAD_ directly with one of those three methods:
 
-3.2.1. Script as FreeCAD argument
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Script as FreeCAD argument
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 Launch FreeCAD_ as following::
 
   > freecad box_wood_frame_example.py
 
 The design appear in the main windows. Rotate and zoom on your design to inspect it and make sure it is as you want it.
 
-3.2.2. Script as FreeCAD macro
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Script as FreeCAD macro
+^^^^^^^^^^^^^^^^^^^^^^^
 Launch FreeCAD_ and run the design example script from the macro menu::
 
   FreeCAD Top Menu Macro > Macros ...
@@ -158,8 +158,8 @@ Launch FreeCAD_ and run the design example script from the macro menu::
     in the field *Macro name*, select your *design example script*.
     click on *Execute*
 
-3.2.3. Script run from FreeCAD
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Script run from FreeCAD
+^^^^^^^^^^^^^^^^^^^^^^^
 Launch FreeCAD_ and run the design example script from the Python_ console::
 
   Launch FreeCAD from the directory where is located your *design example script*.
@@ -170,8 +170,8 @@ Launch FreeCAD_ and run the design example script from the Python_ console::
   Within the FreeCAD Python console, type:
   > execfile("box_wood_frame_example.py")
 
-3.3. Make your design script
-----------------------------
+Make your design script
+-----------------------
 If you are interested in the Cnc25D API and want to create your own design with, create a Python_ script with the following snippet::
 
   # import the FreeCAD library
@@ -201,27 +201,27 @@ If you are interested in the Cnc25D API and want to create your own design with,
   
 Further documentation at :doc:`cnc25d_api` . Also look at the script example **cnc25d_api_example.py** that you can generate with the executable **cnc25d_example_generator.py**.
 
-4. Links
-========
+Links
+=====
 
-4.1. Underlying technologies
-----------------------------
+Underlying technologies
+-----------------------
 Cnc25D rely on those open-source technologies:
 
 - OpenCASCADE_, the technology used by FreeCAD_. Cnc25D doesn't use directly OpenCASCADE.
 - FreeCAD_, the new open-source CAD tool.
 - Python_, the popular programming language.
 
-4.2. Source
------------
+Source
+------
 The source code is available at https://github.com/charlyoleg/Cnc25D. Feel free to clone and hack it!
 
-4.3. Python package
--------------------
+Python package
+--------------
 The Cnc25D package is available on PyPI_.
 
-4.4. Documentation
-------------------
+Documentation
+-------------
 The `Cnc25D release documentation`_ is associated to the latest Cnc25D Python package release.
 The `Cnc25D daily built documentation`_ provides you the latest documentation updates.
 
@@ -232,22 +232,22 @@ If you have Sphinx_ installed on your system and you have downloaded the `Cnc25D
 
 With your browser open the local directory ``file:///.../Cnc25D/docs/_build/html``.
 
-5. License
-==========
+License
+=======
 
 (C\) Copyright 2013 charlyoleg
 
 The Cnc25D Python package is under `GNU Lesser General Public License`_ version 3 or any latter (LGPL_ v3+).
 
-6. Feedback and contact
-=======================
+Feedback and contact
+====================
 
 If you find bugs, will suggest fix or want new features report it in the `GitHub issue tracker`_ or clone the `Cnc25D GitHub repository`_.
 
 For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 
-7. Releases
-===========
+Releases
+========
 
 Release 0.1.4
 -------------

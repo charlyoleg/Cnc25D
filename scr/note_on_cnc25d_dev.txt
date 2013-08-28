@@ -63,6 +63,8 @@ cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_macro.py
 -- epicyclic
 -- gearlever
 -- split_gearwheel
+- bone-axle
+-- gear art
 - clock
 - fan
 - lock

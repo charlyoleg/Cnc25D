@@ -1,9 +1,9 @@
-===============
-CNC Cut Outline
-===============
+=======================
+CNC Cut Outline Details
+=======================
 
-1. Introduction to the automated cutting technology
-===================================================
+Introduction to the automated cutting technology
+================================================
     
 Computer numerical control (a.k.a. CNC) lets cut material directly from computer design file (dxf, stl, g-code ...). This ensures precision, reproducibility, shape-complexity and automation.
 
@@ -20,8 +20,8 @@ Cutting technology:
   - electrical discharge machining
 
 
-2. 2D path constraints
-======================
+2D path constraints
+===================
 
 .. image:: images/2d_path.png
 
@@ -35,15 +35,15 @@ So inner corner can not be cut with router_bit. They must be replaced by inner c
 
 .. image:: images/possible_2d_shape_with_a_router_bit_of_radius_r.png
 
-2.1. Coplanar fitting
----------------------
+Coplanar fitting
+----------------
 
 If you want a perfect fitting between two coplanar shapes, then outer corners and outer curves must be rounded to get a minimum curve radius bigger than the router_bit radius. For a perfect fitting, two coplanar shapes must be complementary.
 
 .. image:: images/coplanar_fitting.png
 
-2.2. Incoplanar fitting
------------------------
+Incoplanar fitting
+------------------
 
 .. image:: images/not_coplanar_shape.png
 
@@ -53,8 +53,8 @@ For fitting not coplanar shapes, we need to enlarge inner corners.
 
 .. image:: images/not_coplanar_fitting.png
 
-3. Coplanar fitting details
-===========================
+Coplanar fitting details
+========================
 
 For fitting two coplanar shapes, the inner and outer corners must be smoothed.
 
@@ -127,27 +127,30 @@ Other method with the law of cosines c²=a²+b²-2*a*b*cos(C)
   Knowing Gx,Gy,Ax,Ay,Hx,Hy,a we want to calculate: Ix, Iy
   With E,I and F, we define the arc than can be build with a router_bit of radius r.
   
-4. Incoplanar fitting details
-=============================
+Incoplanar fitting details
+==========================
 
 For fitting two not-coplanar shapes, the inner corners must be enlarged.
 
 This section details the calculation related to *enlarged line-line corner*. To get the calculation related to *enlarged line-arc corner* and *enlarged arc-arc corner*, check the *SVG* file *docs/enlarge_corner_arc_arc.svg*.
 
-4.1.1. Case of an inner obtuse angle
-------------------------------------
+Angle types
+-----------
+
+Case of an inner obtuse angle
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. image:: images/not_coplanar_fitting_with_obtuse_angle.png
 
-4.1.2. Border case of an inner right angle
-------------------------------------------
+Border case of an inner right angle
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. image:: images/not_coplanar_fitting_with_right_angle.png
 
-4.1.3. Case of an inner acute angle
------------------------------------
+Case of an inner acute angle
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. image:: images/not_coplanar_fitting_with_acute_angle.png
       
-4.2. Calculation
-----------------
+Calculation
+-----------
   
 .. image:: images/not_coplanar_fitting_with_obtuse_angle.png
 

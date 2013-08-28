@@ -2,8 +2,8 @@
 Cnc25D Internals
 ================
 
-1. File layout
-==============
+File layout
+===========
 
 ::
 
@@ -46,8 +46,8 @@ Cnc25D Internals
 
 .. image:: images/cnc25d_file_dependency.png
 
-2. Design example generation
-============================
+Design example generation
+=========================
 The binary script *cnc25d_example_generator.py* just writes example scripts. These example scripts are actually the files *cnc25d/tests/cnc25d_api_macro.py* and *cnc25d/tests/box_wood_frame_macro.py*. To check these example scripts, you must run their wrapper *scripts cnc25d/tests/cnc25d_api_test.py* and *cnc25d/tests/box_wood_frame_test.py*.
 
 Because of the Python package workflow, the example scripts can not be copied after the installation and must be embedded in the binary script *cnc25d_example_generator.py* before the creation of the Python package distribution. This is the purpose of the script *scr/micropreprocessor.py*. The file *bin/cnc25d_example_generator_src.py* contains the skeleton of the script *bin/cnc25d_example_generator.py*. The following command include the example scripts to generate the final script *bin/cnc25d_example_generator.py*::
@@ -67,11 +67,11 @@ To create a new design example, follow those steps:
 
 .. image:: images/design_script_example_generation.png
 
-3. Python package distribution release
-======================================
+Python package distribution release
+===================================
 
-4. Documentation process
-========================
+Documentation process
+=====================
 
 *SVG* files are edited with Inkscape_ and are use as draft documents for pictures and texts. If you want to modify one of the *PNG* of the documentation, you can find the vectorial source in one of the *SVG* files. After modifying the *SVG*, save it and export the picture as *PNG* in the directory *docs/images/*.
 
@@ -90,8 +90,8 @@ The sources of the Sphinx_ documentation are only the *reStructuredText* files (
 .. _Inkscape : http://inkscape.org/
 .. _Sphinx : http://sphinx-doc.org/
 
-5. Design example recommendations
-=================================
+Design example recommendations
+==============================
 
 
 
