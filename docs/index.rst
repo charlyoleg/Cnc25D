@@ -9,8 +9,8 @@ Welcome to Cnc25D's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
    :numbered:
+   :maxdepth: 2
 
    cnc25d_presentation
    cnc25d_api_overview
@@ -23,6 +23,8 @@ Contents:
    cnc25d_internals
    box_wood_frame_design
    box_wood_frame_conception_details
+   gear_profile_function
+   gearwheel_design
 
 Indices and tables
 ==================

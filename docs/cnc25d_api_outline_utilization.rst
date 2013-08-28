@@ -2,18 +2,66 @@
 Cnc25D API Outline Utilization
 ==============================
 
-After getting a *Cnc25D format B outline* from the cnc_cut_outline() function, you probably want to use this outline in CAD_ tools. The function *cnc25d_api.outline_arc_line()* lets you transform the *Cnc25D format B outline* into one of this four formats: *freecad*, *svgwrite*, *dxfwrite*, *tkinter*.
+Transformations at the figure-level
+===================================
+
+The description of a 2.5D part can require several outlines. Typically one outline is the outer shape of the part, the other outlines are holes in this part. In the Cnc25D API, a list of outlines is called a *figure*. After creating such a list, you can directly display this *figure*, write it in a file or extrude it in 3D with FreeCAD.
+
+Display a figure in a GUI
+=========================
+
+::
+
+  cnc25d_api.figure_simple_display(graphic_figure, overlay_figure)
+  return 0
+
+*graphic_figure* is a list of format-B outlines to be displayed in *red*. *overlay_figure* is optional and could be used to display an other figure in *orange* when the overlay is active. A common practice it to set *graphic_figure* with the outlines returned by *cnc_cut_outline()* and to set *overlay_figure* with outlines returned by *ideal_outline()*. So you can see your created format-A outlines and the final format-B outlines.
+Notice that you can also directly use format-A or format-C without converting them in format-B with *ideal_outline()*, but you will get a *warning* message.
+
+If you want more control on the figure display like new *colors*, *width* or *animations*, then you should use *outline_arc_line()* and *Two_Canvas* directly.
+
+Write a figure in a SVF file
+============================
+
+::
+
+  cnc25d_api.write_figure_in_svg(figure, filename)
+  return 0
+
+Write a figure in a DXF file
+============================
+
+::
+
+  cnc25d_api.write_figure_in_dxf(figure, filename)
+  return 0
+
+
+Extrude a figure using FreeCAD
+==============================
+
+::
+
+  cnc25d_api.figure_to_freecad_25d_part(figure, extrusion_height)
+  return FreeCAD Part Object
+
+To create a 3D part from a *figure*, the function *figure_to_freecad_25d_part()* makes the assumption that the first outline is the *outer line* and the remaining outlines are holes.
+
+
+
+
+Detailed transformations at the outline-level
+=============================================
+
+After getting a *Cnc25D format B outline* from the cnc_cut_outline() function, you probably want to use this outline in CAD_ tools. The function *cnc25d_api.outline_arc_line()* lets you transform the *Cnc25D format-B outline* into one of this four formats: *freecad*, *svgwrite*, *dxfwrite*, *tkinter*.
 
 .. _CAD : https://en.wikipedia.org/wiki/Comparison_of_CAD_editors_for_AEC
 
 ::
 
-  cnc25d_api.outline_arc_line(outline_B, backend)
-  cnc25d_api.outline_circle((center-x, center-y), radius, backend)
-
-  with backend=['freecad', 'svgwrite', 'dxfwrite', 'tkinter']
-
-
+  cnc25d_api.outline_arc_line(outline-B, backend) => Tkinter or svgwrite or dxfwrite or FreeCAD stuff
+    with backend=['freecad', 'svgwrite', 'dxfwrite', 'tkinter']
+  
 freecad
 -------
 
@@ -25,9 +73,6 @@ freecad
 
 Notice that *FreeCAD* conserve the *arc* geometrical entity during its complete workflow. So after extruding the outline, slicing the part and then projecting it again in a DXF file, you still get the *arcs* you have designed in your original outline.
 
-The combination *outline_arc_line(cnc_cut_outline(), 'freecad')* is often used. So the *Cnc25D API* proposes this combination with the function *cnc25d_api.cnc_cut_outline_fc()*.
-
-With this methodolgy you can create and extrude any outline made out of lines and arcs. But creating a *circle* outline is not directly possible. You need to create two consecutive arcs, which is not very convenient. If you want to create a circle (to extrude it into a cylinder), you can use the function *cnc25d_api.outline_circle((center-x, center-y), radius, 'freecad')*.
 
 svgwrite
 --------
@@ -40,8 +85,6 @@ A *Cnc25D format B outline* is a 2D vectorial shape that can be transposed in a 
   svg_outline = cnc25d_api.outline_arc_line(my_outline_B, 'svgwrite')
   for one_line_or_arc in svg_outline:
     object_svg.add(one_line_or_arc)
-  #one_svg_circle = cnc25d_api.outline_circle((100,100), 40, 'svgwrite') # create a circle
-  #object_svg.add(one_svg_circle)
   object_svg.save()
 
 *Cnc25D* relies on the *Python package* svgwrite_ from **mozman**. Use Inkscape_ to review the generated *SVG* file.
@@ -63,8 +106,6 @@ A *Cnc25D format B outline* is a 2D vectorial shape that can be transposed in a 
   dxf_outline = cnc25d_api.outline_arc_line(my_outline_B, 'dxfwrite')
   for one_line_or_arc in dxf_outline:
     object_dxf.add(one_line_or_arc)
-  #one_dxf_circle = cnc25d_api.outline_circle((100,100), 40, 'dxfwrite') # create a circle
-  #object_dxf.add(one_dxf_circle)
   object_dxf.save()
 
 *Cnc25D* relies on the *Python package* dxfwrite_ from **mozman**. Use LibreCAD_ to review the generated *DXF* file.
@@ -79,6 +120,12 @@ tkinter
 
 During the early phase of the design, you just need to view the outline (that still might be under-construction) without using the powerful *FreeCAD* or dumping files. This is the purpose of the *Tkinter GUI*. Check the design example *cnc25d_api_example.py* generated by the binary *cnc25d_example_generator.py* or check the file *cnc25d/tests/cnc25d_api_macro.py* to see how to implement this small *graphic user interface*.
 
+::
+
+  cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor
+
+
 .. _DXF : http://en.wikipedia.org/wiki/AutoCAD_DXF
 .. _SVG : http://www.w3.org/Graphics/SVG/
+
 

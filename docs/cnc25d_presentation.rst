@@ -44,6 +44,7 @@ Designing with Python_ let you work in a similar way as software development. Yo
 Currently, you can use those following design examples:
 
 - The piece of furniture **box_wood_frame** to pile-up.
+- Parametric **gearwheel**, **gearring** and **gearbar**
 
 .. _cnc25d_installation :
 
@@ -199,7 +200,7 @@ If you are interested in the Cnc25D API and want to create your own design with,
   yz_slice_list = [ 0.1+2*i for i in range(9) ]
   cnc25d_api.export_xyz_to_dxf(my_part_solid, 40, 40, 20, xy_slice_list, xz_slice_list, yz_slice_list, "my_part_scanned.dxf")
   
-Further documentation at :doc:`cnc25d_api` . Also look at the script example **cnc25d_api_example.py** that you can generate with the executable **cnc25d_example_generator.py**.
+Further documentation at :doc:`cnc25d_api_overview` . Also look at the script example **cnc25d_api_example.py** that you can generate with the executable **cnc25d_example_generator.py**.
 
 Links
 =====

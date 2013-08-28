@@ -1,0 +1,2045 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="100%"
+   version="1.1"
+   width="100%"
+   id="svg2"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="gear_profile_examples.svg">
+  <metadata
+     id="metadata484">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1050"
+     inkscape:window-height="779"
+     id="namedview482"
+     showgrid="false"
+     inkscape:zoom="0.89702957"
+     inkscape:cx="372.04724"
+     inkscape:cy="851.2875"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <defs
+     id="defs4" />
+  <polyline
+     points="9.49799738743,0.182193242251 9.10811058083,0.448045458227 8.69674798373,0.679281131088"
+     id="polyline6"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="8.69674798373,0.679281131088 8.35102239728,0.831573429867 7.99089568364,0.945713149118"
+     id="polyline8"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.99089568364,0.945713149118 7.80658879823,0.987035108235 7.61999448505,1.01634542396"
+     id="polyline10"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.61999448505,1.01634542396 7.52544763677,1.02189522582 7.43097647259,1.01517912891"
+     id="polyline12"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="237.23637"
+     x2="236.04356"
+     y1="173.53844"
+     y2="173.37553"
+     id="line14"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="7.27761479752,0.994227700479 7.20556031595,1.01221759244 7.16578176583,1.074932435"
+     id="polyline16"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="235.1738"
+     x2="234.43042"
+     y1="174.00308"
+     y2="177.97903"
+     id="line18"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="7.07020288246,1.5862343005 7.08464006156,1.65908381928 7.14533016608,1.70188797492"
+     id="polyline20"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="235.01465"
+     x2="236.18581"
+     y1="178.87831"
+     y2="179.15726"
+     id="line22"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="7.29590419805,1.73775197678 7.38642206917,1.76561632367 7.4725795599,1.80494562079"
+     id="polyline24"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.4725795599,1.80494562079 7.63598546781,1.89968231683 7.79291930679,2.00479322255"
+     id="polyline26"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.79291930679,2.00479322255 8.08749544396,2.2413181151 8.35486062856,2.50821694135"
+     id="polyline28"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="8.35486062856,2.50821694135 8.65491286683,2.87243909473 8.92243458913,3.26118226289"
+     id="polyline30"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="248.8362"
+     x2="247.81244"
+     y1="191.00356"
+     y2="193.6456"
+     id="line32"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="8.79080300833,3.60096254046 8.33120749111,3.70801898934 7.86409133335,3.77503852275"
+     id="polyline34"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.86409133335,3.77503852275 7.48669750124,3.79215637522 7.10965731934,3.76849571962"
+     id="polyline36"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.10965731934,3.76849571962 6.92286905364,3.74044797258 6.73828693115,3.70037338744"
+     id="polyline38"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="6.73828693115,3.70037338744 6.64811980108,3.67139416255 6.56245419805,3.63100466793"
+     id="polyline40"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="230.48143"
+     x2="229.42805"
+     y1="193.87917"
+     y2="193.29652"
+     id="line42"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="6.42701722389,3.55606741572 6.35332972228,3.54681340941 6.29358211475,3.59092358874"
+     id="polyline44"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="228.39023"
+     x2="226.26054"
+     y1="193.5676"
+     y2="197.00653"
+     id="line46"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="6.01975392248,4.03317130409 6.00689990951,4.10631676791 6.04802910207,4.16815424882"
+     id="polyline48"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="226.48045"
+     x2="227.47176"
+     y1="198.05612"
+     y2="198.73915"
+     id="line50"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="6.17547963357,4.25599004879 6.24981927155,4.31467160504 6.31595135819,4.38246875791"
+     id="polyline52"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="6.31595135819,4.38246875791 6.43409998751,4.52983711851 6.54246599549,4.68454116057"
+     id="polyline54"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="6.54246599549,4.68454116057 6.73170741658,5.01150722905 6.88460304962,5.35696641736"
+     id="polyline56"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="6.88460304962,5.35696641736 7.03282121163,5.80498483121 7.14184755865,6.2641170326"
+     id="polyline58"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="234.98772"
+     x2="233.0784"
+     y1="214.3544"
+     y2="216.44846"
+     id="line60"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="6.89636197144,6.53340189396 6.4291286649,6.46720400911 5.96934557197,6.3609560437"
+     id="polyline62"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="5.96934557197,6.3609560437 5.61125262243,6.24058758904 5.26822033809,6.08232206124"
+     id="polyline64"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="5.26822033809,6.08232206124 5.10417748242,5.9886926117 4.94653638906,5.88464542047"
+     id="polyline66"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="4.94653638906,5.88464542047 4.87292654775,5.82505097373 4.80763612024,5.75644290646"
+     id="polyline68"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="216.83327"
+     x2="216.06158"
+     y1="210.40681"
+     y2="209.48297"
+     id="line70"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="4.70841536086,5.63764052163 4.64304674461,5.60239242187 4.57139932513,5.62194061383"
+     id="polyline72"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="214.99599"
+     x2="211.76755"
+     y1="209.36087"
+     y2="211.79843"
+     id="line74"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="4.15630383865,5.93540617448 4.1178946393,5.99896888314 4.13390819454,6.07148819488"
+     id="polyline76"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="211.59332"
+     x2="212.2709"
+     y1="212.85658"
+     y2="213.85149"
+     id="line78"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="4.22102232506,6.19943308145 4.26914374986,6.28100657772 4.30631892766,6.36811520517"
+     id="polyline80"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="4.30631892766,6.36811520517 4.36325365131,6.54821231664 4.40841639845,6.73161585692"
+     id="polyline82"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="4.40841639845,6.73161585692 4.4667650009,7.104864522 4.48454167993,7.48222789472"
+     id="polyline84"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="4.48454167993,7.48222789472 4.46090808159,7.9535351997 4.39671444104,8.42104808638"
+     id="polyline86"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="213.63733"
+     x2="211.10048"
+     y1="231.12694"
+     y2="232.38994"
+     id="line88"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="4.07052903625,8.58346911885 3.65876038747,8.35295729143 3.26840661381,8.08779120368"
+     id="polyline90"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="3.26840661381,8.08779120368 2.97797698394,7.84619286867 2.71528100797,7.57469710517"
+     id="polyline92"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="2.71528100797,7.57469710517 2.59613845897,7.42813112911 2.48672869793,7.27416348152"
+     id="polyline94"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="2.48672869793,7.27416348152 2.43961756233,7.19200237319 2.40352014436,7.10444163293"
+     id="polyline96"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="198.13524"
+     x2="197.74942"
+     y1="220.88887"
+     y2="219.74873"
+     id="line98"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="2.3539159131,6.95781903584 2.30569457606,6.90133729383 2.23182372566,6.89368340678"
+     id="polyline100"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="196.79984"
+     x2="192.90875"
+     y1="219.24997"
+     y2="220.3569"
+     id="line102"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="1.73152189054,7.0360315518 1.67274488001,7.08142700927 1.66148007856,7.15483401694"
+     id="polyline104"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="192.36403"
+     x2="192.63628"
+     y1="221.28073"
+     y2="222.4532"
+     id="line106"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="1.69649256205,7.30560832422 1.71189670861,7.39905680782 1.71509426381,7.49371240703"
+     id="polyline108"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="1.71509426381,7.49371240703 1.70312573189,7.68221515651 1.67898573892,7.86954853062"
+     id="polyline110"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="1.67898573892,7.86954853062 1.59856122066,8.23867049183 1.47881810666,8.59697303444"
+     id="polyline112"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="1.47881810666,8.59697303444 1.28652459639,9.02791656741 1.05778067512,9.44066993345"
+     id="polyline114"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="187.6687"
+     x2="184.84683"
+     y1="239.05553"
+     y2="239.31699"
+     id="line116"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="0.694948599126,9.47429127659 0.394256245813,9.1105974062 0.126051231588,8.7223253456"
+     id="polyline118"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="0.126051231588,8.7223253456 -0.0574909477788,8.39212632413 -0.204372068177,8.0440673322"
+     id="polyline120"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-0.204372068177,8.0440673322 -0.262523449055,7.86435937684 -0.308925483303,7.68126545686"
+     id="polyline122"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-0.308925483303,7.68126545686 -0.32317529327,7.58763399988 -0.325204545378,7.49294614979"
+     id="polyline124"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="176.91249"
+     x2="176.96471"
+     y1="223.90991"
+     y2="222.70741"
+     id="line126"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-0.318492922214,7.33830553465 -0.343054421275,7.26821832262 -0.409172034931,7.23439605642"
+     id="polyline128"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="176.25948"
+     x2="172.23116"
+     y1="221.89944"
+     y2="221.52621"
+     id="line130"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-0.92711168358,7.18640188004 -0.998318344326,7.20749917826 -1.03534012861,7.27187985871"
+     id="polyline132"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="171.38945"
+     x2="171.21974"
+     y1="222.19092"
+     y2="223.38249"
+     id="line134"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-1.05715792205,7.42512068103 -1.07655146908,7.51782341644 -1.10776338403,7.60724222422"
+     id="polyline136"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-1.10776338403,7.60724222422 -1.18701875497,7.77869227086 -1.27720124823,7.94465506858"
+     id="polyline138"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-1.27720124823,7.94465506858 -1.48553711037,8.2597983597 -1.72662804633,8.55064932839"
+     id="polyline140"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-1.72662804633,8.55064932839 -2.06161116443,8.88302777728 -2.42401223233,9.18527699346"
+     id="polyline142"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="160.58904"
+     x2="157.86317"
+     y1="237.06963"
+     y2="236.29416"
+     id="line144"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-2.77448849715,9.08555789857 -2.92349438649,8.63780085771 -3.03332806793,8.17886111753"
+     id="polyline146"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-3.03332806793,8.17886111753 -3.08519440843,7.80465661714 -3.09642356405,7.42704169231"
+     id="polyline148"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-3.09642356405,7.42704169231 -3.0857301106,7.23846231281 -3.0628575662,7.05096996889"
+     id="polyline150"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-3.0628575662,7.05096996889 -3.04232153474,6.95851361037 -3.01000855924,6.86948676928"
+     id="polyline152"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="156.03142"
+     x2="156.51454"
+     y1="219.06178"
+     y2="217.9595"
+     id="line154"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-2.94788752355,6.72771320806 -2.94547201809,6.65348619236 -2.9949068449,6.59806343147"
+     id="polyline156"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="156.14885"
+     x2="152.52747"
+     y1="216.95125"
+     y2="215.14836"
+     id="line158"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-3.46053368753,6.36620881316 -3.53455314439,6.36015864509 -3.59233191439,6.40681803068"
+     id="polyline160"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="151.5024"
+     x2="150.91359"
+     y1="215.46416"
+     y2="216.51401"
+     id="line162"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-3.66803337086,6.54182934585 -3.7196054055,6.62126631497 -3.78101144852,6.69337182585"
+     id="polyline164"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-3.78101144852,6.69337182585 -3.91684978148,6.82461389082 -4.06089512959,6.94679191668"
+     id="polyline166"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-4.06089512959,6.94679191668 -4.369005423,7.16539468997 -4.69888351408,7.34951304976"
+     id="polyline168"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-4.69888351408,7.34951304976 -5.13131491371,7.53843686328 -5.57842885589,7.68936149812"
+     id="polyline170"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="136.05548"
+     x2="133.79388"
+     y1="225.43727"
+     y2="223.72974"
+     id="line172"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-5.86921554791,7.46976958153 -5.84641090225,6.99842143968 -5.78303960363,6.5307963749"
+     id="polyline174"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-5.78303960363,6.5307963749 -5.69622526857,6.16312478691 -5.57028589972,5.80695291721"
+     id="polyline176"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-5.57028589972,5.80695291721 -5.49219182208,5.63497080373 -5.4031337629,5.46840191585"
+     id="polyline178"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-5.4031337629,5.46840191585 -5.35058539486,5.38960739931 -5.28829423815,5.31826513543"
+     id="polyline180"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="138.31198"
+     x2="139.16092"
+     y1="206.9995"
+     y2="206.1459"
+     id="line182"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-5.17915358003,5.20850593317 -5.15008729744,5.14016388358 -5.17616289011,5.07062577896"
+     id="polyline184"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="139.18413"
+     x2="136.45862"
+     y1="205.07387"
+     y2="202.0847"
+     id="line186"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-5.5265914415,4.68622396968 -5.59342695666,4.65384344405 -5.66415936933,4.67647992621"
+     id="polyline188"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="135.3887"
+     x2="134.46042"
+     y1="202.00894"
+     y2="202.77515"
+     id="line190"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-5.78352058766,4.77502770799 -5.86030602086,4.83047050796 -5.94361296559,4.87552447315"
+     id="polyline192"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-5.94361296559,4.87552447315 -6.11768854098,4.94883358833 -6.29614262151,5.01072602293"
+     id="polyline194"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-6.29614262151,5.01072602293 -6.66241534376,5.10326476253 -7.03652872585,5.1557843087"
+     id="polyline196"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.03652872585,5.1557843087 -7.5080061503,5.17573827896 -7.97944775133,5.15495512424"
+     id="polyline198"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="117.38154"
+     x2="115.88961"
+     y1="205.72955"
+     y2="203.32048"
+     id="line200"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-8.17127251649,4.84514749109 -7.97973722958,4.41386642662 -7.75171959593,4.00071139344"
+     id="polyline202"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.75171959593,4.00071139344 -7.53794934231,3.68922880315 -7.29185025861,3.4026029732"
+     id="polyline204"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.29185025861,3.4026029732 -7.15690259471,3.27044526316 -7.01368680512,3.14729588261"
+     id="polyline206"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.01368680512,3.14729588261 -6.93622304878,3.09280484413 -6.85236647674,3.04878232553"
+     id="polyline208"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="126.14738"
+     x2="127.24727"
+     y1="189.35184"
+     y2="188.86256"
+     id="line210"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-6.71094624684,2.98586107068 -6.65915474964,2.93263395969 -6.65834945491,2.8583720177"
+     id="polyline212"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="127.65629"
+     x2="126.19497"
+     y1="187.87128"
+     y2="184.09953"
+     id="line214"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-6.8462523974,2.37333861183 -6.89687746419,2.31900089805 -6.97101071526,2.31455729443"
+     id="polyline216"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="125.22462"
+     x2="124.08214"
+     y1="183.64249"
+     y2="184.02182"
+     id="line218"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-7.11791130151,2.36333211882 -7.20953983503,2.38729289229 -7.30349661696,2.39921052413"
+     id="polyline220"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.30349661696,2.39921052413 -7.49229956374,2.4046858873 -7.68106116426,2.39793381439"
+     id="polyline222"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.68106116426,2.39793381439 -8.05602915462,2.35191065075 -8.42385174244,2.26573832756"
+     id="polyline224"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-8.42385174244,2.26573832756 -8.87069955299,2.11402756032 -9.3027980123,1.92434349624"
+     id="polyline226"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="107.08911"
+     x2="106.56836"
+     y1="180.60815"
+     y2="177.82289"
+     id="line228"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-9.36975385312,1.56616138409 -9.03535582681,1.23319429457 -8.67348690303,0.9303081696"
+     id="polyline230"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-8.67348690303,0.9303081696 -8.36163158816,0.717082026805 -8.02860983454,0.538712643191"
+     id="polyline232"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-8.02860983454,0.538712643191 -7.85503401416,0.464227967628 -7.67700258013,0.401130100653"
+     id="polyline234"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.67700258013,0.401130100653 -7.58508534503,0.378301856934 -7.49098865238,0.367544568669"
+     id="polyline236"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="121.18051"
+     x2="122.38293"
+     y1="168.50238"
+     y2="168.44341"
+     id="line238"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-7.33638843638,0.359959125366 -7.26886645326,0.329035569257 -7.24128903063,0.260079276668"
+     id="polyline240"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="123.12246"
+     x2="123.12246"
+     y1="167.6667"
+     y2="163.62193"
+     id="line242"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-7.24128903063,-0.260079276668 -7.26886645326,-0.329035569257 -7.33638843638,-0.359959125366"
+     id="polyline244"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="122.38293"
+     x2="121.18051"
+     y1="162.84523"
+     y2="162.78619"
+     id="line246"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-7.49098865238,-0.367544568669 -7.58508534503,-0.378301856934 -7.67700258013,-0.401130100653"
+     id="polyline248"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.67700258013,-0.401130100653 -7.85503401416,-0.464227967628 -8.02860983454,-0.538712643191"
+     id="polyline250"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-8.02860983454,-0.538712643191 -8.36163158816,-0.717082026805 -8.67348690303,-0.9303081696"
+     id="polyline252"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-8.67348690303,-0.9303081696 -9.03535582681,-1.23319429457 -9.36975385312,-1.56616138409"
+     id="polyline254"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="106.56836"
+     x2="107.08911"
+     y1="153.46574"
+     y2="150.68053"
+     id="line256"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-9.3027980123,-1.92434349624 -8.87069955299,-2.11402756032 -8.42385174244,-2.26573832756"
+     id="polyline258"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-8.42385174244,-2.26573832756 -8.05602915462,-2.35191065075 -7.68106116426,-2.39793381439"
+     id="polyline260"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.68106116426,-2.39793381439 -7.49229956374,-2.4046858873 -7.30349661696,-2.39921052413"
+     id="polyline262"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.30349661696,-2.39921052413 -7.20953983503,-2.38729289229 -7.11791130151,-2.36333211882"
+     id="polyline264"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="124.08214"
+     x2="125.22462"
+     y1="147.26688"
+     y2="147.64616"
+     id="line266"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-6.97101071526,-2.31455729443 -6.89687746419,-2.31900089805 -6.8462523974,-2.37333861183"
+     id="polyline268"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="126.19497"
+     x2="127.65629"
+     y1="147.1891"
+     y2="143.41747"
+     id="line270"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-6.65834945491,-2.8583720177 -6.65915474964,-2.93263395969 -6.71094624684,-2.98586107068"
+     id="polyline272"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="127.24727"
+     x2="126.14738"
+     y1="142.42606"
+     y2="141.9368"
+     id="line274"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-6.85236647674,-3.04878232553 -6.93622304878,-3.09280484413 -7.01368680512,-3.14729588261"
+     id="polyline276"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.01368680512,-3.14729588261 -7.15690259471,-3.27044526316 -7.29185025861,-3.4026029732"
+     id="polyline278"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.29185025861,-3.4026029732 -7.53794934231,-3.68922880315 -7.75171959593,-4.00071139344"
+     id="polyline280"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.75171959593,-4.00071139344 -7.97973722958,-4.41386642662 -8.17127251649,-4.84514749109"
+     id="polyline282"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="115.88961"
+     x2="117.38154"
+     y1="127.96816"
+     y2="125.55908"
+     id="line284"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-7.97944775133,-5.15495512424 -7.5080061503,-5.17573827896 -7.03652872585,-5.1557843087"
+     id="polyline286"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-7.03652872585,-5.1557843087 -6.66241534376,-5.10326476253 -6.29614262151,-5.01072602293"
+     id="polyline288"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-6.29614262151,-5.01072602293 -6.11768854098,-4.94883358833 -5.94361296559,-4.87552447315"
+     id="polyline290"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-5.94361296559,-4.87552447315 -5.86030602086,-4.83047050796 -5.78352058766,-4.77502770799"
+     id="polyline292"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="134.46042"
+     x2="135.3887"
+     y1="128.51343"
+     y2="129.27969"
+     id="line294"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-5.66415936933,-4.67647992621 -5.59342695666,-4.65384344405 -5.5265914415,-4.68622396968"
+     id="polyline296"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="136.45862"
+     x2="139.18413"
+     y1="129.20393"
+     y2="126.21482"
+     id="line298"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-5.17616289011,-5.07062577896 -5.15008729744,-5.14016388358 -5.17915358003,-5.20850593317"
+     id="polyline300"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="139.16092"
+     x2="138.31198"
+     y1="125.14266"
+     y2="124.28913"
+     id="line302"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-5.28829423815,-5.31826513543 -5.35058539486,-5.38960739931 -5.4031337629,-5.46840191585"
+     id="polyline304"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-5.4031337629,-5.46840191585 -5.49219182208,-5.63497080373 -5.57028589972,-5.80695291721"
+     id="polyline306"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-5.57028589972,-5.80695291721 -5.69622526857,-6.16312478691 -5.78303960363,-6.5307963749"
+     id="polyline308"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-5.78303960363,-6.5307963749 -5.84641090225,-6.99842143968 -5.86921554791,-7.46976958153"
+     id="polyline310"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="133.79388"
+     x2="136.05548"
+     y1="107.5589"
+     y2="105.85136"
+     id="line312"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-5.57842885589,-7.68936149812 -5.13131491371,-7.53843686328 -4.69888351408,-7.34951304976"
+     id="polyline314"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-4.69888351408,-7.34951304976 -4.369005423,-7.16539468997 -4.06089512959,-6.94679191668"
+     id="polyline316"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-4.06089512959,-6.94679191668 -3.91684978148,-6.82461389082 -3.78101144852,-6.69337182585"
+     id="polyline318"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-3.78101144852,-6.69337182585 -3.7196054055,-6.62126631497 -3.66803337086,-6.54182934585"
+     id="polyline320"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="150.91359"
+     x2="151.5024"
+     y1="114.77462"
+     y2="115.82452"
+     id="line322"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-3.59233191439,-6.40681803068 -3.53455314439,-6.36015864509 -3.46053368753,-6.36620881316"
+     id="polyline324"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="152.52747"
+     x2="156.14885"
+     y1="116.14027"
+     y2="114.33739"
+     id="line326"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-2.9949068449,-6.59806343147 -2.94547201809,-6.65348619236 -2.94788752355,-6.72771320806"
+     id="polyline328"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="156.51454"
+     x2="156.03142"
+     y1="113.32919"
+     y2="112.22678"
+     id="line330"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-3.01000855924,-6.86948676928 -3.04232153474,-6.95851361037 -3.0628575662,-7.05096996889"
+     id="polyline332"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-3.0628575662,-7.05096996889 -3.0857301106,-7.23846231281 -3.09642356405,-7.42704169231"
+     id="polyline334"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-3.09642356405,-7.42704169231 -3.08519440843,-7.80465661714 -3.03332806793,-8.17886111753"
+     id="polyline336"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-3.03332806793,-8.17886111753 -2.92349438649,-8.63780085771 -2.77448849715,-9.08555789857"
+     id="polyline338"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="157.86317"
+     x2="160.58904"
+     y1="94.994469"
+     y2="94.219009"
+     id="line340"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-2.42401223233,-9.18527699346 -2.06161116443,-8.88302777728 -1.72662804633,-8.55064932839"
+     id="polyline342"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-1.72662804633,-8.55064932839 -1.48553711037,-8.2597983597 -1.27720124823,-7.94465506858"
+     id="polyline344"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-1.27720124823,-7.94465506858 -1.18701875497,-7.77869227086 -1.10776338403,-7.60724222422"
+     id="polyline346"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-1.10776338403,-7.60724222422 -1.07655146908,-7.51782341644 -1.05715792205,-7.42512068103"
+     id="polyline348"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="171.21974"
+     x2="171.38945"
+     y1="107.90614"
+     y2="109.09772"
+     id="line350"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-1.03534012861,-7.27187985871 -0.998318344326,-7.20749917826 -0.92711168358,-7.18640188004"
+     id="polyline352"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="172.23116"
+     x2="176.25948"
+     y1="109.76241"
+     y2="109.38919"
+     id="line354"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-0.409172034931,-7.23439605642 -0.343054421275,-7.26821832262 -0.318492922214,-7.33830553465"
+     id="polyline356"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="176.96471"
+     x2="176.91249"
+     y1="108.58121"
+     y2="107.37873"
+     id="line358"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="-0.325204545378,-7.49294614979 -0.32317529327,-7.58763399988 -0.308925483303,-7.68126545686"
+     id="polyline360"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-0.308925483303,-7.68126545686 -0.262523449055,-7.86435937684 -0.204372068177,-8.0440673322"
+     id="polyline362"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="-0.204372068177,-8.0440673322 -0.0574909477788,-8.39212632413 0.126051231588,-8.7223253456"
+     id="polyline364"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="0.126051231588,-8.7223253456 0.394256245813,-9.1105974062 0.694948599126,-9.47429127659"
+     id="polyline366"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="184.84683"
+     x2="187.6687"
+     y1="91.971657"
+     y2="92.233109"
+     id="line368"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="1.05778067512,-9.44066993345 1.28652459639,-9.02791656741 1.47881810666,-8.59697303444"
+     id="polyline370"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="1.47881810666,-8.59697303444 1.59856122066,-8.23867049183 1.67898573892,-7.86954853062"
+     id="polyline372"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="1.67898573892,-7.86954853062 1.70312573189,-7.68221515651 1.71509426381,-7.49371240703"
+     id="polyline374"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="1.71509426381,-7.49371240703 1.71189670861,-7.39905680782 1.69649256205,-7.30560832422"
+     id="polyline376"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="192.63628"
+     x2="192.36403"
+     y1="108.83543"
+     y2="110.0079"
+     id="line378"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="1.66148007856,-7.15483401694 1.67274488001,-7.08142700927 1.73152189054,-7.0360315518"
+     id="polyline380"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="192.90875"
+     x2="196.79984"
+     y1="110.93168"
+     y2="112.0386"
+     id="line382"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="2.23182372566,-6.89368340678 2.30569457606,-6.90133729383 2.3539159131,-6.95781903584"
+     id="polyline384"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="197.74942"
+     x2="198.13524"
+     y1="111.53989"
+     y2="110.39976"
+     id="line386"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="2.40352014436,-7.10444163293 2.43961756233,-7.19200237319 2.48672869793,-7.27416348152"
+     id="polyline388"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="2.48672869793,-7.27416348152 2.59613845897,-7.42813112911 2.71528100797,-7.57469710517"
+     id="polyline390"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="2.71528100797,-7.57469710517 2.97797698394,-7.84619286867 3.26840661381,-8.08779120368"
+     id="polyline392"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="3.26840661381,-8.08779120368 3.65876038747,-8.35295729143 4.07052903625,-8.58346911885"
+     id="polyline394"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="211.10048"
+     x2="213.63733"
+     y1="98.898758"
+     y2="100.1617"
+     id="line396"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="4.39671444104,-8.42104808638 4.46090808159,-7.9535351997 4.48454167993,-7.48222789472"
+     id="polyline398"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="4.48454167993,-7.48222789472 4.4667650009,-7.104864522 4.40841639845,-6.73161585692"
+     id="polyline400"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="4.40841639845,-6.73161585692 4.36325365131,-6.54821231664 4.30631892766,-6.36811520517"
+     id="polyline402"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="4.30631892766,-6.36811520517 4.26914374986,-6.28100657772 4.22102232506,-6.19943308145"
+     id="polyline404"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="212.2709"
+     x2="211.59332"
+     y1="117.43714"
+     y2="118.43205"
+     id="line406"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="4.13390819454,-6.07148819488 4.1178946393,-5.99896888314 4.15630383865,-5.93540617448"
+     id="polyline408"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="211.76755"
+     x2="214.99599"
+     y1="119.4902"
+     y2="121.92776"
+     id="line410"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="4.57139932513,-5.62194061383 4.64304674461,-5.60239242187 4.70841536086,-5.63764052163"
+     id="polyline412"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="216.06158"
+     x2="216.83327"
+     y1="121.80566"
+     y2="120.88189"
+     id="line414"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="4.80763612024,-5.75644290646 4.87292654775,-5.82505097373 4.94653638906,-5.88464542047"
+     id="polyline416"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="4.94653638906,-5.88464542047 5.10417748242,-5.9886926117 5.26822033809,-6.08232206124"
+     id="polyline418"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="5.26822033809,-6.08232206124 5.61125262243,-6.24058758904 5.96934557197,-6.3609560437"
+     id="polyline420"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="5.96934557197,-6.3609560437 6.4291286649,-6.46720400911 6.89636197144,-6.53340189396"
+     id="polyline422"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="233.0784"
+     x2="234.98772"
+     y1="114.84018"
+     y2="116.93417"
+     id="line424"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="7.14184755865,-6.2641170326 7.03282121163,-5.80498483121 6.88460304962,-5.35696641736"
+     id="polyline426"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="6.88460304962,-5.35696641736 6.73170741658,-5.01150722905 6.54246599549,-4.68454116057"
+     id="polyline428"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="6.54246599549,-4.68454116057 6.43409998751,-4.52983711851 6.31595135819,-4.38246875791"
+     id="polyline430"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="6.31595135819,-4.38246875791 6.24981927155,-4.31467160504 6.17547963357,-4.25599004879"
+     id="polyline432"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="227.47176"
+     x2="226.48045"
+     y1="132.54948"
+     y2="133.23251"
+     id="line434"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="6.04802910207,-4.16815424882 6.00689990951,-4.10631676791 6.01975392248,-4.03317130409"
+     id="polyline436"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="226.26054"
+     x2="228.39023"
+     y1="134.28212"
+     y2="137.7211"
+     id="line438"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="6.29358211475,-3.59092358874 6.35332972228,-3.54681340941 6.42701722389,-3.55606741572"
+     id="polyline440"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="229.42805"
+     x2="230.48143"
+     y1="137.99211"
+     y2="137.40939"
+     id="line442"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="6.56245419805,-3.63100466793 6.64811980108,-3.67139416255 6.73828693115,-3.70037338744"
+     id="polyline444"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="6.73828693115,-3.70037338744 6.92286905364,-3.74044797258 7.10965731934,-3.76849571962"
+     id="polyline446"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.10965731934,-3.76849571962 7.48669750124,-3.79215637522 7.86409133335,-3.77503852275"
+     id="polyline448"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.86409133335,-3.77503852275 8.33120749111,-3.70801898934 8.79080300833,-3.60096254046"
+     id="polyline450"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="247.81244"
+     x2="248.8362"
+     y1="137.64302"
+     y2="140.28514"
+     id="line452"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="8.92243458913,-3.26118226289 8.65491286683,-2.87243909473 8.35486062856,-2.50821694135"
+     id="polyline454"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="8.35486062856,-2.50821694135 8.08749544396,-2.2413181151 7.79291930679,-2.00479322255"
+     id="polyline456"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.79291930679,-2.00479322255 7.63598546781,-1.89968231683 7.4725795599,-1.80494562079"
+     id="polyline458"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.4725795599,-1.80494562079 7.38642206917,-1.76561632367 7.29590419805,-1.73775197678"
+     id="polyline460"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="236.18581"
+     x2="235.01465"
+     y1="152.13142"
+     y2="152.41032"
+     id="line462"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="7.14533016608,-1.70188797492 7.08464006156,-1.65908381928 7.07020288246,-1.5862343005"
+     id="polyline464"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="234.43042"
+     x2="235.1738"
+     y1="153.30966"
+     y2="157.2856"
+     id="line466"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="7.16578176583,-1.074932435 7.20556031595,-1.01221759244 7.27761479752,-0.994227700479"
+     id="polyline468"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="236.04356"
+     x2="237.23637"
+     y1="157.91322"
+     y2="157.7502"
+     id="line470"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <polyline
+     points="7.43097647259,-1.01517912891 7.52544763677,-1.02189522582 7.61999448505,-1.01634542396"
+     id="polyline472"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.61999448505,-1.01634542396 7.80658879823,-0.987035108235 7.99089568364,-0.945713149118"
+     id="polyline474"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="7.99089568364,-0.945713149118 8.35102239728,-0.831573429867 8.69674798373,-0.679281131088"
+     id="polyline476"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <polyline
+     points="8.69674798373,-0.679281131088 9.10811058083,-0.448045458227 9.49799738743,-0.182193242251"
+     id="polyline478"
+     transform="matrix(7.7775174,0,0,7.7760623,179.44186,165.64433)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12858777" />
+  <line
+     x1="253.31264"
+     x2="253.31264"
+     y1="164.22758"
+     y2="167.06104"
+     id="line480"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1" />
+  <rect
+     style="fill:none;stroke:#ececec;stroke-width:2;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+     id="rect3461"
+     width="600"
+     height="1667.9926"
+     x="68.00222"
+     y="35.673294" />
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot3463"
+     style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"><flowRegion
+       id="flowRegion3465"><rect
+         id="rect3467"
+         width="168.33336"
+         height="32.328922"
+         x="76.92054"
+         y="45.706406" /></flowRegion><flowPara
+       id="flowPara3469">gear_profile_examples.svg</flowPara></flowRoot>  <rect
+     style="fill:none;stroke:#ececec;stroke-width:2;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+     id="rect3471"
+     width="436.99786"
+     height="218.49892"
+     x="96.986771"
+     y="82.494492"
+     inkscape:export-filename="images/gear_profile_examples.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="499.85303"
+     x2="500.23041"
+     y1="136.17578"
+     y2="138.25462"
+     id="line3768" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.16578176583,-1.074932435 7.20556031595,-1.01221759244 7.27761479752,-0.994227700479"
+     id="polyline3770" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="501.11371"
+     x2="502.32471"
+     y1="138.91078"
+     y2="138.74055"
+     id="line3772" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.43097647259,-1.01517912891 7.52544763677,-1.02189522582 7.61999448505,-1.01634542396"
+     id="polyline3774" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.61999448505,-1.01634542396 7.80658879823,-0.987035108235 7.99089568364,-0.945713149118"
+     id="polyline3776" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.99089568364,-0.945713149118 8.35102239728,-0.831573429867 8.69674798373,-0.679281131088"
+     id="polyline3778" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="8.69674798373,-0.679281131088 9.10811058083,-0.448045458227 9.49799738743,-0.182193242251"
+     id="polyline3780" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="518.64813"
+     x2="518.64813"
+     y1="145.51414"
+     y2="148.4772"
+     id="line3782" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="9.49799738743,0.182193242251 9.10811058083,0.448045458227 8.69674798373,0.679281131088"
+     id="polyline3784" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="8.69674798373,0.679281131088 8.35102239728,0.831573429867 7.99089568364,0.945713149118"
+     id="polyline3786" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.99089568364,0.945713149118 7.80658879823,0.987035108235 7.61999448505,1.01634542396"
+     id="polyline3788" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.61999448505,1.01634542396 7.52544763677,1.02189522582 7.43097647259,1.01517912891"
+     id="polyline3790" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="502.32471"
+     x2="501.11371"
+     y1="155.25105"
+     y2="155.08055"
+     id="line3792" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.27761479752,0.994227700479 7.20556031595,1.01221759244 7.16578176583,1.074932435"
+     id="polyline3794" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="500.23041"
+     x2="499.47565"
+     y1="155.73694"
+     y2="159.89467"
+     id="line3796" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.07020288246,1.5862343005 7.08464006156,1.65908381928 7.14533016608,1.70188797492"
+     id="polyline3798" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="500.06897"
+     x2="501.25806"
+     y1="160.83521"
+     y2="161.1268"
+     id="line3800" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.29590419805,1.73775197678 7.38642206917,1.76561632367 7.4725795599,1.80494562079"
+     id="polyline3802" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.4725795599,1.80494562079 7.63598546781,1.89968231683 7.79291930679,2.00479322255"
+     id="polyline3804" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.79291930679,2.00479322255 8.08749544396,2.2413181151 8.35486062856,2.50821694135"
+     id="polyline3806" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="8.35486062856,2.50821694135 8.65491286683,2.87243909473 8.92243458913,3.26118226289"
+     id="polyline3808" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="514.10291"
+     x2="513.06348"
+     y1="173.51506"
+     y2="176.27812"
+     id="line3810" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="8.79080300833,3.60096254046 8.33120749111,3.70801898934 7.86409133335,3.77503852275"
+     id="polyline3812" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.86409133335,3.77503852275 7.48669750124,3.79215637522 7.10965731934,3.76849571962"
+     id="polyline3814" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="7.10965731934,3.76849571962 6.92286905364,3.74044797258 6.73828693115,3.70037338744"
+     id="polyline3816" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="6.73828693115,3.70037338744 6.64811980108,3.67139416255 6.56245419805,3.63100466793"
+     id="polyline3818" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="495.46588"
+     x2="494.3963"
+     y1="176.52232"
+     y2="175.91283"
+     id="line3820" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="6.42701722389,3.55606741572 6.35332972228,3.54681340941 6.29358211475,3.59092358874"
+     id="polyline3822" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="493.34265"
+     x2="491.18018"
+     y1="176.19647"
+     y2="179.7926"
+     id="line3824" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="6.01975392248,4.03317130409 6.00689990951,4.10631676791 6.04802910207,4.16815424882"
+     id="polyline3826" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="491.40332"
+     x2="492.41"
+     y1="180.89023"
+     y2="181.60468"
+     id="line3828" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="6.17547963357,4.25599004879 6.24981927155,4.31467160504 6.31595135819,4.38246875791"
+     id="polyline3830" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="6.31595135819,4.38246875791 6.43409998751,4.52983711851 6.54246599549,4.68454116057"
+     id="polyline3832" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="6.54246599549,4.68454116057 6.73170741658,5.01150722905 6.88460304962,5.35696641736"
+     id="polyline3834" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="6.88460304962,5.35696641736 7.03282121163,5.80498483121 7.14184755865,6.2641170326"
+     id="polyline3836" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="500.0415"
+     x2="498.10291"
+     y1="197.93428"
+     y2="200.12405"
+     id="line3838" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="6.89636197144,6.53340189396 6.4291286649,6.46720400911 5.96934557197,6.3609560437"
+     id="polyline3840" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="5.96934557197,6.3609560437 5.61125262243,6.24058758904 5.26822033809,6.08232206124"
+     id="polyline3842" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="5.26822033809,6.08232206124 5.10417748242,5.9886926117 4.94653638906,5.88464542047"
+     id="polyline3844" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="4.94653638906,5.88464542047 4.87292654775,5.82505097373 4.80763612024,5.75644290646"
+     id="polyline3846" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="481.60788"
+     x2="480.82437"
+     y1="193.80585"
+     y2="192.83974"
+     id="line3848" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="4.70841536086,5.63764052163 4.64304674461,5.60239242187 4.57139932513,5.62194061383"
+     id="polyline3850" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="479.74228"
+     x2="476.4642"
+     y1="192.71219"
+     y2="195.26132"
+     id="line3852" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="4.15630383865,5.93540617448 4.1178946393,5.99896888314 4.13390819454,6.07148819488"
+     id="polyline3854" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="476.28754"
+     x2="476.9754"
+     y1="196.36789"
+     y2="197.40817"
+     id="line3856" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="4.22102232506,6.19943308145 4.26914374986,6.28100657772 4.30631892766,6.36811520517"
+     id="polyline3858" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="4.30631892766,6.36811520517 4.36325365131,6.54821231664 4.40841639845,6.73161585692"
+     id="polyline3860" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="4.40841639845,6.73161585692 4.4667650009,7.104864522 4.48454167993,7.48222789472"
+     id="polyline3862" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="4.48454167993,7.48222789472 4.46090808159,7.9535351997 4.39671444104,8.42104808638"
+     id="polyline3864" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="478.36282"
+     x2="475.78699"
+     y1="215.47392"
+     y2="216.79463"
+     id="line3866" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="4.07052903625,8.58346911885 3.65876038747,8.35295729143 3.26840661381,8.08779120368"
+     id="polyline3868" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="3.26840661381,8.08779120368 2.97797698394,7.84619286867 2.71528100797,7.57469710517"
+     id="polyline3870" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="2.71528100797,7.57469710517 2.59613845897,7.42813112911 2.48672869793,7.27416348152"
+     id="polyline3872" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="2.48672869793,7.27416348152 2.43961756233,7.19200237319 2.40352014436,7.10444163293"
+     id="polyline3874" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="462.62241"
+     x2="462.23077"
+     y1="204.76768"
+     y2="203.57526"
+     id="line3876" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="2.3539159131,6.95781903584 2.30569457606,6.90133729383 2.23182372566,6.89368340678"
+     id="polyline3878" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="461.26651"
+     x2="457.31558"
+     y1="203.05362"
+     y2="204.2113"
+     id="line3880" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="1.73152189054,7.0360315518 1.67274488001,7.08142700927 1.66148007856,7.15483401694"
+     id="polyline3882" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="456.76245"
+     x2="457.03891"
+     y1="205.1774"
+     y2="206.40332"
+     id="line3884" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="1.69649256205,7.30560832422 1.71189670861,7.39905680782 1.71509426381,7.49371240703"
+     id="polyline3886" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="1.71509426381,7.49371240703 1.70312573189,7.68221515651 1.67898573892,7.86954853062"
+     id="polyline3888" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="1.67898573892,7.86954853062 1.59856122066,8.23867049183 1.47881810666,8.59697303444"
+     id="polyline3890" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="1.47881810666,8.59697303444 1.28652459639,9.02791656741 1.05778067512,9.44066993345"
+     id="polyline3892" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="451.995"
+     x2="449.12976"
+     y1="223.76527"
+     y2="224.03876"
+     id="line3894" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="0.694948599126,9.47429127659 0.394256245813,9.1105974062 0.126051231588,8.7223253456"
+     id="polyline3896" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="0.126051231588,8.7223253456 -0.0574909477788,8.39212632413 -0.204372068177,8.0440673322"
+     id="polyline3898" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-0.204372068177,8.0440673322 -0.262523449055,7.86435937684 -0.308925483303,7.68126545686"
+     id="polyline3900" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-0.308925483303,7.68126545686 -0.32317529327,7.58763399988 -0.325204545378,7.49294614979"
+     id="polyline3902" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="441.07336"
+     x2="441.1264"
+     y1="207.92679"
+     y2="206.66936"
+     id="line3904" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-0.318492922214,7.33830553465 -0.343054421275,7.26821832262 -0.409172034931,7.23439605642"
+     id="polyline3906" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="440.41037"
+     x2="436.32013"
+     y1="205.82436"
+     y2="205.43401"
+     id="line3908" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-0.92711168358,7.18640188004 -0.998318344326,7.20749917826 -1.03534012861,7.27187985871"
+     id="polyline3910" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="435.46555"
+     x2="435.29324"
+     y1="206.1291"
+     y2="207.37538"
+     id="line3912" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-1.05715792205,7.42512068103 -1.07655146908,7.51782341644 -1.10776338403,7.60724222422"
+     id="polyline3914" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-1.10776338403,7.60724222422 -1.18701875497,7.77869227086 -1.27720124823,7.94465506858"
+     id="polyline3916" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-1.27720124823,7.94465506858 -1.48553711037,8.2597983597 -1.72662804633,8.55064932839"
+     id="polyline3918" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-1.72662804633,8.55064932839 -2.06161116443,8.88302777728 -2.42401223233,9.18527699346"
+     id="polyline3920" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="424.49908"
+     x2="421.7312"
+     y1="221.68842"
+     y2="220.87767"
+     id="line3922" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-2.77448849715,9.08555789857 -2.92349438649,8.63780085771 -3.03332806793,8.17886111753"
+     id="polyline3924" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-3.03332806793,8.17886111753 -3.08519440843,7.80465661714 -3.09642356405,7.42704169231"
+     id="polyline3926" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-3.09642356405,7.42704169231 -3.0857301106,7.23846231281 -3.0628575662,7.05096996889"
+     id="polyline3928" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-3.0628575662,7.05096996889 -3.04232153474,6.95851361037 -3.01000855924,6.86948676928"
+     id="polyline3930" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="419.8714"
+     x2="420.36182"
+     y1="202.85707"
+     y2="201.70412"
+     id="line3932" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-2.94788752355,6.72771320806 -2.94547201809,6.65348619236 -2.9949068449,6.59806343147"
+     id="polyline3934" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="419.99069"
+     x2="416.31351"
+     y1="200.64993"
+     y2="198.76437"
+     id="line3936" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-3.46053368753,6.36620881316 -3.53455314439,6.36015864509 -3.59233191439,6.40681803068"
+     id="polyline3938" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="415.27264"
+     x2="414.67496"
+     y1="199.09468"
+     y2="200.19255"
+     id="line3940" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-3.66803337086,6.54182934585 -3.7196054055,6.62126631497 -3.78101144852,6.69337182585"
+     id="polyline3942" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-3.78101144852,6.69337182585 -3.91684978148,6.82461389082 -4.06089512959,6.94679191668"
+     id="polyline3944" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-4.06089512959,6.94679191668 -4.369005423,7.16539468997 -4.69888351408,7.34951304976"
+     id="polyline3946" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-4.69888351408,7.34951304976 -5.13131491371,7.53843686328 -5.57842885589,7.68936149812"
+     id="polyline3948" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="399.58835"
+     x2="397.29187"
+     y1="209.52397"
+     y2="207.73843"
+     id="line3950" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-5.86921554791,7.46976958153 -5.84641090225,6.99842143968 -5.78303960363,6.5307963749"
+     id="polyline3952" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-5.78303960363,6.5307963749 -5.69622526857,6.16312478691 -5.57028589972,5.80695291721"
+     id="polyline3954" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-5.57028589972,5.80695291721 -5.49219182208,5.63497080373 -5.4031337629,5.46840191585"
+     id="polyline3956" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-5.4031337629,5.46840191585 -5.35058539486,5.38960739931 -5.28829423815,5.31826513543"
+     id="polyline3958" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="401.87955"
+     x2="402.74136"
+     y1="190.24274"
+     y2="189.35034"
+     id="line3960" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-5.17915358003,5.20850593317 -5.15008729744,5.14016388358 -5.17616289011,5.07062577896"
+     id="polyline3962" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="402.76498"
+     x2="399.99756"
+     y1="188.22888"
+     y2="185.10303"
+     id="line3964" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-5.5265914415,4.68622396968 -5.59342695666,4.65384344405 -5.66415936933,4.67647992621"
+     id="polyline3966" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="398.91113"
+     x2="397.9686"
+     y1="185.02388"
+     y2="185.82518"
+     id="line3968" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-5.78352058766,4.77502770799 -5.86030602086,4.83047050796 -5.94361296559,4.87552447315"
+     id="polyline3970" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-5.94361296559,4.87552447315 -6.11768854098,4.94883358833 -6.29614262151,5.01072602293"
+     id="polyline3972" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-6.29614262151,5.01072602293 -6.66241534376,5.10326476253 -7.03652872585,5.1557843087"
+     id="polyline3974" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-7.03652872585,5.1557843087 -7.5080061503,5.17573827896 -7.97944775133,5.15495512424"
+     id="polyline3976" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="380.6272"
+     x2="379.11227"
+     y1="188.91481"
+     y2="186.39546"
+     id="line3978" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-8.17127251649,4.84514749109 -7.97973722958,4.41386642662 -7.75171959593,4.00071139344"
+     id="polyline3980" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-7.75171959593,4.00071139344 -7.53794934231,3.68922880315 -7.29185025861,3.4026029732"
+     id="polyline3982" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-7.29185025861,3.4026029732 -7.15690259471,3.27044526316 -7.01368680512,3.14729588261"
+     id="polyline3984" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-7.01368680512,3.14729588261 -6.93622304878,3.09280484413 -6.85236647674,3.04878232553"
+     id="polyline3986" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="389.5278"
+     x2="390.64459"
+     y1="171.78786"
+     y2="171.27615"
+     id="line3988" />
+  <polyline
+     transform="matrix(7.897088,0,0,8.1317929,443.64166,146.99583)"
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:0.12478815"
+     points="-6.71094624684,2.98586107068 -6.65915474964,2.93263395969 -6.65834945491,2.8583720177"
+     id="polyline3990" />
+  <line
+     style="fill:#008000;fill-opacity:0.25;stroke:#000000;stroke-width:1"
+     x1="391.06009"
+     x2="390.31805"
+     y1="170.23932"
+     y2="168.26741"
+     id="line3992" />
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot4352"
+     style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     transform="translate(-1.1147904,7.8035331)"><flowRegion
+       id="flowRegion4354"><rect
+         id="rect4356"
+         width="208.46581"
+         height="33.443699"
+         x="104.7903"
+         y="268.66449" /></flowRegion><flowPara
+       id="flowPara4358">gear-profile examples</flowPara></flowRoot></svg>

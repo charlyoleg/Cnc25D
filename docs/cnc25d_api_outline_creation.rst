@@ -29,6 +29,7 @@ Cnc25D outline vocabulary:
 - outline format A: pythonic description of an outline used as argument by the function cnc25d_api.cnc_cut_outline()
 - outline format B: pythonic description of an outline returned by cnc25d_api.cnc_cut_outline() and used as argument by cnc25d_api.outline_arc_line()
 - outline format C: pythonic description of a curved-outline used as argument by the function cnc25d_api.smooth_outline_c_curve()
+- figure: list of format-B outlines
 
 .. image:: images/closed_outline.png
 
@@ -68,19 +69,21 @@ outline format A example::
 Cnc25D outline format B
 -----------------------
 
-In short, the *Cnc25D outline format B* is a list of list of 2 or 4 floats.
+The *Cnc25D outline format B* is either a *circle* or a *general outline*.
 
-The purpose of the *Cnc25D outline format B* is to define an outline with points. This is a simplification of the *outline format A*, where the *rbrr* information is removed.
+In short, a format-B circle is a list of 3 floats (center-x, center-y, radius). The *Cnc25D general outline format B* is a list of list of 2 or 4 floats.
 
-The first element of the *outline format B* list is the *first-point*. It is defines by a list of 2 floats: X-coordinate, Y-coordinate.
+The purpose of the *Cnc25D general outline format B* is to define an outline with points. In the general case, this is a simplification of the *outline format A*, where the *rbrr* information is removed.
 
-The second element of the *outline format B* list is the first segment of the outline. If the first segment is a line, it is defines by a list of 2 floats: end-point-X, end-point-Y. If the first segment is an arc, it is defines by a list of 4 floats: middle-point-X, middle-point-Y, end-point-X, end-point-Y.
+The first element of the *general outline format B* list is the *first-point*. It is defines by a list of 2 floats: X-coordinate, Y-coordinate.
 
-All elements of the *outline format B* list define a segment except the first element that defines the *first-point*. An outline composed of N segments is described by a list of N+1 elements. A segment is defined by 2 floats if it is a line or 4 floats if it is an arc. The start-point of a segment is never explicitly defined as it is the end-point of the previous segment. If the X and Y coordinates of the end-point of the last segment are equal to the X and Y coordinates of the first-point of the outline, the outline is closed.
+The second element of the *general outline format B* list is the first segment of the outline. If the first segment is a line, it is defines by a list of 2 floats: end-point-X, end-point-Y. If the first segment is an arc, it is defines by a list of 4 floats: middle-point-X, middle-point-Y, end-point-X, end-point-Y.
 
-The *outline format B* can be defined with *list* or *tuple*. The orientation of a closed outline can be CCW or CW.
+All elements of the *general outline format B* list define a segment except the first element that defines the *first-point*. An outline composed of N segments is described by a list of N+1 elements. A segment is defined by 2 floats if it is a line or 4 floats if it is an arc. The start-point of a segment is never explicitly defined as it is the end-point of the previous segment. If the X and Y coordinates of the end-point of the last segment are equal to the X and Y coordinates of the first-point of the outline, the outline is closed.
 
-outline format B example::
+The *general outline format B* can be defined with *list* or *tuple*. The orientation of a closed outline can be CCW or CW.
+
+general outline format B example::
 
   outline_B = [
     [  0,  0],            # first-point
@@ -309,5 +312,16 @@ outline_reverse
   return outline_AB
 
 It reverses the order of the segments. If the outline is closed, that reverses its orientation (from CCW to CW or opposite). Notice that the *.reverse()* python method would not return a valid outline (format A or B) because of the *first-point* and the *middle-point* of arcs.
+
+
+ideal_outline()
+---------------
+
+::
+
+  cnc25d_api.ideal_outline(outline-AC, error_mark_string)
+  return outline-B
+
+The function *ideal_outline()* lets you quickly convert a format-A or format-C outline into a format-B outline by dropping the additional information contained in the format-A and format-C. The returned format-B outline is probably to suitable for a 3-axis CNC. But you can display this *ideal* or *wished* outline in the Tkinter GUI to check the outline construction.
 
 

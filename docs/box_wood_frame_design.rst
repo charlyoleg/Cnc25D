@@ -191,7 +191,7 @@ Output file base name example::
 Box wood frame conception
 =========================
 
-The notes relative to process of conception of the *Box wood frame* are available in the chapter :doc:`box_wood_frame_conception`.
+The notes relative to process of conception of the *Box wood frame* are available in the chapter :doc:`box_wood_frame_conception_details`.
 
 Box wood frame manufacturing
 ============================
