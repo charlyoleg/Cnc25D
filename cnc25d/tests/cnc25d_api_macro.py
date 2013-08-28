@@ -39,6 +39,7 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 #   cnc25d_api.cnc_cut_outline(outline-A, error_mark_string) => outline-B
 #   cnc25d_api.smooth_outline_c_curve(outline-C, precision, router_bit_radius, error_mark_string) => outline-B
 #   cnc25d_api.smooth_outline_b_curve(outline-B, precision, router_bit_radius, error_mark_string) => outline-B
+#   cnc25d_api.ideal_outline(outline-AC, error_mark_string) => outline-B
 #   cnc25d_api.outline_arc_line(outline-B, backend) => Tkinter or svgwrite or dxfwrite or FreeCAD stuff
 #   cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor
 #   cnc25d_api.figure_simple_display(figure) => 0
@@ -314,9 +315,10 @@ wfl_inner_circle1 = [30,0, 15]
 wfl_inner_circle2 = [40,0, 10]
 
 wfl_figure = [wfl_outer_rectangle_B, wfl_inner_square_B, wfl_inner_circle1, wfl_inner_circle2]
+wfl_overlay_figure = [wfl_outer_rectangle_A, wfl_inner_square_A, wfl_inner_circle1, wfl_inner_circle2]
 
 # display the figure
-cnc25d_api.figure_simple_display(wfl_figure)
+cnc25d_api.figure_simple_display(wfl_figure, wfl_overlay_figure)
 
 wfl_extrude_height = 20.0
 # create a FreeCAD part

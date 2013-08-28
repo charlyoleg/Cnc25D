@@ -180,19 +180,20 @@ ceg_example_list={
   cgf_script_name : cgf_script_content,
   sca_script_name : sca_script_content}
 
+ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")
-for l_example in ceg_example_list.keys():
+for l_example in ceg_example_list_sorted_keys:
   print("  +  {:s}".format(l_example))
 user_choice=raw_input("Do you want to generate all these upper files in the current directory? [yes/No] ")
 if((user_choice=='yes')or(user_choice=='y')):
-  for l_example in ceg_example_list.keys():
+  for l_example in ceg_example_list_sorted_keys:
     fh_output = open(l_example, 'w')
     fh_output.write(ceg_example_list[l_example])
     fh_output.close()
   print("All cnc25d script examples have been created in the current directory :)")
 else:
   print("Choose which cnc25d script example you want to generate in the current directory:")
-  for l_example in ceg_example_list.keys():
+  for l_example in ceg_example_list_sorted_keys:
     print("cnc25d script example : {:s}".format(l_example))
     user_choice=raw_input("Do you want to generate the file {:s} in the current directory? [yes/No] ".format(l_example))
     if((user_choice=='yes')or(user_choice=='y')):

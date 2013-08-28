@@ -54,7 +54,7 @@ import svgwrite
 from dxfwrite import DXFEngine
 import Tkinter
 import display_backend
-import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate and closed()
+import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate, closed(), check_outline_format() and ideal_outline()
 import export_2d # just for test enhancement
 import design_help # just for get_effective_args() and mkdir_p
 
@@ -444,27 +444,33 @@ def outline_arc_line(ai_segments, ai_backend):
     if(len(ai_segments)<2):
       print("ERR402: Error, the segment list must contain at least 2 elements. Currently, len(ai_segments) = {:d}".format(len(ai_segments)))
       sys.exit(2)
-    if(len(ai_segments[0])!=2):
-      print("ERR403: Error, the first element of the segment list must have 2 elements. Currently, len(ai_segments[0]) = {:d}".format(len(ai_segments[0])))
+    # convert any format into format-B
+    if(len(ai_segments[0])==3): # format-A or format-C
+      print("WARN231: warning, format-A or format-C used in outline_arc_line() and must be converted in format-B with ideal_outline()")
+      outline_B = cnc_outline.ideal_outline(ai_segments, "outline_arc_line")
+    else:
+      outline_B = ai_segments
+    if(len(outline_B[0])!=2):
+      print("ERR403: Error, the first element of the segment list must have 2 elements. Currently, len(outline_B[0]) = {:d}".format(len(outline_B[0])))
       sys.exit(2)
-    for i in range(len(ai_segments)):
-      if((len(ai_segments[i])!=2)and(len(ai_segments[i])!=4)):
-        print("ERR405: Error, the length of the segment {:d} must be 2 or 4. Currently len(ai_segments[i]) = {:d}".format(i, len(ai_segments[i])))
+    for i in range(len(outline_B)):
+      if((len(outline_B[i])!=2)and(len(outline_B[i])!=4)):
+        print("ERR405: Error, the length of the segment {:d} must be 2 or 4. Currently len(outline_B[i]) = {:d}".format(i, len(outline_B[i])))
         sys.exit(2)
     # check if the outline is closed
     outline_closed = False
-    if((ai_segments[0][0]==ai_segments[-1][-2])and(ai_segments[0][1]==ai_segments[-1][-1])):
+    if((outline_B[0][0]==outline_B[-1][-2])and(outline_B[0][1]==outline_B[-1][-1])):
       #print("dbg207: the outline is closed.")
       outline_closed = True
     # select backend
     if(ai_backend=='freecad'):
-      r_outline = outline_arc_line_with_freecad(ai_segments, outline_closed)
+      r_outline = outline_arc_line_with_freecad(outline_B, outline_closed)
     elif(ai_backend=='svgwrite'):
-      r_outline = outline_arc_line_with_svgwrite(ai_segments, outline_closed)
+      r_outline = outline_arc_line_with_svgwrite(outline_B, outline_closed)
     elif(ai_backend=='dxfwrite'):
-      r_outline = outline_arc_line_with_dxfwrite(ai_segments, outline_closed)
+      r_outline = outline_arc_line_with_dxfwrite(outline_B, outline_closed)
     elif(ai_backend=='tkinter'):
-      r_outline = outline_arc_line_with_tkinter(ai_segments, outline_closed)
+      r_outline = outline_arc_line_with_tkinter(outline_B, outline_closed)
   else: # circle outline
     if(len(ai_segments)!=3):
       print("ERR658: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_segments)))
@@ -478,17 +484,42 @@ Two_Canvas = display_backend.Two_Canvas
 
 ### figure level functions
 
-def figure_simple_display(ai_figure):
+def figure_simple_display(ai_figure, ai_overlay_figure=[]):
   """ Display the figure with red lines in the Tkinter Two_Canvas GUI
       If you want a finer control on the way outlines are displayed (color, width, overlay), you need to work at the outline level (not figure level)
   """
   print("Figure simple display with Tkinter")
+  # convert all outlines in format-B
+  # graphic layer
+  graphic_figure = []
+  i = 0
+  for i_outline in ai_figure:
+    if(cnc_outline.check_outline_format(i_outline)==2):
+      print("WARN441: Warning, the outline {:d} must be converted in format-B with ideal_outline()!".format(i))
+      graphic_figure.append(cnc_outline.ideal_outline(i_outline, "figure_simple_display"))
+    else:
+      graphic_figure.append(i_outline)
+    i += 1
+  # overlay layer
+  overlay_figure = []
+  i = 0
+  for i_outline in ai_overlay_figure:
+    if(cnc_outline.check_outline_format(i_outline)==2):
+      print("WARN442: Warning, the overlay outline {:d} must be converted in format-B with ideal_outline()!".format(i))
+      overlay_figure.append(cnc_outline.ideal_outline(i_outline, "figure_simple_display_overlay"))
+    else:
+      overlay_figure.append(i_outline)
+    i += 1
+  # start GUI
   tk_root = Tkinter.Tk()
   fsd_canvas = Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_fsd_canvas_graphics(ai_angle_position):
     r_canvas_graphics = []
-    for ol in ai_figure:
+    for ol in overlay_figure:
+      rotated_ol = cnc_outline.outline_rotate(ol, 0, 0, ai_angle_position) # rotation of center (0,0) and angle ai_angle_position
+      r_canvas_graphics.append(('overlay_lines', outline_arc_line(rotated_ol, 'tkinter'), 'orange', 2))
+    for ol in graphic_figure:
       rotated_ol = cnc_outline.outline_rotate(ol, 0, 0, ai_angle_position) # rotation of center (0,0) and angle ai_angle_position
       r_canvas_graphics.append(('graphic_lines', outline_arc_line(rotated_ol, 'tkinter'), 'red', 1))
     return(r_canvas_graphics)

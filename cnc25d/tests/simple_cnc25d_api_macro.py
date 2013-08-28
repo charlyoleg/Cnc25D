@@ -40,6 +40,7 @@ This script focus on the figure-level API functions
 #   cnc25d_api.cnc_cut_outline(outline-A, error_mark_string) => outline-B
 #   cnc25d_api.smooth_outline_c_curve(outline-C, precision, router_bit_radius, error_mark_string) => outline-B
 #   cnc25d_api.smooth_outline_b_curve(outline-B, precision, router_bit_radius, error_mark_string) => outline-B
+#   cnc25d_api.ideal_outline(outline-AC, error_mark_string) => outline-B
 #   cnc25d_api.outline_arc_line(outline-B, backend) => Tkinter or svgwrite or dxfwrite or FreeCAD stuff
 #   cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor
 #   cnc25d_api.figure_simple_display(figure) => 0
@@ -108,9 +109,10 @@ inner_shape_B = cnc25d_api.cnc_cut_outline(inner_shape_A, "inner_shape_A")  # co
 inner_circle1 = [-30, 0, 15] # circle of center (-30, 0) and radius 15
 
 simple_figure = [outer_rectangle_B, inner_shape_B, inner_circle1]
+overlay_figure = [outer_rectangle_A, inner_shape_A, inner_circle1]
 
 # display the figure
-cnc25d_api.figure_simple_display(simple_figure)
+cnc25d_api.figure_simple_display(simple_figure, overlay_figure)
 
 simple_extrude_height = 20.0
 # create a FreeCAD part

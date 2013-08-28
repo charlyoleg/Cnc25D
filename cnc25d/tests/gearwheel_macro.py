@@ -251,5 +251,5 @@ my_gw = gearwheel.gearwheel(
             ai_tkinter_view = gw_tkinter_view,
             ai_output_file_basename = gw_output_file_basename)
 
-Part.show(my_gw)
+#Part.show(my_gw)
 

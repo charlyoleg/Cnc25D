@@ -736,6 +736,8 @@ def outline_close(ai_outline):
   if(outline_type!=0): # general outline (not a circle)
     # check if the outline is already closed
     outline_closed = False
+    #print("dbg536: ai_outline[-1]:", ai_outline[-1])
+    #print("dbg537: ai_outline:", ai_outline)
     if((ai_outline[0][0]==ai_outline[-1][-outline_type-1])and(ai_outline[0][1]==ai_outline[-1][-outline_type])):
       outline_closed = True
       print("WARN421: Warning, the outline is already closed!")
@@ -993,6 +995,30 @@ def smooth_outline_b_curve(ai_polyline, ai_precision, ai_router_bit_request, ai_
   r_outline = smooth_outline_c_curve(outline_c, ai_precision, ai_router_bit_request, ai_error_msg_id)
   # return
   return(r_outline)
+
+def ideal_outline(ai_outline, ai_error_msg_id):
+  """ extract a format-B outline from a format-A or format-C outlines
+      The returned ideal outline is probably not makable by a 3-axis CNC
+      but you can use it to display it and understand the cnc_cut_outline() and smooth_outline_c_curve()
+  """
+  outline_type = check_outline_format(ai_outline)
+  if(outline_type==2): # format-A or format-C outline
+    r_outline = []
+    i = 0
+    for i_segment in ai_outline:
+      # check the segment length
+      segment_len = len(i_segment)
+      if((segment_len!=3)and(segment_len!=5)):
+        print("ERR868: Error in {:s}.{:d}, len(segment_len) is not 3 or 5!".format(ai_error_msg_id, i))
+        sys.exit(2)
+      i += 1
+      # construct the ideal outline
+      r_outline.append(i_segment[:-1]) # remove the third or the fifth element
+  else: # format-B circle or format-B general outline
+    print("WARN441: Warning in {:s}, nothing to do, the outline is already in format-B".format(ai_error_msg_id))
+    r_outline = ai_outline
+  return(r_outline)
+
 
 ################################################################
 # cnc_cut_outline API testing

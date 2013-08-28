@@ -54,6 +54,7 @@ outline_reverse = cnc_outline.outline_reverse
 cnc_cut_outline = cnc_outline.cnc_cut_outline
 smooth_outline_c_curve = cnc_outline.smooth_outline_c_curve
 smooth_outline_b_curve = cnc_outline.smooth_outline_b_curve
+ideal_outline = cnc_outline.ideal_outline
 
 # from outline_backends
 outline_arc_line = outline_backends.outline_arc_line
