@@ -367,6 +367,7 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       print("ERR990: Error, the dedendum_angle {:0.2f} is negative or too small compare to the router_bit_radius {:0.2f} ({:0.2f} < {:0.2f})!".format(dedendum_angle, g_rbr, dedendum_angle*g_dr, 2*g_rbr))
       sys.exit(2)
     if(g_type=='e'): # negative > hollow > positive
+      # low1: to create the gear-profile outline
       i1_base = g_brn
       i1_offset = addendum_angle/2-inaa
       i1_sign = -1
@@ -382,7 +383,11 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       i2u_inc = (ipau-ipdu)/i2u_nb # >0
       i2_thickness = g_stp
       ha1 = addendum_angle/2 + full_negative_involute
+      # low2: to calculate g2_position
+      i1_primitive_offset = addendum_angle/2-inpa
+      i2_primitive_offset = module_angle-addendum_angle/2-ippa
     elif(g_type=='i'): # positive > hollow > negative
+      # low1
       i1_base = g_brp
       i1_offset = addendum_angle/2-ipaa
       i1_sign = 1
@@ -398,6 +403,7 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       i2u_inc = (inau-indu)/i2u_nb # >0
       i2_thickness = g_stn
       ha1 = addendum_angle/2 + full_positive_involute
+      # low2
     #
     gear_type = g_type
     #module_angle = 2*math.pi/g_n
@@ -420,11 +426,14 @@ def calc_low_level_gear_parameters(ai_high_parameters):
     first_end = g_pfe # 0: slope-top, 1: top-middle, 2: slope-bottom, 3: half-hollow
     last_end =  g_ple # 0: slope-top, 1: top-middle, 2: slope-bottom, 3: half-hollow
     # return
-    r_low_parameters = (gear_type, module_angle,
+    low1_parameters = (gear_type, module_angle,
       i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness,
       i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
       hl1, hl2, ha1, ha2, hr, hlm, ham, tlm,
       ox, oy, portion_tooth_nb, first_end, last_end, closed)
+    low2_parameters = (gear_type, module_angle, g_n, g_pr, ox, oy,
+      i1_base, i1_primitive_offset, i1_offset,
+      i2_base, i2_primitive_offset, i2_offset)
   elif(g_type=='l'):
     gear_type = g_type
     module = g_m
@@ -435,11 +444,13 @@ def calc_low_level_gear_parameters(ai_high_parameters):
     first_end = 0 # 0: slope-top, 1: top-middle, 2: slope-bottom, 3: half-hollow
     last_end = 0  # 0: slope-top, 1: top-middle, 2: slope-bottom, 3: half-hollow
     # return
-    r_low_parameters = (gear_type, module, hr1, hr2, hr3, ht1, ht2, hr, cr1, ct1, ct2, htm, ox, oy, inclination, portion_tooth_nb, first_end, last_end)
+    low1_parameters = (gear_type, module, hr1, hr2, hr3, ht1, ht2, hr, cr1, ct1, ct2, htm, ox, oy, inclination, portion_tooth_nb, first_end, last_end)
+    low2_parameters = ()
   else:
     print("ERR740: Error, the gear_type {:s} doesn't exist!".format(g_type))
     sys.exit(2)
   #return
+  r_low_parameters = (low1_parameters, low2_parameters)
   return(r_low_parameters)
 
 def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, ai_u_ini, ai_u_inc, ai_thickness, ai_tooth_angle):
@@ -652,25 +663,55 @@ def gear_profile_outline(ai_low_parameters, ai_angle_position):
   #return
   return(r_gear_profile_outline_B)
 
-def g2_position_calcultion(ai_g1_low_parameters, ai_g2_low_parameters, ai_rotation_direction, ai_g1_position):
+def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rotation_direction, ai_g1_position, ai_aal, ai_g1g2_a):
   """ calculation of the angle position of the second gear
   """
   # get ai_g1_low_parameters
-  (g1_gear_type, g1_module_angle,
-    g1_i1_base, g1_i1_offset, g1_i1_sign, g1_i1u_nb, g1_i1u_ini, g1_i1u_inc, g1_i1_thickness,
-    g1_i2_base, g1_i2_offset, g1_i2_sign, g1_i2u_nb, g1_i2u_ini, g1_i2u_inc, g1_i2_thickness,
-    g1_hl1, g1_hl2, g1_ha1, g1_ha2, g1_hr, g1_hlm, g1_ham, g1_tlm,
-    g1_ox, g1_oy, g1_portion_tooth_nb, g1_first_end, g1_last_end, g1_closed) = ai_g1_low_parameters
+  (g1_gear_type, g1_module_angle, g1_n, g1_pr, g1_ox, g1_oy,
+    g1_i1_base, g1_i1_primitive_offset, g1_i1_offset,
+    g1_i2_base, g1_i2_primitive_offset, g1_i2_offset) = ai_g1_low2_parameters
   # get ai_g2_low_parameters
-  (g2_gear_type, g2_module_angle,
-    g2_i1_base, g2_i1_offset, g2_i1_sign, g2_i1u_nb, g2_i1u_ini, g2_i1u_inc, g2_i1_thickness,
-    g2_i2_base, g2_i2_offset, g2_i2_sign, g2_i2u_nb, g2_i2u_ini, g2_i2u_inc, g2_i2_thickness,
-    g2_hl1, g2_hl2, g2_ha1, g2_ha2, g2_hr, g2_hlm, g2_ham, g2_tlm,
-    g2_ox, g2_oy, g2_portion_tooth_nb, g2_first_end, g2_last_end, g2_closed) = ai_g2_low_parameters
+  (g2_gear_type, g2_module_angle, g2_n, g2_pr, g2_ox, g2_oy,
+    g2_i1_base, g2_i1_primitive_offset, g2_i1_offset,
+    g2_i2_base, g2_i2_primitive_offset, g2_i2_offset) = ai_g2_low2_parameters
   # precision
   #radian_epsilon = math.pi/1000
   radian_epsilon = gp_radian_epsilon
-  #
+  # select parameter depending on ai_rotation_direction
+  if(ai_rotation_direction==1): # rotation_direction positive (g1 driving, g2 driven) : g1_negative_involute with g2_negative_involute
+    g1_primitive_offset = g1_i1_primitive_offset
+    g1_br = g1_i1_base
+    g1_involute_offset = g1_i1_offset
+  else:
+    g1_primitive_offset = g1_i2_primitive_offset
+    g1_br = g1_i2_base
+    g1_involute_offset = g1_i2_offset
+  ## gear system related
+  # real_force_angle
+  real_force_angle = math.acos(float(g1_br*(g1_n+g2_n))/((g1_pr+g2_pr+ai_aal)*g1_n))
+  print("dbg741: real_force_angle:", real_force_angle)
+  # length KL (see documentation  graphic gear_position.svg)
+  KL = math.sqrt((g1_pr+g2_pr+ai_aal)**2 - (g1_br*(1+g2_n/g1_n))**2) # kind of pythagor
+  ## g1 related
+  # get the angle of the closest middle of addendum to the contact point
+  contact_g1_tooth_angle = ai_g1_position
+  contact_g1_primitive_relative_angle = contact_g1_tooth_angle + g1_primitive_offset - ai_g1g2_a
+  while(abs(contact_g1_primitive_relative_angle)>g1_module_angle/2+radian_epsilon):
+    if(contact_g1_primitive_relative_angle>0):
+      contact_g1_primitive_relative_angle = contact_g1_primitive_relative_angle - g1_module_angle
+    else:
+      contact_g1_primitive_relative_angle = contact_g1_primitive_relative_angle + g1_module_angle
+  contact_g1_tooth_angle = contact_g1_primitive_relative_angle - g1_primitive_offset + ai_g1g2_a
+  contact_g1_tooth_relative_angle = contact_g1_primitive_relative_angle - g1_primitive_offset # relative to the inter-axis
+  # g1_involute_offset_angle (see the documentation for the exact definition)
+  g1_involute_offset_angle = contact_g1_tooth_relative_angle + g1_involute_offset
+  # g1_contact_u : involute parameter for g1 of the contact point
+  g1_contact_u = real_force_angle + ai_rotation_direction*g1_involute_offset_angle
+  # contact point coordinates (method 1)
+  (cx, cy, ti) = sample_of_gear_tooth_profile((g1_ox, g1_oy), g1_br, contact_g1_tooth_angle+g1_involute_offset, -1*ai_rotation_direction, 0, g1_contact_u)
+  print("dbg858: contact point (method1): cx: {:0.2f}  cy: {:0.2f}  ti: {:0.2f}".format(cx, cy, ti))
+  # speed of c1 (contact point of g1)
+  
   r_g2_position = 0
 
   # return
@@ -1064,22 +1105,22 @@ def gear_profile(
 
   ### generate the first gear outline
   #print("dbg522: g1_high_parameters:", g1_high_parameters)
-  g1_low_parameters = calc_low_level_gear_parameters(g1_high_parameters)
-  g1_outline_B = gear_profile_outline(g1_low_parameters, g1_ia)
+  (g1_low1_parameters, g1_low2_parameters) = calc_low_level_gear_parameters(g1_high_parameters)
+  g1_outline_B = gear_profile_outline(g1_low1_parameters, g1_ia)
 
   ### simulation
   if(ai_simulation_enable):
     print("Launch the simulation with Tkinter ..")
     # initialization
-    g1_ideal_involute = ideal_tooth_outline(g1_low_parameters, g1_ia, 0)
-    g1_ideal_tooth = ideal_tooth_outline(g1_low_parameters, g1_ia, 1)
+    g1_ideal_involute = ideal_tooth_outline(g1_low1_parameters, g1_ia, 0)
+    g1_ideal_tooth = ideal_tooth_outline(g1_low1_parameters, g1_ia, 1)
     if(g2_exist):
       #print("dbg369: Prepare the second gear ..")
       #print("dbg521: g2_high_parameters:", g2_high_parameters)
       g2_ia = 0
-      g2_low_parameters = calc_low_level_gear_parameters(g2_high_parameters)
-      #print("dbg653: g2_low_parameters:", g2_low_parameters)
-      g2_outline_B = gear_profile_outline(g2_low_parameters, g2_ia)
+      (g2_low1_parameters, g2_low2_parameters) = calc_low_level_gear_parameters(g2_high_parameters)
+      #print("dbg653: g2_low1_parameters:", g2_low1_parameters)
+      g2_outline_B = gear_profile_outline(g2_low1_parameters, g2_ia)
       #print("dbg689: g2_outline_B is ready")
     # start Tkinter
     tk_root = Tkinter.Tk()
@@ -1091,15 +1132,15 @@ def gear_profile(
       g1_position = g1_ia+ai_angle_position
       # g2_position
       #g2_position = g2_ia-ai_angle_position # completely wrong, just waiting for the good formula
-      g2_position = g2_position_calcultion(g1_low_parameters, g2_low_parameters, ai_rotation_direction, g1_position)
+      g2_position = g2_position_calcultion(g1_low2_parameters, g2_low2_parameters, ai_rotation_direction, g1_position, aal, g1g2_a)
       ## get outline_B
-      lg1_outline_B = gear_profile_outline(g1_low_parameters, g1_position)
-      lg1_ideal_involute = ideal_tooth_outline(g1_low_parameters, g1_position, 0)
-      lg1_ideal_tooth = ideal_tooth_outline(g1_low_parameters, g1_position, 1)
+      lg1_outline_B = gear_profile_outline(g1_low1_parameters, g1_position)
+      lg1_ideal_involute = ideal_tooth_outline(g1_low1_parameters, g1_position, 0)
+      lg1_ideal_tooth = ideal_tooth_outline(g1_low1_parameters, g1_position, 1)
       if(g2_exist):
-        lg2_outline_B = gear_profile_outline(g2_low_parameters, g2_position)
-        lg2_ideal_involute = ideal_tooth_outline(g2_low_parameters, g2_position, 0)
-        lg2_ideal_tooth = ideal_tooth_outline(g2_low_parameters, g2_position, 1)
+        lg2_outline_B = gear_profile_outline(g2_low1_parameters, g2_position)
+        lg2_ideal_involute = ideal_tooth_outline(g2_low1_parameters, g2_position, 0)
+        lg2_ideal_tooth = ideal_tooth_outline(g2_low1_parameters, g2_position, 1)
       ## alternative to get outline_B
       #lg1_outline_B = cnc25d_api.outline_rotate(g1_outline_B, g1_ix, g1_iy, ai_angle_position)
       #lg1_ideal_involute = cnc25d_api.outline_rotate(g1_ideal_involute, g1_ix, g1_iy, ai_angle_position)
