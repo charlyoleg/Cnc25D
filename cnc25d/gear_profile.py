@@ -212,7 +212,7 @@ def involute_to_circle(ai_center, ai_base_radius, ai_initial_angle, ai_orientati
   ti0 = math.fmod(rd*u+math.pi, 2*math.pi) - math.pi # =u translated in [-pi,pi[
   # involute_to_circle of center (OX,OY), radius B and initial_angle = s with the parameter u
   px = OX+math.cos(s)*B*px0-math.sin(s)*B*py0
-  py = OX+math.sin(s)*B*px0+math.cos(s)*B*py0
+  py = OY+math.sin(s)*B*px0+math.cos(s)*B*py0
   ti = math.fmod(ti0+s+3*math.pi, 2*math.pi) - math.pi #=u+s translated in [-pi,pi[
   # return
   r_itc=(px, py, ti)
@@ -229,6 +229,13 @@ def search_point_of_involute_to_circle(ai_center, ai_base_radius, ai_initial_ang
       ai_precision: required precision to get closer to ai_altitude
       it returns: the paramter u, the angle (xOP), the Cartesian coordinates of (P), the tangent inclination (xPt)
   """
+  #print("dbg974: ai_center:", ai_center)
+  #print("dbg975: ai_base_radius:", ai_base_radius)
+  #print("dbg976: ai_initial_angle:", ai_initial_angle)
+  #print("dbg977: ai_orientation:", ai_orientation)
+  #print("dbg978: ai_altitude:", ai_altitude)
+  #print("dbg979: ai_step:", ai_step)
+  #print("dbg980: ai_precision:", ai_precision)
   # use notation of the documentation
   OX = ai_center[0]
   OY = ai_center[1]
@@ -645,6 +652,30 @@ def gear_profile_outline(ai_low_parameters, ai_angle_position):
   #return
   return(r_gear_profile_outline_B)
 
+def g2_position_calcultion(ai_g1_low_parameters, ai_g2_low_parameters, ai_rotation_direction, ai_g1_position):
+  """ calculation of the angle position of the second gear
+  """
+  # get ai_g1_low_parameters
+  (g1_gear_type, g1_module_angle,
+    g1_i1_base, g1_i1_offset, g1_i1_sign, g1_i1u_nb, g1_i1u_ini, g1_i1u_inc, g1_i1_thickness,
+    g1_i2_base, g1_i2_offset, g1_i2_sign, g1_i2u_nb, g1_i2u_ini, g1_i2u_inc, g1_i2_thickness,
+    g1_hl1, g1_hl2, g1_ha1, g1_ha2, g1_hr, g1_hlm, g1_ham, g1_tlm,
+    g1_ox, g1_oy, g1_portion_tooth_nb, g1_first_end, g1_last_end, g1_closed) = ai_g1_low_parameters
+  # get ai_g2_low_parameters
+  (g2_gear_type, g2_module_angle,
+    g2_i1_base, g2_i1_offset, g2_i1_sign, g2_i1u_nb, g2_i1u_ini, g2_i1u_inc, g2_i1_thickness,
+    g2_i2_base, g2_i2_offset, g2_i2_sign, g2_i2u_nb, g2_i2u_ini, g2_i2u_inc, g2_i2_thickness,
+    g2_hl1, g2_hl2, g2_ha1, g2_ha2, g2_hr, g2_hlm, g2_ham, g2_tlm,
+    g2_ox, g2_oy, g2_portion_tooth_nb, g2_first_end, g2_last_end, g2_closed) = ai_g2_low_parameters
+  # precision
+  #radian_epsilon = math.pi/1000
+  radian_epsilon = gp_radian_epsilon
+  #
+  r_g2_position = 0
+
+  # return
+  return(r_g2_position)
+
 def real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_g2_pr, ai_g2_ar, ai_g2_br, ai_g1_ix, ai_g1_iy, ai_g2_ix, ai_g2_iy, ai_g1g2_a, ai_aal, ai_involute):
   """ Analytic calculation to check the real_force_angle (including the additional_inter_axis_length) and the force_path_length
   """
@@ -1032,6 +1063,7 @@ def gear_profile(
     real_force_angle(g1_n, g1_pr, g1_ar, g1_brn, g2_n, g2_pr, g2_ar, g2_brn, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, -1) # negative involute
 
   ### generate the first gear outline
+  #print("dbg522: g1_high_parameters:", g1_high_parameters)
   g1_low_parameters = calc_low_level_gear_parameters(g1_high_parameters)
   g1_outline_B = gear_profile_outline(g1_low_parameters, g1_ia)
 
@@ -1042,25 +1074,32 @@ def gear_profile(
     g1_ideal_involute = ideal_tooth_outline(g1_low_parameters, g1_ia, 0)
     g1_ideal_tooth = ideal_tooth_outline(g1_low_parameters, g1_ia, 1)
     if(g2_exist):
+      #print("dbg369: Prepare the second gear ..")
+      #print("dbg521: g2_high_parameters:", g2_high_parameters)
       g2_ia = 0
       g2_low_parameters = calc_low_level_gear_parameters(g2_high_parameters)
+      #print("dbg653: g2_low_parameters:", g2_low_parameters)
       g2_outline_B = gear_profile_outline(g2_low_parameters, g2_ia)
+      #print("dbg689: g2_outline_B is ready")
     # start Tkinter
     tk_root = Tkinter.Tk()
     my_canvas = cnc25d_api.Two_Canvas(tk_root)
     # callback function for display_backend
-    def sub_canvas_graphics(ai_angle_position):
+    def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
       ## gear position
       # g1_position
       g1_position = g1_ia+ai_angle_position
       # g2_position
-      g2_position = g2_ia-ai_angle_position
+      #g2_position = g2_ia-ai_angle_position # completely wrong, just waiting for the good formula
+      g2_position = g2_position_calcultion(g1_low_parameters, g2_low_parameters, ai_rotation_direction, g1_position)
       ## get outline_B
       lg1_outline_B = gear_profile_outline(g1_low_parameters, g1_position)
       lg1_ideal_involute = ideal_tooth_outline(g1_low_parameters, g1_position, 0)
       lg1_ideal_tooth = ideal_tooth_outline(g1_low_parameters, g1_position, 1)
       if(g2_exist):
         lg2_outline_B = gear_profile_outline(g2_low_parameters, g2_position)
+        lg2_ideal_involute = ideal_tooth_outline(g2_low_parameters, g2_position, 0)
+        lg2_ideal_tooth = ideal_tooth_outline(g2_low_parameters, g2_position, 1)
       ## alternative to get outline_B
       #lg1_outline_B = cnc25d_api.outline_rotate(g1_outline_B, g1_ix, g1_iy, ai_angle_position)
       #lg1_ideal_involute = cnc25d_api.outline_rotate(g1_ideal_involute, g1_ix, g1_iy, ai_angle_position)
@@ -1074,6 +1113,8 @@ def gear_profile(
       r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(lg1_ideal_tooth, 'tkinter'), 'blue', 1))
       if(g2_exist):
         r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(lg2_outline_B, 'tkinter'), 'grey', 1))
+        r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(lg2_ideal_involute, 'tkinter'), 'green', 1))
+        r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(lg2_ideal_tooth, 'tkinter'), 'blue', 1))
       return(r_canvas_graphics)
     # end of callback function
     my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
@@ -1247,7 +1288,9 @@ def gear_profile_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gear_profile.py says hello!\n")
   #my_gp = gear_profile_cli()
-  my_gp = gear_profile_cli("--gear_tooth_nb 17".split())
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17".split())
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0".split())
+  my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename gear_profile_example_1.svg".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 17 --cut_portion 7 3 3 --output_file_basename gear_profile_example_2.svg".split())

@@ -221,27 +221,31 @@ class Two_Canvas():
   def action_button_fast_backward(self):
     """ widget action
     """
-    self.angle_speed = -1*g_fast_angle_speed
+    self.rotation_direction = -1
+    self.angle_speed = self.rotation_direction*g_fast_angle_speed
     #self.angle_position += self.angle_speed
     self.set_label_content()
 
   def action_button_slow_backward(self):
     """ widget action
     """
-    self.angle_speed = -1*g_slow_angle_speed
+    self.rotation_direction = -1
+    self.angle_speed = self.rotation_direction*g_slow_angle_speed
     #self.angle_position += self.angle_speed
     self.set_label_content()
 
   def action_button_step_backward(self):
     """ widget action
     """
+    self.rotation_direction = -1
     self.angle_speed = 0
-    self.angle_position += -1*g_step_angle_speed
+    self.angle_position += self.rotation_direction*g_step_angle_speed
     self.set_label_content()
 
   def action_button_stop(self):
     """ widget action
     """
+    #self.rotation_direction = self.rotation_direction
     self.angle_speed = 0
     #self.angle_position += 0
     self.set_label_content()
@@ -249,33 +253,38 @@ class Two_Canvas():
   def action_button_step_forward(self):
     """ widget action
     """
+    self.rotation_direction = 1
     self.angle_speed = 0
-    self.angle_position += 1*g_step_angle_speed
+    self.angle_position += self.rotation_direction*g_step_angle_speed
     self.set_label_content()
 
   def action_button_slow_forward(self):
     """ widget action
     """
-    self.angle_speed = 1*g_slow_angle_speed
+    self.rotation_direction = 1
+    self.angle_speed = self.rotation_direction*g_slow_angle_speed
     #self.angle_position += self.angle_speed
     self.set_label_content()
 
   def action_button_fast_forward(self):
     """ widget action
     """
-    self.angle_speed = 1*g_fast_angle_speed
+    self.rotation_direction = 1
+    self.angle_speed = self.rotation_direction*g_fast_angle_speed
     #self.angle_position += self.angle_speed
     self.set_label_content()
 
   def set_label_content(self):
     """ Update the angle labels
     """
+    lb_rotation_direction = '+' if (self.rotation_direction==1) else '-'
     lb1 = "Angle position : {:0.3f} radian   {:0.2f} degree".format(self.angle_position, self.angle_position*180/math.pi)
-    lb2 = "Angle speed    : {:0.3f} radian   {:0.2f} degree".format(self.angle_speed, self.angle_speed*180/math.pi)
+    lb2 = "Angle speed    : {:0.3f} radian   {:0.2f} degree  {:s}".format(self.angle_speed, self.angle_speed*180/math.pi, lb_rotation_direction)
     #print("dbg774: lb1:", lb1)
     #print("dbg775: lb2:", lb2)
     self.label1_content.set(lb1)
     self.label2_content.set(lb2)
+    #self.label3_content.set(lb3)
     #print("dbg845: self.label1_content.get:", self.label1_content.get())
 
   def action_button_check_event(self, event):
@@ -403,7 +412,7 @@ class Two_Canvas():
     #  #sys.exit(2)
     #  print("WARN446: Warning, the canvas_graphic_function has not been set!")
     if(self.canvas_graphic_function!=None):
-      all_graphics = self.canvas_graphic_function(self.angle_position)
+      all_graphics = self.canvas_graphic_function(self.rotation_direction, self.angle_position)
       #
       self.canvas_a.delete(Tkinter.ALL)
       # uncomment if you want to scale outline depending on the angle_position
@@ -683,6 +692,7 @@ class Two_Canvas():
     self.frame_a.rowconfigure(0, weight=1)
     #
     self.angle_speed = 0*g_slow_angle_speed
+    self.rotation_direction = 1
     self.angle_position = 0
     self.outline_extremum = (0,0,0,0)
     #
@@ -722,7 +732,7 @@ class Two_Canvas():
     #print("dbg445: ai_graphic_function:", ai_graphic_function)
     self.canvas_graphic_function = ai_canvas_graphic_function
     # the next line is to compute the extremum once at initialization if you don't want to recompute it at each angle_position
-    self.outline_extremum = find_outline_extremum(self.canvas_graphic_function(self.angle_position))
+    self.outline_extremum = find_outline_extremum(self.canvas_graphic_function(self.rotation_direction, self.angle_position))
 
   def add_parameter_info(self, ai_parameter_info):
     """ api method to add or change the parameter info
@@ -752,7 +762,7 @@ class Two_Canvas():
 # ******** test the Two_Canvas class ***********
 ################################################################
 
-def test_canvas_graphic_1(ai_angle):
+def test_canvas_graphic_1(ai_rotation_direction, ai_angle):
   """ Sub-function for test 1
       Also example of the callback function for add_canvas_graphic_function
   """
@@ -828,7 +838,7 @@ Vous êtes le Phénix des hôtes de ces bois. "
   r_test = 1
   return(r_test)
 
-def test_canvas_graphic_2(ai_angle):
+def test_canvas_graphic_2(ai_rotation_direction, ai_angle):
   """ Sub-function for test 1
       Also example of the callback function for add_canvas_graphic_function
   """

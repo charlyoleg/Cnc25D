@@ -1299,7 +1299,7 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   tk_root = Tkinter.Tk()
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
-  def sub_canvas_graphics(ai_angle_position):
+  def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
     # outline_c : closed, CW
     # settings for no error
     delta_x = 0.15
@@ -1330,11 +1330,11 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   # end of callback function
   # measurement the execution time of the callback function
   def measure_the_execution_time_of_the_sub_canvas_graphics_function(ai_repeat_nb):
-    #print("dbg506: time sub_canvas_graphics:", timeit.timeit(stmt='sub_canvas_graphics(0)', number=100))
-    #cProfile.run('sub_canvas_graphics(0)')
+    #print("dbg506: time sub_canvas_graphics:", timeit.timeit(stmt='sub_canvas_graphics(1, 0)', number=100))
+    #cProfile.run('sub_canvas_graphics(1, 0)')
     time_start = time.clock()
     for i in range(ai_repeat_nb):
-      tmp = sub_canvas_graphics(i*math.pi/200)
+      tmp = sub_canvas_graphics(1, i*math.pi/200)
     time_stop = time.clock()
     print("dbg507: time sub_canvas_graphics:", time_stop-time_start)
   #measure_the_execution_time_of_the_sub_canvas_graphics_function(100)
@@ -1400,7 +1400,7 @@ def cnc_cut_outline_test4(ai_sw_router_bit_radius):
   tk_root = Tkinter.Tk()
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
-  def sub_canvas_graphics_t4(ai_angle_position):
+  def sub_canvas_graphics_t4(ai_rotation_direction, ai_angle_position):
     r_canvas_graphics = []
     r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_a1, 'tkinter'), 'red', 1))
     r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_a2, 'tkinter'), 'green', 2))
@@ -1438,7 +1438,7 @@ def cnc_cut_outline_test5(ai_sw_router_bit_radius):
   tk_root = Tkinter.Tk()
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
-  def sub_canvas_graphics_t5(ai_angle_position):
+  def sub_canvas_graphics_t5(ai_rotation_direction, ai_angle_position):
     r_canvas_graphics = []
     r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_b1, 'tkinter'), 'green', 2))
     r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_b2, 'tkinter'), 'red', 1))

@@ -134,12 +134,17 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   #print("dbg305: sin_e: ", sin_e)
   #print("dbg306: cos_f: ", cos_f)
   #print("dbg307: sin_f: ", sin_f)
-  if(abs((math.copysign(1, sin_e)*cos_e)-(math.copysign(1,sin_f)*cos_f))<epilon):
+  is_colinear = (math.copysign(1, sin_e)*cos_e)-(math.copysign(1,sin_f)*cos_f)
+  #print("dbg556: is_colinear:", is_colinear)
+  if(abs(is_colinear)<epilon):
     #print("ERR810: Error, A, B, C are colinear. Arc can not be created!")
     #sys.exit(2)
     if(lab>100*epilon):
-      print("WARN810: Arc ABC is replaced by the line AC, because A,B,C are colinear!")
-      print("dbg559: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
+      pass # to let comment the following warning
+      #print("WARN810: Arc ABC is replaced by the line AC, because A,B,C are colinear!")
+      #print("dbg559: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
+      #print("dbg558: is_colinear:", is_colinear)
+      #print("dbg557: lab:", lab)
     r_polyline = []
     r_polyline.append([ptax, ptay])
     r_polyline.append([ptcx, ptcy])
@@ -514,7 +519,7 @@ def figure_simple_display(ai_figure, ai_overlay_figure=[]):
   tk_root = Tkinter.Tk()
   fsd_canvas = Two_Canvas(tk_root)
   # callback function for display_backend
-  def sub_fsd_canvas_graphics(ai_angle_position):
+  def sub_fsd_canvas_graphics(ai_rotation_direction, ai_angle_position):
     r_canvas_graphics = []
     for ol in overlay_figure:
       rotated_ol = cnc_outline.outline_rotate(ol, 0, 0, ai_angle_position) # rotation of center (0,0) and angle ai_angle_position
@@ -718,7 +723,7 @@ def outline_arc_line_test1():
   #my_canvas = display_backend.Two_Canvas(tk_root)
   my_canvas = Two_Canvas(tk_root)
   # callback function for display_backend
-  def sub_canvas_graphics(ai_angle_position):
+  def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
     r_canvas_graphics = []
     for i_ol in l_ols:
       r_canvas_graphics.append(('graphic_lines', outline_arc_line(i_ol, 'tkinter'), 'red', 2))
