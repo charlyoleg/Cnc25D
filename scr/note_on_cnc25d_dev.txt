@@ -74,6 +74,9 @@ cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_macro.py
 - heliostat
 -- mobile antenna
 -- mobile catapult game
+- parabola (antenna dish)
+- vault (architecture)
+- polyhedron (showcase of 2.5D)
 
 
 

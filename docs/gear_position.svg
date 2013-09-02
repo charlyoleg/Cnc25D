@@ -67,13 +67,13 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
+     inkscape:zoom="1.4"
      inkscape:cx="276.54015"
-     inkscape:cy="785.16127"
+     inkscape:cy="530.35714"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1807"
+     inkscape:window-width="1582"
      inkscape:window-height="1008"
      inkscape:window-x="38"
      inkscape:window-y="24"
@@ -90,7 +90,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -895,5 +895,35 @@
            height="47.142857"
            x="407.85715"
            y="241.72768" /></flowRegion><flowPara
-         id="flowPara4772-1">g2 (driven)</flowPara></flowRoot>  </g>
+         id="flowPara4772-1">g2 (driven)</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3181"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(76.65625,83.28125)"><flowRegion
+         id="flowRegion3183"><rect
+           id="rect3185"
+           width="545.71429"
+           height="350.71429"
+           x="27.142857"
+           y="977.43304" /></flowRegion><flowPara
+         id="flowPara3187">Calculation of w2 (rotation speed of g2) depending on w1 (rotation speed of g1)</flowPara><flowPara
+         id="flowPara3189">A, B: center of g1, g2</flowPara><flowPara
+         id="flowPara3195">so, AK, BL: base radius of g1, g2</flowPara><flowPara
+         id="flowPara3197">u: involute parameter of C(g1)</flowPara><flowPara
+         id="flowPara3199">v: involute parameter of C(g2)</flowPara><flowPara
+         id="flowPara3191">c1S = w1*AC</flowPara><flowPara
+         id="flowPara3193">AC = AK*sqrt(1+u²)</flowPara><flowPara
+         id="flowPara3201">c1Sn = cos(KAC)*c1S</flowPara><flowPara
+         id="flowPara3213">KAC = acos(AK/AC)</flowPara><flowPara
+         id="flowPara3217">so, c1Sn = c1S*AK/AC = c1S/sqrt(1+u²) = w1*AK</flowPara><flowPara
+         id="flowPara3203">c2Sn = c1Sn because C is the contact point between g1 and g2</flowPara><flowPara
+         id="flowPara3205">c2S = w2*BC</flowPara><flowPara
+         id="flowPara3207">BC = BL*sqrt(1+v²)</flowPara><flowPara
+         id="flowPara3211">c2Sn = cos(BLC)*c2S</flowPara><flowPara
+         id="flowPara3215">BLC = acos(BL/BC)</flowPara><flowPara
+         id="flowPara3219">so, c2Sn = c2S*BL/BC = c2S/sqrt(1+v²) = c1Sn = c1S*Ak/AC = c1S/sqrt(1+u²)</flowPara><flowPara
+         id="flowPara3221">c2S = c2Sn*sqrt(1+v²) = c1S*sqrt((1+v²)/(1+u²)) = c2Sn*BC/BL = c1S*AK/AC*BC/BL</flowPara><flowPara
+         id="flowPara3223">w2 = c2S/BC = c1S*AK/(AC*BL) = w1*AK/BL</flowPara><flowPara
+         id="flowPara3225">So easy! we don't need u and v :)</flowPara><flowPara
+         id="flowPara3209" /></flowRoot>  </g>
 </svg>
