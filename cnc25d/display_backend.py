@@ -496,8 +496,12 @@ class Two_Canvas():
     #tkMessageBox.showinfo('lala','Yes mes')
     #print("dbg566: frame_c.winfo_exists:", self.frame_c.winfo_exists())
     #print("dbg569: frame_c.state:", self.frame_c.state())
+    #print("dbg559: self.parameter_content.get():", self.parameter_content.get())
     if(self.frame_c.state()=='withdrawn'):
-      self.show_parameter_frame()
+      if(self.parameter_content.get()==''):
+        print("WARN556: Warning, no parameter information has been set!")
+      else:
+        self.show_parameter_frame()
     else:
       self.hide_parameter_frame()
 

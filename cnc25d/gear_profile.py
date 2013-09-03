@@ -1295,13 +1295,16 @@ def gear_profile(
       #print("dbg689: g2_outline_B is ready")
     ### static figure
     inter_axis_outline = ((g1_ix, g1_iy), (g2_ix, g2_iy))
-    # start Tkinter
+    ### matplotlib curve table
+    g2_rotation_speed_curve_table = []
+    tangential_friction_curve_table = []
+    ### start Tkinter
     tk_root = Tkinter.Tk()
     my_canvas = cnc25d_api.Two_Canvas(tk_root)
     # callback functions for display_backend
-    g2_rotation_speed_curve_table = []
-    tangential_friction_curve_table = []
     def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
+      """ create the graphics and fill-up the matplotlib curve tables
+      """
       global g2_rotation_speed_table, tangential_friction_table
       ## gear position
       # g1_position
