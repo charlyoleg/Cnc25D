@@ -372,7 +372,7 @@ def calc_low_level_gear_parameters(ai_high_parameters):
     addendum_negative_involute = -1*ads*(inaa-inpa)
     dedendum_positive_involute = ads*(ippa-ipda)
     dedendum_negative_involute = -1*ads*(inpa-inda)
-    print("dbg646: full_positive_involute: {:0.3f}  full_negative_involute: {:0.3f}  addendum_positive_involute: {:0.3f}  addendum_negative_involute: {:0.3f}  dedendum_positive_involute: {:0.3f}  dedendum_negative_involute: {:0.3f}".format(full_positive_involute, full_negative_involute, addendum_positive_involute, addendum_negative_involute, dedendum_positive_involute, dedendum_negative_involute))
+    #print("dbg646: full_positive_involute: {:0.3f}  full_negative_involute: {:0.3f}  addendum_positive_involute: {:0.3f}  addendum_negative_involute: {:0.3f}  dedendum_positive_involute: {:0.3f}  dedendum_negative_involute: {:0.3f}".format(full_positive_involute, full_negative_involute, addendum_positive_involute, addendum_negative_involute, dedendum_positive_involute, dedendum_negative_involute))
     addendum_angle = module_angle*g_adp-(addendum_positive_involute+addendum_negative_involute)
     if(addendum_angle*g_ar<radian_epsilon): # a bit stricter than 0
       print("ERR989: Error, the addendum_angle {:0.2f} is negative or too small!".format(addendum_angle))
@@ -466,8 +466,14 @@ def calc_low_level_gear_parameters(ai_high_parameters):
   else:
     print("ERR740: Error, the gear_type {:s} doesn't exist!".format(g_type))
     sys.exit(2)
+  # info
+  info_txt = "Gear profile details:\n"
+  info_txt += "positive involute: \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_positive_involute, g_pr*full_positive_involute, 100*full_positive_involute/module_angle)
+  info_txt += "negative involute: \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_negative_involute, g_pr*full_negative_involute, 100*full_negative_involute/module_angle)
+  info_txt += "top land:          \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(addendum_angle, g_ar*addendum_angle, 100*addendum_angle/module_angle)
+  info_txt += "bottom land:       \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(dedendum_angle, g_dr*dedendum_angle, 100*dedendum_angle/module_angle)
   #return
-  r_low_parameters = (low1_parameters, low2_parameters)
+  r_low_parameters = (low1_parameters, low2_parameters, info_txt)
   return(r_low_parameters)
 
 def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, ai_u_ini, ai_u_inc, ai_thickness, ai_tooth_angle):
@@ -681,7 +687,7 @@ def gear_profile_outline(ai_low_parameters, ai_angle_position):
   return(r_gear_profile_outline_B)
 
 def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rotation_direction, ai_g1_position, ai_aal, ai_g1g2_a):
-  """ calculation of the angle position of the second gear
+  """ calculation of the angle position of the second gear and other related parameters (speed, friction)
   """
   # get ai_g1_low_parameters
   (g1_gear_type, g1_module_angle, g1_n, g1_pr, g1_ox, g1_oy,
@@ -713,7 +719,8 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
   #print("dbg743: real_force_angle:", real_force_angle)
   # length KL (see documentation  graphic gear_position.svg)
   AB = g1_pr+g2_pr+ai_aal
-  KL = math.sqrt(AB**2 - (g1_br*(1+g2_n/g1_n))**2) # kind of pythagor
+  KL = math.sqrt(AB**2 - (g1_br*(1+float(g2_n)/g1_n))**2) # kind of pythagor
+  #print("dbg631: KL {:0.5f}".format(KL))
   ## g1 related
   # get the angle of the closest middle of addendum to the contact point
   aa = ai_g1_position + g1_primitive_offset - ai_g1g2_a
@@ -748,8 +755,8 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
     sys.exit(20)
   else:
     # law of cosinus (Al-Kashi) in ABC
-    BAC = math.acos((AB**2+AC**2-BC**2)/(2*AB*AC))
-    ABC = math.acos((AB**2+BC**2-AC**2)/(2*AB*BC))
+    BAC = math.acos(float(AB**2+AC**2-BC**2)/(2*AB*AC))
+    ABC = math.acos(float(AB**2+BC**2-AC**2)/(2*AB*BC))
     # alternative
     xAB = math.atan2(g2_oy-g1_oy, g2_ox-g1_ox)
     xAC = math.atan2(cy-g1_oy, cx-g1_ox)
@@ -786,27 +793,32 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
   c1_speed_radial = c1_speed*math.cos(g1_sra)
   c1_speed_tangential = c1_speed*math.sin(g1_sra)
   ## g2_contact_u : involute parameter for g2 of the contact point
-  g2_contact_u = (KL - g1_contact_u*g1_br)/g2_br
-  # alternative to calculate g2_contact_u
+  # several mathods:
+  g2_contact_u1 = float(KL - g1_contact_u*g1_br)/g2_br
   g2_contact_u2 = math.tan(g2_sra)
-  g2_contact_u3 = math.sqrt((BC/g2_br)**2-1)
-  if(abs(g2_contact_u2-g2_contact_u)>radian_epsilon):
-    print("ERR331: Error in the calculation of g2_contact_u {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u, g2_contact_u2))
-    #sys.exit(2)
-  #if(abs(g2_contact_u3-g2_contact_u)>radian_epsilon):
-  if(abs(g2_contact_u3-g2_contact_u)>0.09): # poor precision :(
-    print("ERR332: Error in the calculation of g2_contact_u {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u, g2_contact_u3))
-    sys.exit(2)
+  g2_contact_u3 = math.sqrt((float(BC)/g2_br)**2-1)
+#  if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon):
+#    print("ERR331: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u1, g2_contact_u2))
+#    #sys.exit(2)
+#  #if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon):
+#  if(abs(g2_contact_u3-g2_contact_u1)>0.09): # poor precision :(
+#    print("ERR332: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u1, g2_contact_u3))
+#    #sys.exit(2)
+  g2_contact_u = abs(g2_contact_u2) # select the method for g2_contact_u
+  ## c2_position
+  g2_position = ai_g1g2_a + math.pi - ai_rotation_direction*(real_force_angle - g2_contact_u) - g2_involute_offset
+  # c2 coordinates
+  (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_involute_offset, -1*ai_rotation_direction, 0, g2_contact_u)
   ## speed of c2 (contact point of g2)
   c2_speed_radial = c1_speed_radial
-  c2_speed = c2_speed_radial/math.cos(g2_sra)
+  c2_speed = float(c2_speed_radial)/math.cos(g2_sra)
   c2_speed_tangential = c2_speed*math.sin(g2_sra)
   # alternative
   c2_speed_tangential2 = c2_speed_radial*g2_contact_u
   #if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon):
   #  print("ERR336: Error in the calculation of c2_speed_tangential {:0.3f} or c2_speed_tangential2 {:0.3f}".format(c2_speed_tangential, c2_speed_tangential2))
     #sys.exit(2)
-  g2_rotation_speed = c2_speed/BC
+  g2_rotation_speed = float(c2_speed)/BC
   # friction between g1 and g2
   tangential_friction = c2_speed_tangential - c1_speed_tangential
   ## speed outline
@@ -825,19 +837,17 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
     (c1rx, c1ry), # c1 radial speed
     (c1rx+scaled_c1_speed_tangential*math.cos(txa), c1ry+scaled_c1_speed_tangential*math.sin(txa)), # c1 tangential speed
     (cx, cy)) # close
-  c2rx = cx+scaled_c2_speed_radial*math.cos(nxa)
-  c2ry = cy+scaled_c2_speed_radial*math.sin(nxa)
-  c2_speed_outline = ((cx, cy),
+  c2rx = c2x+scaled_c2_speed_radial*math.cos(nxa)
+  c2ry = c2y+scaled_c2_speed_radial*math.sin(nxa)
+  c2_speed_outline = ((c2x, c2y),
     (c2rx, c2ry), # c2 radial speed
     (c2rx+scaled_c2_speed_tangential*math.cos(txa), c2ry+scaled_c2_speed_tangential*math.sin(txa)), # c2 tangential speed
-    (cx, cy)) # close
-  ## c2_position
-  r_g2_position = ai_g1g2_a + math.pi - ai_rotation_direction*real_force_angle + g2_contact_u2 - g2_involute_offset
+    (c2x, c2y)) # close
   # return
-  r_position = (r_g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline)
+  r_position = (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline)
   return(r_position)
 
-def real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_g2_pr, ai_g2_ar, ai_g2_br, ai_g1_ix, ai_g1_iy, ai_g2_ix, ai_g2_iy, ai_g1g2_a, ai_aal, ai_involute):
+def info_on_real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_g2_pr, ai_g2_ar, ai_g2_br, ai_g1_ix, ai_g1_iy, ai_g2_ix, ai_g2_iy, ai_g1g2_a, ai_aal, ai_involute):
   """ Analytic calculation to check the real_force_angle (including the additional_inter_axis_length) and the force_path_length
   """
   if(ai_involute==1):
@@ -847,10 +857,11 @@ def real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_g2_pr, a
   else:
     print("ERR663: Error, ai_involute {:d} can only be 1 or -1!".format(ai_involute))
     sys.exit(2)
+  r_info = "Info on Real Force Angle {:s}:\n".format(involute_name)
   rd = ai_involute
   #print("dbg311: ai_g1_br:", ai_g1_br)
   real_force_angle = math.acos(float(ai_g1_br*(ai_g1_n+ai_g2_n))/((ai_g1_pr+ai_g2_pr+ai_aal)*ai_g1_n))
-  print("INFO051: {:s} Real Force Angle = {:0.2f} radian ({:0.2f} degree)".format(involute_name, real_force_angle, real_force_angle*180/math.pi))
+  r_info += "{:s} Real Force Angle = {:0.2f} radian ({:0.2f} degree)\n".format(involute_name, real_force_angle, real_force_angle*180/math.pi)
   # coordinate of C (intersection of axis-line and force-line)
   AC = float((ai_g1_pr+ai_g2_pr+ai_aal)*ai_g1_n)/(ai_g1_n+ai_g2_n)
   CX = ai_g1_ix + math.cos(ai_g1g2_a)*AC
@@ -876,7 +887,7 @@ def real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_g2_pr, a
     sys.exit(2)
   # length of F1F2
   F1F2 = math.sqrt((F2X-F1X)**2+(F2Y-F1Y)**2)
-  print("INFO052: length of the tooth {:s} contact path: {:0.2f}".format(involute_name, F1F2))
+  r_info += "length of the tooth {:s} contact path: {:0.2f}\n".format(involute_name, F1F2)
   # angle (F1AF2)
   AF1 = float(math.sqrt((F1X-ai_g1_ix)**2+(F1Y-ai_g1_iy)**2))
   xAF1 = math.atan2((F1Y-ai_g1_iy)/AF1, (F1X-ai_g1_ix)/AF1)
@@ -884,7 +895,7 @@ def real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_g2_pr, a
   xAF2 = math.atan2((F2Y-ai_g1_iy)/AF2, (F2X-ai_g1_ix)/AF2)
   F1AF2 = abs(math.fmod(xAF2-xAF1+5*math.pi, 2*math.pi)-math.pi)
   F1AF2p = F1AF2*ai_g1_n/(2*math.pi)
-  print("INFO053: tooth {:s} contact path angle from gearwheel1: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length".format(involute_name, F1AF2, F1AF2*180/math.pi, F1AF2p*100))
+  r_info += "tooth {:s} contact path angle from gearwheel1: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length\n".format(involute_name, F1AF2, F1AF2*180/math.pi, F1AF2p*100)
   # angle (F1EF2)
   EF2 = float(math.sqrt((F2X-ai_g2_ix)**2+(F2Y-ai_g2_iy)**2))
   xEF2 = math.atan2((F2Y-ai_g2_iy)/EF2, (F2X-ai_g2_ix)/EF2)
@@ -892,9 +903,36 @@ def real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_g2_pr, a
   xEF1 = math.atan2((F1Y-ai_g2_iy)/EF1, (F1X-ai_g2_ix)/EF1)
   F1EF2 = abs(math.fmod(xEF2-xEF1+5*math.pi, 2*math.pi)-math.pi)
   F1EF2p = F1EF2*ai_g2_n/(2*math.pi)
-  print("INFO054: tooth {:s} contact path angle from gearwheel2: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length".format(involute_name, F1EF2, F1EF2*180/math.pi, F1EF2p*100))
+  r_info += "tooth {:s} contact path angle from gearwheel2: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length\n".format(involute_name, F1EF2, F1EF2*180/math.pi, F1EF2p*100)
   # return
-  return(0)
+  return(r_info)
+
+def gear_high_level_parameter_to_text(ai_prefix_txt, ai_gear_high_parameters):
+  """ Create a string that contains the gear high-level parameters
+  """
+  r_txt = "\n"
+  r_txt += ai_prefix_txt
+  (g_type, g_n, g_m, g_pr, g_adp, g_thh, g_ar, g_dr, g_brp, g_brn, g_ix, g_iy, g_rbr, g_hr, g_irp, g_irn, g_stp, g_stn, g_ptn, g_pfe, g_ple, g_bi) = ai_gear_high_parameters
+  r_txt += "\ngear_type:                \t{:s}\n".format(g_type)
+  r_txt += "tooth_nb:                 \t{:d}\n".format(g_n)
+  r_txt += "gear_module:              \t{:0.3f}\n".format(g_m)
+  r_txt += "primitive radius:         \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_pr, 2*g_pr)
+  r_txt += "addendum-dedendum parity: \t{:0.2f} %\n".format(100*g_adp)
+  r_txt += "tooth half height:        \t{:0.3f}\n".format(g_thh)
+  r_txt += "positive base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_brp, 2*g_brp)
+  r_txt += "negative base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_brn, 2*g_brn)
+  r_txt += "addendum radius:          \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_ar, 2*g_ar)
+  r_txt += "dedendum radius:          \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_dr, 2*g_dr)
+  r_txt += "gear hollow radius:       \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_hr, 2*g_hr)
+  r_txt += "router-bit radius:        \t{:0.3f}   \tdiameter:  {:0.3f}\n".format(g_rbr, 2*g_rbr)
+  r_txt += "gear center (x, y):       \t{:0.3f}   \t {:0.3f}\n".format(g_ix, g_iy)
+  r_txt += "positive profile resolution:       \t{:d}\n".format(g_irp)
+  r_txt += "negative profile resolution:       \t{:d}\n".format(g_irn)
+  r_txt += "positive profile skin thickness:   \t{:0.3f}\n".format(g_stp)
+  r_txt += "negative profile skin thickness:   \t{:0.3f}\n".format(g_stn)
+  r_txt += "gear portion:   \ttooth_nb: {:d}   \tstart: {:d}   \tstop: {:d}\n".format(g_ptn, g_pfe, g_ple)
+  return(r_txt)
+
 
 ################################################################
 # the most important function to be used in other scripts
@@ -1220,13 +1258,18 @@ def gear_profile(
 
   ## compute the real_force_angle and the tooth_contact_path
   if(g2_exist):
-    real_force_angle(g1_n, g1_pr, g1_ar, g1_brp, g2_n, g2_pr, g2_ar, g2_brp, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal,  1) # positive involute
-    real_force_angle(g1_n, g1_pr, g1_ar, g1_brn, g2_n, g2_pr, g2_ar, g2_brn, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, -1) # negative involute
+    real_force_info = "Real force info:\n"
+    real_force_info += info_on_real_force_angle(g1_n, g1_pr, g1_ar, g1_brp, g2_n, g2_pr, g2_ar, g2_brp, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal,  1) # positive involute
+    real_force_info += info_on_real_force_angle(g1_n, g1_pr, g1_ar, g1_brn, g2_n, g2_pr, g2_ar, g2_brn, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, -1) # negative involute
 
   ### generate the first gear outline
   #print("dbg522: g1_high_parameters:", g1_high_parameters)
-  (g1_low1_parameters, g1_low2_parameters) = calc_low_level_gear_parameters(g1_high_parameters)
+  (g1_low1_parameters, g1_low2_parameters, g1_info_low) = calc_low_level_gear_parameters(g1_high_parameters)
   g1_outline_B = gear_profile_outline(g1_low1_parameters, g1_ia)
+  # output info
+  parameter_info_txt1 = gear_high_level_parameter_to_text("Gear 1:", g1_high_parameters)
+  parameter_info_txt1 += g1_info_low
+  print(parameter_info_txt1)
 
   ### simulation
   if(ai_simulation_enable):
@@ -1234,21 +1277,32 @@ def gear_profile(
     # initialization
     g1_ideal_involute = ideal_tooth_outline(g1_low1_parameters, g1_ia, 0)
     g1_ideal_tooth = ideal_tooth_outline(g1_low1_parameters, g1_ia, 1)
+    parameter_info_txt = parameter_info_txt1
     if(g2_exist):
       #print("dbg369: Prepare the second gear ..")
       #print("dbg521: g2_high_parameters:", g2_high_parameters)
       g2_ia = 0
-      (g2_low1_parameters, g2_low2_parameters) = calc_low_level_gear_parameters(g2_high_parameters)
+      (g2_low1_parameters, g2_low2_parameters, g2_info_low) = calc_low_level_gear_parameters(g2_high_parameters)
       #print("dbg653: g2_low1_parameters:", g2_low1_parameters)
       g2_outline_B = gear_profile_outline(g2_low1_parameters, g2_ia)
+      # output info
+      parameter_info_txt2 = "\nGear system:\n g1g2_a: {:0.3f}\n additional inter-axis length: {:0.3f}\n".format(g1g2_a, aal)
+      parameter_info_txt2 += real_force_info
+      parameter_info_txt3 = gear_high_level_parameter_to_text("Gear 2:", g2_high_parameters)
+      parameter_info_txt3 += g2_info_low
+      print(parameter_info_txt2 + parameter_info_txt3)
+      parameter_info_txt += parameter_info_txt2 + parameter_info_txt3
       #print("dbg689: g2_outline_B is ready")
     ### static figure
     inter_axis_outline = ((g1_ix, g1_iy), (g2_ix, g2_iy))
     # start Tkinter
     tk_root = Tkinter.Tk()
     my_canvas = cnc25d_api.Two_Canvas(tk_root)
-    # callback function for display_backend
+    # callback functions for display_backend
+    g2_rotation_speed_curve_table = []
+    tangential_friction_curve_table = []
     def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
+      global g2_rotation_speed_table, tangential_friction_table
       ## gear position
       # g1_position
       g1_position = g1_ia+ai_angle_position
@@ -1283,9 +1337,19 @@ def gear_profile(
         r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(c2_speed_outline, 'tkinter'), 'orange', 1))
         # inter-axis
         r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(inter_axis_outline, 'tkinter'), 'green', 1))
+      ## update matplotlib curve_table
+      if(g2_exist):
+        g2_rotation_speed_curve_table.append(g2_rotation_speed)
+        tangential_friction_curve_table.append(tangential_friction)
       return(r_canvas_graphics)
-    # end of callback function
+    # matplotlib stuff
+    gear_profile_mpl_curves = (('gear-profile analysis', 'g1_position_angle (simulation iteration)', 1),
+      ('g2_rotation_speed', g2_rotation_speed_curve_table, 'r'),
+      ('tangential friction', tangential_friction_curve_table, 'bo'))
+    # end of callback functions
     my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
+    my_canvas.add_parameter_info(parameter_info_txt)
+    my_canvas.add_curve_graphic_table(gear_profile_mpl_curves)
     tk_root.mainloop()
     del (my_canvas, tk_root) # because Tkinter could be used again later in this script
 

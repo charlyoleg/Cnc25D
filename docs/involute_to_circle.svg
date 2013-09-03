@@ -670,13 +670,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="310.11838"
-     inkscape:cy="589.79298"
+     inkscape:cx="219.03583"
+     inkscape:cy="3539.4384"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="742"
-     inkscape:window-height="975"
+     inkscape:window-width="879"
+     inkscape:window-height="976"
      inkscape:window-x="24"
      inkscape:window-y="72"
      inkscape:window-maximized="0"
@@ -699,7 +699,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -994,11 +994,11 @@
        xml:space="preserve"
        id="flowRoot8495"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(79.5,83.28125)"><flowRegion
+       transform="translate(-1.3122039,81.260945)"><flowRegion
          id="flowRegion8497"><rect
            id="rect8499"
-           width="475.78183"
-           height="454.5686"
+           width="551.54327"
+           height="507.09653"
            x="107.07617"
            y="492.0188" /></flowRegion><flowPara
          id="flowPara8501">(OX,OY) = ai_center</flowPara><flowPara
@@ -1018,8 +1018,11 @@
          id="flowPara3104">ti(u) = u</flowPara><flowPara
          id="flowPara4132" /><flowPara
          id="flowPara4134">OP(u) = sqrt(PX²+PY²)</flowPara><flowPara
-         id="flowPara4136">OP²(u) = B²*(cos(u)*sin(u)+u*(sin²(u)-cos²(u))-u²*sin(u)*cos(u)))</flowPara><flowPara
-         id="flowPara4140">= B²*((1-u²)*sin(2u)/2 - u*cos(2u))    Oops! difficult to solve</flowPara><flowPara
+         id="flowPara3557">OP²(u) = B²*(cos²(u)+2*u*cos(u)*sin(u)+u²*sin²(u)+sin²(u)-2*u*sin(u)*cos(u)+u²*cos²(u))</flowPara><flowPara
+         id="flowPara3559">= B²*(cos²(u)+sin²(u))*(1+u²)</flowPara><flowPara
+         id="flowPara3561">= B²*(1+u²)</flowPara><flowPara
+         id="flowPara4140">SOP=atan(PY/PX) = atan((sin(u)-u*cos(u))/(cos(u)+u*sin(u)))</flowPara><flowPara
+         id="flowPara3565">= atan((tan(u)-u)/(1+u*tan(u))) = atan(tan(u)) + atan(-u) = u - atan(u)</flowPara><flowPara
          id="flowPara4144" /><flowPara
          id="flowPara3106">If orientation=-1 (and u&gt;0)</flowPara><flowPara
          id="flowPara3108">PXn(u)=B*(cos(-u)+u*cos(-u+pi/2)) = B*(cos(u)+u*sin(u)) = PX(u)</flowPara><flowPara

@@ -375,7 +375,7 @@ class Two_Canvas():
     self.angle_position += self.angle_speed
     self.set_label_content()
     self.apply_canvas_graphic_function()
-    self.apply_curve_graphic_function(self.angle_position, self.angle_speed)
+    #self.apply_curve_graphic_table(self.angle_position, self.angle_speed)
     self.frame_a.after(g_step_period, self.simulation_step)
   
   def draw_canvas(self, ai_canvas, ai_canvas_graphics, ai_overlay):
@@ -523,40 +523,61 @@ class Two_Canvas():
     self.frame_c.update()
     self.frame_c.deiconify()
 
-  def apply_curve_graphic_function(self, ai_angle_position, ai_angle_speed):
-    """ Compute the curve new points accordind to the angle_position and angle_speed
-    """
-    curve_nb = len(self.curve_graphic_function)-1
-    if(curve_nb>0):
-      # angle in x-axis
-      #lx = ai_angle_position
-      # time in x-axis
-      lx = 0 # initial timestamp
-      if(len(self.curve_points[0])>0):
-        dlx = ai_angle_speed/self.curve_graphic_function[0][2]
-        lx = self.curve_points[0][-1] + abs(dlx)
-      self.curve_points[0].append(lx)
-      for i in range(curve_nb):
-        ly = self.curve_graphic_function[i+1][1](ai_angle_position, ai_angle_speed)
-        self.curve_points[i+1].append(ly)
+  #def apply_curve_graphic_table(self, ai_angle_position, ai_angle_speed):
+  #  """ Compute the curve new points accordind to the angle_position and angle_speed
+  #  """
+  #  curve_nb = len(self.curve_graphic_table)-1
+  #  if(curve_nb>0):
+  #    # angle in x-axis
+  #    #lx = ai_angle_position
+  #    # time in x-axis
+  #    lx = 0 # initial timestamp
+  #    if(len(self.curve_points[0])>0):
+  #      #dlx = ai_angle_speed/self.curve_graphic_table[0][2]
+  #      dlx = self.curve_graphic_table[0][2]
+  #      lx = self.curve_points[0][-1] + abs(dlx)
+  #    self.curve_points[0].append(lx)
+  #    for i in range(curve_nb):
+  #      ly = self.curve_graphic_table[i+1][1](ai_angle_position, ai_angle_speed)
+  #      self.curve_points[i+1].append(ly)
 
   def action_button_curve_graph(self, event):
     """ Launch the matplotlib window for curve display
     """
-    curve_nb = len(self.curve_graphic_function)-1
+    curve_nb = len(self.curve_graphic_table)-1
     if(curve_nb<=0):
-      print("WARN451: Warning, self.curve_graphic_function is not set!")
+      print("WARN451: Warning, self.curve_graphic_table is not set!")
     else:
+      # create curve_points
+      curve_nb = len(self.curve_graphic_table)-1
+      curve_points = []
+      for i in range(curve_nb+1):
+        curve_points.append([])
+      curve_table_len = len( self.curve_graphic_table[1][1])
+      for j in range(curve_nb-1):
+        check_len = len( self.curve_graphic_table[j+2][1])
+        if(check_len!=curve_table_len):
+          print("ERR586: Error in the curve_table {:d}! Its lenght {:d} does not match the reference length {:d}".format(j, check_len, curve_table_len))
+      x_increment = self.curve_graphic_table[0][2]
+      abscissa_x = 0
+      for i in range(curve_table_len):
+        curve_points[0].append(abscissa_x)
+        abscissa_x += x_increment
+        for j in range(curve_nb):
+          table = self.curve_graphic_table[j+1][1]
+          ly = table[i]
+          curve_points[j+1].append(ly)
       #matplotlib.pyplot.plot([1,2,3,4,5],[5,3,2,1,4])
       matplotlib.pyplot.figure(1)
       for i in range(curve_nb):
         matplotlib.pyplot.subplot(curve_nb,1,i+1)
-        matplotlib.pyplot.plot(self.curve_points[0], self.curve_points[i+1], self.curve_graphic_function[i+1][2])
-        matplotlib.pyplot.ylabel(self.curve_graphic_function[i+1][0])
+        #matplotlib.pyplot.plot(self.curve_points[0], self.curve_points[i+1], self.curve_graphic_table[i+1][2])
+        matplotlib.pyplot.plot(curve_points[0], curve_points[i+1], self.curve_graphic_table[i+1][2])
+        matplotlib.pyplot.ylabel(self.curve_graphic_table[i+1][0])
         if(i==0):
-          matplotlib.pyplot.title(self.curve_graphic_function[0][0])
+          matplotlib.pyplot.title(self.curve_graphic_table[0][0])
         if(i==curve_nb-1):
-          matplotlib.pyplot.xlabel(self.curve_graphic_function[0][1])
+          matplotlib.pyplot.xlabel(self.curve_graphic_table[0][1])
       matplotlib.pyplot.show()
 
   def createWidgets(self):
@@ -719,8 +740,8 @@ class Two_Canvas():
     self.measurement_id = 0
     self.scale_coef_b = None
     #
-    self.curve_graphic_function = []
-    self.curve_points = []
+    self.curve_graphic_table = []
+    #self.curve_points = []
     #
     self.createWidgets()
     # initiate the time simulation
@@ -739,14 +760,14 @@ class Two_Canvas():
     """
     self.parameter_content.set(ai_parameter_info)
     
-  def add_curve_graphic_function(self, ai_curve_graphic_function):
+  def add_curve_graphic_table(self, ai_curve_graphic_table):
     """ api method to add or change the curve functions for matplotlib
     """
-    self.curve_graphic_function = ai_curve_graphic_function
-    curve_nb = len(self.curve_graphic_function)-1
-    self.curve_points = []
-    for i in range(curve_nb+1):
-      self.curve_points.append([])
+    self.curve_graphic_table = ai_curve_graphic_table
+    #curve_nb = len(self.curve_graphic_table)-1
+    #self.curve_points = []
+    #for i in range(curve_nb+1):
+    #  self.curve_points.append([])
 
 
 
@@ -792,17 +813,17 @@ def test_canvas_graphic_1(ai_rotation_direction, ai_angle):
   r_canvas_graph.append(('graphic_polygon', polygon_test_3, 'green', 'red', 1))
   return(r_canvas_graph)
 
-def test1_curve1(ai_angle_position, ai_angle_speed):
-  """ test curve for matplotlib
-  """
-  r_y = math.sin(ai_angle_position)
-  return(r_y)
-
-def test1_curve2(ai_angle_position, ai_angle_speed):
-  """ test curve for matplotlib
-  """
-  r_y = math.cos(ai_angle_position)
-  return(r_y)
+#def test1_curve1(ai_angle_position, ai_angle_speed):
+#  """ test curve for matplotlib
+#  """
+#  r_y = math.sin(ai_angle_position)
+#  return(r_y)
+#
+#def test1_curve2(ai_angle_position, ai_angle_speed):
+#  """ test curve for matplotlib
+#  """
+#  r_y = math.cos(ai_angle_position)
+#  return(r_y)
 
 def two_canvas_class_test1():
   """ test the simple display of a static graphic with Two_Canvas
@@ -823,7 +844,9 @@ Vous êtes le Phénix des hôtes de ces bois. "
   #lambda_function_1 = test1_curve1
   #lambda_function_1 = lambda x: test1_curve1(x)
   #lambda_function_2 = test1_curve2
-  test_curve_graphic_1 = (('global_title', 'x_axis_name', math.pi*10),
+  test1_curve1 = (1,2,3,4,5,6,7,8,9,10,11,12,13)
+  test1_curve2 = (8,7,3,4,2,2,3,4,5,5.5,6,6.2,6.9)
+  test_curve_graphic_1 = (('global_title', 'x_axis_name', 1),
     ('plot1_title', test1_curve1, 'bo'),
     ('plot2_title', test1_curve2, 'r'))
   #
@@ -832,7 +855,7 @@ Vous êtes le Phénix des hôtes de ces bois. "
   #dut = Two_Canvas()
   dut.add_canvas_graphic_function(test_canvas_graphic_1)
   dut.add_parameter_info(test_parameter_info)
-  dut.add_curve_graphic_function(test_curve_graphic_1)
+  dut.add_curve_graphic_table(test_curve_graphic_1)
   tk_root.mainloop()
   #dut.mainloop()
   r_test = 1
@@ -864,7 +887,9 @@ Maître Corbeau, sur un arbre perché,
 Tenait en son bec un fromage.
   """
   #
-  test_curve_graphic_1 = (('global_title', 'x_axis_name', math.pi*10),
+  test1_curve1 = (1,2,3,4,5,6,7,8,9,10,11,12,13)
+  test1_curve2 = (8,7,3,4,2,2,3,4,5,5.5,6,6.2,6.9)
+  test_curve_graphic_1 = (('global_title', 'x_axis_name', 0.001),
     ('plot1_title', test1_curve1, 'bo'),
     ('plot2_title', test1_curve2, 'r'))
   #
@@ -872,7 +897,7 @@ Tenait en son bec un fromage.
   dut = Two_Canvas(tk_root)
   dut.add_canvas_graphic_function(test_canvas_graphic_2)
   dut.add_parameter_info(test_parameter_info)
-  dut.add_curve_graphic_function(test_curve_graphic_1)
+  dut.add_curve_graphic_table(test_curve_graphic_1)
   tk_root.mainloop()
   #
   r_test = 1
