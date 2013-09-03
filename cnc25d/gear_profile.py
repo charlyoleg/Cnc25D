@@ -885,6 +885,8 @@ def info_on_real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_
   if(line_circle_intersection_status==2):
     print("ERR126: Error, you not get the intersection of the force line and the addendum_circle_2")
     sys.exit(2)
+  ### action_line_outline
+  r_action_line_outline = ((F1X, F1Y), (F2X, F2Y))
   # length of F1F2
   F1F2 = math.sqrt((F2X-F1X)**2+(F2Y-F1Y)**2)
   r_info += "length of the tooth {:s} contact path: {:0.2f}\n".format(involute_name, F1F2)
@@ -905,7 +907,8 @@ def info_on_real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_
   F1EF2p = F1EF2*ai_g2_n/(2*math.pi)
   r_info += "tooth {:s} contact path angle from gearwheel2: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length\n".format(involute_name, F1EF2, F1EF2*180/math.pi, F1EF2p*100)
   # return
-  return(r_info)
+  r_iorfa = (r_info, r_action_line_outline)
+  return(r_iorfa)
 
 def gear_high_level_parameter_to_text(ai_prefix_txt, ai_gear_high_parameters):
   """ Create a string that contains the gear high-level parameters
@@ -1258,9 +1261,11 @@ def gear_profile(
 
   ## compute the real_force_angle and the tooth_contact_path
   if(g2_exist):
+    (real_force_info_p, positive_action_line_outline) = info_on_real_force_angle(g1_n, g1_pr, g1_ar, g1_brp, g2_n, g2_pr, g2_ar, g2_brp, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal,  1) # positive involute
+    (real_force_info_n, negative_action_line_outline) = info_on_real_force_angle(g1_n, g1_pr, g1_ar, g1_brn, g2_n, g2_pr, g2_ar, g2_brn, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, -1) # negative involute
     real_force_info = "Real force info:\n"
-    real_force_info += info_on_real_force_angle(g1_n, g1_pr, g1_ar, g1_brp, g2_n, g2_pr, g2_ar, g2_brp, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal,  1) # positive involute
-    real_force_info += info_on_real_force_angle(g1_n, g1_pr, g1_ar, g1_brn, g2_n, g2_pr, g2_ar, g2_brn, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, -1) # negative involute
+    real_force_info += real_force_info_p
+    real_force_info += real_force_info_n
 
   ### generate the first gear outline
   #print("dbg522: g1_high_parameters:", g1_high_parameters)
@@ -1296,8 +1301,15 @@ def gear_profile(
     ### static figure
     inter_axis_outline = ((g1_ix, g1_iy), (g2_ix, g2_iy))
     ### matplotlib curve table
+    g1_position_curve_table = []
+    g2_position_curve_table = []
     g2_rotation_speed_curve_table = []
     tangential_friction_curve_table = []
+    # initialization to avoid strange matplotlib representation (particularly on g2_rotation_speed)
+    g1_position_curve_table.append(0.0)
+    g2_position_curve_table.append(0.0)
+    g2_rotation_speed_curve_table.append(1.0)
+    tangential_friction_curve_table.append(0.0)
     ### start Tkinter
     tk_root = Tkinter.Tk()
     my_canvas = cnc25d_api.Two_Canvas(tk_root)
@@ -1305,7 +1317,7 @@ def gear_profile(
     def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
       """ create the graphics and fill-up the matplotlib curve tables
       """
-      global g2_rotation_speed_table, tangential_friction_table
+      #global g1_position_curve_table, g2_position_curve_table, g2_rotation_speed_curve_table, tangential_friction_curve_table # no need of global because just append element to lists
       ## gear position
       # g1_position
       g1_position = g1_ia+ai_angle_position
@@ -1320,6 +1332,11 @@ def gear_profile(
         lg2_outline_B = gear_profile_outline(g2_low1_parameters, g2_position)
         lg2_ideal_involute = ideal_tooth_outline(g2_low1_parameters, g2_position, 0)
         lg2_ideal_tooth = ideal_tooth_outline(g2_low1_parameters, g2_position, 1)
+        # action_line
+        if(ai_rotation_direction==1):
+          action_line_outline = positive_action_line_outline
+        else:
+          action_line_outline = negative_action_line_outline
       ## alternative to get outline_B
       #lg1_outline_B = cnc25d_api.outline_rotate(g1_outline_B, g1_ix, g1_iy, ai_angle_position)
       #lg1_ideal_involute = cnc25d_api.outline_rotate(g1_ideal_involute, g1_ix, g1_iy, ai_angle_position)
@@ -1338,17 +1355,24 @@ def gear_profile(
         # speed overlay
         r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(c1_speed_outline, 'tkinter'), 'yellow', 1))
         r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(c2_speed_outline, 'tkinter'), 'orange', 1))
-        # inter-axis
-        r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(inter_axis_outline, 'tkinter'), 'green', 1))
+        # action line
+        r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(action_line_outline, 'tkinter'), 'brown', 1))
+      # inter-axis
+      r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(inter_axis_outline, 'tkinter'), 'green', 1))
       ## update matplotlib curve_table
       if(g2_exist):
+        #print("dbg554: g1_position: {:0.3f}  g2_position: {:0.3f}  g2_rotation_speed: {:0.3f}  tangential_friction: {:0.3f}".format(g1_position, g2_position, g2_rotation_speed, tangential_friction))
+        g1_position_curve_table.append(g1_position)
+        g2_position_curve_table.append(g2_position)
         g2_rotation_speed_curve_table.append(g2_rotation_speed)
         tangential_friction_curve_table.append(tangential_friction)
       return(r_canvas_graphics)
     # matplotlib stuff
-    gear_profile_mpl_curves = (('gear-profile analysis', 'g1_position_angle (simulation iteration)', 1),
-      ('g2_rotation_speed', g2_rotation_speed_curve_table, 'r'),
-      ('tangential friction', tangential_friction_curve_table, 'bo'))
+    gear_profile_mpl_curves = (('gear-profile analysis\n(with g1_rotation_speed = 1 radian/s)', 'g1_position_angle (simulation iteration)', 1),
+      ('g1\nposition\n(radian)', g1_position_curve_table, 'gx'),
+      ('g2\nposition\n(radian)', g2_position_curve_table, 'r+'),
+      ('g2\nrotation_speed\n(radian/s)', g2_rotation_speed_curve_table, 'y.'),
+      ('tangential\nfriction\n(mm/s)', tangential_friction_curve_table, 'bo'))
     # end of callback functions
     my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
     my_canvas.add_parameter_info(parameter_info_txt)
