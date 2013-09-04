@@ -725,7 +725,7 @@ def calc_real_force_angle(ai_g1_type, ai_g1_pr, ai_g1_br, ai_g2_type, ai_g2_pr, 
     if(ai_g1_pr>ai_g2_pr):
       print("ERR547: Error, the gearring radius {:0.3f} must be bigger gearwheel radius {:0.3f}".format(ai_g2_pr, ai_g1_pr))
       sys.exit(2)
-    r_real_force_angle = math.acos(float(ai_g2_br-ai_g1_br)/(ai_g2_pr+ai_aal-ai_g1_pr))
+    r_real_force_angle = math.acos(float(ai_g2_br-ai_g1_br)/(ai_g2_pr-(ai_g1_pr+ai_aal)))
   elif((ai_g1_type=='l')and(ai_g2_type=='e')): # l-e
     r_real_force_angle = ai_g1_br
   elif((ai_g1_type=='e')and(ai_g2_type=='l')): # e-l
@@ -1263,6 +1263,18 @@ def gear_profile(
     print("WARN247: Warning, g2_brn {:0.2f} is bigger than g2_small_r {:0.2f}".format(g2_brn, g2_small_r))
   if(g1_brp!=g1_brn):
     print("WARN218: Warning, g1_brp {:0.2f} and g1_brn {:0.2f} are different. The gear_tooth are asymmetrical!".format(g1_brp, g1_brn))
+  if(g1_brp>g1_big_r):
+    print("ERR616: Error, g1_brp {:0.2f} is bigger than g1_big_r {:0.2f}".format(g1_brp, g1_big_r))
+    sys.exit(2)
+  if(g2_exist and (g2_brp>g2_big_r)):
+    print("ERR617: Error, g2_brp {:0.2f} is bigger than g2_big_r {:0.2f}".format(g2_brp, g2_big_r))
+    sys.exit(2)
+  if(g1_brn>g1_big_r):
+    print("ERR646: Error, g1_brn {:0.2f} is bigger than g1_big_r {:0.2f}".format(g1_brn, g1_big_r))
+    sys.exit(2)
+  if(g2_exist and (g2_brn>g2_big_r)):
+    print("ERR647: Error, g2_brn {:0.2f} is bigger than g2_big_r {:0.2f}".format(g2_brn, g2_big_r))
+    sys.exit(2)
   # initial position
   g1_ia = ai_gear_initial_angle
   g1_ix = ai_center_position_x
