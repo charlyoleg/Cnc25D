@@ -42,7 +42,7 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 #   cnc25d_api.ideal_outline(outline-AC, error_mark_string) => outline-B
 #   cnc25d_api.outline_arc_line(outline-B, backend) => Tkinter or svgwrite or dxfwrite or FreeCAD stuff
 #   cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor
-#   cnc25d_api.figure_simple_display(graphic_figure, overlay_figure) => 0
+#   cnc25d_api.figure_simple_display(graphic_figure, overlay_figure, parameter_info) => 0
 #   cnc25d_api.write_figure_in_svg(figure, filename) => 0
 #   cnc25d_api.write_figure_in_dxf(figure, filename) => 0
 #   cnc25d_api.figure_to_freecad_25d_part(figure, extrusion_height) => freecad_part_object
@@ -172,7 +172,7 @@ print("Display the outlines with Tkinter")
 tk_root = Tkinter.Tk()
 my_canvas = cnc25d_api.Two_Canvas(tk_root)
 # callback function for display_backend
-def sub_canvas_graphics(ai_angle_position):
+def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
   r_canvas_graphics = []
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc, 'tkinter'), 'red', 1))
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc_x_shifted, 'tkinter'), 'red', 1))
@@ -317,8 +317,14 @@ wfl_inner_circle2 = [40,0, 10]
 wfl_figure = [wfl_outer_rectangle_B, wfl_inner_square_B, wfl_inner_circle1, wfl_inner_circle2]
 wfl_overlay_figure = [wfl_outer_rectangle_A, wfl_inner_square_A, wfl_inner_circle1, wfl_inner_circle2]
 
+wfl_parameter_info = """
+those lines will appers
+in the parameter window.
+Might be usefull to provide some info to the user!
+"""
+
 # display the figure
-cnc25d_api.figure_simple_display(wfl_figure, wfl_overlay_figure)
+cnc25d_api.figure_simple_display(wfl_figure, wfl_overlay_figure, wfl_parameter_info)
 
 wfl_extrude_height = 20.0
 # create a FreeCAD part

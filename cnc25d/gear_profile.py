@@ -910,13 +910,13 @@ def info_on_real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_
   r_iorfa = (r_info, r_action_line_outline)
   return(r_iorfa)
 
-def gear_high_level_parameter_to_text(ai_prefix_txt, ai_gear_high_parameters):
+def gear_high_level_parameter_to_text(ai_prefix_txt, ai_gear_high_parameters, ai_initial_angle=0):
   """ Create a string that contains the gear high-level parameters
   """
   r_txt = "\n"
-  r_txt += ai_prefix_txt
+  r_txt += ai_prefix_txt+"\n"
   (g_type, g_n, g_m, g_pr, g_adp, g_thh, g_ar, g_dr, g_brp, g_brn, g_ix, g_iy, g_rbr, g_hr, g_irp, g_irn, g_stp, g_stn, g_ptn, g_pfe, g_ple, g_bi) = ai_gear_high_parameters
-  r_txt += "\ngear_type:                \t{:s}\n".format(g_type)
+  r_txt += "gear_type:                \t{:s}\t".format(g_type)
   r_txt += "tooth_nb:                 \t{:d}\n".format(g_n)
   r_txt += "gear_module:              \t{:0.3f}\n".format(g_m)
   r_txt += "primitive radius:         \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_pr, 2*g_pr)
@@ -934,6 +934,7 @@ def gear_high_level_parameter_to_text(ai_prefix_txt, ai_gear_high_parameters):
   r_txt += "positive profile skin thickness:   \t{:0.3f}\n".format(g_stp)
   r_txt += "negative profile skin thickness:   \t{:0.3f}\n".format(g_stn)
   r_txt += "gear portion:   \ttooth_nb: {:d}   \tstart: {:d}   \tstop: {:d}\n".format(g_ptn, g_pfe, g_ple)
+  r_txt += "first tooth position angle:   \t{:0.3f} (radian)  \t{:0.3f} (degree)\n".format(ai_initial_angle, ai_initial_angle*180/math.pi)
   return(r_txt)
 
 
@@ -1272,9 +1273,9 @@ def gear_profile(
   (g1_low1_parameters, g1_low2_parameters, g1_info_low) = calc_low_level_gear_parameters(g1_high_parameters)
   g1_outline_B = gear_profile_outline(g1_low1_parameters, g1_ia)
   # output info
-  parameter_info_txt1 = gear_high_level_parameter_to_text("Gear 1:", g1_high_parameters)
+  parameter_info_txt1 = gear_high_level_parameter_to_text("Gear-profile 1:", g1_high_parameters, g1_ia)
   parameter_info_txt1 += g1_info_low
-  print(parameter_info_txt1)
+  #print(parameter_info_txt1)
 
   ### simulation
   if(ai_simulation_enable):
@@ -1291,13 +1292,15 @@ def gear_profile(
       #print("dbg653: g2_low1_parameters:", g2_low1_parameters)
       g2_outline_B = gear_profile_outline(g2_low1_parameters, g2_ia)
       # output info
-      parameter_info_txt2 = "\nGear system:\n g1g2_a: {:0.3f}\n additional inter-axis length: {:0.3f}\n".format(g1g2_a, aal)
+      parameter_info_txt2 = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
       parameter_info_txt2 += real_force_info
-      parameter_info_txt3 = gear_high_level_parameter_to_text("Gear 2:", g2_high_parameters)
+      parameter_info_txt3 = gear_high_level_parameter_to_text("Gear-profile 2:", g2_high_parameters)
       parameter_info_txt3 += g2_info_low
-      print(parameter_info_txt2 + parameter_info_txt3)
+      #print(parameter_info_txt2 + parameter_info_txt3)
       parameter_info_txt += parameter_info_txt2 + parameter_info_txt3
       #print("dbg689: g2_outline_B is ready")
+    ### gear_profile parameter info in the log
+    print(parameter_info_txt)
     ### static figure
     inter_axis_outline = ((g1_ix, g1_iy), (g2_ix, g2_iy))
     ### matplotlib curve table
@@ -1306,10 +1309,10 @@ def gear_profile(
     g2_rotation_speed_curve_table = []
     tangential_friction_curve_table = []
     # initialization to avoid strange matplotlib representation (particularly on g2_rotation_speed)
-    g1_position_curve_table.append(0.0)
-    g2_position_curve_table.append(0.0)
-    g2_rotation_speed_curve_table.append(1.0)
-    tangential_friction_curve_table.append(0.0)
+    #g1_position_curve_table.append(0.0)
+    #g2_position_curve_table.append(0.0)
+    #g2_rotation_speed_curve_table.append(1.0)
+    #tangential_friction_curve_table.append(0.0)
     ### start Tkinter
     tk_root = Tkinter.Tk()
     my_canvas = cnc25d_api.Two_Canvas(tk_root)
@@ -1366,6 +1369,9 @@ def gear_profile(
         g2_position_curve_table.append(g2_position)
         g2_rotation_speed_curve_table.append(g2_rotation_speed)
         tangential_friction_curve_table.append(tangential_friction)
+        # to avoid the matplotlib exponential scale
+        if(len(g2_rotation_speed_curve_table)==1):
+          g2_rotation_speed_curve_table[0] = 1.01*g2_rotation_speed_curve_table[0]
       return(r_canvas_graphics)
     # matplotlib stuff
     gear_profile_mpl_curves = (('gear-profile analysis\n(with g1_rotation_speed = 1 radian/s)', 'g1_position_angle (simulation iteration)', 1),
@@ -1384,7 +1390,7 @@ def gear_profile(
   gp_figure = [g1_outline_B] # select the outlines to be writen in files
   cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height)
 
-  r_gp = (g1_outline_B, g1_high_parameters)
+  r_gp = (g1_outline_B, g1_high_parameters, parameter_info_txt1)
   return(r_gp)
 
 ################################################################

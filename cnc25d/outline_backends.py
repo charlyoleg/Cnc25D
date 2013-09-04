@@ -489,7 +489,7 @@ Two_Canvas = display_backend.Two_Canvas
 
 ### figure level functions
 
-def figure_simple_display(ai_figure, ai_overlay_figure=[]):
+def figure_simple_display(ai_figure, ai_overlay_figure=[], ai_parameter_info=""):
   """ Display the figure with red lines in the Tkinter Two_Canvas GUI
       If you want a finer control on the way outlines are displayed (color, width, overlay), you need to work at the outline level (not figure level)
   """
@@ -530,6 +530,7 @@ def figure_simple_display(ai_figure, ai_overlay_figure=[]):
     return(r_canvas_graphics)
   # end of callback function
   fsd_canvas.add_canvas_graphic_function(sub_fsd_canvas_graphics)
+  fsd_canvas.add_parameter_info(ai_parameter_info)
   tk_root.mainloop()
   #del (tk_root, fsd_canvas)
   return(0)
