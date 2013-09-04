@@ -705,13 +705,13 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
     g1_primitive_offset = g1_i1_primitive_offset
     g1_br = g1_i1_base
     g1_involute_offset = g1_i1_offset2
-    g2_br = g1_i1_base
+    g2_br = g2_i1_base
     g2_involute_offset = g2_i1_offset2
   else:
     g1_primitive_offset = g1_i2_primitive_offset
     g1_br = g1_i2_base
     g1_involute_offset = g1_i2_offset2
-    g2_br = g1_i2_base
+    g2_br = g2_i2_base
     g2_involute_offset = g2_i2_offset2
   ## gear system related
   # real_force_angle
@@ -795,29 +795,29 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
   ## g2_contact_u : involute parameter for g2 of the contact point
   # several mathods:
   g2_contact_u1 = float(KL - g1_contact_u*g1_br)/g2_br
-  g2_contact_u2 = math.tan(g2_sra)
+  g2_contact_u2 = math.tan(abs(g2_sra))
   g2_contact_u3 = math.sqrt((float(BC)/g2_br)**2-1)
-#  if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon):
-#    print("ERR331: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u1, g2_contact_u2))
-#    #sys.exit(2)
-#  #if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon):
-#  if(abs(g2_contact_u3-g2_contact_u1)>0.09): # poor precision :(
-#    print("ERR332: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u1, g2_contact_u3))
-#    #sys.exit(2)
-  g2_contact_u = abs(g2_contact_u2) # select the method for g2_contact_u
+  if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon):
+    print("ERR331: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u1, g2_contact_u2))
+    sys.exit(2)
+  if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon):
+    print("ERR332: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u1, g2_contact_u3))
+    sys.exit(2)
+  g2_contact_u = g2_contact_u1 # select the method for g2_contact_u
   ## c2_position
   g2_position = ai_g1g2_a + math.pi - ai_rotation_direction*(real_force_angle - g2_contact_u) - g2_involute_offset
   # c2 coordinates
   (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_involute_offset, -1*ai_rotation_direction, 0, g2_contact_u)
+  #print("dbg632: g2_ox {:0.3f}  g2_oy {:0.3f}  g2_br {:0.3f}".format(g2_ox, g2_oy, g2_br))
   ## speed of c2 (contact point of g2)
   c2_speed_radial = c1_speed_radial
   c2_speed = float(c2_speed_radial)/math.cos(g2_sra)
   c2_speed_tangential = c2_speed*math.sin(g2_sra)
   # alternative
-  c2_speed_tangential2 = c2_speed_radial*g2_contact_u
-  #if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon):
-  #  print("ERR336: Error in the calculation of c2_speed_tangential {:0.3f} or c2_speed_tangential2 {:0.3f}".format(c2_speed_tangential, c2_speed_tangential2))
-    #sys.exit(2)
+  c2_speed_tangential2 = ai_rotation_direction*c2_speed_radial*g2_contact_u
+  if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon):
+    print("ERR336: Error in the calculation of c2_speed_tangential {:0.3f} or c2_speed_tangential2 {:0.3f}".format(c2_speed_tangential, c2_speed_tangential2))
+    sys.exit(2)
   g2_rotation_speed = float(c2_speed)/BC
   # friction between g1 and g2
   tangential_friction = c2_speed_tangential - c1_speed_tangential
@@ -1360,6 +1360,11 @@ def gear_profile(
         r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(c2_speed_outline, 'tkinter'), 'orange', 1))
         # action line
         r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(action_line_outline, 'tkinter'), 'brown', 1))
+        # debug
+        #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_brp), 'tkinter'), 'brown', 1))
+        #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_brn), 'tkinter'), 'brown', 1))
+        #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g2_ix, g2_iy, g2_brp), 'tkinter'), 'brown', 1))
+        #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g2_ix, g2_iy, g2_brn), 'tkinter'), 'brown', 1))
       # inter-axis
       r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(inter_axis_outline, 'tkinter'), 'green', 1))
       ## update matplotlib curve_table

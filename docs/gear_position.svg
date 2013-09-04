@@ -10,7 +10,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="601"
-   height="1586.7188"
+   height="2063.1562"
    id="svg3088"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
@@ -68,8 +68,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="276.54015"
-     inkscape:cy="530.35714"
+     inkscape:cx="261.54015"
+     inkscape:cy="562.50893"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -123,13 +123,13 @@
        sodipodi:cy="167.7991"
        sodipodi:rx="63.214287"
        sodipodi:ry="63.214287"
-       d="m 222.14286,167.7991 c 0,34.91229 -28.302,63.21429 -63.21429,63.21429 -34.91228,0 -63.214283,-28.302 -63.214283,-63.21429 0,-34.91228 28.302003,-63.21428 63.214283,-63.21428 34.91229,0 63.21429,28.302 63.21429,63.21428 z"
+       d="m 222.14286,167.7991 a 63.214287,63.214287 0 1 1 -126.428573,0 63.214287,63.214287 0 1 1 126.428573,0 z"
        transform="matrix(1.2478391,0,0,1.2478391,59.271601,531.84891)" />
     <rect
        style="fill:none;stroke:#d7eef4;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3096"
        width="600"
-       height="1585.7146"
+       height="2062.1431"
        x="77.14286"
        y="83.790756" />
     <flowRoot
@@ -150,7 +150,7 @@
        sodipodi:cy="167.7991"
        sodipodi:rx="63.214287"
        sodipodi:ry="63.214287"
-       d="m 222.14286,167.7991 c 0,34.91229 -28.302,63.21429 -63.21429,63.21429 -34.91228,0 -63.214283,-28.302 -63.214283,-63.21429 0,-34.91228 28.302003,-63.21428 63.214283,-63.21428 34.91229,0 63.21429,28.302 63.21429,63.21428 z"
+       d="m 222.14286,167.7991 a 63.214287,63.214287 0 1 1 -126.428573,0 63.214287,63.214287 0 1 1 126.428573,0 z"
        transform="matrix(0.79661017,0,0,0.79661017,95.94066,180.93183)" />
     <path
        sodipodi:type="arc"
@@ -160,7 +160,7 @@
        sodipodi:cy="103.87054"
        sodipodi:rx="122.85714"
        sodipodi:ry="122.14286"
-       d="m 443.57143,103.87054 c 0,67.45764 -55.00501,122.14286 -122.85714,122.14286 -67.85212,0 -122.85714,-54.68522 -122.85714,-122.14286 0,-67.457642 55.00502,-122.142864 122.85714,-122.142864 67.85213,0 122.85714,54.685222 122.85714,122.142864 z"
+       d="m 443.57143,103.87054 a 122.85714,122.14286 0 1 1 -245.71428,0 122.85714,122.14286 0 1 1 245.71428,0 z"
        transform="matrix(0.67732557,0,0,0.67731792,199.24535,243.17749)" />
     <path
        style="color:#000000;fill:none;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -486,7 +486,7 @@
        sodipodi:cy="167.7991"
        sodipodi:rx="63.214287"
        sodipodi:ry="63.214287"
-       d="m 222.14286,167.7991 c 0,34.91229 -28.302,63.21429 -63.21429,63.21429 -34.91228,0 -63.214283,-28.302 -63.214283,-63.21429 0,-34.91228 28.302003,-63.21428 63.214283,-63.21428 34.91229,0 63.21429,28.302 63.21429,63.21428 z"
+       d="m 222.14286,167.7991 a 63.214287,63.214287 0 1 1 -126.428573,0 63.214287,63.214287 0 1 1 126.428573,0 z"
        transform="matrix(0.79661017,0,0,0.79661017,130.79091,607.21619)" />
     <path
        sodipodi:type="arc"
@@ -496,7 +496,7 @@
        sodipodi:cy="103.87054"
        sodipodi:rx="122.85714"
        sodipodi:ry="122.14286"
-       d="m 443.57143,103.87054 c 0,67.45764 -55.00501,122.14286 -122.85714,122.14286 -67.85212,0 -122.85714,-54.68522 -122.85714,-122.14286 0,-67.457642 55.00502,-122.142864 122.85714,-122.142864 67.85213,0 122.85714,54.685222 122.85714,122.142864 z"
+       d="m 443.57143,103.87054 a 122.85714,122.14286 0 1 1 -245.71428,0 122.85714,122.14286 0 1 1 245.71428,0 z"
        transform="matrix(0.67732557,0,0,0.67731792,234.0956,669.46185)" />
     <path
        style="color:#000000;fill:none;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -729,7 +729,7 @@
        sodipodi:cy="103.87054"
        sodipodi:rx="122.85714"
        sodipodi:ry="122.14286"
-       d="m 443.57143,103.87054 c 0,67.45764 -55.00501,122.14286 -122.85714,122.14286 -67.85212,0 -122.85714,-54.68522 -122.85714,-122.14286 0,-67.457642 55.00502,-122.142864 122.85714,-122.142864 67.85213,0 122.85714,54.685222 122.85714,122.142864 z"
+       d="m 443.57143,103.87054 a 122.85714,122.14286 0 1 1 -245.71428,0 122.85714,122.14286 0 1 1 245.71428,0 z"
        transform="matrix(0.94188857,0,0,0.94188718,148.95599,642.39073)" />
     <path
        style="color:#000000;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -925,5 +925,47 @@
          id="flowPara3221">c2S = c2Sn*sqrt(1+v²) = c1S*sqrt((1+v²)/(1+u²)) = c2Sn*BC/BL = c1S*AK/AC*BC/BL</flowPara><flowPara
          id="flowPara3223">w2 = c2S/BC = c1S*AK/(AC*BL) = w1*AK/BL</flowPara><flowPara
          id="flowPara3225">So easy! we don't need u and v :)</flowPara><flowPara
-         id="flowPara3209" /></flowRoot>  </g>
+         id="flowPara3209" /></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3204"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(43.084821,68.995536)"><flowRegion
+         id="flowRegion3206"><rect
+           id="rect3208"
+           width="506.4285"
+           height="342.85693"
+           x="47.857143"
+           y="1298.8616" /></flowRegion><flowPara
+         id="flowPara3210">calculation of the position of g2 depending on the position of g1:</flowPara><flowPara
+         id="flowPara3212">1- position angle of the middle of the top-land of the first tooth</flowPara><flowPara
+         id="flowPara3218">    = g1_position </flowPara><flowPara
+         id="flowPara3214">2- position angle of the intersection of the involute and primitive</flowPara><flowPara
+         id="flowPara3220">    = g1_position + primitive_offset </flowPara><flowPara
+         id="flowPara3222">3- closest intersection of the involute and primitive to the inter-axis</flowPara><flowPara
+         id="flowPara3232">    = g1_position + primitive_offset + N*module_angle</flowPara><flowPara
+         id="flowPara3234">4- closest tooth to the inter-axis</flowPara><flowPara
+         id="flowPara3238">    = g1_position + primitive_offset + N*module_angle - primitive_offset</flowPara><flowPara
+         id="flowPara3244">    = g1_position + N*module_angle</flowPara><flowPara
+         id="flowPara3246">5- closest tooth involute offset angle</flowPara><flowPara
+         id="flowPara3248">    = g1_position + N*module_angle + involute_offset</flowPara><flowPara
+         id="flowPara3250">6- closest tooth involute parameter</flowPara><flowPara
+         id="flowPara3252">    = g1_position + N*module_angle + involute_offset + real_force_angle</flowPara><flowPara
+         id="flowPara3254">7- g2 closet tooth involute parameter</flowPara><flowPara
+         id="flowPara3256">    = (KL - u1*g1_br)/g2_br</flowPara><flowPara
+         id="flowPara3258">8- g2 closest tooth involute offset angle</flowPara><flowPara
+         id="flowPara3236">    = u2 - real_force_angle</flowPara><flowPara
+         id="flowPara3260">9- g2 closest tooth position angle</flowPara><flowPara
+         id="flowPara3262">   = u2 - real_force_angle - involute_offset</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       x="317.85715"
+       y="1423.1473"
+       id="text3240"
+       sodipodi:linespacing="125%"
+       transform="translate(76.65625,83.28125)"><tspan
+         sodipodi:role="line"
+         id="tspan3242"
+         x="317.85715"
+         y="1423.1473" /></text>
+  </g>
 </svg>
