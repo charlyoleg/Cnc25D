@@ -318,8 +318,16 @@ def calc_low_level_gear_parameters(ai_high_parameters):
   ### check
   # tooth height check
   ads = 1 # addendum_dedendum_sign for external and linear gear
-  if(g_type=='i'): # internal gear
+  g_ks = 1
+  if(g_type=='e'): # external gear
+    g_ks = 1
+  elif(g_type=='i'): # internal gear
     ads = -1
+    g_ks = -1
+  elif(g_type=='l'): # linear gear
+    #g_ks = 0
+    g_ks = 1
+  #
   if(ads*(g_pr-g_dr)<0):
     print("ERR985: Error, g_pr {:0.2f} and g_dr {:0.2f} are not in the correct order!".format(g_pr, g_dr))
     sys.exit(2)
@@ -399,10 +407,16 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       i2_thickness = g_stp
       ha1 = addendum_angle/2 + full_negative_involute
       # low2: to calculate g2_position
-      i1_primitive_offset = addendum_angle/2-inpa #>0
-      i2_primitive_offset = -1*(addendum_angle/2+ippa) #<0
+      #i1_primitive_offset = addendum_angle/2-inpa #>0
+      #i2_primitive_offset = -1*(addendum_angle/2+ippa) #<0
+      i1_primitive_offset = addendum_angle/2+addendum_negative_involute #>0
+      i2_primitive_offset = -1*(addendum_angle/2+addendum_positive_involute) #<0
       i1_offset2 = addendum_angle/2-inaa # >0
       i2_offset2 = -1*(addendum_angle/2+ipaa) # <0
+      driven_i1_base = g_brn
+      driven_i2_base = g_brp
+      driven_i1_offset = i1_offset2
+      driven_i2_offset = i2_offset2
     elif(g_type=='i'): # positive > hollow > negative
       # low1
       i1_base = g_brp
@@ -421,6 +435,15 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       i2_thickness = g_stn
       ha1 = addendum_angle/2 + full_positive_involute
       # low2
+      # gearring with positive rotation, push with positive involute
+      i1_primitive_offset = addendum_angle/2+addendum_positive_involute #>0
+      i2_primitive_offset = -1*(addendum_angle/2+addendum_negative_involute) #<0
+      i1_offset2 = addendum_angle/2-ipaa
+      i2_offset2 = -1*addendum_angle/2-inaa
+      driven_i1_base = g_brn
+      driven_i2_base = g_brp
+      driven_i1_offset = i2_offset2
+      driven_i2_offset = i1_offset2
     #
     gear_type = g_type
     #module_angle = 2*math.pi/g_n
@@ -448,9 +471,10 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
       hl1, hl2, ha1, ha2, hr, hlm, ham, tlm,
       ox, oy, portion_tooth_nb, first_end, last_end, closed)
-    low2_parameters = (gear_type, module_angle, g_n, g_pr, ox, oy,
+    low2_parameters = (gear_type, module_angle, g_n, g_pr, ox, oy, g_ks,
       i1_base, i1_primitive_offset, i1_offset2,
-      i2_base, i2_primitive_offset, i2_offset2)
+      i2_base, i2_primitive_offset, i2_offset2,
+      driven_i1_base, driven_i2_base, driven_i1_offset, driven_i2_offset)
   elif(g_type=='l'):
     gear_type = g_type
     module = g_m
@@ -686,17 +710,43 @@ def gear_profile_outline(ai_low_parameters, ai_angle_position):
   #return
   return(r_gear_profile_outline_B)
 
+def calc_real_force_angle(ai_g1_type, ai_g1_pr, ai_g1_br, ai_g2_type, ai_g2_pr, ai_g2_br, ai_aal):
+  """ calculate the real_force_angle depending also on the additional inter-axis length
+  """
+  if((ai_g1_type=='e')and(ai_g2_type=='e')):# depending on gear_type
+    r_real_force_angle = math.acos(float(ai_g1_br+ai_g2_br)/(ai_g1_pr+ai_g2_pr+ai_aal))
+  elif((ai_g1_type=='i')and(ai_g2_type=='e')): # i-e
+    if(ai_g2_pr>ai_g1_pr):
+      print("ERR546: Error, the gearring radius {:0.3f} must be bigger gearwheel radius {:0.3f}".format(ai_g1_pr, ai_g2_pr))
+      sys.exit(2)
+    r_real_force_angle = math.acos(float(ai_g1_br-ai_g2_br)/(ai_g1_pr-(ai_g2_pr+ai_aal)))
+  elif((ai_g1_type=='e')and(ai_g2_type=='i')): # e-i
+    if(ai_g1_pr>ai_g2_pr):
+      print("ERR547: Error, the gearring radius {:0.3f} must be bigger gearwheel radius {:0.3f}".format(ai_g2_pr, ai_g1_pr))
+      sys.exit(2)
+    r_real_force_angle = math.acos(float(ai_g2_br-ai_g1_br)/(ai_g2_pr+ai_aal-ai_g1_pr))
+  elif((ai_g1_type=='l')and(ai_g2_type=='e')): # l-e
+    r_real_force_angle = ai_g1_br
+  elif((ai_g1_type=='e')and(ai_g2_type=='l')): # e-l
+    r_real_force_angle = ai_g2_br
+  else:
+    print("ERR221: Error, the gear type combination {:s}-{:s} does not exist!".format(ai_g1_type, ai_g2_type))
+    sys.exit(2)
+  return(r_real_force_angle)
+
 def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rotation_direction, ai_g1_position, ai_aal, ai_g1g2_a):
   """ calculation of the angle position of the second gear and other related parameters (speed, friction)
   """
   # get ai_g1_low_parameters
-  (g1_gear_type, g1_module_angle, g1_n, g1_pr, g1_ox, g1_oy,
+  (g1_gear_type, g1_module_angle, g1_n, g1_pr, g1_ox, g1_oy, g1_ks,
     g1_i1_base, g1_i1_primitive_offset, g1_i1_offset2,
-    g1_i2_base, g1_i2_primitive_offset, g1_i2_offset2) = ai_g1_low2_parameters
+    g1_i2_base, g1_i2_primitive_offset, g1_i2_offset2,
+    g1_driven_i1_base, g1_driven_i2_base, g1_driven_i1_offset, g1_driven_i2_offset) = ai_g1_low2_parameters
   # get ai_g2_low_parameters
-  (g2_gear_type, g2_module_angle, g2_n, g2_pr, g2_ox, g2_oy,
+  (g2_gear_type, g2_module_angle, g2_n, g2_pr, g2_ox, g2_oy, g2_ks,
     g2_i1_base, g2_i1_primitive_offset, g2_i1_offset2,
-    g2_i2_base, g2_i2_primitive_offset, g2_i2_offset2) = ai_g2_low2_parameters
+    g2_i2_base, g2_i2_primitive_offset, g2_i2_offset2,
+    g2_driven_i1_base, g2_driven_i2_base, g2_driven_i1_offset, g2_driven_i2_offset) = ai_g2_low2_parameters
   # precision
   #radian_epsilon = math.pi/1000
   radian_epsilon = gp_radian_epsilon
@@ -705,21 +755,29 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
     g1_primitive_offset = g1_i1_primitive_offset
     g1_br = g1_i1_base
     g1_involute_offset = g1_i1_offset2
-    g2_br = g2_i1_base
-    g2_involute_offset = g2_i1_offset2
+    g2_br = g2_driven_i1_base
+    g2_involute_offset = g2_driven_i1_offset
   else:
     g1_primitive_offset = g1_i2_primitive_offset
     g1_br = g1_i2_base
     g1_involute_offset = g1_i2_offset2
-    g2_br = g2_i2_base
-    g2_involute_offset = g2_i2_offset2
+    g2_br = g2_driven_i2_base
+    g2_involute_offset = g2_driven_i2_offset
   ## gear system related
   # real_force_angle
-  real_force_angle = math.acos(float(g1_br*(g1_n+g2_n))/((g1_pr+g2_pr+ai_aal)*g1_n))
+  real_force_angle = calc_real_force_angle(g1_gear_type, g1_pr, g1_br, g2_gear_type, g2_pr, g2_br, ai_aal)
   #print("dbg743: real_force_angle:", real_force_angle)
   # length KL (see documentation  graphic gear_position.svg)
-  AB = g1_pr+g2_pr+ai_aal
-  KL = math.sqrt(AB**2 - (g1_br*(1+float(g2_n)/g1_n))**2) # kind of pythagor
+  #AB = g1_pr+g2_pr+ai_aal
+  AB = abs(g1_ks*g1_pr+g2_ks*g2_pr+ai_aal)
+  # alternative for AB
+  AB2 = math.sqrt((g2_ox-g1_ox)**2+(g2_oy-g1_oy)**2)
+  if(abs(AB2-AB)>radian_epsilon):
+    print("ERR314: Error with the calculation of AB {:0.3f} or {:0.3f}".format(AB, AB2))
+    sys.exit(2)
+  #KL = math.sqrt(AB**2 - (g1_br*(1+float(g2_n)/g1_n))**2) # kind of pythagor
+  #KL = math.sqrt(AB**2 - (g1_br+g2_br)**2) # kind of pythagor
+  KL = math.sin(real_force_angle)*AB
   #print("dbg631: KL {:0.5f}".format(KL))
   ## g1 related
   # get the angle of the closest middle of addendum to the contact point
@@ -757,20 +815,24 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
     # law of cosinus (Al-Kashi) in ABC
     BAC = math.acos(float(AB**2+AC**2-BC**2)/(2*AB*AC))
     ABC = math.acos(float(AB**2+BC**2-AC**2)/(2*AB*BC))
+    BAC = math.fmod(BAC+5*math.pi/2, math.pi)-math.pi/2
+    ABC = math.fmod(ABC+5*math.pi/2, math.pi)-math.pi/2
     # alternative
     xAB = math.atan2(g2_oy-g1_oy, g2_ox-g1_ox)
     xAC = math.atan2(cy-g1_oy, cx-g1_ox)
-    BAC2 = math.fmod(xAC-xAB+5*math.pi, 2*math.pi)-math.pi
+    #BAC2 = math.fmod(xAC-xAB+5*math.pi, 2*math.pi)-math.pi
+    BAC2 = math.fmod(xAC-xAB+9*math.pi/2, math.pi)-math.pi/2
     xBA = math.atan2(g1_oy-g2_oy, g1_ox-g2_ox)
     xBC = math.atan2(cy-g2_oy, cx-g2_ox)
-    ABC2 = math.fmod(xBC-xBA+5*math.pi, 2*math.pi)-math.pi
+    #ABC2 = math.fmod(xBC-xBA+5*math.pi, 2*math.pi)-math.pi
+    ABC2 = math.fmod(xBC-xBA+9*math.pi/2, math.pi)-math.pi/2
+    #print("dbg557: xBA {:0.3f}  xBC {:0.3f}".format(xBA, xBC))
     # sign BAC, ABC
-    if(BAC2<0):
-      BAC = -1*BAC
-      ABC =  1*ABC
-    else:
-      BAC =  1*BAC
-      ABC = -1*ABC
+    #if(BAC2<0):
+    #  BAC = -1*BAC
+    #  ABC = -1*ABC
+    BAC = math.copysign(BAC, BAC2)
+    ABC = -1*g1_ks*g2_ks* math.copysign(ABC, BAC2)
     # check BAC and BAC2
     if(abs(BAC2-BAC)>radian_epsilon):
       print("ERR689: Error in the calculation of BAC {:0.3f} or BAC2 {:0.3f} !".format(BAC, BAC2))
@@ -779,6 +841,8 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
     if(abs(ABC2-ABC)>radian_epsilon):
       print("ERR688: Error in the calculation of ABC {:0.3f} or ABC2 {:0.3f} !".format(ABC, ABC2))
       sys.exit(2)
+  #print("dbg334: BAC: {:0.3f}".format(BAC))
+  #print("dbg335: ABC: {:0.3f}".format(ABC))
   ## speed / radial angle
   g1_sra = ai_rotation_direction*real_force_angle+BAC
   g2_sra = ai_rotation_direction*real_force_angle+ABC
@@ -794,7 +858,8 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
   c1_speed_tangential = c1_speed*math.sin(g1_sra)
   ## g2_contact_u : involute parameter for g2 of the contact point
   # several mathods:
-  g2_contact_u1 = float(KL - g1_contact_u*g1_br)/g2_br
+  #g2_contact_u1 = float(KL - g1_contact_u*g1_br)/g2_br
+  g2_contact_u1 = g1_ks*float(KL - g2_ks*g1_contact_u*g1_br)/g2_br
   g2_contact_u2 = math.tan(abs(g2_sra))
   g2_contact_u3 = math.sqrt((float(BC)/g2_br)**2-1)
   if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon):
@@ -805,7 +870,8 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
     sys.exit(2)
   g2_contact_u = g2_contact_u1 # select the method for g2_contact_u
   ## c2_position
-  g2_position = ai_g1g2_a + math.pi - ai_rotation_direction*(real_force_angle - g2_contact_u) - g2_involute_offset
+  #g2_position = ai_g1g2_a + math.pi - ai_rotation_direction*(real_force_angle - g2_contact_u) - g2_involute_offset
+  g2_position = ai_g1g2_a + (1+g1_ks*g2_ks)/2*math.pi - ai_rotation_direction*(real_force_angle - g2_contact_u) - g2_involute_offset
   # c2 coordinates
   (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_involute_offset, -1*ai_rotation_direction, 0, g2_contact_u)
   #print("dbg632: g2_ox {:0.3f}  g2_oy {:0.3f}  g2_br {:0.3f}".format(g2_ox, g2_oy, g2_br))
@@ -847,7 +913,7 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
   r_position = (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline)
   return(r_position)
 
-def info_on_real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_g2_pr, ai_g2_ar, ai_g2_br, ai_g1_ix, ai_g1_iy, ai_g2_ix, ai_g2_iy, ai_g1g2_a, ai_aal, ai_involute):
+def info_on_real_force_angle(ai_g1_type, ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_type, ai_g2_n, ai_g2_pr, ai_g2_ar, ai_g2_br, ai_g1_ix, ai_g1_iy, ai_g2_ix, ai_g2_iy, ai_g1g2_a, ai_aal, ai_involute):
   """ Analytic calculation to check the real_force_angle (including the additional_inter_axis_length) and the force_path_length
   """
   if(ai_involute==1):
@@ -860,10 +926,13 @@ def info_on_real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_
   r_info = "Info on Real Force Angle {:s}:\n".format(involute_name)
   rd = ai_involute
   #print("dbg311: ai_g1_br:", ai_g1_br)
-  real_force_angle = math.acos(float(ai_g1_br*(ai_g1_n+ai_g2_n))/((ai_g1_pr+ai_g2_pr+ai_aal)*ai_g1_n))
+  # depending on gear_type
+  #real_force_angle = math.acos(float(ai_g1_br*(ai_g1_n+ai_g2_n))/((ai_g1_pr+ai_g2_pr+ai_aal)*ai_g1_n))
+  real_force_angle = calc_real_force_angle(ai_g1_type, ai_g1_pr, ai_g1_br, ai_g2_type, ai_g2_pr, ai_g2_br, ai_aal)
   r_info += "{:s} Real Force Angle = {:0.2f} radian ({:0.2f} degree)\n".format(involute_name, real_force_angle, real_force_angle*180/math.pi)
   # coordinate of C (intersection of axis-line and force-line)
-  AC = float((ai_g1_pr+ai_g2_pr+ai_aal)*ai_g1_n)/(ai_g1_n+ai_g2_n)
+  #AC = float((ai_g1_pr+ai_g2_pr+ai_aal)*ai_g1_n)/(ai_g1_n+ai_g2_n)
+  AC = ai_g1_br/math.cos(real_force_angle)
   CX = ai_g1_ix + math.cos(ai_g1g2_a)*AC
   CY = ai_g1_iy + math.sin(ai_g1g2_a)*AC
   # force line equation
@@ -872,18 +941,18 @@ def info_on_real_force_angle(ai_g1_n, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g2_n, ai_
   Fly = -1*math.cos(real_force_inclination)
   Fk = -1*(Flx*CX+Fly*CY)
   # F2: intersection of the force line and the addendum_circle_1
-  S2X = CX + ai_g1_pr*math.cos(ai_g1g2_a+rd*math.pi/2) # S2: define the side of the intersection line-circle
-  S2Y = CY + ai_g1_pr*math.sin(ai_g1g2_a+rd*math.pi/2)
+  S2X = CX + ai_g1_pr/ai_g1_n*math.cos(ai_g1g2_a+rd*math.pi/2) # S2: define the side of the intersection line-circle
+  S2Y = CY + ai_g1_pr/ai_g1_n*math.sin(ai_g1g2_a+rd*math.pi/2)
   (F2X,F2Y, line_circle_intersection_status) = small_geometry.line_circle_intersection((Flx, Fly, Fk), (ai_g1_ix,ai_g1_iy),ai_g1_ar, (S2X,S2Y), real_force_inclination, "F2 calcultation")
   if(line_circle_intersection_status==2):
-    print("ERR125: Error, you not get the intersection of the force line and the addendum_circle_1")
+    print("ERR125: Error with the intersection of the force line and the addendum_circle_1")
     sys.exit(2)
   # F1: intersection of the force line and the addendum_circle_2
-  S1X = CX + ai_g2_pr*math.cos(ai_g1g2_a-rd*math.pi/2) # S1: define the side of the intersection line-circle
-  S1Y = CY + ai_g2_pr*math.sin(ai_g1g2_a-rd*math.pi/2)
+  S1X = CX + ai_g2_pr/ai_g2_n*math.cos(ai_g1g2_a-rd*math.pi/2) # S1: define the side of the intersection line-circle
+  S1Y = CY + ai_g2_pr/ai_g2_n*math.sin(ai_g1g2_a-rd*math.pi/2)
   (F1X,F1Y, line_circle_intersection_status) = small_geometry.line_circle_intersection((Flx, Fly, Fk), (ai_g2_ix,ai_g2_iy),ai_g2_ar, (S1X,S1Y), real_force_inclination+math.pi, "F1 calcultation")
   if(line_circle_intersection_status==2):
-    print("ERR126: Error, you not get the intersection of the force line and the addendum_circle_2")
+    print("ERR126: Error with the intersection of the force line and the addendum_circle_2")
     sys.exit(2)
   ### action_line_outline
   r_action_line_outline = ((F1X, F1Y), (F2X, F2Y))
@@ -1262,8 +1331,11 @@ def gear_profile(
 
   ## compute the real_force_angle and the tooth_contact_path
   if(g2_exist):
-    (real_force_info_p, positive_action_line_outline) = info_on_real_force_angle(g1_n, g1_pr, g1_ar, g1_brp, g2_n, g2_pr, g2_ar, g2_brp, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal,  1) # positive involute
-    (real_force_info_n, negative_action_line_outline) = info_on_real_force_angle(g1_n, g1_pr, g1_ar, g1_brn, g2_n, g2_pr, g2_ar, g2_brn, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, -1) # negative involute
+    # positive involute
+    (real_force_info_p, positive_action_line_outline) = info_on_real_force_angle(g1_type, g1_n, g1_pr, g1_ar, g1_brp, g2_type, g2_n, g2_pr, g2_ar, g2_brp, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal,  1) 
+    # negative involute
+    (real_force_info_n, negative_action_line_outline) = info_on_real_force_angle(g1_type, g1_n, g1_pr, g1_ar, g1_brn, g2_type, g2_n, g2_pr, g2_ar, g2_brn, g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, -1)
+    #:
     real_force_info = "Real force info:\n"
     real_force_info += real_force_info_p
     real_force_info += real_force_info_n
@@ -1365,6 +1437,8 @@ def gear_profile(
         #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_brn), 'tkinter'), 'brown', 1))
         #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g2_ix, g2_iy, g2_brp), 'tkinter'), 'brown', 1))
         #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g2_ix, g2_iy, g2_brn), 'tkinter'), 'brown', 1))
+        #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_ar), 'tkinter'), 'green', 1))
+        #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g2_ix, g2_iy, g2_ar), 'tkinter'), 'green', 1))
       # inter-axis
       r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(inter_axis_outline, 'tkinter'), 'green', 1))
       ## update matplotlib curve_table
