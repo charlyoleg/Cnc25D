@@ -275,7 +275,7 @@ def gearwheel(
       ai_simulation_enable    = ai_simulation_enable,    # ai_simulation_enable,
       ai_output_file_basename = '')
 
-    (g1_type, g1_n, g1_m, g1_pr, g1_adp, g1_thh, g1_ar, g1_dr, g1_brp, g1_brn, g1_ix, g1_iy, g1_rbr, g1_hr, g1_irp, g1_irn, g1_stp, g1_stn, g1_ptn, g1_pfe, g1_ple, g1_bi) = gear_profile_parameters
+    (g1_type, g1_n, g1_m, g1_pr, g1_adp, g1_thh, g1_ar, g1_dr, g1_brp, g1_brn, g1_ix, g1_iy, g1_rbr, g1_hr, g1_irp, g1_irn, g1_stp, g1_stn, g1_ptn, g1_pfe, g1_ple, g1_bi, g1_sp, g1_sn) = gear_profile_parameters
     minimal_gear_profile_radius = g1_hr
   else: # no gear_profile, just a circle
     if(ai_gear_primitive_diameter<radian_epsilon):
