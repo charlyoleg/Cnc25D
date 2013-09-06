@@ -127,6 +127,9 @@ gw_second_gear_skin_thickness     = 0
 gw_second_gear_base_diameter_n    = 0
 gw_second_gear_tooth_resolution_n = 0
 gw_second_gear_skin_thickness_n   = 0
+### gearbar specific
+gw_gearbar_slope                  = 0.0
+gw_gearbar_slope_n                = 0.0
 ### position
 # first gear position
 gw_center_position_x                    = 0.0
@@ -216,6 +219,9 @@ my_gw = gearwheel.gearwheel(
             ai_second_gear_base_diameter_n    = gw_second_gear_base_diameter_n,
             ai_second_gear_tooth_resolution_n = gw_second_gear_tooth_resolution_n,
             ai_second_gear_skin_thickness_n   = gw_second_gear_skin_thickness_n,
+            ### gearbar specific
+            ai_gearbar_slope                  = gw_gearbar_slope,
+            ai_gearbar_slope_n                = gw_gearbar_slope_n,
             ### position
             # first gear position
             ai_center_position_x                    = gw_center_position_x,

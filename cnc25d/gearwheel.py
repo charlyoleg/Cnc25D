@@ -143,6 +143,9 @@ def gearwheel(
       ai_second_gear_base_diameter_n = 0.0,
       ai_second_gear_tooth_resolution_n = 0,
       ai_second_gear_skin_thickness_n = 0.0,
+      ### gearbar specific
+      ai_gearbar_slope = 0.0,
+      ai_gearbar_slope_n = 0.0,
       ### position
       # first gear position
       ai_center_position_x = 0.0,
@@ -258,6 +261,9 @@ def gearwheel(
       ai_second_gear_base_diameter_n    = ai_second_gear_base_diameter_n,
       ai_second_gear_tooth_resolution_n = ai_second_gear_tooth_resolution_n,
       ai_second_gear_skin_thickness_n   = ai_second_gear_skin_thickness_n,
+      ### gearbar specific
+      ai_gearbar_slope                  = ai_gearbar_slope,
+      ai_gearbar_slope_n                = ai_gearbar_slope_n,
       ### position
       # first gear position
       ai_center_position_x                    = ai_center_position_x,
@@ -274,9 +280,11 @@ def gearwheel(
       ai_gear_profile_height  = ai_gear_profile_height,
       ai_simulation_enable    = ai_simulation_enable,    # ai_simulation_enable,
       ai_output_file_basename = '')
-
-    (g1_type, g1_n, g1_m, g1_pr, g1_adp, g1_thh, g1_ar, g1_dr, g1_brp, g1_brn, g1_ix, g1_iy, g1_rbr, g1_hr, g1_irp, g1_irn, g1_stp, g1_stn, g1_ptn, g1_pfe, g1_ple, g1_bi, g1_sp, g1_sn) = gear_profile_parameters
-    minimal_gear_profile_radius = g1_hr
+    # extract some gear_profile high-level parameter
+    #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
+    minimal_gear_profile_radius = gear_profile_parameters['hollow_radius']
+    g1_ix = gear_profile_parameters['center_ox']
+    g1_iy = gear_profile_parameters['center_oy']
   else: # no gear_profile, just a circle
     if(ai_gear_primitive_diameter<radian_epsilon):
       print("ERR885: Error, the no-gear-profile circle outline diameter ai_gear_primitive_diameter {:0.2f} is too small!".format(ai_gear_primitive_diameter))
@@ -479,6 +487,9 @@ def gearwheel_argparse_wrapper(ai_gw_args):
            ai_second_gear_base_diameter_n    = ai_gw_args.sw_second_gear_base_diameter_n,
            ai_second_gear_tooth_resolution_n = ai_gw_args.sw_second_gear_tooth_resolution_n,
            ai_second_gear_skin_thickness_n   = ai_gw_args.sw_second_gear_skin_thickness_n,
+           ### gearbar specific
+           ai_gearbar_slope                  = ai_gw_args.sw_gearbar_slope,
+           ai_gearbar_slope_n                = ai_gw_args.sw_gearbar_slope_n,
            ### position
            # first gear position
            ai_center_position_x                    = ai_gw_args.sw_center_position_x,

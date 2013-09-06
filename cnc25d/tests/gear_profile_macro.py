@@ -126,6 +126,9 @@ gp_second_gear_skin_thickness     = 0
 gp_second_gear_base_diameter_n    = 0
 gp_second_gear_tooth_resolution_n = 0
 gp_second_gear_skin_thickness_n   = 0
+### gearbar specific
+gp_gearbar_slope                  = 0.0
+gp_gearbar_slope_n                = 0.0
 ### position
 # first gear position
 gp_center_position_x                    = 0.0
@@ -196,6 +199,9 @@ my_gp = gear_profile.gear_profile(
             ai_second_gear_base_diameter_n    = gp_second_gear_base_diameter_n,
             ai_second_gear_tooth_resolution_n = gp_second_gear_tooth_resolution_n,
             ai_second_gear_skin_thickness_n   = gp_second_gear_skin_thickness_n,
+            ### gearbar specific
+            ai_gearbar_slope                  = gp_gearbar_slope,
+            ai_gearbar_slope_n                = gp_gearbar_slope_n,
             ### position
             # first gear position
             ai_center_position_x                    = gp_center_position_x,

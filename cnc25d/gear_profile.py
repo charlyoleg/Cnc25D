@@ -316,7 +316,9 @@ def calc_low_level_gear_parameters(ai_high_parameters):
   """ From the hight level parameters relative to a gearwheel (or gearbar) and returns the low level parameters required to compute the gearwheel outline
   """
   # get the hight level parameters
-  (g_type, g_n, g_m, g_pr, g_adp, g_thh, g_ar, g_dr, g_brp, g_brn, g_ix, g_iy, g_rbr, g_hr, g_irp, g_irn, g_stp, g_stn, g_ptn, g_pfe, g_ple, g_bi, g_sp, g_sn) = ai_high_parameters
+  (g_type, g_n, g_m, g_pr, g_adp, g_thh, g_ar, g_dr, g_brp, g_brn,
+    g_ix, g_iy, g_rbr, g_hr, g_irp, g_irn, g_stp, g_stn, g_ptn, g_pfe, g_ple,
+    g_bi, g_sp, g_sn, g_a_delta, g_d_delta, g_h_delta) = ai_high_parameters
   # precision
   radian_epsilon = math.pi/1000
   radian_epsilon_2 = math.pi/10000
@@ -348,7 +350,7 @@ def calc_low_level_gear_parameters(ai_high_parameters):
   if((g_type=='e')or(g_type=='i')):
     ### search points
     initial_step = (g_ar-g_dr)/4
-    module_angle = 2*math.pi/g_n
+    pi_module_angle = 2*math.pi/g_n
     # intersection of positive involute and the primitive circle
     if(g_brp>g_pr-radian_epsilon):
       print("ERR987: Error, g_brp {:0.2f} is bigger than g_pr {:0.2f}!".format(g_brp, g_pr))
@@ -383,11 +385,11 @@ def calc_low_level_gear_parameters(ai_high_parameters):
     dedendum_positive_involute = g_ks*(ippa-ipda)
     dedendum_negative_involute = -1*g_ks*(inpa-inda)
     #print("dbg646: full_positive_involute: {:0.3f}  full_negative_involute: {:0.3f}  addendum_positive_involute: {:0.3f}  addendum_negative_involute: {:0.3f}  dedendum_positive_involute: {:0.3f}  dedendum_negative_involute: {:0.3f}".format(full_positive_involute, full_negative_involute, addendum_positive_involute, addendum_negative_involute, dedendum_positive_involute, dedendum_negative_involute))
-    addendum_angle = module_angle*g_adp-(addendum_positive_involute+addendum_negative_involute)
+    addendum_angle = pi_module_angle*g_adp-(addendum_positive_involute+addendum_negative_involute)
     if(addendum_angle*g_ar<radian_epsilon): # a bit stricter than 0
       print("ERR989: Error, the addendum_angle {:0.2f} is negative or too small!".format(addendum_angle))
       sys.exit(2)
-    dedendum_angle = module_angle*(1-g_adp)-(dedendum_positive_involute+dedendum_negative_involute)
+    dedendum_angle = pi_module_angle*(1-g_adp)-(dedendum_positive_involute+dedendum_negative_involute)
     if(dedendum_angle*g_dr<2*g_rbr+radian_epsilon): # a bit stricter than router_bit_radius
       print("ERR990: Error, the dedendum_angle {:0.2f} is negative or too small compare to the router_bit_radius {:0.2f} ({:0.2f} < {:0.2f})!".format(dedendum_angle, g_rbr, dedendum_angle*g_dr, 2*g_rbr))
       sys.exit(2)
@@ -401,7 +403,7 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       i1u_inc = (indu-inau)/i1u_nb # <0
       i1_thickness = g_stn
       i2_base = g_brp
-      i2_offset = module_angle-addendum_angle/2-ipaa
+      i2_offset = pi_module_angle-addendum_angle/2-ipaa
       i2_sign = 1
       i2u_nb = g_irp
       i2u_ini = ipdu
@@ -429,7 +431,7 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       i1u_inc = (ipdu-ipau)/i1u_nb # >0
       i1_thickness = g_stp
       i2_base = g_brn
-      i2_offset = module_angle-addendum_angle/2-inaa
+      i2_offset = pi_module_angle-addendum_angle/2-inaa
       i2_sign = -1
       i2u_nb = g_irn
       i2u_ini = indu
@@ -449,7 +451,7 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       #print("dbg663: ipaa {:0.3f}".format(ipaa))
     #
     gear_type = g_type
-    #module_angle = 2*math.pi/g_n
+    #pi_module_angle = 2*math.pi/g_n
     hl1 = g_dr
     hl2 = g_hr
     #ha1 = addendum_angle/2 + full_negative_involute or full_positive_involute
@@ -469,25 +471,25 @@ def calc_low_level_gear_parameters(ai_high_parameters):
     first_end = g_pfe # 0: slope-top, 1: top-middle, 2: slope-bottom, 3: half-hollow
     last_end =  g_ple # 0: slope-top, 1: top-middle, 2: slope-bottom, 3: half-hollow
     # return
-    low1_parameters = (gear_type, module_angle,
+    low1_parameters = (gear_type, pi_module_angle,
       i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness,
       i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
       hl1, hl2, ha1, ha2, hrbr, hlm, ham, tlm,
       ox, oy, portion_tooth_nb, first_end, last_end, closed)
-    low2_parameters = (gear_type, module_angle, g_n, g_pr, ox, oy, g_ks, g_pc,
+    low2_parameters = (gear_type, pi_module_angle, g_n, g_pr, ox, oy, g_ks, g_pc,
       i1_base, i1_primitive_offset, i1_offset2,
       i2_base, i2_primitive_offset, i2_offset2,
       driven_ip_base, driven_ip_offset, driven_in_base, driven_in_offset)
     # info
     info_txt = "Gear profile details:\n"
-    info_txt += "positive involute: \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_positive_involute, g_pr*full_positive_involute, 100*full_positive_involute/module_angle)
-    info_txt += "negative involute: \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_negative_involute, g_pr*full_negative_involute, 100*full_negative_involute/module_angle)
-    info_txt += "top land:          \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(addendum_angle, g_ar*addendum_angle, 100*addendum_angle/module_angle)
-    info_txt += "bottom land:       \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(dedendum_angle, g_dr*dedendum_angle, 100*dedendum_angle/module_angle)
+    info_txt += "positive involute: \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_positive_involute, g_pr*full_positive_involute, 100*full_positive_involute/pi_module_angle)
+    info_txt += "negative involute: \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_negative_involute, g_pr*full_negative_involute, 100*full_negative_involute/pi_module_angle)
+    info_txt += "top land:          \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(addendum_angle, g_ar*addendum_angle, 100*addendum_angle/pi_module_angle)
+    info_txt += "bottom land:       \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(dedendum_angle, g_dr*dedendum_angle, 100*dedendum_angle/pi_module_angle)
   elif(g_type=='l'):
     # linear gear low_1
     gear_type = g_type
-    module = g_m
+    pi_module = g_m * math.pi
     hr1 = g_dr - g_pr # hollow-radial-1
     hr2 = g_hr - g_pr # hollow-radial-2
     hr3 = g_dr - g_pr # hollow-radial-3
@@ -497,8 +499,8 @@ def calc_low_level_gear_parameters(ai_high_parameters):
     positive_dedendum = abs(hr1)*math.tan(g_sp)
     negative_addendum = cr1*math.tan(g_sn)
     negative_dedendum = abs(hr1)*math.tan(g_sn)
-    top_land = module*g_adp-(positive_addendum+negative_addendum)
-    bottom_land = module*(1-g_adp)-(positive_dedendum+negative_dedendum)
+    top_land = pi_module*g_adp-(positive_addendum+negative_addendum)
+    bottom_land = pi_module*(1-g_adp)-(positive_dedendum+negative_dedendum)
     if(top_land<radian_epsilon):
       print("ERR858: Error, the linear gear top-land {:0.3f} is negative or too small!".format(top_land))
       sys.exit(2)
@@ -506,9 +508,9 @@ def calc_low_level_gear_parameters(ai_high_parameters):
       print("ERR859: Error, the linear gear bottom-land {:0.3f} is too small compare to the gear_router_bit_radius {:0.3f}".format(bottom_land, hrbr))
       sys.exit(2)
     ct1 = top_land/2
-    ct2 = module-top_land/2
+    ct2 = pi_module-top_land/2
     ht1 = top_land/2+positive_addendum+positive_dedendum
-    ht2 = module-(top_land/2+negative_addendum+negative_dedendum)
+    ht2 = pi_module-(top_land/2+negative_addendum+negative_dedendum)
     htm = ht1+bottom_land/2
     ox = g_ix
     oy = g_iy
@@ -531,8 +533,8 @@ def calc_low_level_gear_parameters(ai_high_parameters):
     driven_in_base = g_sn
     driven_in_offset = i1_primitive_offset
     # return
-    low1_parameters = (gear_type, module, hr1, hr2, hr3, ht1, ht2, hrbr, cr1, ct1, ct2, htm, ox, oy, inclination, portion_tooth_nb, first_end, last_end)
-    low2_parameters = (gear_type, module, g_n, g_pr, ox, oy, g_ks, g_pc,
+    low1_parameters = (gear_type, pi_module, hr1, hr2, hr3, ht1, ht2, hrbr, cr1, ct1, ct2, htm, ox, oy, inclination, portion_tooth_nb, first_end, last_end)
+    low2_parameters = (gear_type, pi_module, g_n, g_pr, ox, oy, g_ks, g_pc,
       i1_base, i1_primitive_offset, i1_offset2,
       i2_base, i2_primitive_offset, i2_offset2,
       driven_ip_base, driven_ip_offset, driven_in_base, driven_in_offset)
@@ -540,10 +542,10 @@ def calc_low_level_gear_parameters(ai_high_parameters):
     full_positive_slope = positive_addendum + positive_dedendum
     full_negative_slope = negative_addendum + negative_dedendum
     info_txt = "Gearbar profile details:\n"
-    info_txt += "positive slope: \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_positive_slope, 100*full_positive_slope/module)
-    info_txt += "negative slope: \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_negative_slope, 100*full_negative_slope/module)
-    info_txt += "top land:          \t{:0.3f} (mm)  \t{:0.2f} %\n".format(top_land, 100*top_land/module)
-    info_txt += "bottom land:       \t{:0.3f} (mm)  \t{:0.2f} %\n".format(bottom_land, 100*bottom_land/module)
+    info_txt += "positive slope: \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_positive_slope, 100*full_positive_slope/pi_module)
+    info_txt += "negative slope: \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_negative_slope, 100*full_negative_slope/pi_module)
+    info_txt += "top land:          \t{:0.3f} (mm)  \t{:0.2f} %\n".format(top_land, 100*top_land/pi_module)
+    info_txt += "bottom land:       \t{:0.3f} (mm)  \t{:0.2f} %\n".format(bottom_land, 100*bottom_land/pi_module)
   else:
     print("ERR740: Error, the gear_type {:s} doesn't exist!".format(g_type))
     sys.exit(2)
@@ -577,7 +579,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
       ai_angle_position sets the reference of the gearwheel.
   """
   # get ai_low_parameters
-  (gear_type, module_angle,
+  (gear_type, pi_module_angle,
     i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness,
     i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
     hl1, hl2, ha1, ha2, hrbr, hlm, ham, tlm,
@@ -595,13 +597,13 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     if(first_end==1):
       start_of_profile_B = [(ox+tlm*math.cos(tooth_angle), oy+tlm*math.sin(tooth_angle))]
     else:
-      start_of_profile_B = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, tooth_angle-module_angle)
+      start_of_profile_B = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, tooth_angle-pi_module_angle)
       # gearwheel hollow
       if(first_end==3):
         hollow_A = []
-        hollow_A.append((ox+hlm*math.cos(tooth_angle-module_angle+ham), oy+hlm*math.sin(tooth_angle-module_angle+ham), 0))
-        hollow_A.append((ox+hl2*math.cos(tooth_angle-module_angle+ha2), oy+hl2*math.sin(tooth_angle-module_angle+ha2), hrbr))
-        hollow_A.append((ox+hl1*math.cos(tooth_angle-module_angle+ha2), oy+hl1*math.sin(tooth_angle-module_angle+ha2), 0))
+        hollow_A.append((ox+hlm*math.cos(tooth_angle-pi_module_angle+ham), oy+hlm*math.sin(tooth_angle-pi_module_angle+ham), 0))
+        hollow_A.append((ox+hl2*math.cos(tooth_angle-pi_module_angle+ha2), oy+hl2*math.sin(tooth_angle-pi_module_angle+ha2), hrbr))
+        hollow_A.append((ox+hl1*math.cos(tooth_angle-pi_module_angle+ha2), oy+hl1*math.sin(tooth_angle-pi_module_angle+ha2), 0))
         hollow_B = cnc25d_api.cnc_cut_outline(hollow_A, "hollow")
         half_hollow = hollow_B[0:-1]
     # assembly
@@ -625,7 +627,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     r_final_outline.extend(hollow_B[1:-1])
     r_final_outline.extend(second_involute_B)
     # prepare the next tooth
-    tooth_angle += module_angle
+    tooth_angle += pi_module_angle
   ### end of bulk
   if(last_end>0):
     half_hollow = []
@@ -657,7 +659,7 @@ def ideal_circle_tooth_outline(ai_low_parameters, ai_angle_position, ai_thicknes
   #radian_epsilon=math.pi/1000 # unefficient because this function is used often
   radian_epsilon = gp_radian_epsilon
   # get ai_low_parameters
-  (gear_type, module_angle,
+  (gear_type, pi_module_angle,
     i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness,
     i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
     hl1, hl2, ha1, ha2, hrbr, hlm, ham, tlm,
@@ -674,7 +676,7 @@ def ideal_circle_tooth_outline(ai_low_parameters, ai_angle_position, ai_thicknes
   for sampling in range(ideal*i2u_nb+1):
     if(abs(u)<radian_epsilon): # for rounding error
       u=0
-    (qx, qy, ti) = sample_of_gear_tooth_profile((ox,oy), i2_base, tooth_angle-module_angle+i2_offset, i2_sign, ai_thickness_coeff*i2_thickness, u)
+    (qx, qy, ti) = sample_of_gear_tooth_profile((ox,oy), i2_base, tooth_angle-pi_module_angle+i2_offset, i2_sign, ai_thickness_coeff*i2_thickness, u)
     first_involute.append((qx, qy))
     u += ideal_i2u_inc
   # second_involute
@@ -700,22 +702,22 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
       ai_tangential_position sets the reference of the gearbar.
   """
   # get ai_low_parameters
-  (gear_type, module, hr1, hr2, hr3, ht1, ht2, hrbr, cr1, ct1, ct2, htm, ox, oy, inclination, portion_tooth_nb, first_end, last_end) = ai_low_parameters
+  (gear_type, pi_module, hr1, hr2, hr3, ht1, ht2, hrbr, cr1, ct1, ct2, htm, ox, oy, inclination, portion_tooth_nb, first_end, last_end) = ai_low_parameters
   # construct the final_outline
   r_final_outline = []
   half_tooth_nb =  int(portion_tooth_nb/2)
-  cyclic_tangential_position = math.fmod(ai_tangential_position, half_tooth_nb*module) # to avoid the gearbar move away from its gearwheel
-  tangential_position = cyclic_tangential_position - half_tooth_nb*module # the position reference is the middle of the middle tooth
+  cyclic_tangential_position = math.fmod(ai_tangential_position, half_tooth_nb*pi_module) # to avoid the gearbar move away from its gearwheel
+  tangential_position = cyclic_tangential_position - half_tooth_nb*pi_module # the position reference is the middle of the middle tooth
   # start of the gearbar
   gearbar_A = []
   if(first_end==1): # start on hollow_middle
-    gearbar_A.append((hr2, tangential_position-module+htm, 0)) # hollow
-    gearbar_A.append((hr2, tangential_position-module+ht2, hrbr))
-    gearbar_A.append((hr3, tangential_position-module+ht2, 0))
-    gearbar_A.append((cr1, tangential_position-module+ct1, 0)) # positive slope
-  elif(first_end==2): # start on the positive slope
-    gearbar_A.append((hr3, tangential_position-module+ht2, 0))
-    gearbar_A.append((cr1, tangential_position-module+ct1, 0)) # positive slope
+    gearbar_A.append((hr2, tangential_position-pi_module+htm, 0)) # hollow
+    gearbar_A.append((hr2, tangential_position-pi_module+ht2, hrbr))
+    gearbar_A.append((hr3, tangential_position-pi_module+ht2, 0))
+    gearbar_A.append((cr1, tangential_position-pi_module+ct1, 0)) # positive slope
+  elif(first_end==2): # start on the positive spi_lope
+    gearbar_A.append((hr3, tangential_position-pi_module+ht2, 0))
+    gearbar_A.append((cr1, tangential_position-pi_module+ct1, 0)) # positive slope
   elif(first_end==3): # start on the top middle
     gearbar_A.append((cr1, tangential_position, 0)) # top middle
   if(gearbar_A!=[]):
@@ -733,7 +735,7 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
     gearbar_B = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_rotate(gearbar_A, ox, oy, inclination), "bulk of gearbar")
     r_final_outline.extend(gearbar_B)
     # prepare the next tooth
-    tangential_position += module
+    tangential_position += pi_module
   # end of the gearbar
   gearbar_A = []
   if(last_end==1): # stop on hollow_middle
@@ -756,10 +758,10 @@ def ideal_linear_tooth_outline(ai_low_parameters, ai_tangential_position, ai_thi
   """ create the ideal tooth_profile over the first tooth of a gearbar
   """
   # get ai_low_parameters
-  (gear_type, module, hr1, hr2, hr3, ht1, ht2, hrbr, cr1, ct1, ct2, htm, ox, oy, inclination, portion_tooth_nb, first_end, last_end) = ai_low_parameters
+  (gear_type, pi_module, hr1, hr2, hr3, ht1, ht2, hrbr, cr1, ct1, ct2, htm, ox, oy, inclination, portion_tooth_nb, first_end, last_end) = ai_low_parameters
   half_tooth_nb =  int(portion_tooth_nb/2)
-  cyclic_tangential_position = math.fmod(ai_tangential_position, half_tooth_nb*module) # to avoid the gearbar move away from its gearwheel
-  #tangential_position = cyclic_tangential_position - half_tooth_nb*module # the position reference is the middle of the middle tooth
+  cyclic_tangential_position = math.fmod(ai_tangential_position, half_tooth_nb*pi_module) # to avoid the gearbar move away from its gearwheel
+  #tangential_position = cyclic_tangential_position - half_tooth_nb*pi_module # the position reference is the middle of the middle tooth
   tangential_position = cyclic_tangential_position
   # tooth
   tooth_A = []
@@ -826,12 +828,12 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
   """ calculation of the angle position of the second gear and other related parameters (speed, friction)
   """
   # get ai_g1_low_parameters
-  (g1_gear_type, g1_module_angle, g1_n, g1_pr, g1_ox, g1_oy, g1_ks, g1_pc,
+  (g1_gear_type, g1_pi_module_angle, g1_n, g1_pr, g1_ox, g1_oy, g1_ks, g1_pc,
     g1_i1_base, g1_i1_primitive_offset, g1_i1_offset2,
     g1_i2_base, g1_i2_primitive_offset, g1_i2_offset2,
     g1_driven_ip_base, g1_driven_ip_offset, g1_driven_in_base, g1_driven_in_offset) = ai_g1_low2_parameters
   # get ai_g2_low_parameters
-  (g2_gear_type, g2_module_angle, g2_n, g2_pr, g2_ox, g2_oy, g2_ks, g2_pc,
+  (g2_gear_type, g2_pi_module_angle, g2_n, g2_pr, g2_ox, g2_oy, g2_ks, g2_pc,
     g2_i1_base, g2_i1_primitive_offset, g2_i1_offset2,
     g2_i2_base, g2_i2_primitive_offset, g2_i2_offset2,
     g2_driven_ip_base, g2_driven_ip_offset, g2_driven_in_base, g2_driven_in_offset) = ai_g2_low2_parameters
@@ -877,11 +879,11 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
   ## g1 related
   # get the angle of the closest middle of addendum to the contact point
   aa = ai_g1_position + g1_primitive_offset - ai_g1g2_a
-  while(abs(aa)>g1_module_angle/2+radian_epsilon):
+  while(abs(aa)>g1_pi_module_angle/2+radian_epsilon):
     if(aa>0):
-      aa = aa - g1_module_angle
+      aa = aa - g1_pi_module_angle
     else:
-      aa = aa + g1_module_angle
+      aa = aa + g1_pi_module_angle
   contact_g1_tooth_angle = aa - g1_primitive_offset + ai_g1g2_a
   contact_g1_tooth_relative_angle = aa - g1_primitive_offset # relative to the inter-axis
   # g1_involute_offset_angle (see the documentation for the exact definition)
@@ -1132,7 +1134,9 @@ def gear_high_level_parameter_to_text(ai_prefix_txt, ai_gear_high_parameters, ai
   """
   r_txt = "\n"
   r_txt += ai_prefix_txt+"\n"
-  (g_type, g_n, g_m, g_pr, g_adp, g_thh, g_ar, g_dr, g_brp, g_brn, g_ix, g_iy, g_rbr, g_hr, g_irp, g_irn, g_stp, g_stn, g_ptn, g_pfe, g_ple, g_bi, g_sp, g_sn) = ai_gear_high_parameters
+  (g_type, g_n, g_m, g_pr, g_adp, g_thh, g_ar, g_dr, g_brp, g_brn,
+    g_ix, g_iy, g_rbr, g_hr, g_irp, g_irn, g_stp, g_stn, g_ptn, g_pfe, g_ple,
+    g_bi, g_sp, g_sn, g_a_delta, g_d_delta, g_h_delta) = ai_gear_high_parameters
   r_txt += "gear_type:                \t{:s}\t".format(g_type)
   r_txt += "tooth_nb:                 \t{:d}\n".format(g_n)
   r_txt += "gear_module:              \t{:0.3f}\n".format(g_m)
@@ -1227,8 +1231,10 @@ def gear_profile(
   """
   ## epsilon for rounding
   radian_epsilon = math.pi/1000
-  #rd = 1 # rotation direction 1:CCW -1:CW  just use for some initial static calculation
-  ## set internal
+  ##### gear-profile high-level parameters
+  g1_param = {}   # first gear high-level parameters
+  g2_param = {}   # second gear high-level parameters
+  sys_param = {}  # gear-system high-level parameters
   # gear_type
   # g1_type
   if((ai_gear_type=='e')or(ai_gear_type=='i')or(ai_gear_type=='l')):
@@ -1249,6 +1255,8 @@ def gear_profile(
   if((g1_type=='l')and(g2_type!='e')):
     print("ERR512: Error, linear gear is only compatible with external gear. g1_type: {:s}  g2_type: {:s}".format(g1_type, g2_type))
     sys.exit(2)
+  g1_param['gear_type'] = g1_type
+  g2_param['gear_type'] = g2_type
   # tooth_nb
   g1_n = ai_gear_tooth_nb
   if(g1_n==0):
@@ -1264,6 +1272,11 @@ def gear_profile(
   if(g2_exist and (g1_n<3)):
     print("ERR114: Error, the second_gear_tooth_nb {:d} must be equal or bigger than 3!".format(g2_n))
     sys.exit(2)
+  #g1_param['gear_exist'] = True
+  #g2_param['gear_exist'] = g2_exist
+  sys_param['second_gear_exist'] = g2_exist
+  g1_param['full_tooth_nb'] = g1_n
+  g2_param['full_tooth_nb'] = g2_n
   # module
   g1_m = 1
   g1_m_set = False
@@ -1275,7 +1288,10 @@ def gear_profile(
       print("ERR115: Error, the gear_module is already set to {:0.2f}!".format(g1_m))
       sys.exit(2)
     else:
-      g1_m = float(ai_gear_primitive_diameter)/g1_n
+      if((g1_type=='i')or(g1_type=='e')):
+        g1_m = float(ai_gear_primitive_diameter)/g1_n
+      elif(g1_type=='l'):
+        g1_m = float(ai_gear_primitive_diameter)/g1_n/math.pi
       g1_m_set = True
   if(ai_second_gear_primitive_diameter>0):
     if(not g2_exist):
@@ -1285,12 +1301,25 @@ def gear_profile(
       print("ERR117: Error, the gear_module is already set to {:0.2f}!".format(g1_m))
       sys.exit(2)
     else:
-      g1_m = float(ai_second_gear_primitive_diameter)/g2_n
+      if((g2_type=='i')or(g2_type=='e')):
+        g1_m = float(ai_second_gear_primitive_diameter)/g2_n
+      elif(g2_type=='l'):
+        g1_m = float(ai_second_gear_primitive_diameter)/g2_n/math.pi
       g1_m_set = True
   g2_m = g1_m
+  g1_param['module'] = g1_m
+  g2_param['module'] = g2_m
+  g1_param['pi_module'] = g1_m * math.pi
+  g2_param['pi_module'] = g2_m * math.pi
   # primitive radius
-  g1_pr = float(g1_m*g1_n)/2
-  g2_pr = float(g2_m*g2_n)/2
+  g1_pr = 0
+  if((g1_type=='i')or(g1_type=='e')):
+    g1_pr = float(g1_m*g1_n)/2
+  g2_pr = 0
+  if((g2_type=='i')or(g2_type=='e')):
+    g2_pr = float(g2_m*g2_n)/2
+  g1_param['primitive_radius'] = g1_pr
+  g2_param['primitive_radius'] = g2_pr
   # addendum_dedendum_parity
   g1_adp = float(ai_gear_addendum_dedendum_parity)/100
   if((g1_adp<=0)or(g1_adp>=1)):
@@ -1307,6 +1336,8 @@ def gear_profile(
   if((g2_adp<=0)or(g2_adp>=1)):
     print("ERR119: Error, the second_gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(ai_second_gear_addendum_dedendum_parity))
     sys.exit(2)
+  g1_param['addendum_dedendum_parity'] = g1_adp
+  g2_param['addendum_dedendum_parity'] = g2_adp
   # inter-axis additional length
   aal = ai_second_gear_additional_axis_length
   if(aal>0):
@@ -1315,6 +1346,7 @@ def gear_profile(
       sys.exit(2)
     else:
       print("WARN212: Warning, second_gear_additional_axis_length is used for irregular cases.")
+  sys_param['additional_inter_axis_length'] = aal
   ### tooth_height
   # external / linear :  hollow < dedendum < primitive < addendum
   # internal          :  addendum < primitive < dedendum < hollow
@@ -1324,6 +1356,12 @@ def gear_profile(
   # position_coefficient
   g1_pc = 0 if(g1_type=='l') else 1
   g2_pc = 0 if(g2_type=='l') else 1
+  g1_param['gear_sign'] = g1_as
+  g2_param['gear_sign'] = g2_as
+  g1_param['position_coefficient'] = g1_pc
+  g2_param['position_coefficient'] = g2_pc
+  g1_param['center_to_reference_length'] = g1_as * g1_pc * g1_pr
+  g2_param['center_to_reference_length'] = g2_as * g2_pc * g2_pr
   # g1
   g1_thh = g1_m
   if(ai_gear_tooth_half_height>0):
@@ -1350,6 +1388,22 @@ def gear_profile(
     print("WARN214: Warning, the addendum {:0.2f} of the second gear is too big, other the dedendum {:0.2f} of the other gear is too small (second_gear_additional_axis_length={:0.2f})!".format(g2_a_delta, g1_d_delta, aal))
   if(g1_a_delta+g2_a_delta<aal):
     print("WARN215: Warning, the (second_gear_additional_axis_length {:0.2f} is too big compare to the addendum {:0.2f} and {:0.2f}!".format(aal, g1_a_delta, g2_a_delta))
+  g1_param['tooth_half_height'] = g1_thh # g1
+  g1_param['addendum_height']   = g1_a_delta
+  g1_param['dedendum_height']   = g1_d_delta
+  g1_param['addendum_radius']   = g1_ar
+  g1_param['dedendum_radius']   = g1_dr
+  g1_param['smaller_radius']    = g1_small_r
+  g1_param['bigger_radius']     = g1_big_r
+  g1_param['real_tooth_hight']  = g1_a_delta + g1_d_delta
+  g2_param['tooth_half_height'] = g2_thh # g2
+  g2_param['addendum_height']   = g2_a_delta
+  g2_param['dedendum_height']   = g2_d_delta
+  g2_param['addendum_radius']   = g2_ar
+  g2_param['dedendum_radius']   = g2_dr
+  g2_param['smaller_radius']    = g2_small_r
+  g2_param['bigger_radius']     = g2_big_r
+  g2_param['real_tooth_hight']  = g2_a_delta + g2_d_delta
   ### base radius
   # positive involute : positive_base_radius
   g1_brp = g1_small_r
@@ -1424,6 +1478,10 @@ def gear_profile(
     if(g2_exist and (g2_brn>g2_big_r)):
       print("ERR647: Error, g2_brn {:0.2f} is bigger than g2_big_r {:0.2f}".format(g2_brn, g2_big_r))
       sys.exit(2)
+  g1_param['positive_base_radius'] = g1_brp
+  g2_param['positive_base_radius'] = g2_brp
+  g1_param['negative_base_radius'] = g1_brn
+  g2_param['negative_base_radius'] = g2_brn
   ## linear gear base_radius = slope angle
   # g1_sp g1_sn
   g1_sp = 0
@@ -1450,6 +1508,8 @@ def gear_profile(
       if(not g2_sn_set):
         g1_sn = ai_gear_force_angle_n
         g1_sn_set = True
+  g1_param['positive_slope_angle'] = g1_sp
+  g1_param['negative_slope_angle'] = g1_sn
   # g2_sp g2_sn
   g2_sp = 0
   g2_sp_set = False
@@ -1475,6 +1535,8 @@ def gear_profile(
       if(not g2_sn_set):
         g2_sn = ai_gear_force_angle_n
         g2_sn_set = True
+  g2_param['positive_slope_angle'] = g2_sp
+  g2_param['negative_slope_angle'] = g2_sn
   # initial position
   g1_ia = ai_gear_initial_angle
   g1_ix = ai_center_position_x
@@ -1484,6 +1546,14 @@ def gear_profile(
   inter_axis_length = g1_pc*g1_pr+(g1_as*g2_as)*g2_pc*g2_pr+g1_as*aal
   g2_ix = g1_ix + inter_axis_length*math.cos(g1g2_a)
   g2_iy = g1_iy + inter_axis_length*math.sin(g1g2_a)
+  g1_param['center_ox']     = g1_ix
+  g1_param['center_oy']     = g1_iy
+  g1_param['initial_angle'] = g1_ia
+  g2_param['center_ox']     = g2_ix
+  g2_param['center_oy']     = g2_iy
+  g2_param['initial_angle'] = g2_ia
+  sys_param['g1g2_angle'] = g1g2_a
+  sys_param['inter_axis_length'] = inter_axis_length
   # router_bit radius
   g1_rbr = ai_gear_router_bit_radius
   g2_rbr = g1_rbr
@@ -1493,6 +1563,8 @@ def gear_profile(
       sys.exit(2)
     else:
       g2_rbr = ai_second_gear_router_bit_radius
+  g1_param['gear_router_bit_radius'] = g1_rbr
+  g2_param['gear_router_bit_radius'] = g2_rbr
   # hollow
   g1_h_delta = g1_thh*float(ai_gear_hollow_height_pourcentage)/100
   if(g1_h_delta<g1_rbr):
@@ -1505,6 +1577,10 @@ def gear_profile(
       g2_h_delta = g2_rbr + 10*radian_epsilon
   g1_hr = g1_dr - g1_as*g1_h_delta
   g2_hr = g2_dr - g2_as*g2_h_delta
+  g1_param['hollow_height'] = g1_h_delta
+  g1_param['hollow_radius'] = g1_hr
+  g2_param['hollow_height'] = g2_h_delta
+  g2_param['hollow_radius'] = g2_hr
   # involute resolution
   g1_irp = ai_gear_tooth_resolution
   g1_irn = g1_irp
@@ -1516,6 +1592,10 @@ def gear_profile(
   g2_irn = g2_irp
   if(ai_second_gear_tooth_resolution_n>0):
     g2_irn = ai_second_gear_tooth_resolution_n
+  g1_param['positive_involute_resolution'] = g1_irp
+  g1_param['negative_involute_resolution'] = g1_irn
+  g2_param['positive_involute_resolution'] = g2_irp
+  g2_param['negative_involute_resolution'] = g2_irn
   # skin_thickness
   g1_stp = ai_gear_skin_thickness
   g1_stn = g1_stp
@@ -1527,6 +1607,10 @@ def gear_profile(
   g2_stn = g2_stp
   if(ai_second_gear_skin_thickness_n>0):
     g2_stn = ai_second_gear_skin_thickness_n
+  g1_param['positive_skin_thickness'] = g1_stp
+  g1_param['negative_skin_thickness'] = g1_stn
+  g2_param['positive_skin_thickness'] = g2_stp
+  g2_param['negative_skin_thickness'] = g2_stn
   # portion
   g1_ptn = 0 # 0: full first gear
   g1_pfe = 0
@@ -1541,17 +1625,27 @@ def gear_profile(
   g2_ptn = 0 # full second gear
   g2_pfe = 0
   g2_ple = 0
+  g1_param['portion_tooth_nb']  = g1_ptn
+  g1_param['portion_first_end'] = g1_pfe
+  g1_param['portion_last_end']  = g1_ple
+  g2_param['portion_tooth_nb']  = g2_ptn
+  g2_param['portion_first_end'] = g2_pfe
+  g2_param['portion_last_end']  = g2_ple
   # bar inclination (make only sense for the gearbar)
   g1_bi = g1g2_a
   g2_bi = g1g2_a + math.pi
+  g1_param['gearbar_inclination']  = g1_bi
+  g2_param['gearbar_inclination']  = g2_bi
   ## now we have the following hight level parameters:
   # g1_type, g1_n, g1_m, g1_pr, g1_adp, g1_thh, g1_ar, g1_dr, g1_brp, g1_brn, g1_ia, g1_ix, g1_iy, g1_rbr, g1_hr, g1_irp, g1_irn, g1_stp, g1_stn, g1_ptn, g1_pfe, g1_ple, g1_bi
   # g2_type, g2_n, g2_m, g2_pr, g2_adp, g2_thh, g2_ar, g2_dr, g2_brp, g2_brn, g2_ia, g2_ix, g2_iy, g2_rbr, g2_hr, g2_irp, g2_irn, g2_stp, g2_stn, g2_ptn, g2_pfe, g2_ple, g2_bi
   # g2_exist, aal, g1g2_a
   g1_high_parameters = (g1_type, g1_n, g1_m, g1_pr, g1_adp, g1_thh, g1_ar, g1_dr, g1_brp, g1_brn,
-                        g1_ix, g1_iy, g1_rbr, g1_hr, g1_irp, g1_irn, g1_stp, g1_stn, g1_ptn, g1_pfe, g1_ple, g1_bi, g1_sp, g1_sn)
+                        g1_ix, g1_iy, g1_rbr, g1_hr, g1_irp, g1_irn, g1_stp, g1_stn, g1_ptn, g1_pfe, g1_ple,
+                        g1_bi, g1_sp, g1_sn, g1_a_delta, g1_d_delta, g1_h_delta)
   g2_high_parameters = (g2_type, g2_n, g2_m, g2_pr, g2_adp, g2_thh, g2_ar, g2_dr, g2_brp, g2_brn,
-                        g2_ix, g2_iy, g2_rbr, g2_hr, g2_irp, g2_irn, g2_stp, g2_stn, g2_ptn, g2_pfe, g2_ple, g2_bi, g2_sp, g2_sn)
+                        g2_ix, g2_iy, g2_rbr, g2_hr, g2_irp, g2_irn, g2_stp, g2_stn, g2_ptn, g2_pfe, g2_ple,
+                        g2_bi, g2_sp, g2_sn, g2_a_delta, g2_d_delta, g2_h_delta)
 
   ## compute the real_force_angle and the tooth_contact_path
   if(g2_exist):
@@ -1704,7 +1798,7 @@ def gear_profile(
   gp_figure = [g1_outline_B] # select the outlines to be writen in files
   cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height)
 
-  r_gp = (g1_outline_B, g1_high_parameters, parameter_info_txt1)
+  r_gp = (g1_outline_B, g1_param, parameter_info_txt1)
   return(r_gp)
 
 ################################################################
@@ -1767,7 +1861,7 @@ def gear_profile_argparse_wrapper(ai_gp_args):
                       ai_second_gear_skin_thickness_n   = ai_gp_args.sw_second_gear_skin_thickness_n,
                       ### gearbar specific
                       ai_gearbar_slope                  = ai_gp_args.sw_gearbar_slope,
-                      ai_gearbar_slope_n                = ai_gp_args.sw_gearbar_slope,
+                      ai_gearbar_slope_n                = ai_gp_args.sw_gearbar_slope_n,
                       ### position
                       # first gear position
                       ai_center_position_x                    = ai_gp_args.sw_center_position_x,
