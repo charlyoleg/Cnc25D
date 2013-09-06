@@ -312,13 +312,37 @@ def sample_of_gear_tooth_profile(ai_center, ai_base_radius, ai_initial_angle, ai
   r_sogtp = (qx, qy, ti)
   return(r_sogtp)
 
-def calc_low_level_gear_parameters(ai_high_parameters):
+def calc_low_level_gear_parameters(ai_param):
   """ From the hight level parameters relative to a gearwheel (or gearbar) and returns the low level parameters required to compute the gearwheel outline
   """
   # get the hight level parameters
-  (g_type, g_n, g_m, g_pr, g_adp, g_thh, g_ar, g_dr, g_brp, g_brn,
-    g_ix, g_iy, g_rbr, g_hr, g_irp, g_irn, g_stp, g_stn, g_ptn, g_pfe, g_ple,
-    g_bi, g_sp, g_sn, g_a_delta, g_d_delta, g_h_delta) = ai_high_parameters
+  g_type    = ai_param['gear_type']
+  g_n       = ai_param['full_tooth_nb']
+  g_m       = ai_param['module']
+  g_pr      = ai_param['primitive_radius']
+  g_adp     = ai_param['addendum_dedendum_parity']
+  g_thh     = ai_param['tooth_half_height']
+  g_ar      = ai_param['addendum_radius']
+  g_dr      = ai_param['dedendum_radius']
+  g_brp     = ai_param['positive_base_radius']
+  g_brn     = ai_param['negative_base_radius']
+  g_ix      = ai_param['center_ox']
+  g_iy      = ai_param['center_oy']
+  g_rbr     = ai_param['gear_router_bit_radius']
+  g_hr      = ai_param['hollow_radius']
+  g_irp     = ai_param['positive_involute_resolution']
+  g_irn     = ai_param['negative_involute_resolution']
+  g_stp     = ai_param['positive_skin_thickness']
+  g_stn     = ai_param['negative_skin_thickness']
+  g_ptn     = ai_param['portion_tooth_nb']
+  g_pfe     = ai_param['portion_first_end']
+  g_ple     = ai_param['portion_last_end']
+  g_bi      = ai_param['gearbar_inclination']
+  g_sp      = ai_param['positive_slope_angle']
+  g_sn      = ai_param['negative_slope_angle']
+  g_a_delta = ai_param['addendum_height']
+  g_d_delta = ai_param['dedendum_height']
+  g_h_delta = ai_param['hollow_height']
   # precision
   radian_epsilon = math.pi/1000
   radian_epsilon_2 = math.pi/10000
@@ -1029,66 +1053,105 @@ def g2_position_calcultion(ai_g1_low2_parameters, ai_g2_low2_parameters, ai_rota
   r_position = (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline)
   return(r_position)
 
-def info_on_real_force_angle(ai_g1_type, ai_g1_n, ai_g1_m, ai_g1_pr, ai_g1_ar, ai_g1_br, ai_g1_sa,
-                              ai_g2_type, ai_g2_n, ai_g2_m, ai_g2_pr, ai_g2_ar, ai_g2_br, ai_g2_sa,
-                              ai_g1_ix, ai_g1_iy, ai_g2_ix, ai_g2_iy, ai_g1g2_a, ai_aal, ai_involute):
+def info_on_real_force_angle(ai_g1_param, ai_g2_param, ai_sys_param, ai_rotation_direction):
   """ Analytic calculation to check the real_force_angle (including the additional_inter_axis_length) and the force_path_length
   """
-  if(ai_involute==1):
-    involute_name = 'Positive'
-  elif(ai_involute==-1):
-    involute_name = 'Negative'
+  ### positive_rotation
+  # external / external : negative_involute / negative_involute
+  # external / internal : negative_involute / negative_involute
+  # internal / external : positive_involute / positive_involute # exception !
+  # external / linear   : negative_involute / negative_involute
+  # linear   / external : negative_involute / negative_involute
+  if(ai_rotation_direction==1):
+    rotation_name = 'Positive'
+  elif(ai_rotation_direction==-1):
+    rotation_name = 'Negative'
   else:
-    print("ERR663: Error, ai_involute {:d} can only be 1 or -1!".format(ai_involute))
+    print("ERR663: Error, ai_rotation_direction {:d} can only be 1 or -1!".format(ai_rotation_direction))
     sys.exit(2)
-  r_info = "Info on Real Force Angle {:s}:\n".format(involute_name)
-  rd = ai_involute
+  # get the interesting high-level parameters
+  rd = ai_rotation_direction
+  g1_type = ai_g1_param['gear_type']
+  g1_sign = ai_g1_param['gear_sign']
+  g1_n    = ai_g1_param['full_tooth_nb']
+  g1_pr   = ai_g1_param['primitive_radius']
+  g1_ar   = ai_g1_param['addendum_radius']
+  g1_ah   = ai_g1_param['addendum_height']
+  g1_bl   = ai_g1_param['gearbar_length']
+  g1_ox   = ai_g1_param['center_ox']
+  g1_oy   = ai_g1_param['center_oy']
+  g2_type = ai_g2_param['gear_type']
+  g2_sign = ai_g2_param['gear_sign']
+  g2_n    = ai_g2_param['full_tooth_nb']
+  g2_pr   = ai_g2_param['primitive_radius']
+  g2_ar   = ai_g2_param['addendum_radius']
+  g2_ah   = ai_g2_param['addendum_height']
+  g2_bl   = ai_g2_param['gearbar_length']
+  g2_ox   = ai_g2_param['center_ox']
+  g2_oy   = ai_g2_param['center_oy']
+  g1g2_a  = ai_sys_param['g1g2_angle']
+  aal     = ai_sys_param['additional_inter_axis_length']
+  if(rd*g1_sign==1):
+    involute_name = 'Negative'
+    g1_br = ai_g1_param['negative_base_radius']
+    g2_br = ai_g2_param['negative_base_radius']
+    g1_sa = ai_g1_param['negative_slope_angle']
+    g2_sa = ai_g2_param['negative_slope_angle']
+  else:
+    involute_name = 'Positive'
+    g1_br = ai_g1_param['positive_base_radius']
+    g2_br = ai_g2_param['positive_base_radius']
+    g1_sa = ai_g1_param['positive_slope_angle']
+    g2_sa = ai_g2_param['positive_slope_angle']
+  # start creating the info text
+  r_info = ""
+  #r_info += "Info on Real Force Angle {:s}:\n".format(rotation_name)
   #print("dbg311: ai_g1_br:", ai_g1_br)
   # depending on gear_type
   #real_force_angle = math.acos(float(ai_g1_br*(ai_g1_n+ai_g2_n))/((ai_g1_pr+ai_g2_pr+ai_aal)*ai_g1_n))
-  real_force_angle = calc_real_force_angle(ai_g1_type, ai_g1_pr, ai_g1_br, ai_g2_type, ai_g2_pr, ai_g2_br, ai_aal, ai_g1_sa, ai_g2_sa)
-  r_info += "{:s} Real Force Angle = {:0.2f} radian ({:0.2f} degree)\n".format(involute_name, real_force_angle, real_force_angle*180/math.pi)
+  real_force_angle = calc_real_force_angle(g1_type, g1_pr, g1_br, g2_type, g2_pr, g2_br, aal, g1_sa, g2_sa)
+  #r_info += "{:s} Real Force Angle = {:0.2f} radian ({:0.2f} degree)\n".format(rotation_name, real_force_angle, real_force_angle*180/math.pi)
   # coordinate of C (intersection of axis-line and force-line)
   #AC = float((ai_g1_pr+ai_g2_pr+ai_aal)*ai_g1_n)/(ai_g1_n+ai_g2_n)
-  AC = ai_g1_br/math.cos(real_force_angle)
-  CX = ai_g1_ix + math.cos(ai_g1g2_a)*AC
-  CY = ai_g1_iy + math.sin(ai_g1g2_a)*AC
+  AC = g1_br/math.cos(real_force_angle)
+  CX = g1_ox + math.cos(g1g2_a)*AC
+  CY = g1_oy + math.sin(g1g2_a)*AC
   # force line equation
-  real_force_inclination = ai_g1g2_a + rd*(math.pi/2 - real_force_angle) # angle (Ox, force)
+  real_force_inclination = g1g2_a + rd*(math.pi/2 - real_force_angle) # angle (Ox, force)
   Flx = math.sin(real_force_inclination)
   Fly = -1*math.cos(real_force_inclination)
   Fk = -1*(Flx*CX+Fly*CY)
   # F2: intersection of the force line and the addendum_circle_1
-  if((ai_g1_type=='e')or(ai_g1_type=='i')):
-    S2X = CX + ai_g1_pr/ai_g1_n*math.cos(ai_g1g2_a+rd*math.pi/2) # S2: define the side of the intersection line-circle
-    S2Y = CY + ai_g1_pr/ai_g1_n*math.sin(ai_g1g2_a+rd*math.pi/2)
-    (F2X,F2Y, line_circle_intersection_status) = small_geometry.line_circle_intersection((Flx, Fly, Fk), (ai_g1_ix,ai_g1_iy),ai_g1_ar, (S2X,S2Y), real_force_inclination, "F2 calcultation")
+  if((g1_type=='e')or(g1_type=='i')):
+    S2X = CX + g1_pr/g1_n*math.cos(g1g2_a+rd*math.pi/2) # S2: define the side of the intersection line-circle
+    S2Y = CY + g1_pr/g1_n*math.sin(g1g2_a+rd*math.pi/2)
+    (F2X,F2Y, line_circle_intersection_status) = small_geometry.line_circle_intersection((Flx, Fly, Fk), (g1_ox, g1_oy), g1_ar, (S2X,S2Y), real_force_inclination, "F2 calcultation")
     if(line_circle_intersection_status==2):
       print("ERR125: Error with the intersection of the force line and the addendum_circle_1")
       sys.exit(2)
-  elif(ai_g1_type=='l'):
-    LX = ai_g1_ix+(ai_g1_ar-ai_g1_pr)*math.cos(ai_g1g2_a)
-    LY = ai_g1_iy+(ai_g1_ar-ai_g1_pr)*math.sin(ai_g1g2_a)
-    Blx = math.sin(ai_g1g2_a+math.pi/2)
-    Bly = -1*math.cos(ai_g1g2_a+math.pi/2)
+  elif(g1_type=='l'):
+    LX = g1_ox+g1_ah*math.cos(g1g2_a)
+    LY = g1_oy+g1_ah*math.sin(g1g2_a)
+    Blx = math.sin(g1g2_a+math.pi/2)
+    Bly = -1*math.cos(g1g2_a+math.pi/2)
     Bk = -1*(Blx*LX+Bly*LY)
     (F2X, F2Y, line_line_intersection_status) = small_geometry.line_line_intersection((Flx, Fly, Fk), (Blx, Bly, Bk), "F2 calcultation with gearbar")
     if(line_line_intersection_status==2):
       print("ERR127: Error with the intersection of the force line and the gearbar addendum line")
       sys.exit(2)
   # F1: intersection of the force line and the addendum_circle_2
-  if((ai_g2_type=='e')or(ai_g2_type=='i')):
-    S1X = CX + ai_g2_pr/ai_g2_n*math.cos(ai_g1g2_a-rd*math.pi/2) # S1: define the side of the intersection line-circle
-    S1Y = CY + ai_g2_pr/ai_g2_n*math.sin(ai_g1g2_a-rd*math.pi/2)
-    (F1X,F1Y, line_circle_intersection_status) = small_geometry.line_circle_intersection((Flx, Fly, Fk), (ai_g2_ix,ai_g2_iy),ai_g2_ar, (S1X,S1Y), real_force_inclination+math.pi, "F1 calcultation")
+  if((g2_type=='e')or(g2_type=='i')):
+    S1X = CX + g2_pr/g2_n*math.cos(g1g2_a-rd*math.pi/2) # S1: define the side of the intersection line-circle
+    S1Y = CY + g2_pr/g2_n*math.sin(g1g2_a-rd*math.pi/2)
+    (F1X,F1Y, line_circle_intersection_status) = small_geometry.line_circle_intersection((Flx, Fly, Fk), (g2_ox, g2_oy), g2_ar, (S1X,S1Y), real_force_inclination+math.pi, "F1 calcultation")
     if(line_circle_intersection_status==2):
       print("ERR126: Error with the intersection of the force line and the addendum_circle_2")
       sys.exit(2)
-  elif(ai_g2_type=='l'):
-    LX = ai_g2_ix+(ai_g1_ar-ai_g1_pr)*math.cos(ai_g1g2_a+math.pi)
-    LY = ai_g2_iy+(ai_g1_ar-ai_g1_pr)*math.sin(ai_g1g2_a+math.pi)
-    Blx = math.sin(ai_g1g2_a+math.pi/2)
-    Bly = -1*math.cos(ai_g1g2_a+math.pi/2)
+  elif(g2_type=='l'):
+    LX = g2_ox+g1_ah*math.cos(g1g2_a+math.pi)
+    LY = g2_oy+g1_ah*math.sin(g1g2_a+math.pi)
+    Blx = math.sin(g1g2_a+math.pi/2)
+    Bly = -1*math.cos(g1g2_a+math.pi/2)
     Bk = -1*(Blx*LX+Bly*LY)
     (F1X, F1Y, line_line_intersection_status) = small_geometry.line_line_intersection((Flx, Fly, Fk), (Blx, Bly, Bk), "F1 calcultation with gearbar")
     if(line_line_intersection_status==2):
@@ -1098,32 +1161,33 @@ def info_on_real_force_angle(ai_g1_type, ai_g1_n, ai_g1_m, ai_g1_pr, ai_g1_ar, a
   r_action_line_outline = ((F1X, F1Y), (F2X, F2Y))
   # length of F1F2
   F1F2 = math.sqrt((F2X-F1X)**2+(F2Y-F1Y)**2)
-  r_info += "length of the tooth {:s} contact path: {:0.2f}\n".format(involute_name, F1F2)
+  #r_info += "length of the tooth {:s} contact path: {:0.2f}\n".format(involute_name, F1F2)
+  r_info += "{:s} rotation, {:s}-{:s} involute {:s}. Real Force Angle = {:0.2f} radian ({:0.2f} degree). Contact path length: {:0.2f}\n".format(rotation_name, g1_type, g2_type, involute_name, real_force_angle, real_force_angle*180/math.pi, F1F2)
   # angle (F1AF2)
-  if((ai_g1_type=='e')or(ai_g1_type=='i')):
-    AF1 = float(math.sqrt((F1X-ai_g1_ix)**2+(F1Y-ai_g1_iy)**2))
-    xAF1 = math.atan2((F1Y-ai_g1_iy)/AF1, (F1X-ai_g1_ix)/AF1)
-    AF2 = float(ai_g1_ar)
-    xAF2 = math.atan2((F2Y-ai_g1_iy)/AF2, (F2X-ai_g1_ix)/AF2)
+  if((g1_type=='e')or(g1_type=='i')):
+    AF1 = float(math.sqrt((F1X-g1_ox)**2+(F1Y-g1_oy)**2))
+    xAF1 = math.atan2((F1Y-g1_oy)/AF1, (F1X-g1_ox)/AF1)
+    AF2 = float(g1_ar)
+    xAF2 = math.atan2((F2Y-g1_oy)/AF2, (F2X-g1_ox)/AF2)
     F1AF2 = abs(math.fmod(xAF2-xAF1+5*math.pi, 2*math.pi)-math.pi)
-    F1AF2p = F1AF2*ai_g1_n/(2*math.pi)
+    F1AF2p = F1AF2*g1_n/(2*math.pi)
     r_info += "tooth {:s} contact path angle from gearwheel1: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length\n".format(involute_name, F1AF2, F1AF2*180/math.pi, F1AF2p*100)
-  elif(ai_g1_type=='l'):
-    F1F2t = F1F2*math.cos(ai_g1_sa)
-    F1F2p = float(F1F2t)/ai_g1_m
+  elif(g1_type=='l'):
+    F1F2t = F1F2*math.cos(g1_sa)
+    F1F2p = float(F1F2t)*g1_n/g1_bl
     r_info += "tooth {:s} contact path from gearbar1 tangential length {:0.2f} (mm) {:0.2f}% of tooth length\n".format(involute_name, F1F2t, F1F2p*100)
   # angle (F1EF2)
-  if((ai_g2_type=='e')or(ai_g2_type=='i')):
-    EF2 = float(math.sqrt((F2X-ai_g2_ix)**2+(F2Y-ai_g2_iy)**2))
-    xEF2 = math.atan2((F2Y-ai_g2_iy)/EF2, (F2X-ai_g2_ix)/EF2)
-    EF1 = float(ai_g2_ar)
-    xEF1 = math.atan2((F1Y-ai_g2_iy)/EF1, (F1X-ai_g2_ix)/EF1)
+  if((g2_type=='e')or(g2_type=='i')):
+    EF2 = float(math.sqrt((F2X-g2_ox)**2+(F2Y-g2_oy)**2))
+    xEF2 = math.atan2((F2Y-g2_oy)/EF2, (F2X-g2_ox)/EF2)
+    EF1 = float(g2_ar)
+    xEF1 = math.atan2((F1Y-g2_oy)/EF1, (F1X-g2_ox)/EF1)
     F1EF2 = abs(math.fmod(xEF2-xEF1+5*math.pi, 2*math.pi)-math.pi)
-    F1EF2p = F1EF2*ai_g2_n/(2*math.pi)
+    F1EF2p = F1EF2*g2_n/(2*math.pi)
     r_info += "tooth {:s} contact path angle from gearwheel2: {:0.2f} radian ({:0.2f} degree) {:0.2f}% of tooth length\n".format(involute_name, F1EF2, F1EF2*180/math.pi, F1EF2p*100)
-  elif(ai_g2_type=='l'):
-    F1F2t = F1F2*math.cos(ai_g2_sa)
-    F1F2p = float(F1F2t)/ai_g2_m
+  elif(g2_type=='l'):
+    F1F2t = F1F2*math.cos(g2_sa)
+    F1F2p = float(F1F2t)*g2_n/g2_bl
     r_info += "tooth {:s} contact path from gearbar2 tangential length {:0.2f} (mm) {:0.2f}% of tooth length\n".format(involute_name, F1F2t, F1F2p*100)
   # return
   r_iorfa = (r_info, r_action_line_outline)
@@ -1633,43 +1697,23 @@ def gear_profile(
   g2_bi = g1g2_a + math.pi
   g1_param['gearbar_inclination']  = g1_bi
   g2_param['gearbar_inclination']  = g2_bi
-  ## now we have the following hight level parameters:
-  # g1_type, g1_n, g1_m, g1_pr, g1_adp, g1_thh, g1_ar, g1_dr, g1_brp, g1_brn, g1_ia, g1_ix, g1_iy, g1_rbr, g1_hr, g1_irp, g1_irn, g1_stp, g1_stn, g1_ptn, g1_pfe, g1_ple, g1_bi
-  # g2_type, g2_n, g2_m, g2_pr, g2_adp, g2_thh, g2_ar, g2_dr, g2_brp, g2_brn, g2_ia, g2_ix, g2_iy, g2_rbr, g2_hr, g2_irp, g2_irn, g2_stp, g2_stn, g2_ptn, g2_pfe, g2_ple, g2_bi
-  # g2_exist, aal, g1g2_a
-  g1_high_parameters = (g1_type, g1_n, g1_m, g1_pr, g1_adp, g1_thh, g1_ar, g1_dr, g1_brp, g1_brn,
-                        g1_ix, g1_iy, g1_rbr, g1_hr, g1_irp, g1_irn, g1_stp, g1_stn, g1_ptn, g1_pfe, g1_ple,
-                        g1_bi, g1_sp, g1_sn, g1_a_delta, g1_d_delta, g1_h_delta)
-  g2_high_parameters = (g2_type, g2_n, g2_m, g2_pr, g2_adp, g2_thh, g2_ar, g2_dr, g2_brp, g2_brn,
-                        g2_ix, g2_iy, g2_rbr, g2_hr, g2_irp, g2_irn, g2_stp, g2_stn, g2_ptn, g2_pfe, g2_ple,
-                        g2_bi, g2_sp, g2_sn, g2_a_delta, g2_d_delta, g2_h_delta)
+  g1_param['gearbar_length']  = g1_n * g1_m * math.pi
+  g2_param['gearbar_length']  = g2_n * g2_m * math.pi
+  #
+  #print("dbg341: g1_param:", g1_param)
+  #print("dbg342: g2_param:", g2_param)
+  #print("dbg343: sys_param:", sys_param)
+  ## end of the construction of the high-level parameters
 
   ## compute the real_force_angle and the tooth_contact_path
   if(g2_exist):
-    # positive involute
-    (real_force_info_p, positive_action_line_outline) = info_on_real_force_angle(g1_type, g1_n, g1_m, g1_pr, g1_ar, g1_brp, g1_sp,
-                                                                                  g2_type, g2_n, g2_m, g2_pr, g2_ar, g2_brp, g2_sp,
-                                                                                  g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, -1) 
-    # negative involute
-    (real_force_info_n, negative_action_line_outline) = info_on_real_force_angle(g1_type, g1_n,  g1_m, g1_pr, g1_ar, g1_brn, g1_sn,
-                                                                                  g2_type, g2_n, g2_m, g2_pr, g2_ar, g2_brn, g2_sn,
-                                                                                  g1_ix, g1_iy, g2_ix, g2_iy, g1g2_a, aal, 1)
-    #
-    real_force_info = "Real force info:\n"
-    real_force_info += real_force_info_p
-    real_force_info += real_force_info_n
-    #
-    if(g1_type=='i'):
-      positive_rotation_action_line_outline = positive_action_line_outline
-      negative_rotation_action_line_outline = negative_action_line_outline
-    else:
-      positive_rotation_action_line_outline = negative_action_line_outline
-      negative_rotation_action_line_outline = positive_action_line_outline
+    (real_force_info_p, positive_rotation_action_line_outline) = info_on_real_force_angle(g1_param, g2_param, sys_param,  1)
+    (real_force_info_n, negative_rotation_action_line_outline) = info_on_real_force_angle(g1_param, g2_param, sys_param, -1)
+    real_force_info = "Real force info:\n" + real_force_info_p + real_force_info_n
 
   ### generate the first gear outline
-  #print("dbg522: g1_high_parameters:", g1_high_parameters)
-  (g1_low1_parameters, g1_low2_parameters, g1_info_low) = calc_low_level_gear_parameters(g1_high_parameters)
-  g1_outline_B = gear_profile_outline(g1_low1_parameters, g1_ia)
+  (g1_make_low_param, g1_place_low_param, g1_info_low) = calc_low_level_gear_parameters(g1_param)
+  g1_outline_B = gear_profile_outline(g1_make_low_param, g1_ia)
   # output info
   parameter_info_txt1 = gear_high_level_parameter_to_text("Gear-profile 1:", g1_param)
   parameter_info_txt1 += g1_info_low
@@ -1679,16 +1723,16 @@ def gear_profile(
   if(ai_simulation_enable):
     print("Launch the simulation with Tkinter ..")
     # initialization
-    g1_ideal_involute = ideal_tooth_outline(g1_low1_parameters, g1_ia, 0)
-    g1_ideal_tooth = ideal_tooth_outline(g1_low1_parameters, g1_ia, 1)
+    g1_ideal_involute = ideal_tooth_outline(g1_make_low_param, g1_ia, 0)
+    g1_ideal_tooth = ideal_tooth_outline(g1_make_low_param, g1_ia, 1)
     parameter_info_txt = parameter_info_txt1
     if(g2_exist):
       #print("dbg369: Prepare the second gear ..")
       #print("dbg521: g2_high_parameters:", g2_high_parameters)
       g2_ia = 0
-      (g2_low1_parameters, g2_low2_parameters, g2_info_low) = calc_low_level_gear_parameters(g2_high_parameters)
-      #print("dbg653: g2_low1_parameters:", g2_low1_parameters)
-      g2_outline_B = gear_profile_outline(g2_low1_parameters, g2_ia)
+      (g2_make_low_param, g2_place_low_param, g2_info_low) = calc_low_level_gear_parameters(g2_param)
+      #print("dbg653: g2_make_low_param:", g2_make_low_param)
+      g2_outline_B = gear_profile_outline(g2_make_low_param, g2_ia)
       # output info
       parameter_info_txt2 = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
       parameter_info_txt2 += real_force_info
@@ -1723,16 +1767,17 @@ def gear_profile(
       # g1_position
       g1_position = g1_ia+ai_angle_position
       ## get outline_B
-      lg1_outline_B = gear_profile_outline(g1_low1_parameters, g1_position)
-      lg1_ideal_involute = ideal_tooth_outline(g1_low1_parameters, g1_position, 0)
-      lg1_ideal_tooth = ideal_tooth_outline(g1_low1_parameters, g1_position, 1)
+      lg1_outline_B = gear_profile_outline(g1_make_low_param, g1_position)
+      lg1_ideal_involute = ideal_tooth_outline(g1_make_low_param, g1_position, 0)
+      lg1_ideal_tooth = ideal_tooth_outline(g1_make_low_param, g1_position, 1)
       if(g2_exist):
         # g2_position
         #g2_position = g2_ia-ai_angle_position # completely wrong, just waiting for the good formula
-        (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline) = g2_position_calcultion(g1_low2_parameters, g2_low2_parameters, ai_rotation_direction, g1_position, aal, g1g2_a)
-        lg2_outline_B = gear_profile_outline(g2_low1_parameters, g2_position)
-        lg2_ideal_involute = ideal_tooth_outline(g2_low1_parameters, g2_position, 0)
-        lg2_ideal_tooth = ideal_tooth_outline(g2_low1_parameters, g2_position, 1)
+        g2_position_calcultion_stuff = g2_position_calcultion(g1_place_low_param, g2_place_low_param, ai_rotation_direction, g1_position, aal, g1g2_a)
+        (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline) = g2_position_calcultion_stuff
+        lg2_outline_B = gear_profile_outline(g2_make_low_param, g2_position)
+        lg2_ideal_involute = ideal_tooth_outline(g2_make_low_param, g2_position, 0)
+        lg2_ideal_tooth = ideal_tooth_outline(g2_make_low_param, g2_position, 1)
         # action_line
         if(ai_rotation_direction==1):
           action_line_outline = positive_rotation_action_line_outline
