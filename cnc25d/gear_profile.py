@@ -1129,32 +1129,29 @@ def info_on_real_force_angle(ai_g1_type, ai_g1_n, ai_g1_m, ai_g1_pr, ai_g1_ar, a
   r_iorfa = (r_info, r_action_line_outline)
   return(r_iorfa)
 
-def gear_high_level_parameter_to_text(ai_prefix_txt, ai_gear_high_parameters, ai_initial_angle=0):
+def gear_high_level_parameter_to_text(ai_prefix_txt, ai_param):
   """ Create a string that contains the gear high-level parameters
   """
   r_txt = "\n"
   r_txt += ai_prefix_txt+"\n"
-  (g_type, g_n, g_m, g_pr, g_adp, g_thh, g_ar, g_dr, g_brp, g_brn,
-    g_ix, g_iy, g_rbr, g_hr, g_irp, g_irn, g_stp, g_stn, g_ptn, g_pfe, g_ple,
-    g_bi, g_sp, g_sn, g_a_delta, g_d_delta, g_h_delta) = ai_gear_high_parameters
-  r_txt += "gear_type:                \t{:s}\t".format(g_type)
-  r_txt += "tooth_nb:                 \t{:d}\n".format(g_n)
-  r_txt += "gear_module:              \t{:0.3f}\n".format(g_m)
-  r_txt += "primitive radius:         \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_pr, 2*g_pr)
-  r_txt += "addendum-dedendum parity: \t{:0.2f} %\n".format(100*g_adp)
-  r_txt += "tooth half height:        \t{:0.3f}\n".format(g_thh)
-  r_txt += "positive base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_brp, 2*g_brp)
-  r_txt += "negative base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_brn, 2*g_brn)
-  r_txt += "addendum radius:          \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_ar, 2*g_ar)
-  r_txt += "dedendum radius:          \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_dr, 2*g_dr)
-  r_txt += "gear hollow radius:       \t{:0.3f}   \tdiameter: {:0.3f}\n".format(g_hr, 2*g_hr)
-  r_txt += "router-bit radius:        \t{:0.3f}   \tdiameter:  {:0.3f}\n".format(g_rbr, 2*g_rbr)
-  r_txt += "gear center (x, y):       \t{:0.3f}   \t {:0.3f}\n".format(g_ix, g_iy)
-  r_txt += "profile resolution (positive, negative):       \t{:d}     \t{:d}\n".format(g_irp, g_irn)
-  r_txt += "profile skin thickness (positive, negative):   \t{:0.3f}  \t{:0.3f}\n".format(g_stp, g_stn)
-  r_txt += "gear portion:   \ttooth_nb: {:d}   \tstart: {:d}  \tstop: {:d}\n".format(g_ptn, g_pfe, g_ple)
-  r_txt += "first tooth position angle:   \t{:0.3f} (radian)  \t{:0.3f} (degree)\n".format(ai_initial_angle, ai_initial_angle*180/math.pi)
-  r_txt += "linear gear: inclination: {:0.3f} (radian)  {:0.3f} (degree)  positive slope: {:0.3f} (radian)  {:0.3f} (degree)  negative slope: {:0.3f} (radian)  {:0.3f}\n".format(g_bi, g_bi*180/math.pi, g_sp, g_sp*180/math.pi, g_sn, g_sn*180/math.pi)
+  r_txt += "gear_type:                \t{:s}\t".format(ai_param['gear_type'])
+  r_txt += "tooth_nb:                 \t{:d}\n".format(ai_param['full_tooth_nb'])
+  r_txt += "gear_module:              \t{:0.3f}\n".format(ai_param['module'])
+  r_txt += "primitive radius:         \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['primitive_radius'], 2*ai_param['primitive_radius'])
+  r_txt += "addendum-dedendum parity: \t{:0.2f} %\n".format(100*ai_param['addendum_dedendum_parity'])
+  r_txt += "tooth half height:        \t{:0.3f}\n".format(ai_param['tooth_half_height'])
+  r_txt += "positive base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['positive_base_radius'], 2*ai_param['positive_base_radius'])
+  r_txt += "negative base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['negative_base_radius'], 2*ai_param['negative_base_radius'])
+  r_txt += "addendum radius:          \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['addendum_radius'], 2*ai_param['addendum_radius'])
+  r_txt += "dedendum radius:          \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['dedendum_radius'], 2*ai_param['dedendum_radius'])
+  r_txt += "gear hollow radius:       \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['hollow_radius'], 2*ai_param['hollow_radius'])
+  r_txt += "router-bit radius:        \t{:0.3f}   \tdiameter:  {:0.3f}\n".format(ai_param['gear_router_bit_radius'], 2*ai_param['gear_router_bit_radius'])
+  r_txt += "gear center (x, y):       \t{:0.3f}   \t {:0.3f}\n".format(ai_param['center_ox'], ai_param['center_oy'])
+  r_txt += "profile resolution (positive, negative):       \t{:d}     \t{:d}\n".format(ai_param['positive_involute_resolution'], ai_param['negative_involute_resolution'])
+  r_txt += "profile skin thickness (positive, negative):   \t{:0.3f}  \t{:0.3f}\n".format(ai_param['positive_skin_thickness'], ai_param['negative_skin_thickness'])
+  r_txt += "gear portion:   \ttooth_nb: {:d}   \tstart: {:d}  \tstop: {:d}\n".format(ai_param['portion_tooth_nb'], ai_param['portion_first_end'], ai_param['portion_last_end'])
+  r_txt += "first tooth position angle:   \t{:0.3f} (radian)  \t{:0.3f} (degree)\n".format(ai_param['initial_angle'], ai_param['initial_angle']*180/math.pi)
+  r_txt += "linear gear: inclination: {:0.3f} (radian)  {:0.3f} (degree)  positive slope: {:0.3f} (radian)  {:0.3f} (degree)  negative slope: {:0.3f} (radian)  {:0.3f}\n".format(ai_param['gearbar_inclination'], ai_param['gearbar_inclination']*180/math.pi, ai_param['positive_slope_angle'], ai_param['positive_slope_angle']*180/math.pi, ai_param['negative_slope_angle'], ai_param['negative_slope_angle']*180/math.pi)
   return(r_txt)
 
 
@@ -1674,7 +1671,7 @@ def gear_profile(
   (g1_low1_parameters, g1_low2_parameters, g1_info_low) = calc_low_level_gear_parameters(g1_high_parameters)
   g1_outline_B = gear_profile_outline(g1_low1_parameters, g1_ia)
   # output info
-  parameter_info_txt1 = gear_high_level_parameter_to_text("Gear-profile 1:", g1_high_parameters, g1_ia)
+  parameter_info_txt1 = gear_high_level_parameter_to_text("Gear-profile 1:", g1_param)
   parameter_info_txt1 += g1_info_low
   #print(parameter_info_txt1)
 
@@ -1695,7 +1692,7 @@ def gear_profile(
       # output info
       parameter_info_txt2 = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
       parameter_info_txt2 += real_force_info
-      parameter_info_txt3 = gear_high_level_parameter_to_text("Gear-profile 2:", g2_high_parameters)
+      parameter_info_txt3 = gear_high_level_parameter_to_text("Gear-profile 2:", g2_param)
       parameter_info_txt3 += g2_info_low
       #print(parameter_info_txt2 + parameter_info_txt3)
       parameter_info_txt += parameter_info_txt2 + parameter_info_txt3
