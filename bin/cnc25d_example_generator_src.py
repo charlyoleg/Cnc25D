@@ -113,7 +113,7 @@ You can rename, move, copy and edit the script {:s}
 
 ### box_wood_frame script example
 
-bwf_script_name="box_wood_frame_example.py"
+bwf_script_name="eg01_box_wood_frame_example.py"
 
 # copy from ../cnc25d/tests/box_wood_frame_macro.py without the import stuff
 bwf_script_content='''#!/usr/bin/env python
@@ -123,35 +123,11 @@ bwf_script_content='''#!/usr/bin/env python
 #include "../cnc25d/tests/box_wood_frame_macro.py"
 '''
 
-### gear_profile script example
-
-gp_script_name="gear_profile_example.py"
-
-# copy from ../cnc25d/tests/gear_profile_macro.py without the import stuff
-gp_script_content='''#!/usr/bin/env python
-#
-# copy/paste of cnc25d/tests/gear_profile_macro.py
-#
-#include "../cnc25d/tests/gear_profile_macro.py"
-'''
-
-### gearwheel script example
-
-gw_script_name="gearwheel_example.py"
-
-# copy from ../cnc25d/tests/gearwheel_macro.py without the import stuff
-gw_script_content='''#!/usr/bin/env python
-#
-# copy/paste of cnc25d/tests/gearwheel_macro.py
-#
-#include "../cnc25d/tests/gearwheel_macro.py"
-'''
-
 ### cnc25d_api_example script
 
-cgf_script_name="cnc25d_api_example.py"
+cgf_script_name="eg03_cnc25d_api_example.py"
 
-# copy from ../cnc25d/tests/cnc25d_api_macro.py without the import stuff
+# copy from ../cnc25d/tests/cnc25d_api_macro.py
 cgf_script_content='''#!/usr/bin/env python
 #
 # copy/paste of cnc25d/tests/cnc25d_api_macro.py
@@ -161,14 +137,38 @@ cgf_script_content='''#!/usr/bin/env python
 
 ### simple_cnc25d_api_example script
 
-sca_script_name="simple_cnc25d_api_example.py"
+sca_script_name="eg02_simple_cnc25d_api_example.py"
 
-# copy from ../cnc25d/tests/simple_cnc25d_api_macro.py without the import stuff
+# copy from ../cnc25d/tests/simple_cnc25d_api_macro.py
 sca_script_content='''#!/usr/bin/env python
 #
 # copy/paste of cnc25d/tests/simple_cnc25d_api_macro.py
 #
 #include "../cnc25d/tests/simple_cnc25d_api_macro.py"
+'''
+
+### gear_profile script example
+
+gp_script_name="eg04_gear_profile_example.py"
+
+# copy from ../cnc25d/tests/gear_profile_macro.py
+gp_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/gear_profile_macro.py
+#
+#include "../cnc25d/tests/gear_profile_macro.py"
+'''
+
+### gearwheel script example
+
+gw_script_name="eg05_gearwheel_example.py"
+
+# copy from ../cnc25d/tests/gearwheel_macro.py
+gw_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/gearwheel_macro.py
+#
+#include "../cnc25d/tests/gearwheel_macro.py"
 '''
 
 ### Generating the script examples

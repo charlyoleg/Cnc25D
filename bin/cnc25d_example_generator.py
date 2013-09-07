@@ -113,7 +113,7 @@ You can rename, move, copy and edit the script {:s}
 
 ### box_wood_frame script example
 
-bwf_script_name="box_wood_frame_example.py"
+bwf_script_name="eg01_box_wood_frame_example.py"
 
 # copy from ../cnc25d/tests/box_wood_frame_macro.py without the import stuff
 bwf_script_content='''#!/usr/bin/env python
@@ -244,509 +244,11 @@ Part.show(bwf_assembly)
 
 '''
 
-### gear_profile script example
-
-gp_script_name="gear_profile_example.py"
-
-# copy from ../cnc25d/tests/gear_profile_macro.py without the import stuff
-gp_script_content='''#!/usr/bin/env python
-#
-# copy/paste of cnc25d/tests/gear_profile_macro.py
-#
-# gear_profile_macro.py
-# the macro to generate a gear_profile.
-# created by charlyoleg on 2013/08/27
-#
-# (C) Copyright 2013 charlyoleg
-#
-# This file is part of the Cnc25D Python package.
-# 
-# Cnc25D is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# Cnc25D is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-# 
-# You should have received a copy of the GNU Lesser General Public License
-# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
-
-
-################################################################
-# this file intends being included in the file bin/cnc25d_example_generator.py
-# for this purpose, there is some syntaxe restrictions
-# don't use triple single-quotes (') and return character ('\'.'n') in this file
-# but you can still use triple double-quote (")
-################################################################
-
-"""
-this piece of code is an example of how to use the parametric design gear_profile
-You can also use this file as a FreeCAD macro from the GUI
-Look at the code. It's very simple to hack
-"""
-
-################################################################
-# Installation pre-request
-################################################################
-# This script needs freecad and Cnc25D installed on your system
-# visit those sites for more information:
-# http://www.freecadweb.org/
-# https://pypi.python.org/pypi/Cnc25D
-#
-# To install FreeCAD on Ubuntu, run the following command:
-# > sudo apt-get install freecad
-# or to get the newest version:
-# > sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
-# > sudo apt-get update
-# > sudo apt-get install freecad
-# and optionally:
-# >  sudo apt-get install freecad-doc freecad-dev
-# To install the python package cnc25d, run the following command:
-# > sudo pip install Cnc25D
-# or
-# > sudo pip install Cnc25D -U
-
-
-################################################################
-# header for Python / FreeCAD compatibility
-################################################################
-
-from cnc25d import cnc25d_api
-cnc25d_api.importing_freecad()
-
-#print("FreeCAD.Version:", FreeCAD.Version())
-
-################################################################
-# import
-################################################################
-
-#
-import math
-#
-from cnc25d import gear_profile
-#
-import Part
-
-    
-################################################################
-# parameters value
-################################################################
-#
-# choose the values of the parameters by editing this file
-# feature request : create a GUI with PyQt4 to edit those parameter values
-
-### first gear
-# general
-gp_gear_type                      = 'e'
-gp_gear_tooth_nb                  = 18
-gp_gear_module                    = 10.0
-gp_gear_primitive_diameter        = 0
-gp_gear_addendum_dedendum_parity  = 50.0
-# tooth height
-gp_gear_tooth_half_height           = 0 # 10.0
-gp_gear_addendum_height_pourcentage = 100.0
-gp_gear_dedendum_height_pourcentage = 100.0
-gp_gear_hollow_height_pourcentage   = 25.0
-gp_gear_router_bit_radius           = 3.0
-# positive involute
-gp_gear_base_diameter       = 0
-gp_gear_force_angle         = 0
-gp_gear_tooth_resolution    = 2
-gp_gear_skin_thickness      = 0
-# negative involute (if zero, negative involute = positive involute)
-gp_gear_base_diameter_n     = 0
-gp_gear_force_angle_n       = 0
-gp_gear_tooth_resolution_n  = 0
-gp_gear_skin_thickness_n    = 0
-### second gear
-# general
-gp_second_gear_type                     = 'e'
-gp_second_gear_tooth_nb                 = 0 #25
-gp_second_gear_primitive_diameter       = 0
-gp_second_gear_addendum_dedendum_parity = 0 # 50.0
-# tooth height
-gp_second_gear_tooth_half_height            = 0
-gp_second_gear_addendum_height_pourcentage  = 100.0
-gp_second_gear_dedendum_height_pourcentage  = 100.0
-gp_second_gear_hollow_height_pourcentage    = 25.0
-gp_second_gear_router_bit_radius            = 0
-# positive involute
-gp_second_gear_base_diameter      = 0
-gp_second_gear_tooth_resolution   = 0
-gp_second_gear_skin_thickness     = 0
-# negative involute (if zero, negative involute = positive involute)
-gp_second_gear_base_diameter_n    = 0
-gp_second_gear_tooth_resolution_n = 0
-gp_second_gear_skin_thickness_n   = 0
-### position
-# first gear position
-gp_center_position_x                    = 0.0
-gp_center_position_y                    = 0.0
-gp_gear_initial_angle                   = 0.0
-# second gear position
-gp_second_gear_position_angle           = 0.0
-gp_second_gear_additional_axis_length   = 0.0
-### portion
-gp_portion_tooth_nb     = 10
-gp_portion_first_end    = 3
-gp_portion_last_end     = 3
-### output1
-gp_gear_profile_height  = 20.0
-gp_simulation_enable    = True
-gp_output_file_basename = "" # set a not-empty string if you want to generate the output files
-#gp_output_file_basename = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gp_output_file_basename = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gp_output_file_basename = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
-
-
-
-################################################################
-# action
-################################################################
-
-my_gp = gear_profile.gear_profile(
-            ### first gear
-            # general
-            ai_gear_type                      = gp_gear_type,
-            ai_gear_tooth_nb                  = gp_gear_tooth_nb,
-            ai_gear_module                    = gp_gear_module,
-            ai_gear_primitive_diameter        = gp_gear_primitive_diameter,
-            ai_gear_addendum_dedendum_parity  = gp_gear_addendum_dedendum_parity,
-            # tooth height
-            ai_gear_tooth_half_height           = gp_gear_tooth_half_height,
-            ai_gear_addendum_height_pourcentage = gp_gear_addendum_height_pourcentage,
-            ai_gear_dedendum_height_pourcentage = gp_gear_dedendum_height_pourcentage,
-            ai_gear_hollow_height_pourcentage   = gp_gear_hollow_height_pourcentage,
-            ai_gear_router_bit_radius           = gp_gear_router_bit_radius,
-            # positive involute
-            ai_gear_base_diameter       = gp_gear_base_diameter,
-            ai_gear_force_angle         = gp_gear_force_angle,
-            ai_gear_tooth_resolution    = gp_gear_tooth_resolution,
-            ai_gear_skin_thickness      = gp_gear_skin_thickness,
-            # negative involute (if zero, negative involute = positive involute)
-            ai_gear_base_diameter_n     = gp_gear_base_diameter_n,
-            ai_gear_force_angle_n       = gp_gear_force_angle_n,
-            ai_gear_tooth_resolution_n  = gp_gear_tooth_resolution_n,
-            ai_gear_skin_thickness_n    = gp_gear_skin_thickness_n,
-            ### second gear
-            # general
-            ai_second_gear_type                     = gp_second_gear_type,
-            ai_second_gear_tooth_nb                 = gp_second_gear_tooth_nb,
-            ai_second_gear_primitive_diameter       = gp_second_gear_primitive_diameter,
-            ai_second_gear_addendum_dedendum_parity = gp_second_gear_addendum_dedendum_parity,
-            # tooth height
-            ai_second_gear_tooth_half_height            = gp_second_gear_tooth_half_height,
-            ai_second_gear_addendum_height_pourcentage  = gp_second_gear_addendum_height_pourcentage,
-            ai_second_gear_dedendum_height_pourcentage  = gp_second_gear_dedendum_height_pourcentage,
-            ai_second_gear_hollow_height_pourcentage    = gp_second_gear_hollow_height_pourcentage,
-            ai_second_gear_router_bit_radius            = gp_second_gear_router_bit_radius,
-            # positive involute
-            ai_second_gear_base_diameter      = gp_second_gear_base_diameter,
-            ai_second_gear_tooth_resolution   = gp_second_gear_tooth_resolution,
-            ai_second_gear_skin_thickness     = gp_second_gear_skin_thickness,
-            # negative involute (if zero, negative involute = positive involute)
-            ai_second_gear_base_diameter_n    = gp_second_gear_base_diameter_n,
-            ai_second_gear_tooth_resolution_n = gp_second_gear_tooth_resolution_n,
-            ai_second_gear_skin_thickness_n   = gp_second_gear_skin_thickness_n,
-            ### position
-            # first gear position
-            ai_center_position_x                    = gp_center_position_x,
-            ai_center_position_y                    = gp_center_position_y,
-            ai_gear_initial_angle                   = gp_gear_initial_angle,
-            # second gear position
-            ai_second_gear_position_angle           = gp_second_gear_position_angle,
-            ai_second_gear_additional_axis_length   = gp_second_gear_additional_axis_length,
-            ### portion
-            ai_portion_tooth_nb     = gp_portion_tooth_nb,
-            ai_portion_first_end    = gp_portion_first_end,
-            ai_portion_last_end     = gp_portion_last_end,
-            ### output
-            ai_gear_profile_height  = gp_gear_profile_height,
-            ai_simulation_enable    = gp_simulation_enable,    # gp_simulation_enable,
-            ai_output_file_basename = gp_output_file_basename)
-
-#print("dbg339: my_gp:", my_gp)
-#Part.show(my_gp)
-
-
-
-'''
-
-### gearwheel script example
-
-gw_script_name="gearwheel_example.py"
-
-# copy from ../cnc25d/tests/gearwheel_macro.py without the import stuff
-gw_script_content='''#!/usr/bin/env python
-#
-# copy/paste of cnc25d/tests/gearwheel_macro.py
-#
-# gearwheel_macro.py
-# the macro to generate a gearwheel.
-# created by charlyoleg on 2013/06/19
-#
-# (C) Copyright 2013 charlyoleg
-#
-# This file is part of the Cnc25D Python package.
-# 
-# Cnc25D is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# Cnc25D is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-# 
-# You should have received a copy of the GNU Lesser General Public License
-# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
-
-
-################################################################
-# this file intends being included in the file bin/cnc25d_example_generator.py
-# for this purpose, there is some syntaxe restrictions
-# don't use triple single-quotes (') and return character ('\'.'n') in this file
-# but you can still use triple double-quote (")
-################################################################
-
-"""
-this piece of code is an example of how to use the parametric design gearwheel
-You can also use this file as a FreeCAD macro from the GUI
-Look at the code. It's very simple to hack
-"""
-
-################################################################
-# Installation pre-request
-################################################################
-# This script needs freecad and Cnc25D installed on your system
-# visit those sites for more information:
-# http://www.freecadweb.org/
-# https://pypi.python.org/pypi/Cnc25D
-#
-# To install FreeCAD on Ubuntu, run the following command:
-# > sudo apt-get install freecad
-# or to get the newest version:
-# > sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
-# > sudo apt-get update
-# > sudo apt-get install freecad
-# and optionally:
-# >  sudo apt-get install freecad-doc freecad-dev
-# To install the python package cnc25d, run the following command:
-# > sudo pip install Cnc25D
-# or
-# > sudo pip install Cnc25D -U
-
-
-################################################################
-# header for Python / FreeCAD compatibility
-################################################################
-
-from cnc25d import cnc25d_api
-cnc25d_api.importing_freecad()
-
-#print("FreeCAD.Version:", FreeCAD.Version())
-
-################################################################
-# import
-################################################################
-
-#
-import math
-#
-from cnc25d import gearwheel
-#
-import Part
-
-    
-################################################################
-# parameters value
-################################################################
-#
-# choose the values of the parameters by editing this file
-# feature request : create a GUI with PyQt4 to edit those parameter values
-
-##### from gear_profile
-### first gear
-# general
-#gw_gear_type                      = gw_gear_type
-gw_gear_tooth_nb                  = 18
-gw_gear_module                    = 10.0
-gw_gear_primitive_diameter        = 0
-gw_gear_addendum_dedendum_parity  = 50.0
-# tooth height
-gw_gear_tooth_half_height           = 0 # 10.0
-gw_gear_addendum_height_pourcentage = 100.0
-gw_gear_dedendum_height_pourcentage = 100.0
-gw_gear_hollow_height_pourcentage   = 25.0
-gw_gear_router_bit_radius           = 3.0
-# positive involute
-gw_gear_base_diameter       = 0
-gw_gear_force_angle         = 0
-gw_gear_tooth_resolution    = 2
-gw_gear_skin_thickness      = 0
-# negative involute (if zero, negative involute = positive involute)
-gw_gear_base_diameter_n     = 0
-gw_gear_force_angle_n       = 0
-gw_gear_tooth_resolution_n  = 0
-gw_gear_skin_thickness_n    = 0
-### second gear
-# general
-gw_second_gear_type                     = 'e'
-gw_second_gear_tooth_nb                 = 25
-gw_second_gear_primitive_diameter       = 0
-gw_second_gear_addendum_dedendum_parity = 0 # 50.0
-# tooth height
-gw_second_gear_tooth_half_height            = 0
-gw_second_gear_addendum_height_pourcentage  = 100.0
-gw_second_gear_dedendum_height_pourcentage  = 100.0
-gw_second_gear_hollow_height_pourcentage    = 25.0
-gw_second_gear_router_bit_radius            = 0
-# positive involute
-gw_second_gear_base_diameter      = 0
-gw_second_gear_tooth_resolution   = 0
-gw_second_gear_skin_thickness     = 0
-# negative involute (if zero, negative involute = positive involute)
-gw_second_gear_base_diameter_n    = 0
-gw_second_gear_tooth_resolution_n = 0
-gw_second_gear_skin_thickness_n   = 0
-### position
-# first gear position
-gw_center_position_x                    = 0.0
-gw_center_position_y                    = 0.0
-gw_gear_initial_angle                   = 0.0
-# second gear position
-gw_second_gear_position_angle           = 0.0
-gw_second_gear_additional_axis_length   = 0.0
-### portion
-#gw_portion_tooth_nb     = gw_portion_tooth_nb
-#gw_portion_first_end    = gw_portion_first_end
-#gw_portion_last_end     = gw_portion_last_end
-### output
-gw_gear_profile_height  = 20.0
-gw_simulation_enable    = False    # gw_simulation_enable
-#gw_output_file_basename = gw_output_file_basename
-##### from gearwheel
-### axle
-gw_axle_type                = 'rectangle'
-gw_axle_x_width             = 20.0
-gw_axle_y_width             = 15.0
-gw_axle_router_bit_radius   = 3.0
-### wheel-hollow = legs
-gw_wheel_hollow_leg_number        = 7
-gw_wheel_hollow_leg_width         = 10.0
-gw_wheel_hollow_leg_angle         = 0.0
-gw_wheel_hollow_internal_diameter = 40.0
-gw_wheel_hollow_external_diameter = 125.0
-gw_wheel_hollow_router_bit_radius = 5.0
-### cnc router_bit constraint
-gw_cnc_router_bit_radius          = 1.0
-### design output : view the gearwheel with tkinter or write files
-gw_tkinter_view = True
-gw_output_file_basename = "" # set a not-empty string if you want to generate the output files
-#gw_output_file_basename = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gw_output_file_basename = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gw_output_file_basename = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
-
-
-
-################################################################
-# action
-################################################################
-
-my_gw = gearwheel.gearwheel(
-            ##### from gear_profile
-            ### first gear
-            # general
-            #ai_gear_type                      = gw_gear_type,
-            ai_gear_tooth_nb                  = gw_gear_tooth_nb,
-            ai_gear_module                    = gw_gear_module,
-            ai_gear_primitive_diameter        = gw_gear_primitive_diameter,
-            ai_gear_addendum_dedendum_parity  = gw_gear_addendum_dedendum_parity,
-            # tooth height
-            ai_gear_tooth_half_height           = gw_gear_tooth_half_height,
-            ai_gear_addendum_height_pourcentage = gw_gear_addendum_height_pourcentage,
-            ai_gear_dedendum_height_pourcentage = gw_gear_dedendum_height_pourcentage,
-            ai_gear_hollow_height_pourcentage   = gw_gear_hollow_height_pourcentage,
-            ai_gear_router_bit_radius           = gw_gear_router_bit_radius,
-            # positive involute
-            ai_gear_base_diameter       = gw_gear_base_diameter,
-            ai_gear_force_angle         = gw_gear_force_angle,
-            ai_gear_tooth_resolution    = gw_gear_tooth_resolution,
-            ai_gear_skin_thickness      = gw_gear_skin_thickness,
-            # negative involute (if zero, negative involute = positive involute)
-            ai_gear_base_diameter_n     = gw_gear_base_diameter_n,
-            ai_gear_force_angle_n       = gw_gear_force_angle_n,
-            ai_gear_tooth_resolution_n  = gw_gear_tooth_resolution_n,
-            ai_gear_skin_thickness_n    = gw_gear_skin_thickness_n,
-            ### second gear
-            # general
-            ai_second_gear_type                     = gw_second_gear_type,
-            ai_second_gear_tooth_nb                 = gw_second_gear_tooth_nb,
-            ai_second_gear_primitive_diameter       = gw_second_gear_primitive_diameter,
-            ai_second_gear_addendum_dedendum_parity = gw_second_gear_addendum_dedendum_parity,
-            # tooth height
-            ai_second_gear_tooth_half_height            = gw_second_gear_tooth_half_height,
-            ai_second_gear_addendum_height_pourcentage  = gw_second_gear_addendum_height_pourcentage,
-            ai_second_gear_dedendum_height_pourcentage  = gw_second_gear_dedendum_height_pourcentage,
-            ai_second_gear_hollow_height_pourcentage    = gw_second_gear_hollow_height_pourcentage,
-            ai_second_gear_router_bit_radius            = gw_second_gear_router_bit_radius,
-            # positive involute
-            ai_second_gear_base_diameter      = gw_second_gear_base_diameter,
-            ai_second_gear_tooth_resolution   = gw_second_gear_tooth_resolution,
-            ai_second_gear_skin_thickness     = gw_second_gear_skin_thickness,
-            # negative involute (if zero, negative involute = positive involute)
-            ai_second_gear_base_diameter_n    = gw_second_gear_base_diameter_n,
-            ai_second_gear_tooth_resolution_n = gw_second_gear_tooth_resolution_n,
-            ai_second_gear_skin_thickness_n   = gw_second_gear_skin_thickness_n,
-            ### position
-            # first gear position
-            ai_center_position_x                    = gw_center_position_x,
-            ai_center_position_y                    = gw_center_position_y,
-            ai_gear_initial_angle                   = gw_gear_initial_angle,
-            # second gear position
-            ai_second_gear_position_angle           = gw_second_gear_position_angle,
-            ai_second_gear_additional_axis_length   = gw_second_gear_additional_axis_length,
-            ### portion
-            #ai_portion_tooth_nb     = gw_cut_portion[0],
-            #ai_portion_first_end    = gw_cut_portion[1],
-            #ai_portion_last_end     = gw_cut_portion[2],
-            ### output
-            ai_gear_profile_height  = gw_gear_profile_height,
-            ai_simulation_enable    = gw_simulation_enable,    # gw_simulation_enable,
-            #ai_output_file_basename = gw_output_file_basename,
-            ##### from gearwheel
-            ### axle
-            ai_axle_type                = gw_axle_type,
-            ai_axle_x_width             = gw_axle_x_width,
-            ai_axle_y_width             = gw_axle_y_width,
-            ai_axle_router_bit_radius   = gw_axle_router_bit_radius,
-            ### wheel-hollow = legs
-            ai_wheel_hollow_leg_number        = gw_wheel_hollow_leg_number,
-            ai_wheel_hollow_leg_width         = gw_wheel_hollow_leg_width,
-            ai_wheel_hollow_leg_angle         = gw_wheel_hollow_leg_angle,
-            ai_wheel_hollow_internal_diameter = gw_wheel_hollow_internal_diameter,
-            ai_wheel_hollow_external_diameter = gw_wheel_hollow_external_diameter,
-            ai_wheel_hollow_router_bit_radius = gw_wheel_hollow_router_bit_radius,
-            ### cnc router_bit constraint
-            ai_cnc_router_bit_radius          = gw_cnc_router_bit_radius,
-            ### design output : view the gearwheel with tkinter or write files
-            ai_tkinter_view = gw_tkinter_view,
-            ai_output_file_basename = gw_output_file_basename)
-
-Part.show(my_gw)
-
-
-'''
-
 ### cnc25d_api_example script
 
-cgf_script_name="cnc25d_api_example.py"
+cgf_script_name="eg03_cnc25d_api_example.py"
 
-# copy from ../cnc25d/tests/cnc25d_api_macro.py without the import stuff
+# copy from ../cnc25d/tests/cnc25d_api_macro.py
 cgf_script_content='''#!/usr/bin/env python
 #
 # copy/paste of cnc25d/tests/cnc25d_api_macro.py
@@ -792,9 +294,10 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 #   cnc25d_api.cnc_cut_outline(outline-A, error_mark_string) => outline-B
 #   cnc25d_api.smooth_outline_c_curve(outline-C, precision, router_bit_radius, error_mark_string) => outline-B
 #   cnc25d_api.smooth_outline_b_curve(outline-B, precision, router_bit_radius, error_mark_string) => outline-B
+#   cnc25d_api.ideal_outline(outline-AC, error_mark_string) => outline-B
 #   cnc25d_api.outline_arc_line(outline-B, backend) => Tkinter or svgwrite or dxfwrite or FreeCAD stuff
 #   cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor
-#   cnc25d_api.figure_simple_display(figure) => 0
+#   cnc25d_api.figure_simple_display(graphic_figure, overlay_figure, parameter_info) => 0
 #   cnc25d_api.write_figure_in_svg(figure, filename) => 0
 #   cnc25d_api.write_figure_in_dxf(figure, filename) => 0
 #   cnc25d_api.figure_to_freecad_25d_part(figure, extrusion_height) => freecad_part_object
@@ -924,7 +427,7 @@ print("Display the outlines with Tkinter")
 tk_root = Tkinter.Tk()
 my_canvas = cnc25d_api.Two_Canvas(tk_root)
 # callback function for display_backend
-def sub_canvas_graphics(ai_angle_position):
+def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
   r_canvas_graphics = []
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc, 'tkinter'), 'red', 1))
   r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(my_outline_for_cnc_x_shifted, 'tkinter'), 'red', 1))
@@ -1067,9 +570,16 @@ wfl_inner_circle1 = [30,0, 15]
 wfl_inner_circle2 = [40,0, 10]
 
 wfl_figure = [wfl_outer_rectangle_B, wfl_inner_square_B, wfl_inner_circle1, wfl_inner_circle2]
+wfl_overlay_figure = [wfl_outer_rectangle_A, wfl_inner_square_A, wfl_inner_circle1, wfl_inner_circle2]
+
+wfl_parameter_info = """
+those lines will appers
+in the parameter window.
+Might be usefull to provide some info to the user!
+"""
 
 # display the figure
-cnc25d_api.figure_simple_display(wfl_figure)
+cnc25d_api.figure_simple_display(wfl_figure, wfl_overlay_figure, wfl_parameter_info)
 
 wfl_extrude_height = 20.0
 # create a FreeCAD part
@@ -1095,9 +605,9 @@ print("cnc25d_api_macro.py says Bye!")
 
 ### simple_cnc25d_api_example script
 
-sca_script_name="simple_cnc25d_api_example.py"
+sca_script_name="eg02_simple_cnc25d_api_example.py"
 
-# copy from ../cnc25d/tests/simple_cnc25d_api_macro.py without the import stuff
+# copy from ../cnc25d/tests/simple_cnc25d_api_macro.py
 sca_script_content='''#!/usr/bin/env python
 #
 # copy/paste of cnc25d/tests/simple_cnc25d_api_macro.py
@@ -1144,9 +654,10 @@ This script focus on the figure-level API functions
 #   cnc25d_api.cnc_cut_outline(outline-A, error_mark_string) => outline-B
 #   cnc25d_api.smooth_outline_c_curve(outline-C, precision, router_bit_radius, error_mark_string) => outline-B
 #   cnc25d_api.smooth_outline_b_curve(outline-B, precision, router_bit_radius, error_mark_string) => outline-B
+#   cnc25d_api.ideal_outline(outline-AC, error_mark_string) => outline-B
 #   cnc25d_api.outline_arc_line(outline-B, backend) => Tkinter or svgwrite or dxfwrite or FreeCAD stuff
 #   cnc25d_api.Two_Canvas(Tkinter.Tk()) # object constructor
-#   cnc25d_api.figure_simple_display(figure) => 0
+#   cnc25d_api.figure_simple_display(graphic_figure, overlay_figure, parameter_info) => 0
 #   cnc25d_api.write_figure_in_svg(figure, filename) => 0
 #   cnc25d_api.write_figure_in_dxf(figure, filename) => 0
 #   cnc25d_api.figure_to_freecad_25d_part(figure, extrusion_height) => freecad_part_object
@@ -1212,9 +723,15 @@ inner_shape_B = cnc25d_api.cnc_cut_outline(inner_shape_A, "inner_shape_A")  # co
 inner_circle1 = [-30, 0, 15] # circle of center (-30, 0) and radius 15
 
 simple_figure = [outer_rectangle_B, inner_shape_B, inner_circle1]
+overlay_figure = [outer_rectangle_A, inner_shape_A, inner_circle1]
+
+simple_figure_info = """
+Some info there
+that will appear in the parameter window
+"""
 
 # display the figure
-cnc25d_api.figure_simple_display(simple_figure)
+cnc25d_api.figure_simple_display(simple_figure, overlay_figure, simple_figure_info)
 
 simple_extrude_height = 20.0
 # create a FreeCAD part
@@ -1247,6 +764,516 @@ Part.show(simple_part)
 
 # bye message
 print("simple_cnc25d_api_macro.py says Bye!")
+
+
+'''
+
+### gear_profile script example
+
+gp_script_name="eg04_gear_profile_example.py"
+
+# copy from ../cnc25d/tests/gear_profile_macro.py
+gp_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/gear_profile_macro.py
+#
+# gear_profile_macro.py
+# the macro to generate a gear_profile.
+# created by charlyoleg on 2013/08/27
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
+
+################################################################
+# this file intends being included in the file bin/cnc25d_example_generator.py
+# for this purpose, there is some syntaxe restrictions
+# don't use triple single-quotes (') and return character ('\'.'n') in this file
+# but you can still use triple double-quote (")
+################################################################
+
+"""
+this piece of code is an example of how to use the parametric design gear_profile
+You can also use this file as a FreeCAD macro from the GUI
+Look at the code. It's very simple to hack
+"""
+
+################################################################
+# Installation pre-request
+################################################################
+# This script needs freecad and Cnc25D installed on your system
+# visit those sites for more information:
+# http://www.freecadweb.org/
+# https://pypi.python.org/pypi/Cnc25D
+#
+# To install FreeCAD on Ubuntu, run the following command:
+# > sudo apt-get install freecad
+# or to get the newest version:
+# > sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
+# > sudo apt-get update
+# > sudo apt-get install freecad
+# and optionally:
+# >  sudo apt-get install freecad-doc freecad-dev
+# To install the python package cnc25d, run the following command:
+# > sudo pip install Cnc25D
+# or
+# > sudo pip install Cnc25D -U
+
+
+################################################################
+# header for Python / FreeCAD compatibility
+################################################################
+
+from cnc25d import cnc25d_api
+cnc25d_api.importing_freecad()
+
+#print("FreeCAD.Version:", FreeCAD.Version())
+
+################################################################
+# import
+################################################################
+
+#
+import math
+#
+from cnc25d import gear_profile
+#
+import Part
+
+    
+################################################################
+# parameters value
+################################################################
+#
+# choose the values of the parameters by editing this file
+# feature request : create a GUI with PyQt4 to edit those parameter values
+
+### first gear
+# general
+gp_gear_type                      = 'e'
+gp_gear_tooth_nb                  = 18
+gp_gear_module                    = 10.0
+gp_gear_primitive_diameter        = 0
+gp_gear_addendum_dedendum_parity  = 50.0
+# tooth height
+gp_gear_tooth_half_height           = 0 # 10.0
+gp_gear_addendum_height_pourcentage = 100.0
+gp_gear_dedendum_height_pourcentage = 100.0
+gp_gear_hollow_height_pourcentage   = 25.0
+gp_gear_router_bit_radius           = 3.0
+# positive involute
+gp_gear_base_diameter       = 0
+gp_gear_force_angle         = 0
+gp_gear_tooth_resolution    = 2
+gp_gear_skin_thickness      = 0
+# negative involute (if zero, negative involute = positive involute)
+gp_gear_base_diameter_n     = 0
+gp_gear_force_angle_n       = 0
+gp_gear_tooth_resolution_n  = 0
+gp_gear_skin_thickness_n    = 0
+### second gear
+# general
+gp_second_gear_type                     = 'e'
+gp_second_gear_tooth_nb                 = 0 #25
+gp_second_gear_primitive_diameter       = 0
+gp_second_gear_addendum_dedendum_parity = 0 # 50.0
+# tooth height
+gp_second_gear_tooth_half_height            = 0
+gp_second_gear_addendum_height_pourcentage  = 100.0
+gp_second_gear_dedendum_height_pourcentage  = 100.0
+gp_second_gear_hollow_height_pourcentage    = 25.0
+gp_second_gear_router_bit_radius            = 0
+# positive involute
+gp_second_gear_base_diameter      = 0
+gp_second_gear_tooth_resolution   = 0
+gp_second_gear_skin_thickness     = 0
+# negative involute (if zero, negative involute = positive involute)
+gp_second_gear_base_diameter_n    = 0
+gp_second_gear_tooth_resolution_n = 0
+gp_second_gear_skin_thickness_n   = 0
+### gearbar specific
+gp_gearbar_slope                  = 0.0
+gp_gearbar_slope_n                = 0.0
+### position
+# first gear position
+gp_center_position_x                    = 0.0
+gp_center_position_y                    = 0.0
+gp_gear_initial_angle                   = 0.0
+# second gear position
+gp_second_gear_position_angle           = 0.0
+gp_second_gear_additional_axis_length   = 0.0
+### portion
+gp_portion_tooth_nb     = 10
+gp_portion_first_end    = 3
+gp_portion_last_end     = 3
+### output1
+gp_gear_profile_height  = 20.0
+gp_simulation_enable    = True
+gp_output_file_basename = "" # set a not-empty string if you want to generate the output files
+#gp_output_file_basename = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
+#gp_output_file_basename = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
+#gp_output_file_basename = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
+
+
+
+################################################################
+# action
+################################################################
+
+my_gp = gear_profile.gear_profile(
+            ### first gear
+            # general
+            ai_gear_type                      = gp_gear_type,
+            ai_gear_tooth_nb                  = gp_gear_tooth_nb,
+            ai_gear_module                    = gp_gear_module,
+            ai_gear_primitive_diameter        = gp_gear_primitive_diameter,
+            ai_gear_addendum_dedendum_parity  = gp_gear_addendum_dedendum_parity,
+            # tooth height
+            ai_gear_tooth_half_height           = gp_gear_tooth_half_height,
+            ai_gear_addendum_height_pourcentage = gp_gear_addendum_height_pourcentage,
+            ai_gear_dedendum_height_pourcentage = gp_gear_dedendum_height_pourcentage,
+            ai_gear_hollow_height_pourcentage   = gp_gear_hollow_height_pourcentage,
+            ai_gear_router_bit_radius           = gp_gear_router_bit_radius,
+            # positive involute
+            ai_gear_base_diameter       = gp_gear_base_diameter,
+            ai_gear_force_angle         = gp_gear_force_angle,
+            ai_gear_tooth_resolution    = gp_gear_tooth_resolution,
+            ai_gear_skin_thickness      = gp_gear_skin_thickness,
+            # negative involute (if zero, negative involute = positive involute)
+            ai_gear_base_diameter_n     = gp_gear_base_diameter_n,
+            ai_gear_force_angle_n       = gp_gear_force_angle_n,
+            ai_gear_tooth_resolution_n  = gp_gear_tooth_resolution_n,
+            ai_gear_skin_thickness_n    = gp_gear_skin_thickness_n,
+            ### second gear
+            # general
+            ai_second_gear_type                     = gp_second_gear_type,
+            ai_second_gear_tooth_nb                 = gp_second_gear_tooth_nb,
+            ai_second_gear_primitive_diameter       = gp_second_gear_primitive_diameter,
+            ai_second_gear_addendum_dedendum_parity = gp_second_gear_addendum_dedendum_parity,
+            # tooth height
+            ai_second_gear_tooth_half_height            = gp_second_gear_tooth_half_height,
+            ai_second_gear_addendum_height_pourcentage  = gp_second_gear_addendum_height_pourcentage,
+            ai_second_gear_dedendum_height_pourcentage  = gp_second_gear_dedendum_height_pourcentage,
+            ai_second_gear_hollow_height_pourcentage    = gp_second_gear_hollow_height_pourcentage,
+            ai_second_gear_router_bit_radius            = gp_second_gear_router_bit_radius,
+            # positive involute
+            ai_second_gear_base_diameter      = gp_second_gear_base_diameter,
+            ai_second_gear_tooth_resolution   = gp_second_gear_tooth_resolution,
+            ai_second_gear_skin_thickness     = gp_second_gear_skin_thickness,
+            # negative involute (if zero, negative involute = positive involute)
+            ai_second_gear_base_diameter_n    = gp_second_gear_base_diameter_n,
+            ai_second_gear_tooth_resolution_n = gp_second_gear_tooth_resolution_n,
+            ai_second_gear_skin_thickness_n   = gp_second_gear_skin_thickness_n,
+            ### gearbar specific
+            ai_gearbar_slope                  = gp_gearbar_slope,
+            ai_gearbar_slope_n                = gp_gearbar_slope_n,
+            ### position
+            # first gear position
+            ai_center_position_x                    = gp_center_position_x,
+            ai_center_position_y                    = gp_center_position_y,
+            ai_gear_initial_angle                   = gp_gear_initial_angle,
+            # second gear position
+            ai_second_gear_position_angle           = gp_second_gear_position_angle,
+            ai_second_gear_additional_axis_length   = gp_second_gear_additional_axis_length,
+            ### portion
+            ai_portion_tooth_nb     = gp_portion_tooth_nb,
+            ai_portion_first_end    = gp_portion_first_end,
+            ai_portion_last_end     = gp_portion_last_end,
+            ### output
+            ai_gear_profile_height  = gp_gear_profile_height,
+            ai_simulation_enable    = gp_simulation_enable,    # gp_simulation_enable,
+            ai_output_file_basename = gp_output_file_basename)
+
+#print("dbg339: my_gp:", my_gp)
+#Part.show(my_gp)
+
+
+
+'''
+
+### gearwheel script example
+
+gw_script_name="eg05_gearwheel_example.py"
+
+# copy from ../cnc25d/tests/gearwheel_macro.py
+gw_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/gearwheel_macro.py
+#
+# gearwheel_macro.py
+# the macro to generate a gearwheel.
+# created by charlyoleg on 2013/06/19
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
+
+################################################################
+# this file intends being included in the file bin/cnc25d_example_generator.py
+# for this purpose, there is some syntaxe restrictions
+# don't use triple single-quotes (') and return character ('\'.'n') in this file
+# but you can still use triple double-quote (")
+################################################################
+
+"""
+this piece of code is an example of how to use the parametric design gearwheel
+You can also use this file as a FreeCAD macro from the GUI
+Look at the code. It's very simple to hack
+"""
+
+################################################################
+# Installation pre-request
+################################################################
+# This script needs freecad and Cnc25D installed on your system
+# visit those sites for more information:
+# http://www.freecadweb.org/
+# https://pypi.python.org/pypi/Cnc25D
+#
+# To install FreeCAD on Ubuntu, run the following command:
+# > sudo apt-get install freecad
+# or to get the newest version:
+# > sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
+# > sudo apt-get update
+# > sudo apt-get install freecad
+# and optionally:
+# >  sudo apt-get install freecad-doc freecad-dev
+# To install the python package cnc25d, run the following command:
+# > sudo pip install Cnc25D
+# or
+# > sudo pip install Cnc25D -U
+
+
+################################################################
+# header for Python / FreeCAD compatibility
+################################################################
+
+from cnc25d import cnc25d_api
+cnc25d_api.importing_freecad()
+
+#print("FreeCAD.Version:", FreeCAD.Version())
+
+################################################################
+# import
+################################################################
+
+#
+import math
+#
+from cnc25d import gearwheel
+#
+import Part
+
+    
+################################################################
+# parameters value
+################################################################
+#
+# choose the values of the parameters by editing this file
+# feature request : create a GUI with PyQt4 to edit those parameter values
+
+##### from gear_profile
+### first gear
+# general
+#gw_gear_type                      = gw_gear_type
+gw_gear_tooth_nb                  = 18
+gw_gear_module                    = 10.0
+gw_gear_primitive_diameter        = 0
+gw_gear_addendum_dedendum_parity  = 50.0
+# tooth height
+gw_gear_tooth_half_height           = 0 # 10.0
+gw_gear_addendum_height_pourcentage = 100.0
+gw_gear_dedendum_height_pourcentage = 100.0
+gw_gear_hollow_height_pourcentage   = 25.0
+gw_gear_router_bit_radius           = 3.0
+# positive involute
+gw_gear_base_diameter       = 0
+gw_gear_force_angle         = 0
+gw_gear_tooth_resolution    = 2
+gw_gear_skin_thickness      = 0
+# negative involute (if zero, negative involute = positive involute)
+gw_gear_base_diameter_n     = 0
+gw_gear_force_angle_n       = 0
+gw_gear_tooth_resolution_n  = 0
+gw_gear_skin_thickness_n    = 0
+### second gear
+# general
+gw_second_gear_type                     = 'e'
+gw_second_gear_tooth_nb                 = 25
+gw_second_gear_primitive_diameter       = 0
+gw_second_gear_addendum_dedendum_parity = 0 # 50.0
+# tooth height
+gw_second_gear_tooth_half_height            = 0
+gw_second_gear_addendum_height_pourcentage  = 100.0
+gw_second_gear_dedendum_height_pourcentage  = 100.0
+gw_second_gear_hollow_height_pourcentage    = 25.0
+gw_second_gear_router_bit_radius            = 0
+# positive involute
+gw_second_gear_base_diameter      = 0
+gw_second_gear_tooth_resolution   = 0
+gw_second_gear_skin_thickness     = 0
+# negative involute (if zero, negative involute = positive involute)
+gw_second_gear_base_diameter_n    = 0
+gw_second_gear_tooth_resolution_n = 0
+gw_second_gear_skin_thickness_n   = 0
+### gearbar specific
+gw_gearbar_slope                  = 0.0
+gw_gearbar_slope_n                = 0.0
+### position
+# first gear position
+gw_center_position_x                    = 0.0
+gw_center_position_y                    = 0.0
+gw_gear_initial_angle                   = 0.0
+# second gear position
+gw_second_gear_position_angle           = 0.0
+gw_second_gear_additional_axis_length   = 0.0
+### portion
+#gw_portion_tooth_nb     = gw_portion_tooth_nb
+#gw_portion_first_end    = gw_portion_first_end
+#gw_portion_last_end     = gw_portion_last_end
+### output
+gw_gear_profile_height  = 20.0
+gw_simulation_enable    = False    # gw_simulation_enable
+#gw_output_file_basename = gw_output_file_basename
+##### from gearwheel
+### axle
+gw_axle_type                = 'rectangle'
+gw_axle_x_width             = 20.0
+gw_axle_y_width             = 15.0
+gw_axle_router_bit_radius   = 3.0
+### wheel-hollow = legs
+gw_wheel_hollow_leg_number        = 7
+gw_wheel_hollow_leg_width         = 10.0
+gw_wheel_hollow_leg_angle         = 0.0
+gw_wheel_hollow_internal_diameter = 40.0
+gw_wheel_hollow_external_diameter = 125.0
+gw_wheel_hollow_router_bit_radius = 5.0
+### cnc router_bit constraint
+gw_cnc_router_bit_radius          = 1.0
+### design output : view the gearwheel with tkinter or write files
+gw_tkinter_view = True
+gw_output_file_basename = "" # set a not-empty string if you want to generate the output files
+#gw_output_file_basename = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
+#gw_output_file_basename = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
+#gw_output_file_basename = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
+
+
+
+################################################################
+# action
+################################################################
+
+my_gw = gearwheel.gearwheel(
+            ##### from gear_profile
+            ### first gear
+            # general
+            #ai_gear_type                      = gw_gear_type,
+            ai_gear_tooth_nb                  = gw_gear_tooth_nb,
+            ai_gear_module                    = gw_gear_module,
+            ai_gear_primitive_diameter        = gw_gear_primitive_diameter,
+            ai_gear_addendum_dedendum_parity  = gw_gear_addendum_dedendum_parity,
+            # tooth height
+            ai_gear_tooth_half_height           = gw_gear_tooth_half_height,
+            ai_gear_addendum_height_pourcentage = gw_gear_addendum_height_pourcentage,
+            ai_gear_dedendum_height_pourcentage = gw_gear_dedendum_height_pourcentage,
+            ai_gear_hollow_height_pourcentage   = gw_gear_hollow_height_pourcentage,
+            ai_gear_router_bit_radius           = gw_gear_router_bit_radius,
+            # positive involute
+            ai_gear_base_diameter       = gw_gear_base_diameter,
+            ai_gear_force_angle         = gw_gear_force_angle,
+            ai_gear_tooth_resolution    = gw_gear_tooth_resolution,
+            ai_gear_skin_thickness      = gw_gear_skin_thickness,
+            # negative involute (if zero, negative involute = positive involute)
+            ai_gear_base_diameter_n     = gw_gear_base_diameter_n,
+            ai_gear_force_angle_n       = gw_gear_force_angle_n,
+            ai_gear_tooth_resolution_n  = gw_gear_tooth_resolution_n,
+            ai_gear_skin_thickness_n    = gw_gear_skin_thickness_n,
+            ### second gear
+            # general
+            ai_second_gear_type                     = gw_second_gear_type,
+            ai_second_gear_tooth_nb                 = gw_second_gear_tooth_nb,
+            ai_second_gear_primitive_diameter       = gw_second_gear_primitive_diameter,
+            ai_second_gear_addendum_dedendum_parity = gw_second_gear_addendum_dedendum_parity,
+            # tooth height
+            ai_second_gear_tooth_half_height            = gw_second_gear_tooth_half_height,
+            ai_second_gear_addendum_height_pourcentage  = gw_second_gear_addendum_height_pourcentage,
+            ai_second_gear_dedendum_height_pourcentage  = gw_second_gear_dedendum_height_pourcentage,
+            ai_second_gear_hollow_height_pourcentage    = gw_second_gear_hollow_height_pourcentage,
+            ai_second_gear_router_bit_radius            = gw_second_gear_router_bit_radius,
+            # positive involute
+            ai_second_gear_base_diameter      = gw_second_gear_base_diameter,
+            ai_second_gear_tooth_resolution   = gw_second_gear_tooth_resolution,
+            ai_second_gear_skin_thickness     = gw_second_gear_skin_thickness,
+            # negative involute (if zero, negative involute = positive involute)
+            ai_second_gear_base_diameter_n    = gw_second_gear_base_diameter_n,
+            ai_second_gear_tooth_resolution_n = gw_second_gear_tooth_resolution_n,
+            ai_second_gear_skin_thickness_n   = gw_second_gear_skin_thickness_n,
+            ### gearbar specific
+            ai_gearbar_slope                  = gw_gearbar_slope,
+            ai_gearbar_slope_n                = gw_gearbar_slope_n,
+            ### position
+            # first gear position
+            ai_center_position_x                    = gw_center_position_x,
+            ai_center_position_y                    = gw_center_position_y,
+            ai_gear_initial_angle                   = gw_gear_initial_angle,
+            # second gear position
+            ai_second_gear_position_angle           = gw_second_gear_position_angle,
+            ai_second_gear_additional_axis_length   = gw_second_gear_additional_axis_length,
+            ### portion
+            #ai_portion_tooth_nb     = gw_cut_portion[0],
+            #ai_portion_first_end    = gw_cut_portion[1],
+            #ai_portion_last_end     = gw_cut_portion[2],
+            ### output
+            ai_gear_profile_height  = gw_gear_profile_height,
+            ai_simulation_enable    = gw_simulation_enable,    # gw_simulation_enable,
+            #ai_output_file_basename = gw_output_file_basename,
+            ##### from gearwheel
+            ### axle
+            ai_axle_type                = gw_axle_type,
+            ai_axle_x_width             = gw_axle_x_width,
+            ai_axle_y_width             = gw_axle_y_width,
+            ai_axle_router_bit_radius   = gw_axle_router_bit_radius,
+            ### wheel-hollow = legs
+            ai_wheel_hollow_leg_number        = gw_wheel_hollow_leg_number,
+            ai_wheel_hollow_leg_width         = gw_wheel_hollow_leg_width,
+            ai_wheel_hollow_leg_angle         = gw_wheel_hollow_leg_angle,
+            ai_wheel_hollow_internal_diameter = gw_wheel_hollow_internal_diameter,
+            ai_wheel_hollow_external_diameter = gw_wheel_hollow_external_diameter,
+            ai_wheel_hollow_router_bit_radius = gw_wheel_hollow_router_bit_radius,
+            ### cnc router_bit constraint
+            ai_cnc_router_bit_radius          = gw_cnc_router_bit_radius,
+            ### design output : view the gearwheel with tkinter or write files
+            ai_tkinter_view = gw_tkinter_view,
+            ai_output_file_basename = gw_output_file_basename)
+
+#Part.show(my_gw)
 
 
 '''
