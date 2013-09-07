@@ -628,7 +628,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="308.66572"
-     inkscape:cy="889.23409"
+     inkscape:cy="2583.9139"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -819,7 +819,7 @@
        sodipodi:nodetypes="aaaaaaaaasaaaaa" />
     <path
        style="color:#000000;fill:#d5ffd5;stroke:#d5ffd5;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 32.81684,163.17239 c -5.945616,4.2209 -12.512907,13.26714 -14.114486,21.76432 -2.984976,15.8368 -6.179034,44.81308 9.734602,47.3568 43.495547,6.95256 98.917264,3.09476 148.347694,5.33575 41.89259,1.89925 83.74742,4.51386 125.61897,6.87294 13.17399,0.74224 26.3511,1.36124 39.52057,2.29098 18.3556,1.29591 36.70877,2.73661 55.04652,4.58196 12.94759,1.30295 25.86988,3.21189 38.81485,4.58198 12.22693,1.29407 25.42938,11.24761 36.69766,3.43646 17.34084,-12.02063 40.68387,-39.96062 36.69768,-69.87491 -2.69187,-20.20114 -22.19632,-21.53833 -34.58049,-26.34628 -52.18825,-20.26123 -107.37252,-2.36192 -160.90521,-8.01843 -43.89444,-4.63808 -87.26576,-23.0726 -131.25129,-21.23469 -32.17424,1.34438 -63.31691,17.90662 -95.286281,23.52566 -18.035388,3.16997 -37.710153,-6.07891 -54.340789,5.72746 z"
+       d="m 32.81684,163.17239 c -5.945616,4.2209 -12.512907,13.26714 -14.114486,21.76432 -2.984976,15.8368 -6.179034,44.81308 9.734602,47.3568 43.495547,6.95256 98.917264,3.09476 148.347694,5.33575 41.89259,1.89925 83.74742,4.51386 125.61897,6.87294 13.17399,0.74224 26.3511,1.36124 39.52057,2.29098 18.3556,1.29591 36.70877,2.73661 55.04652,4.58196 12.94759,1.30295 25.86988,3.21189 38.81485,4.58198 12.22693,1.29407 25.42938,11.24761 36.69766,3.43646 17.34084,-12.02063 40.68387,-39.96062 36.69768,-69.87491 -2.69187,-20.20114 -21.23547,-20.69798 -34.58049,-26.34628 -48.8431,-20.67291 -104.53665,-18.68487 -157.33378,-23.73272 -44.77439,-4.2808 -90.07141,-10.03607 -134.82272,-5.5204 -32.55054,3.28454 -63.31691,17.90662 -95.286281,23.52566 -18.035388,3.16997 -37.710153,-6.07891 -54.340789,5.72746 z"
        id="path4551"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="aasaaaaaaaaaaaa" />
@@ -899,7 +899,7 @@
        xml:space="preserve"
        id="flowRoot3025"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(-202.6751,45.913729)"><flowRegion
+       transform="translate(-193.38939,29.485158)"><flowRegion
          id="flowRegion3027"><rect
            id="rect3029"
            width="171.72594"
@@ -1254,7 +1254,7 @@
            y="231.30956" /></flowRegion><flowPara
          id="flowPara3180">positioning.py</flowPara></flowRoot>    <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 220.65544,217.37368 37.80638,46.26036"
+       d="m 212.08401,208.80225 46.37781,54.83179"
        id="path3068-8-4"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
@@ -1808,22 +1808,23 @@
        xml:space="preserve"
        id="flowRoot3336"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(-135.84822,40.535713)"><flowRegion
+       transform="translate(-182.14808,13.342093)"><flowRegion
          id="flowRegion3338"><rect
            id="rect3340"
            width="189.28571"
-           height="31.428572"
+           height="38.57143"
            x="295"
            y="160.95537" /></flowRegion><flowPara
-         id="flowPara3342">gear_profile.py</flowPara></flowRoot>    <path
+         id="flowPara3342">gear_profile.py</flowPara><flowPara
+         id="flowPara3507">gear_profile_outline.py</flowPara></flowRoot>    <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="M 251.93552,171.96735 274.7419,263.942"
+       d="M 249.79266,153.39592 274.7419,263.942"
        id="path3068-8-4-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 229.05358,170.85774 -12.9079,29.11751"
+       d="m 222.62501,155.85774 -12.9079,29.11751"
        id="path3068-8-4-5-2"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
@@ -2229,5 +2230,16 @@
        inkscape:connector-curvature="0"
        transform="translate(-6.5625,-3.75)"
        sodipodi:nodetypes="cac" />
-  </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3499"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(483.4375,-12.321429)"><flowRegion
+         id="flowRegion3501"><rect
+           id="rect3503"
+           width="177.78685"
+           height="26.263966"
+           x="132.83507"
+           y="57.079674" /></flowRegion><flowPara
+         id="flowPara3505">gear_profile_outline.py</flowPara></flowRoot>  </g>
 </svg>
