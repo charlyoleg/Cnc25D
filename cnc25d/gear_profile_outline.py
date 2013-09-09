@@ -383,7 +383,7 @@ def calc_low_level_gear_parameters(ai_param):
     info_txt += "top land:          \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(addendum_angle, g_ar*addendum_angle, 100*addendum_angle/pi_module_angle)
     info_txt += "bottom land:       \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(dedendum_angle, g_dr*dedendum_angle, 100*dedendum_angle/pi_module_angle)
   elif(g_type=='l'):
-    # linear gear low_1
+    # linear gear make low parameters
     pi_module = g_m * math.pi
     positive_addendum = g_ah*math.tan(g_sp)
     positive_dedendum = abs(g_dh)*math.tan(g_sp)
@@ -400,9 +400,19 @@ def calc_low_level_gear_parameters(ai_param):
     bar_tooth_nb = g_n
     if(g_ptn>0):
       bar_tooth_nb = g_ptn
+    middle_tooth = int(bar_tooth_nb/2)+1
+    tlh = g_ah
+    blh = g_dh + g_hh
+    blx = top_land/2 + negative_addendum + negative_dedendum + bottom_land/2
+    g_alp = g_ah/math.cos(g_sp)
+    g_dlp = g_dh/math.cos(g_sp)
+    g_hlp = g_hh/math.cos(g_sp)
+    g_aln = g_ah/math.cos(g_sn)
+    g_dln = g_dh/math.cos(g_sn)
+    g_hln = g_hh/math.cos(g_sn)
     gb_p_offset = -1*(top_land/2+positive_addendum)
     gb_n_offset = top_land/2+negative_addendum
-    # linear gear low_2
+    # linear gear place low parameters
     i1_base = g_sn
     i1_primitive_offset = -1*(top_land/2+negative_addendum)
     i1_offset2 = -1*(top_land/2+negative_addendum+negative_dedendum)
@@ -414,7 +424,8 @@ def calc_low_level_gear_parameters(ai_param):
     driven_in_base = g_sn
     driven_in_offset = i1_primitive_offset
     # return
-    make_low_parameters = (g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, g_pfe, g_ple, g_sp, g_sn, g_ah, g_dh, g_hh, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset)
+    make_low_parameters = (g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, middle_tooth, g_pfe, g_ple, tlh, blh, blx,
+                            g_sp, g_sn, g_alp, g_dlp, g_hlp, g_aln, g_dln, g_hln, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset)
     place_low_parameters = (g_type, pi_module, g_n, g_pr, g_ox, g_oy, g_ks, g_pc,
       i1_base, i1_primitive_offset, i1_offset2,
       i2_base, i2_primitive_offset, i2_offset2,
@@ -577,7 +588,7 @@ def ideal_involute_tooth_outline(ai_low_parameters, ai_angle_position, ai_thickn
   #return
   return(r_ideal_tooth_outline)
 
-def slope_outline(ai_ox, ai_oy, ai_bi, ai_offset, ai_slope_angle, ai_sign, ai_top_height, ai_bottom_height, ai_thickness, ai_bottom_router_bit, ai_tooth_position):
+def slope_outline(ai_ox, ai_oy, ai_bi, ai_offset, ai_slope_angle, ai_sign, ai_top_length, ai_bottom_length, ai_hollow_length, ai_thickness, ai_bottom_router_bit, ai_tooth_position):
   """ from subset of low-level parameter, generates a gearbear_tooth_slope format B outline
   """
   # precision
@@ -586,13 +597,15 @@ def slope_outline(ai_ox, ai_oy, ai_bi, ai_offset, ai_slope_angle, ai_sign, ai_to
   #
   slope_angle = ai_bi + ai_sign*ai_slope_angle
   thickness_angle = slope_angle - ai_sign*math.pi/2
-  top_height = ai_top_height/math.cos(ai_slope_angle)
-  bottom_height = ai_bottom_height/math.cos(ai_slope_angle)
+  #top_height = ai_top_height/math.cos(ai_slope_angle)
+  #bottom_height = ai_bottom_height/math.cos(ai_slope_angle)
+  top_length = ai_top_length
+  bottom_length = ai_bottom_length + ai_hollow_length + ai_thickness*math.tan(ai_slope_angle)
   #
-  top_x = ai_ox + (ai_tooth_position+ai_offset)*math.cos(ai_bi+math.pi/2) + top_height*math.cos(slope_angle) + ai_thickness*math.cos(thickness_angle)
-  top_y = ai_oy + (ai_tooth_position+ai_offset)*math.sin(ai_bi+math.pi/2) + top_height*math.sin(slope_angle) + ai_thickness*math.sin(thickness_angle)
-  bottom_x = ai_ox + (ai_tooth_position+ai_offset)*math.cos(ai_bi+math.pi/2) - bottom_height*math.cos(slope_angle) + ai_thickness*math.cos(thickness_angle)
-  bottom_y = ai_oy + (ai_tooth_position+ai_offset)*math.sin(ai_bi+math.pi/2) - bottom_height*math.sin(slope_angle) + ai_thickness*math.sin(thickness_angle)
+  top_x = ai_ox + (ai_tooth_position+ai_offset)*math.cos(ai_bi+math.pi/2) + top_length*math.cos(slope_angle) + ai_thickness*math.cos(thickness_angle)
+  top_y = ai_oy + (ai_tooth_position+ai_offset)*math.sin(ai_bi+math.pi/2) + top_length*math.sin(slope_angle) + ai_thickness*math.sin(thickness_angle)
+  bottom_x = ai_ox + (ai_tooth_position+ai_offset)*math.cos(ai_bi+math.pi/2) - bottom_length*math.cos(slope_angle) + ai_thickness*math.cos(thickness_angle)
+  bottom_y = ai_oy + (ai_tooth_position+ai_offset)*math.sin(ai_bi+math.pi/2) - bottom_length*math.sin(slope_angle) + ai_thickness*math.sin(thickness_angle)
   #
   if(ai_sign==-1):
     r_slope_B = ((top_x, top_y, 0),(bottom_x, bottom_y, ai_bottom_router_bit))
@@ -607,28 +620,25 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
       ai_tangential_position sets the reference of the gearbar.
   """
   # get ai_low_parameters
-  (g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, g_pfe, g_ple, g_sp, g_sn, g_ah, g_dh, g_hh, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset) = ai_low_parameters
+  #(g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, g_pfe, g_ple, g_sp, g_sn, g_ah, g_dh, g_hh, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset) = ai_low_parameters
+  (g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, middle_tooth, g_pfe, g_ple, tlh, blh, blx,
+    g_sp, g_sn, g_alp, g_dlp, g_hlp, g_aln, g_dln, g_hln, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset) = ai_low_parameters
   # construct the final_outline
   r_final_outline = []
-  half_tooth_nb =  int(bar_tooth_nb/2)
-  cyclic_tangential_position = math.fmod(ai_tangential_position, half_tooth_nb*pi_module) # to avoid the gearbar move away from its gearwheel
-  tangential_position = cyclic_tangential_position - half_tooth_nb*pi_module # the position reference is the middle of the middle tooth
+  cyclic_tangential_position = math.fmod(ai_tangential_position, middle_tooth*pi_module) # to avoid the gearbar move away from its gearwheel
+  tangential_position = cyclic_tangential_position - middle_tooth*pi_module # the position reference is the middle of the middle tooth
   # start of the gearbar
   gearbar_A = []
   if(g_pfe==3): # start on hollow_middle
-    ideal_slope_n = slope_outline(gb_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_ah, g_dh+g_hh, 0, 0, tangential_position-pi_module)
-    ideal_slope_p = slope_outline(gb_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_ah, g_dh+g_hh, 0, 0, tangential_position)
-    hollow_middle_x = (ideal_slope_n[1][0]+ideal_slope_p[0][0])/2
-    hollow_middle_y = (ideal_slope_n[1][1]+ideal_slope_p[0][1])/2
+    hollow_middle_x = g_ox + (tangential_position-pi_module+blx)*math.cos(g_bi+math.pi/2) + blh*math.cos(g_bi+math.pi)
+    hollow_middle_y = g_oy + (tangential_position-pi_module+blx)*math.sin(g_bi+math.pi/2) + blh*math.sin(g_bi+math.pi)
     gearbar_A.append((hollow_middle_x, hollow_middle_y, 0)) # hollow middle
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_ah, g_dh+g_hh, g_stp, g_rbr, tangential_position)) # positive slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, g_rbr, tangential_position)) # positive slope
   elif(g_pfe==2): # start on the positive slope
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_ah, g_dh+g_hh, g_stp, 0, tangential_position)) # positive slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, 0, tangential_position)) # positive slope
   elif(g_pfe==1): # start on the top middle
-    ideal_slope_p = slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_ah, g_dh+g_hh, 0, 0, tangential_position)
-    ideal_slope_n = slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_ah, g_dh+g_hh, 0, 0, tangential_position)
-    top_middle_x = (ideal_slope_p[1][0]+ideal_slope_n[0][0])/2
-    top_middle_y = (ideal_slope_p[1][1]+ideal_slope_n[0][1])/2
+    top_middle_x = g_ox + tangential_position*math.cos(g_bi+math.pi/2) + tlh*math.cos(g_bi)
+    top_middle_y = g_oy + tangential_position*math.sin(g_bi+math.pi/2) + tlh*math.sin(g_bi)
     gearbar_A.append((top_middle_x, top_middle_y, 0)) # top middle
   if(gearbar_A!=[]):
     gearbar_B = cnc25d_api.cnc_cut_outline(gearbar_A, "start of gearbar")
@@ -636,8 +646,8 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   # bulk of the gearbar
   for tooth in range(bar_tooth_nb):
     gearbar_A = []
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_ah, g_dh+g_hh, g_stn, g_rbr, tangential_position)) # negative slope
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_ah, g_dh+g_hh, g_stp, g_rbr, tangential_position+pi_module)) # positive slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position)) # negative slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, g_rbr, tangential_position+pi_module)) # positive slope
     #print("dbg745: gearbar_A:", gearbar_A)
     gearbar_B = cnc25d_api.cnc_cut_outline(gearbar_A, "bulk of gearbar")
     r_final_outline.extend(gearbar_B)
@@ -646,19 +656,15 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   # end of the gearbar
   gearbar_A = []
   if(g_ple==3): # stop on hollow_middle
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_ah, g_dh+g_hh, g_stn, g_rbr, tangential_position)) # negative slope
-    ideal_slope_n = slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_ah, g_dh+g_hh, 0, 0, tangential_position)
-    ideal_slope_p = slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_ah, g_dh+g_hh, 0, 0, tangential_position+pi_module)
-    hollow_middle_x = (ideal_slope_n[1][0]+ideal_slope_p[0][0])/2
-    hollow_middle_y = (ideal_slope_n[1][1]+ideal_slope_p[0][1])/2
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position)) # negative slope
+    hollow_middle_x = g_ox + (tangential_position+blx)*math.cos(g_bi+math.pi/2) + blh*math.cos(g_bi+math.pi)
+    hollow_middle_y = g_oy + (tangential_position+blx)*math.sin(g_bi+math.pi/2) + blh*math.sin(g_bi+math.pi)
     gearbar_A.append((hollow_middle_x, hollow_middle_y, 0)) # hollow middle
   elif(g_ple==2): # stop on the negative slope
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_ah, g_dh+g_hh, g_stn, 0, tangential_position)) # negative slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, 0, tangential_position)) # negative slope
   elif(g_ple==1): # stop on the top middle
-    ideal_slope_p = slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_ah, g_dh+g_hh, 0, 0, tangential_position)
-    ideal_slope_n = slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_ah, g_dh+g_hh, 0, 0, tangential_position)
-    top_middle_x = (ideal_slope_p[1][0]+ideal_slope_n[0][0])/2
-    top_middle_y = (ideal_slope_p[1][1]+ideal_slope_n[0][1])/2
+    top_middle_x = g_ox + tangential_position*math.cos(g_bi+math.pi/2) + tlh*math.cos(g_bi)
+    top_middle_y = g_oy + tangential_position*math.sin(g_bi+math.pi/2) + tlh*math.sin(g_bi)
     gearbar_A.append((top_middle_x, top_middle_y, 0)) # top middle
   if(gearbar_A!=[]):
     gearbar_B = cnc25d_api.cnc_cut_outline(gearbar_A, "end of gearbar")
@@ -670,15 +676,15 @@ def ideal_linear_tooth_outline(ai_low_parameters, ai_tangential_position, ai_thi
   """ create the ideal tooth_profile over the first tooth of a gearbar
   """
   # get ai_low_parameters
-  (g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, g_pfe, g_ple, g_sp, g_sn, g_ah, g_dh, g_hh, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset) = ai_low_parameters
-  half_tooth_nb =  int(bar_tooth_nb/2)
-  cyclic_tangential_position = math.fmod(ai_tangential_position, half_tooth_nb*pi_module) # to avoid the gearbar move away from its gearwheel
-  #tangential_position = cyclic_tangential_position - half_tooth_nb*pi_module # the position reference is the middle of the middle tooth
+  (g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, middle_tooth, g_pfe, g_ple, tlh, blh, blx,
+    g_sp, g_sn, g_alp, g_dlp, g_hlp, g_aln, g_dln, g_hln, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset) = ai_low_parameters
+  cyclic_tangential_position = math.fmod(ai_tangential_position, middle_tooth*pi_module) # to avoid the gearbar move away from its gearwheel
+  #tangential_position = cyclic_tangential_position - middle_tooth*pi_module # the position reference is the middle of the middle tooth
   tangential_position = cyclic_tangential_position
   # tooth
   tooth_A = []
-  tooth_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_ah, g_dh, ai_thickness_coeff*g_stp, 0, tangential_position))
-  tooth_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_ah, g_dh, ai_thickness_coeff*g_stn, 0, tangential_position))
+  tooth_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, 0, ai_thickness_coeff*g_stp, 0, tangential_position))
+  tooth_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, 0, ai_thickness_coeff*g_stn, 0, tangential_position))
   r_ideal_tooth_outline_B = cnc25d_api.cnc_cut_outline(tooth_A, "bulk of gearbar")
   #return
   return(r_ideal_tooth_outline_B)
@@ -835,9 +841,6 @@ def g2_position_calcultion(ai_g1_low_parameters, ai_g2_low_parameters, ai_rotati
     ABC2 = math.fmod(xBC-xBA+9*math.pi/2, math.pi)-math.pi/2
     #print("dbg557: xBA {:0.3f}  xBC {:0.3f}".format(xBA, xBC))
     # sign BAC, ABC
-    #if(BAC2<0):
-    #  BAC = -1*BAC
-    #  ABC = -1*ABC
     BAC = math.copysign(BAC, BAC2)
     ABC = -1*g1_ks*g2_ks* math.copysign(ABC, BAC2)
     # check BAC and BAC2
