@@ -372,7 +372,7 @@ def calc_low_level_gear_parameters(ai_param):
       i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
       hl1, hl2, ha1, ha2, hrbr, hlm, ham, tlm,
       ox, oy, portion_tooth_nb, first_end, last_end, closed)
-    place_low_parameters = (gear_type, pi_module_angle, g_n, g_pr, ox, oy, g_ks, g_pc,
+    place_low_parameters = (gear_type, pi_module_angle, g_n, g_pr, ox, oy, g_ks, g_pc, g_bi,
       i1_base, i1_primitive_offset, i1_offset2,
       i2_base, i2_primitive_offset, i2_offset2,
       driven_ip_base, driven_ip_offset, driven_in_base, driven_in_offset)
@@ -410,8 +410,8 @@ def calc_low_level_gear_parameters(ai_param):
     g_aln = g_ah/math.cos(g_sn)
     g_dln = g_dh/math.cos(g_sn)
     g_hln = g_hh/math.cos(g_sn)
-    gb_p_offset = -1*(top_land/2+positive_addendum)
-    gb_n_offset = top_land/2+negative_addendum
+    gb_p_offset = top_land/2+positive_addendum
+    gb_n_offset = -1*(top_land/2+negative_addendum)
     # linear gear place low parameters
     i1_base = g_sn
     i1_primitive_offset = -1*(top_land/2+negative_addendum)
@@ -426,7 +426,7 @@ def calc_low_level_gear_parameters(ai_param):
     # return
     make_low_parameters = (g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, middle_tooth, g_pfe, g_ple, tlh, blh, blx,
                             g_sp, g_sn, g_alp, g_dlp, g_hlp, g_aln, g_dln, g_hln, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset)
-    place_low_parameters = (g_type, pi_module, g_n, g_pr, g_ox, g_oy, g_ks, g_pc,
+    place_low_parameters = (g_type, pi_module, g_n, g_pr, g_ox, g_oy, g_ks, g_pc, g_bi,
       i1_base, i1_primitive_offset, i1_offset2,
       i2_base, i2_primitive_offset, i2_offset2,
       driven_ip_base, driven_ip_offset, driven_in_base, driven_in_offset)
@@ -602,14 +602,14 @@ def slope_outline(ai_ox, ai_oy, ai_bi, ai_offset, ai_slope_angle, ai_sign, ai_to
   top_length = ai_top_length
   bottom_length = ai_bottom_length + ai_hollow_length + ai_thickness*math.tan(ai_slope_angle)
   #
-  top_x = ai_ox + (ai_tooth_position+ai_offset)*math.cos(ai_bi+math.pi/2) + top_length*math.cos(slope_angle) + ai_thickness*math.cos(thickness_angle)
-  top_y = ai_oy + (ai_tooth_position+ai_offset)*math.sin(ai_bi+math.pi/2) + top_length*math.sin(slope_angle) + ai_thickness*math.sin(thickness_angle)
-  bottom_x = ai_ox + (ai_tooth_position+ai_offset)*math.cos(ai_bi+math.pi/2) - bottom_length*math.cos(slope_angle) + ai_thickness*math.cos(thickness_angle)
-  bottom_y = ai_oy + (ai_tooth_position+ai_offset)*math.sin(ai_bi+math.pi/2) - bottom_length*math.sin(slope_angle) + ai_thickness*math.sin(thickness_angle)
+  top_x = ai_ox + (ai_tooth_position+ai_offset)*math.cos(ai_bi-math.pi/2) + top_length*math.cos(slope_angle) + ai_thickness*math.cos(thickness_angle)
+  top_y = ai_oy + (ai_tooth_position+ai_offset)*math.sin(ai_bi-math.pi/2) + top_length*math.sin(slope_angle) + ai_thickness*math.sin(thickness_angle)
+  bottom_x = ai_ox + (ai_tooth_position+ai_offset)*math.cos(ai_bi-math.pi/2) - bottom_length*math.cos(slope_angle) + ai_thickness*math.cos(thickness_angle)
+  bottom_y = ai_oy + (ai_tooth_position+ai_offset)*math.sin(ai_bi-math.pi/2) - bottom_length*math.sin(slope_angle) + ai_thickness*math.sin(thickness_angle)
   #
-  if(ai_sign==-1):
+  if(ai_sign==1):
     r_slope_B = ((top_x, top_y, 0),(bottom_x, bottom_y, ai_bottom_router_bit))
-  elif(ai_sign==1):
+  elif(ai_sign==-1):
     r_slope_B = ((bottom_x, bottom_y, ai_bottom_router_bit),(top_x, top_y, 0))
   # return
   return(r_slope_B)
@@ -633,9 +633,9 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
     hollow_middle_x = g_ox + (tangential_position-pi_module+blx)*math.cos(g_bi+math.pi/2) + blh*math.cos(g_bi+math.pi)
     hollow_middle_y = g_oy + (tangential_position-pi_module+blx)*math.sin(g_bi+math.pi/2) + blh*math.sin(g_bi+math.pi)
     gearbar_A.append((hollow_middle_x, hollow_middle_y, 0)) # hollow middle
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, g_rbr, tangential_position)) # positive slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position)) # positive slope
   elif(g_pfe==2): # start on the positive slope
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, 0, tangential_position)) # positive slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, 0, tangential_position)) # positive slope
   elif(g_pfe==1): # start on the top middle
     top_middle_x = g_ox + tangential_position*math.cos(g_bi+math.pi/2) + tlh*math.cos(g_bi)
     top_middle_y = g_oy + tangential_position*math.sin(g_bi+math.pi/2) + tlh*math.sin(g_bi)
@@ -646,8 +646,8 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   # bulk of the gearbar
   for tooth in range(bar_tooth_nb):
     gearbar_A = []
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position)) # negative slope
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, g_rbr, tangential_position+pi_module)) # positive slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, g_rbr, tangential_position)) # negative slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position+pi_module)) # positive slope
     #print("dbg745: gearbar_A:", gearbar_A)
     gearbar_B = cnc25d_api.cnc_cut_outline(gearbar_A, "bulk of gearbar")
     r_final_outline.extend(gearbar_B)
@@ -656,12 +656,12 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   # end of the gearbar
   gearbar_A = []
   if(g_ple==3): # stop on hollow_middle
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position)) # negative slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, g_rbr, tangential_position)) # negative slope
     hollow_middle_x = g_ox + (tangential_position+blx)*math.cos(g_bi+math.pi/2) + blh*math.cos(g_bi+math.pi)
     hollow_middle_y = g_oy + (tangential_position+blx)*math.sin(g_bi+math.pi/2) + blh*math.sin(g_bi+math.pi)
     gearbar_A.append((hollow_middle_x, hollow_middle_y, 0)) # hollow middle
   elif(g_ple==2): # stop on the negative slope
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, 0, tangential_position)) # negative slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, 0, tangential_position)) # negative slope
   elif(g_ple==1): # stop on the top middle
     top_middle_x = g_ox + tangential_position*math.cos(g_bi+math.pi/2) + tlh*math.cos(g_bi)
     top_middle_y = g_oy + tangential_position*math.sin(g_bi+math.pi/2) + tlh*math.sin(g_bi)
@@ -683,8 +683,8 @@ def ideal_linear_tooth_outline(ai_low_parameters, ai_tangential_position, ai_thi
   tangential_position = cyclic_tangential_position
   # tooth
   tooth_A = []
-  tooth_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, 0, ai_thickness_coeff*g_stp, 0, tangential_position))
   tooth_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, 0, ai_thickness_coeff*g_stn, 0, tangential_position))
+  tooth_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, 0, ai_thickness_coeff*g_stp, 0, tangential_position))
   r_ideal_tooth_outline_B = cnc25d_api.cnc_cut_outline(tooth_A, "bulk of gearbar")
   #return
   return(r_ideal_tooth_outline_B)
@@ -742,12 +742,12 @@ def g2_position_calcultion(ai_g1_low_parameters, ai_g2_low_parameters, ai_rotati
   """ calculation of the angle position of the second gear and other related parameters (speed, friction)
   """
   # get ai_g1_low_parameters
-  (g1_gear_type, g1_pi_module_angle, g1_n, g1_pr, g1_ox, g1_oy, g1_ks, g1_pc,
+  (g1_gear_type, g1_pi_module_angle, g1_n, g1_pr, g1_ox, g1_oy, g1_ks, g1_pc, g1_bi,
     g1_i1_base, g1_i1_primitive_offset, g1_i1_offset2,
     g1_i2_base, g1_i2_primitive_offset, g1_i2_offset2,
     g1_driven_ip_base, g1_driven_ip_offset, g1_driven_in_base, g1_driven_in_offset) = ai_g1_low_parameters
   # get ai_g2_low_parameters
-  (g2_gear_type, g2_pi_module_angle, g2_n, g2_pr, g2_ox, g2_oy, g2_ks, g2_pc,
+  (g2_gear_type, g2_pi_module_angle, g2_n, g2_pr, g2_ox, g2_oy, g2_ks, g2_pc, g2_bi,
     g2_i1_base, g2_i1_primitive_offset, g2_i1_offset2,
     g2_i2_base, g2_i2_primitive_offset, g2_i2_offset2,
     g2_driven_ip_base, g2_driven_ip_offset, g2_driven_in_base, g2_driven_in_offset) = ai_g2_low_parameters
@@ -901,16 +901,27 @@ def g2_position_calcultion(ai_g1_low_parameters, ai_g2_low_parameters, ai_rotati
       sys.exit(2)
     g2_rotation_speed = float(c2_speed)/BC
   elif(g2_gear_type=='l'): # linear-gear (aka gearbar)
-    g2_contact_u = g1_contact_u*g1_br-KL
-    g2_position = g2_contact_u/math.cos(g2_sa) - g2_involute_offset
-    c2y = -1*g2_contact_u*math.sin(g2_sa)
-    c2x = g2_position + g2_involute_offset + c2y*math.tan(g2_sa)
+    KD = g1_br*math.tan(g2_sa)
+    AD = g1_br/math.cos(g2_sa)
+    BD = AB-AD
+    DE = BD/math.sin(g2_sa)
+    KE = KD+DE
+    BE = BD/math.tan(g2_sa)
+    if(BD<0):
+      print("ERR852: Error, BD {:0.3f} is negative".format(BD))
+      sys.exit(2)
+    g2_contact_u = ai_rotation_direction*(g1_contact_u*g1_br-KE)
+    g2_position = ai_rotation_direction*BE + g2_contact_u/math.cos(g2_sa) - g2_involute_offset
+    dc = (g2_position+g2_involute_offset-ai_rotation_direction*BE)*math.cos(g2_sa)
+    c2x = g2_ox + ai_rotation_direction*BE*math.cos(g2_bi-math.pi/2) + dc*math.cos(g2_bi-math.pi/2-ai_rotation_direction*g2_sa)
+    c2y = g2_oy + ai_rotation_direction*BE*math.sin(g2_bi-math.pi/2) + dc*math.sin(g2_bi-math.pi/2-ai_rotation_direction*g2_sa)
+    #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
     if(abs(math.fmod(ti - (-1*ai_rotation_direction*g2_sa), math.pi/2))>radian_epsilon):
       print("ERR875: Error, the tangents ti {:0.3f} and slope g2_sa {:0.3f} are not equal (modulo pi)".format(ti, g2_sa))
       sys.exit(2)
     c2_speed_radial = c1_speed_radial
     c2_speed = float(c2_speed_radial)/math.cos(g2_sa)
-    c2_speed_tangential = c2_speed*math.sin(g2_sa)
+    c2_speed_tangential = ai_rotation_direction*c2_speed*math.sin(g2_sa)
     g2_rotation_speed = c2_speed
   # friction between g1 and g2
   tangential_friction = c2_speed_tangential - c1_speed_tangential
