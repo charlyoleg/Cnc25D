@@ -489,7 +489,10 @@ def gear_profile(
     else:
       g1_brp = g1_pr*math.cos(ai_gear_force_angle)
       g1_brp_set = True
-  g2_brp = float(g1_brp*g2_n)/g1_n
+  if(g1_brp_set or (g1_type=='i') or (g1_type=='e')):
+    g2_brp = float(g1_brp*g2_n)/g1_n
+  else:
+    g2_brp = g2_small_r
   # negative involute : negative_base_radius
   g1_brn = g1_brp
   g1_brn_set = False
@@ -513,7 +516,10 @@ def gear_profile(
     else:
       g1_brn = g1_pr*math.cos(ai_gear_force_angle_n)
       g1_brn_set = True
-  g2_brn = float(g1_brn*g2_n)/g1_n
+  if(g1_brn_set or (g1_type=='i') or (g1_type=='e')):
+    g2_brn = float(g1_brn*g2_n)/g1_n
+  else:
+    g2_brn = g2_small_r
   # base radius check
   if((g1_type=='e')or(g1_type=='i')):
     if(g1_brp>g1_small_r):
@@ -712,7 +718,7 @@ def gear_profile(
     real_force_info = "Real force info:\n" + real_force_info_p + real_force_info_n
 
   ### generate the first gear outline
-  (g1_make_low_param, g1_place_low_param, g1_info_low) = calc_low_level_gear_parameters(g1_param)
+  (g1_make_low_param, g1_info_low) = calc_low_level_gear_parameters(g1_param)
   g1_outline_B = gear_profile_outline(g1_make_low_param, g1_ia)
   # output info
   parameter_info_txt1 = gear_high_level_parameter_to_text("Gear-profile 1:", g1_param)
@@ -727,12 +733,15 @@ def gear_profile(
     g1_ideal_tooth = ideal_tooth_outline(g1_make_low_param, g1_ia, 1)
     parameter_info_txt = parameter_info_txt1
     if(g2_exist):
+      ### g2
       #print("dbg369: Prepare the second gear ..")
       #print("dbg521: g2_high_parameters:", g2_high_parameters)
       g2_ia = 0
-      (g2_make_low_param, g2_place_low_param, g2_info_low) = calc_low_level_gear_parameters(g2_param)
+      (g2_make_low_param, g2_info_low) = calc_low_level_gear_parameters(g2_param)
       #print("dbg653: g2_make_low_param:", g2_make_low_param)
       g2_outline_B = gear_profile_outline(g2_make_low_param, g2_ia)
+      ### g2_position
+      (place_low_parameters, place_info) = pre_g2_position_calculation(g1_param, g2_param, aal, g1g2_a, g1_rotation_speed, speed_scale)
       # output info
       parameter_info_txt2 = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
       parameter_info_txt2 += real_force_info
@@ -765,7 +774,10 @@ def gear_profile(
       #global g1_position_curve_table, g2_position_curve_table, g2_rotation_speed_curve_table, tangential_friction_curve_table # no need of global because just append element to lists
       ## gear position
       # g1_position
-      g1_position = g1_ia+ai_angle_position
+      if((g1_type=='e')or(g1_type=='i')):
+        g1_position = g1_ia+ai_angle_position
+      elif(g1_type=='l'):
+        g1_position = g1_ia+ai_angle_position*g1_m*10
       ## get outline_B
       lg1_outline_B = gear_profile_outline(g1_make_low_param, g1_position)
       lg1_ideal_involute = ideal_tooth_outline(g1_make_low_param, g1_position, 0)
@@ -773,8 +785,7 @@ def gear_profile(
       if(g2_exist):
         # g2_position
         #g2_position = g2_ia-ai_angle_position # completely wrong, just waiting for the good formula
-        g2_position_calcultion_stuff = g2_position_calcultion(g1_place_low_param, g2_place_low_param, ai_rotation_direction, g1_position, aal, g1g2_a, g1_rotation_speed, speed_scale)
-        (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline) = g2_position_calcultion_stuff
+        (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline) = g2_position_calculation(place_low_parameters, ai_rotation_direction, g1_position)
         lg2_outline_B = gear_profile_outline(g2_make_low_param, g2_position)
         lg2_ideal_involute = ideal_tooth_outline(g2_make_low_param, g2_position, 0)
         lg2_ideal_tooth = ideal_tooth_outline(g2_make_low_param, g2_position, 1)
