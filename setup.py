@@ -1,11 +1,29 @@
-#from distutils.core import setup
+# setup.py
+# generates a Python package using setuptools
+# created by charlyoleg on 2013/09/11
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
 from setuptools import setup
-#from distribute import setup
-#from distribute_setup import use_setuptools
 
 setup(
   name='Cnc25D',
-  version='0.1.3',
+  version='0.1.4',
   author='charlyoleg',
   author_email='charlyoleg@fabfolk.com',
   packages=['cnc25d', 'cnc25d.tests'],
@@ -14,6 +32,7 @@ setup(
   license='LICENSE.txt',
   description='Help-functions to create 2.5D physical parts and cuboid assembly',
   long_description=open('README.rst').read(),
+  keywords="CNC 2.5D FreeCAD 3D gear"
   install_requires=[
     #"math >= 0.6.24",
     #"sys >= 0.1.6",
