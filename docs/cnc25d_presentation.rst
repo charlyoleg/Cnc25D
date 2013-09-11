@@ -254,6 +254,7 @@ Release 0.1.4
 -------------
 Released on 2013-09-01
 
+* Python package created with setuptools (instead of distribute)
 * add API function smooth_outline_c_curve() approximates a curve defined by points and tangents with arcs.
 * integrate circle into the format-B
 * add API functions working at the *figure-level*: figure_simple_display(), figure_to_freecad_25d_part(), ..

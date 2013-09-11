@@ -2,6 +2,18 @@
 Release History
 ###############
 
+0.1.4 (2013-09-11)
+==================
+
+* Python package created with setuptools (instead of distribute)
+* add API function smooth_outline_c_curve() approximates a curve defined by points and tangents with arcs.
+* integrate circle into the format-B
+* add API functions working at the *figure-level*: figure_simple_display(), figure_to_freecad_25d_part(), ..
+* remove API function cnc_cut_outline_fc()
+* gear_profile.py generates and simulates gear-profiles
+* gearwheel.py
+
+
 0.1.3 (2013-08-13)
 ==================
 
