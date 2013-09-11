@@ -11,6 +11,7 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 - make the distribution
 > python setup.py sdist
 - test the distribution
+-- with virtualenv
 > cd far/away
 > virtualenv test_cnc25d_distrib
 > source test_cnc25d_distrib/bin/activate
@@ -32,6 +33,20 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 > #make
 > #make install
 > #pip install PySide
+-- with virtualenvwrapper
+> cd ~tmp
+> mkvirtualenv test_cnc25d_0.1.4
+> lsvirtualenv
+> workon test_cnc25d_0.1.4
+> pip install ~cnc25d/dist/Cnc25D-0.1.4.tar.gz
+> pip install matplotlib
+> pip freeze
+> cdvirtualenv
+> cp /usr/lib/python2.7/dist-packages/sip.so lib/python2.7/site-packages/
+> cp -a /usr/lib/python2.7/dist-packages/PyQt4 lib/python2.7/site-packages/
+> cd -
+> deactivate
+> workon test_cnc25d_0.1.4 # to see cnc25d_example_generator.py in your completion tool (probably because of zsh)
 ## run the cnc25d design example
 > mkdir Tmp
 > cd Tmp

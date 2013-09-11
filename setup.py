@@ -38,13 +38,13 @@ setup(
     #"math >= 0.6.24",
     #"sys >= 0.1.6",
     "argparse >= 1.2.1",
-    "datetime >= 0.6.24",
+    #"datetime >= 0.6.24", # datetime is a builtin module
     #"os >= 0.0.0",
     #"errno >= 0.0.0",
     #"Tkinter >= 0.0.0",
     #"tkMessageBox >= 0.0.0",
-    "numpy >= 1.6.1",
-    #"matplotlib >= 1.2.1",  # currently disable because of a bug in matplotlib setup.py about numpy dependency
+    "numpy >= 1.7.1",
+    #"matplotlib >= 1.3.0",  # currently disable because of a bug in matplotlib setup.py about numpy dependency
     "svgwrite >= 1.1.2",
     "dxfwrite >= 1.2.0",
     #"timeit >= 0.0.0",
