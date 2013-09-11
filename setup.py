@@ -31,7 +31,7 @@ setup(
   scripts=['bin/cnc25d_example_generator.py'],
   url='http://pypi.python.org/pypi/Cnc25D/',
   license='LICENSE.txt',
-  description='Help-functions to create 2.5D physical parts and cuboid assembly',
+  description='CAD library for 2.5D parts (including gears) using svgwrite, dxfwrite or FreeCAD as backend',
   long_description=open('README.rst').read(),
   keywords="CNC 2.5D FreeCAD 3D gear",
   install_requires=[
