@@ -832,18 +832,133 @@ def tmp_f(ai_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale):
   r_low_parameters = place_low_parameters
   return(r_low_parameters)
 
+def linear_gear_geometry(ai_g_sa, ai_br, ai_AB):
+  """ calculation of the geometry relative to a e-l or l-e gear
+  """
+  KD = ai_br*math.tan(ai_g_sa)
+  AD = ai_br/math.cos(ai_g_sa)
+  BD = ai_AB-AD
+  DE = BD/math.sin(ai_g_sa)
+  KE = KD+DE
+  BE = BD/math.tan(ai_g_sa)
+  #if(BD<0):
+  #  print("ERR853: Error, BD {:0.3f} is negative".format(BD))
+  #  print("dbg553: ai_g_sa {:0.3f}  ai_br {:0.3f}  ai_AB {:0.3f}".format(ai_g_sa, ai_br, ai_AB))
+  #  sys.exit(2)
+  return(KE, BE, BD)
 
 def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale):
   """ Initial calcultation for getting the g2_position from the high-level parameters of g1 anf g2.
       The goal of this function is to speed-up the function g2_position_calcultion by factoring some of the processing
   """
-  # place_low_parameters
+  # precision
+  radian_epsilon = math.pi/1000
+  ### place_low_parameters
+  # old way
   g1_place_low_parameters = tmp_f(ai_g1_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
   g2_place_low_parameters = tmp_f(ai_g2_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
-  # info_txt
+  # new way
+  # get g1 high-level parameters
+  g1_type  = ai_g1_param['gear_type']
+  if((g1_type=='e')or(g1_type=='i')): # g1_tl and g1_gc are used to find out the current tooth involved
+    g1_tl    = ai_g1_param['pi_module_angle'] # tooth length
+    g1_gc    = ai_g1g2_a # gear center
+  elif(g1_type=='l'):
+    g1_tl    = ai_g1_param['pi_module'] # tooth length
+    g1_gc    = 0 # gear center
+  g1_pr    = ai_g1_param['primitive_radius']
+  g1_brp   = ai_g1_param['positive_base_radius']
+  g1_brn   = ai_g1_param['negative_base_radius']
+  g1_ox    = ai_g1_param['center_ox']
+  g1_oy    = ai_g1_param['center_oy']
+  g1_bi    = ai_g1_param['gearbar_inclination']
+  g1_sp    = ai_g1_param['positive_slope_angle']
+  g1_sn    = ai_g1_param['negative_slope_angle']
+  g1_ks    = ai_g1_param['gear_sign']
+  g1_pc    = ai_g1_param['position_coefficient']
+  # get g2 high-level parameters
+  g2_type  = ai_g2_param['gear_type']
+  g2_pr    = ai_g2_param['primitive_radius']
+  g2_brp   = ai_g2_param['positive_base_radius']
+  g2_brn   = ai_g2_param['negative_base_radius']
+  g2_ox    = ai_g2_param['center_ox']
+  g2_oy    = ai_g2_param['center_oy']
+  g2_bi    = ai_g2_param['gearbar_inclination']
+  g2_sp    = ai_g2_param['positive_slope_angle']
+  g2_sn    = ai_g2_param['negative_slope_angle']
+  g2_ks    = ai_g2_param['gear_sign']
+  g2_pc    = ai_g2_param['position_coefficient']
+  ### g1 driving - g2 driven
+  ## positive rotation
+  # e-e : negative involute - negative involute
+  # e-i : negative involute - negative involute
+  # e-l : negative involute - negative slope
+  # i-e : positive involute - positive involute
+  # l-e : negative slope - negative involute
+  gear_param_positive = (g1_brp, g1_sp, g2_brp, g2_sp)
+  gear_param_negative = (g1_brn, g1_sn, g2_brn, g2_sn)
+  if(g1_type=='i'): # i-e
+    place_low_param_positive = gear_param_positive
+    place_low_param_negative = gear_param_negative
+  else: # e-e, e-i, e-l, l-e
+    place_low_param_positive = gear_param_negative
+    place_low_param_negative = gear_param_positive
+  (g1_br_rp, g1_sa_rp, g2_br_rp, g2_sa_rp) = place_low_param_positive # positive rotation
+  (g1_br_rn, g1_sa_rn, g2_br_rn, g2_sa_rn) = place_low_param_negative # negative rotation
+  ### some calculation in advance
+  # real_force_angle
+  rfa_rp = calc_real_force_angle(g1_type, g1_pr, g1_br_rp, g2_type, g2_pr, g2_br_rp, ai_aal, g1_sa_rp, g2_sa_rp)
+  rfa_rn = calc_real_force_angle(g1_type, g1_pr, g1_br_rn, g2_type, g2_pr, g2_br_rn, ai_aal, g1_sa_rn, g2_sa_rn)
+  # AB = g1_pr+g2_pr+ai_aal
+  AB = abs(g1_ks*g1_pc*g1_pr+g2_ks*g2_pc*g2_pr+ai_aal)
+  # alternative for AB
+  AB2 = math.sqrt((g2_ox-g1_ox)**2+(g2_oy-g1_oy)**2)
+  if(abs(AB2-AB)>radian_epsilon):
+    print("ERR414: Error with the calculation of AB {:0.3f} or {:0.3f}".format(AB, AB2))
+    sys.exit(2)
+  # KL (see documentation  graphic gear_position.svg), used only with e-e, e-i and i-e
+  KL_rp = math.sin(rfa_rp)*AB
+  KL_rn = math.sin(rfa_rn)*AB
+  if((g1_type!='l')and(g2_type!='l')):
+    KL_rp2 = math.sqrt(AB**2 - (g1_ks*g1_br_rp+g2_ks*g2_br_rp)**2) # kind of pythagor
+    KL_rn2 = math.sqrt(AB**2 - (g1_ks*g1_br_rn+g2_ks*g2_br_rn)**2) # kind of pythagor
+    if(abs(KL_rp2-KL_rp)>radian_epsilon):
+      print("ERR875: Error, KL_rp {:0.3f} and KL_rp2 {:0.3f} are too different!".format(KL_rp, KL_rp2))
+      sys.exit(2)
+    if(abs(KL_rn2-KL_rn)>radian_epsilon):
+      print("ERR876: Error, KL_rn {:0.3f} and KL_rn2 {:0.3f} are too different!".format(KL_rn, KL_rn2))
+      sys.exit(2)
+  # KE, BE, BD
+  KE1_rp = 0 # default value for g_type = 'e' or 'i'
+  BE1_rp = 0
+  BD1_rp = 0
+  KE1_rn = 0
+  BE1_rn = 0
+  BD1_rn = 0
+  if(g1_type=='l'):
+    (KE1_rp, BE1_rp, BD1_rp) = linear_gear_geometry(g1_sa_rp, g2_br_rp, AB)
+    (KE1_rn, BE1_rn, BD1_rn) = linear_gear_geometry(g1_sa_rn, g2_br_rn, AB)
+  KE2_rp = 0 # default value for g_type = 'e' or 'i'
+  BE2_rp = 0
+  BD2_rp = 0
+  KE2_rn = 0
+  BE2_rn = 0
+  BD2_rn = 0
+  if(g2_type=='l'):
+    (KE2_rp, BE2_rp, BD2_rp) = linear_gear_geometry(g2_sa_rp, g1_br_rp, AB)
+    (KE2_rn, BE2_rn, BD2_rn) = linear_gear_geometry(g2_sa_rn, g1_br_rn, AB)
+  ### pack the place_low_param
+  place_low_param_common = (g1_type, g1_pr, g1_ox, g1_oy, g1_bi, g1_ks, g1_pc,
+                            g2_type, g2_pr, g2_ox, g2_oy, g2_bi, g2_ks, g2_pc,
+                            ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale,
+                            g1_tl, g1_gc, AB)
+  place_low_param_positive2 = (g1_br_rp, g1_sa_rp, g2_br_rp, g2_sa_rp, rfa_rp, KL_rp, KE1_rp, BE1_rp, KE2_rp, BE2_rp)
+  place_low_param_negative2 = (g1_br_rn, g1_sa_rn, g2_br_rn, g2_sa_rn, rfa_rn, KL_rn, KE1_rn, BE1_rn, KE2_rn, BE2_rn)
+  place_low_param = (place_low_param_common, place_low_param_positive2, place_low_param_negative2)
+  ### info_txt
   info_txt = ""
   # return
-  place_low_parameters = (g1_place_low_parameters, g2_place_low_parameters, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
+  place_low_parameters = (g1_place_low_parameters, g2_place_low_parameters, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale, place_low_param)
   r_ppc = (place_low_parameters, info_txt)
   return(r_ppc)
 
@@ -852,7 +967,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   """ calculation of the angle position of the second gear and other related parameters (speed, friction)
   """
   #((g1_place_low_parameters, g2_place_low_parameters), tmp_info) = pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
-  (g1_place_low_parameters, g2_place_low_parameters, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale) = ai_place_low_param
+  (g1_place_low_parameters, g2_place_low_parameters, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale, place_low_param) = ai_place_low_param
   # get ai_g1_low_parameters
   (g1_gear_type, g1_pi_module_angle, g1_n, g1_pr, g1_ox, g1_oy, g1_ks, g1_pc, g1_bi,
     g1_i1_base, g1_i1_primitive_offset, g1_i1_offset2,
@@ -886,6 +1001,14 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     g2_br = g2_driven_ip_base
     g2_involute_offset = g2_driven_ip_offset
     g2_sa = g2_driven_ip_base
+  # unpack place_low_param
+  (place_low_param_common, place_low_param_positive2, place_low_param_negative2) = place_low_param
+  #() = place_low_param_common
+  if(ai_rotation_direction==1):
+    place_low_param_oriented = place_low_param_positive2
+  elif(ai_rotation_direction==-1):
+    place_low_param_oriented = place_low_param_negative2
+  #() = place_low_param_oriented
   ## gear system related
   # real_force_angle
   real_force_angle = calc_real_force_angle(g1_gear_type, g1_pr, g1_br, g2_gear_type, g2_pr, g2_br, ai_aal, g1_sa, g2_sa)
