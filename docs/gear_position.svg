@@ -10,7 +10,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="601"
-   height="2812.6875"
+   height="3939.8438"
    id="svg3088"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
@@ -67,9 +67,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.9899495"
+     inkscape:zoom="1.979899"
      inkscape:cx="255.95409"
-     inkscape:cy="392.30215"
+     inkscape:cy="1217.1094"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -97,7 +97,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -148,7 +148,7 @@
        style="fill:none;stroke:#d7eef4;stroke-width:0.99999994;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3096"
        width="600"
-       height="2811.6763"
+       height="3938.8191"
        x="77.14286"
        y="83.790756" />
     <flowRoot
@@ -1004,7 +1004,7 @@
        transform="translate(76.65625,83.28125)" />
     <path
        sodipodi:type="arc"
-       style="fill:none;stroke:#aade87;stroke-width:0.40007316999999998;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:none;stroke:#aade87;stroke-width:0.40007317;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="path3230-8"
        sodipodi:cx="368.92856"
        sodipodi:cy="1782.7991"
@@ -1067,7 +1067,7 @@
        inkscape:connector-curvature="0" />
     <path
        sodipodi:type="arc"
-       style="fill:none;stroke:#0000ff;stroke-width:1.13380276999999996;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:none;stroke:#0000ff;stroke-width:1.13380277;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="path3230-2"
        sodipodi:cx="368.92856"
        sodipodi:cy="1782.7991"
@@ -1077,7 +1077,7 @@
        transform="matrix(0.88198758,0,0,0.88198758,141.26584,296.53087)" />
     <path
        sodipodi:type="arc"
-       style="fill:none;stroke:#008000;stroke-width:0.52614379000000000;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:none;stroke:#008000;stroke-width:0.52614379;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="path3230-8-2"
        sodipodi:cx="368.92856"
        sodipodi:cy="1782.7991"
@@ -1469,27 +1469,27 @@
            x="325.71429"
            y="2274.8303" /></flowRegion><flowPara
          id="flowPara4713">position_reference</flowPara></flowRoot>    <path
-       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994000000003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 356.75449,2458.5489 -11.89344,-44.6992 -5.94671,0 -9.91119,44.6992 -10.76072,0"
        id="path3415-8"
        inkscape:connector-curvature="0" />
     <path
-       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994000000003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 395.26656,2458.5489 -11.89344,-44.6992 -5.94671,0 -9.91119,44.6992 -10.76073,0"
        id="path3415-8-4"
        inkscape:connector-curvature="0" />
     <path
-       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994000000003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 433.77863,2458.5489 -11.89344,-44.6992 -5.94671,0 -9.91119,44.6992 -10.76073,0"
        id="path3415-8-0"
        inkscape:connector-curvature="0" />
     <path
-       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994000000003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 472.2907,2458.5489 -11.89344,-44.6992 -5.94672,0 -9.91118,44.6992 -10.76073,0"
        id="path3415-8-0-5"
        inkscape:connector-curvature="0" />
     <path
-       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994000000003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:#008000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 510.80276,2458.5489 -11.89344,-44.6992 -5.94671,0 -9.91119,44.6992 -10.76072,0"
        id="path3415-8-1"
        inkscape:connector-curvature="0" />
@@ -2022,5 +2022,19 @@
          id="flowPara6545">DE = BD/sin(a)</flowPara><flowPara
          id="flowPara6547">KE=KD+DE=AK*tan(a)+AB/sin(a)-AK/(sin(a)*cos(a))</flowPara><flowPara
          id="flowPara6551">BE=BD/tan(a)=AB/tan(a)-AK/sin(a)</flowPara><flowPara
-         id="flowPara6549" /></flowRoot>  </g>
+         id="flowPara6549" /></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3497"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(76.65625,83.28125)"><flowRegion
+         id="flowRegion3499"><rect
+           id="rect3501"
+           width="543.4621"
+           height="89.903465"
+           x="29.294424"
+           y="2728.1658" /></flowRegion><flowPara
+         id="flowPara3503">conditions of a good specified gear:</flowPara><flowPara
+         id="flowPara3505">- primitives are matching -&gt; so addendum_dedendum_parity can match</flowPara><flowPara
+         id="flowPara3507">- base diameter ratio = N1/N2 -&gt; tooth transition is smooth</flowPara><flowPara
+         id="flowPara3504">- </flowPara></flowRoot>  </g>
 </svg>
