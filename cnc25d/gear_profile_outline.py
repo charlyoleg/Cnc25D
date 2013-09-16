@@ -866,7 +866,9 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
   elif(g1_type=='l'):
     g1_tl    = ai_g1_param['pi_module'] # tooth length
     g1_gc    = 0 # gear center
+  g1_n     = ai_g1_param['full_tooth_nb']
   g1_pr    = ai_g1_param['primitive_radius']
+  g1_adp   = ai_g1_param['addendum_dedendum_parity']
   g1_brp   = ai_g1_param['positive_base_radius']
   g1_brn   = ai_g1_param['negative_base_radius']
   g1_ox    = ai_g1_param['center_ox']
@@ -878,7 +880,10 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
   g1_pc    = ai_g1_param['position_coefficient']
   # get g2 high-level parameters
   g2_type  = ai_g2_param['gear_type']
+  g2_tl    = ai_g2_param['pi_module']
+  g2_n     = ai_g2_param['full_tooth_nb']
   g2_pr    = ai_g2_param['primitive_radius']
+  g2_adp   = ai_g2_param['addendum_dedendum_parity']
   g2_brp   = ai_g2_param['positive_base_radius']
   g2_brn   = ai_g2_param['negative_base_radius']
   g2_ox    = ai_g2_param['center_ox']
@@ -956,7 +961,43 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
   place_low_param_negative2 = (g1_br_rn, g1_sa_rn, g2_br_rn, g2_sa_rn, rfa_rn, KL_rn, KE1_rn, BE1_rn, KE2_rn, BE2_rn)
   place_low_param = (place_low_param_common, place_low_param_positive2, place_low_param_negative2)
   ### info_txt
+  ## check if the primitive circle are matching (in order than addendum_dedendum_parity makes sense)
   info_txt = ""
+  if((g1_type!='l')and(g2_type!='l')): # e-e, e-i or i-e
+    if(abs(g2_pr*g1_n-g1_pr*g2_n)>radian_epsilon):
+      info_txt += "WARN701: Warning, the primitive diameter ratio is different from N2/N1: g1_pr {:0.3f}  g2_pr {:0.3f}  g1_n {:d}  g2_n {:d}\n".format(g1_pr, g2_pr, g1_n, g2_n)
+    if(abs(g2_brp*g1_n-g2_brp*g2_n)>radian_epsilon):
+      info_txt += "WARN702: Warning, the positive base diameter ratio is different from N2/N1: g1_brp {:0.3f}  g2_brp {:0.3f}  g1_n {:d}  g2_n {:d}\n".format(g1_brp, g2_brp, g1_n, g2_n)
+    if(abs(g2_brn*g1_n-g2_brn*g2_n)>radian_epsilon):
+      info_txt += "WARN703: Warning, the negative base diameter ratio is different from N2/N1: g1_brn {:0.3f}  g2_brn {:0.3f}  g1_n {:d}  g2_n {:d}\n".format(g1_brn, g2_brn, g1_n, g2_n)
+  elif((g1_type=='l')or(g2_type=='l')): # e-l or l-e
+    if(g1_type=='l'):
+      g_tl = g1_tl
+      g_sp = g1_sp
+      g_sn = g1_sn
+      g_n = g2_n
+      g_pr = g2_pr
+      g_brp = g2_brp
+      g_brn = g2_brn
+    elif(g2_type=='l'):
+      g_tl = g2_tl
+      g_sp = g2_sp
+      g_sn = g2_sn
+      g_n = g1_n
+      g_pr = g1_pr
+      g_brp = g1_brp
+      g_brn = g1_brn
+    if(abs(g_tl-2*math.pi*g_pr/g_n)>radian_epsilon):
+      info_txt += "WARN711: Warning, the tooth pitch of gearwheel and the gearbar are different! g_tl {:0.3f}  g_pr {:0.3f}  g_n {:d}\n".format(g_tl, g_pr, g_n)
+    if(abs(g_pr*math.cos(g_sp)-g_brp)>radian_epsilon):
+      info_txt += "WARN712: Warning, the positive base diameter and the gearbar slope angle are not coherent! g_pr {:0.3f}  g_sp {:0.3f}  g_brp {:0.3f}\n".format(g_pr, g_sp, g_brp)
+    if(abs(g_pr*math.cos(g_sn)-g_brn)>radian_epsilon):
+      info_txt += "WARN713: Warning, the negative base diameter and the gearbar slope angle are not coherent! g_pr {:0.3f}  g_sn {:0.3f}  g_brn {:0.3f}\n".format(g_pr, g_sn, g_brn)
+  if(ai_aal!=0):
+    info_txt += "WARN704: Warning, the additional inter-axis length {:0.3f} is not null. The addendum_dedendum_parity can not be checked\n".format(ai_aal)
+  elif(abs(g1_adp+g2_adp-1)>radian_epsilon):
+    info_txt += "WARN05: Warning, the addendum_dedendum_parity are not complementary. g1_adp {:0.3f}  g2_adp {:0.3f}\n".format(g1_adp, g2_adp)
+  #print("{:s}".format(info_txt))
   # return
   place_low_parameters = (g1_place_low_parameters, g2_place_low_parameters, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale, place_low_param)
   r_ppc = (place_low_parameters, info_txt)

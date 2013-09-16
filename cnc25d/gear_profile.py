@@ -745,6 +745,7 @@ def gear_profile(
       # output info
       parameter_info_txt2 = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
       parameter_info_txt2 += real_force_info
+      parameter_info_txt2 += place_info
       parameter_info_txt3 = gear_high_level_parameter_to_text("Gear-profile 2:", g2_param)
       parameter_info_txt3 += g2_info_low
       #print(parameter_info_txt2 + parameter_info_txt3)
