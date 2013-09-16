@@ -966,9 +966,9 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
   if((g1_type!='l')and(g2_type!='l')): # e-e, e-i or i-e
     if(abs(g2_pr*g1_n-g1_pr*g2_n)>radian_epsilon):
       info_txt += "WARN701: Warning, the primitive diameter ratio is different from N2/N1: g1_pr {:0.3f}  g2_pr {:0.3f}  g1_n {:d}  g2_n {:d}\n".format(g1_pr, g2_pr, g1_n, g2_n)
-    if(abs(g2_brp*g1_n-g2_brp*g2_n)>radian_epsilon):
+    if(abs(g2_brp*g1_n-g1_brp*g2_n)>radian_epsilon):
       info_txt += "WARN702: Warning, the positive base diameter ratio is different from N2/N1: g1_brp {:0.3f}  g2_brp {:0.3f}  g1_n {:d}  g2_n {:d}\n".format(g1_brp, g2_brp, g1_n, g2_n)
-    if(abs(g2_brn*g1_n-g2_brn*g2_n)>radian_epsilon):
+    if(abs(g2_brn*g1_n-g1_brn*g2_n)>radian_epsilon):
       info_txt += "WARN703: Warning, the negative base diameter ratio is different from N2/N1: g1_brn {:0.3f}  g2_brn {:0.3f}  g1_n {:d}  g2_n {:d}\n".format(g1_brn, g2_brn, g1_n, g2_n)
   elif((g1_type=='l')or(g2_type=='l')): # e-l or l-e
     if(g1_type=='l'):

@@ -346,7 +346,7 @@ def gear_profile(
     g1_m_set = True
   if(ai_gear_primitive_diameter>0):
     if(g1_m_set):
-      print("ERR115: Error, the gear_module is already set to {:0.2f}!".format(g1_m))
+      print("ERR115: Error, too much constraints! the gear_module is already set to {:0.2f}!".format(g1_m))
       sys.exit(2)
     else:
       if((g1_type=='i')or(g1_type=='e')):
@@ -359,7 +359,7 @@ def gear_profile(
       print("ERR116: Error, set second_gear_tooth_nb to use second_gear_primitive_diameter")
       sys.exit(2)
     elif(g1_m_set):
-      print("ERR117: Error, the gear_module is already set to {:0.2f}!".format(g1_m))
+      print("ERR117: Error, too much constraints! the gear_module is already set to {:0.2f}!".format(g1_m))
       sys.exit(2)
     else:
       if((g2_type=='i')or(g2_type=='e')):
@@ -466,60 +466,145 @@ def gear_profile(
   g2_param['bigger_radius']     = g2_big_r
   g2_param['real_tooth_hight']  = g2_a_delta + g2_d_delta
   ### base radius
-  # positive involute : positive_base_radius
-  g1_brp = g1_small_r
-  g1_brp_set = False
-  if(ai_gear_base_diameter>0):
-    g1_brp = ai_gear_base_diameter
-    g1_brp_set = True
-  if(ai_second_gear_base_diameter>0):
-    if(not g2_exist):
-      print("ERR121: Error, set second_gear_tooth_nb to use second_gear_base_diameter")
-      sys.exit(2)
-    elif(g1_brp_set):
-      print("ERR122: Error, gear_base_diameter is already set to {:0.2f}".format(g1_brp*2))
-      sys.exit(2)
-    else:
-      g1_brp = float(ai_second_gear_base_diameter*g1_n)/g2_n
+  g1_brp = 0
+  g1_brn = 0
+  g1_sp = 0
+  g1_sn = 0
+  if((g1_type=='e')or(g1_type=='i')):
+    # positive involute : positive_base_radius
+    g1_brp = g1_small_r
+    g1_brp_set = False
+    if(ai_gear_base_diameter>0):
+      g1_brp = ai_gear_base_diameter
       g1_brp_set = True
-  if(ai_gear_force_angle>0):
-    if(g1_brp_set):
-      print("ERR123: Error, gear_base_diameter is already set to {:0.2f}".format(g1_brp*2))
-      sys.exit(2)
-    else:
-      g1_brp = g1_pr*math.cos(ai_gear_force_angle)
-      g1_brp_set = True
-  if(g1_brp_set or (g1_type=='i') or (g1_type=='e')):
-    g2_brp = float(g1_brp*g2_n)/g1_n
-  else:
-    g2_brp = g2_small_r
-  # negative involute : negative_base_radius
-  g1_brn = g1_brp
-  g1_brn_set = False
-  if(ai_gear_base_diameter_n>0):
-    g1_brn = ai_gear_base_diameter_n
-    g1_brn_set = True
-  if(ai_second_gear_base_diameter_n>0):
-    if(not g2_exist):
-      print("ERR121: Error, set second_gear_tooth_nb to use second_gear_base_diameter_n")
-      sys.exit(2)
-    elif(g1_brn_set):
-      print("ERR122: Error, gear_base_diameter_n is already set to {:0.2f}".format(g1_brn*2))
-      sys.exit(2)
-    else:
-      g1_brn = float(ai_second_gear_base_diameter_n*g1_n)/g2_n
+    if(ai_second_gear_base_diameter>0):
+      if(not g2_exist):
+        print("ERR121: Error, set second_gear_tooth_nb to use second_gear_base_diameter")
+        sys.exit(2)
+      elif(g2_type=='l'):
+        print("ERR921: Error, the second gear type {:s} is a gearbar".format(g2_type))
+        sys.exit(2)
+      elif(g1_brp_set):
+        print("ERR122: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2))
+        sys.exit(2)
+      else:
+        g1_brp = float(ai_second_gear_base_diameter*g1_n)/g2_n
+        g1_brp_set = True
+    if(ai_gearbar_slope>0):
+      if(not g2_exist):
+        print("ERR811: Error, set second_gear_tooth_nb to use gearbar_slope")
+        sys.exit(2)
+      elif((g2_type=='e')or(g2_type=='i')):
+        print("ERR812: Error, the second gear type {:s} is not a gearbar".format(g2_type))
+        sys.exit(2)
+      elif(g1_brp_set):
+        print("ERR813: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2))
+        sys.exit(2)
+      else:
+        g1_brp = g1_pr*math.cos(ai_gearbar_slope)
+        g1_brp_set = True
+    if(ai_gear_force_angle>0):
+      if(g1_brp_set):
+        print("ERR123: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2))
+        sys.exit(2)
+      else:
+        g1_brp = g1_pr*math.cos(ai_gear_force_angle)
+        g1_brp_set = True
+    # negative involute : negative_base_radius
+    g1_brn = g1_brp
+    g1_brn_set = False
+    if(ai_gear_base_diameter_n>0):
+      g1_brn = ai_gear_base_diameter_n
       g1_brn_set = True
-  if(ai_gear_force_angle_n>0):
-    if(g1_brn_set):
-      print("ERR123: Error, gear_base_diameter is already set to {:0.2f}".format(g1_brn*2))
+    if(ai_second_gear_base_diameter_n>0):
+      if(not g2_exist):
+        print("ERR121: Error, set second_gear_tooth_nb to use second_gear_base_diameter_n")
+        sys.exit(2)
+      elif(g2_type=='l'):
+        print("ERR922: Error, the second gear type {:s} is a gearbar".format(g2_type))
+        sys.exit(2)
+      elif(g1_brn_set):
+        print("ERR122: Error, too much constraints! gear_base_diameter_n is already set to {:0.2f}".format(g1_brn*2))
+        sys.exit(2)
+      else:
+        g1_brn = float(ai_second_gear_base_diameter_n*g1_n)/g2_n
+        g1_brn_set = True
+    if(ai_gearbar_slope_n>0):
+      if(not g2_exist):
+        print("ERR821: Error, set second_gear_tooth_nb to use gearbar_slope_n")
+        sys.exit(2)
+      elif((g2_type=='e')or(g2_type=='i')):
+        print("ERR822: Error, the second gear type {:s} is not a gearbar".format(g2_type))
+        sys.exit(2)
+      elif(g1_brn_set):
+        print("ERR823: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brn*2))
+        sys.exit(2)
+      else:
+        g1_brn = g1_pr*math.cos(ai_gearbar_slope_n)
+        g1_brn_set = True
+    if(ai_gear_force_angle_n>0):
+      if(g1_brn_set):
+        print("ERR123: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brn*2))
+        sys.exit(2)
+      else:
+        g1_brn = g1_pr*math.cos(ai_gear_force_angle_n)
+        g1_brn_set = True
+  elif(g1_type=='l'):
+    g1_sp_set = False
+    if(ai_gearbar_slope>0):
+      g1_sp = ai_gearbar_slope
+      g1_sp_set = True
+    if(ai_gear_force_angle>0):
+      if(not g1_sp_set):
+        g1_sp = ai_gear_force_angle
+        g1_sp_set = True
+    if(ai_second_gear_base_diameter>0):
+      if(not g2_exist):
+        print("ERR521: Error, set second_gear_tooth_nb to use second_gear_base_diameter")
+        sys.exit(2)
+      elif(g1_sp_set):
+        print("ERR523: Error, too much constraints! gearbar_slope_angle is already set to {:0.2f}".format(g1_sp))
+        sys.exit(2)
+      else:
+        g1_sp = math.acos(float(ai_second_gear_base_diameter)/(2*g2_pr))
+        g1_sp_set = True
+    if(not g1_sp_set):
+      print("ERR541: Error, the slope angle of the linear gear 1 is not set!")
       sys.exit(2)
-    else:
-      g1_brn = g1_pr*math.cos(ai_gear_force_angle_n)
-      g1_brn_set = True
-  if(g1_brn_set or (g1_type=='i') or (g1_type=='e')):
-    g2_brn = float(g1_brn*g2_n)/g1_n
-  else:
-    g2_brn = g2_small_r
+    g1_sn = g1_sp
+    g1_sn_set = False
+    if(ai_gearbar_slope_n>0):
+      g1_sn = ai_gearbar_slope_n
+      g1_sn_set = True
+    if(ai_gear_force_angle_n>0):
+      if(not g2_sn_set):
+        g1_sn = ai_gear_force_angle_n
+        g1_sn_set = True
+    if(ai_second_gear_base_diameter_n>0):
+      if(not g2_exist):
+        print("ERR531: Error, set second_gear_tooth_nb to use second_gear_base_diameter_n")
+        sys.exit(2)
+      elif(g1_sn_set):
+        print("ERR532: Error, too much constraints! gearbar_slope_angle_n is already set to {:0.2f}".format(g1_sp))
+        sys.exit(2)
+      else:
+        g1_sn = math.acos(float(ai_second_gear_base_diameter_n)/(2*g2_pr))
+        g1_sn_set = True
+  # now we have: g1_brp, g1_brn, g1_sp, g1_sn
+  g2_brp = 0
+  g2_brn = 0
+  g2_sp = 0
+  g2_sn = 0
+  if((g2_type=='e')or(g2_type=='i')):
+    if((g1_type=='e')or(g1_type=='i')):
+      g2_brp = g1_brp*g2_n/g1_n
+      g2_brn = g1_brn*g2_n/g1_n
+    elif(g1_type=='l'):
+      g2_brp = g2_pr*math.cos(g1_sp)
+      g2_brn = g2_pr*math.cos(g1_sn)
+  elif(g2_type=='l'):
+    g2_sp = math.acos(float(g1_brp)/g1_pr)
+    g2_sn = math.acos(float(g1_brn)/g1_pr)
   # base radius check
   if((g1_type=='e')or(g1_type=='i')):
     if(g1_brp>g1_small_r):
@@ -546,62 +631,11 @@ def gear_profile(
       print("ERR647: Error, g2_brn {:0.2f} is bigger than g2_big_r {:0.2f}".format(g2_brn, g2_big_r))
       sys.exit(2)
   g1_param['positive_base_radius'] = g1_brp
-  g2_param['positive_base_radius'] = g2_brp
   g1_param['negative_base_radius'] = g1_brn
-  g2_param['negative_base_radius'] = g2_brn
-  ## linear gear base_radius = slope angle
-  # g1_sp g1_sn
-  g1_sp = 0
-  g1_sp_set = False
-  g1_sn = 0
-  g1_sn_set = False
-  if(ai_gear_type=='l'):
-    if(ai_gearbar_slope>0):
-      g1_sp = ai_gearbar_slope
-      g1_sp_set = True
-    if(ai_gear_force_angle>0):
-      if(not g1_sp_set):
-        g1_sp = ai_gear_force_angle
-        g1_sp_set = True
-    if(not g1_sp_set):
-      print("ERR541: Error, the slope angle of the linear gear 1 is not set!")
-      sys.exit(2)
-    g1_sn = g1_sp
-    g1_sn_set = False
-    if(ai_gearbar_slope_n>0):
-      g1_sn = ai_gearbar_slope_n
-      g1_sn_set = True
-    if(ai_gear_force_angle_n>0):
-      if(not g2_sn_set):
-        g1_sn = ai_gear_force_angle_n
-        g1_sn_set = True
   g1_param['positive_slope_angle'] = g1_sp
   g1_param['negative_slope_angle'] = g1_sn
-  # g2_sp g2_sn
-  g2_sp = 0
-  g2_sp_set = False
-  g2_sn = 0
-  g2_sn_set = False
-  if(ai_second_gear_type=='l'):
-    if(ai_gearbar_slope>0):
-      g2_sp = ai_gearbar_slope
-      g2_sp_set = True
-    if(ai_gear_force_angle>0):
-      if(not g2_sp_set):
-        g2_sp = ai_gear_force_angle
-        g2_sp_set = True
-    if(not g2_sp_set):
-      print("ERR542: Error, the slope angle of the linear gear 2 is not set!")
-      sys.exit(2)
-    g2_sn = g2_sp
-    g2_sn_set = False
-    if(ai_gearbar_slope_n>0):
-      g2_sn = ai_gearbar_slope_n
-      g2_sn_set = True
-    if(ai_gear_force_angle_n>0):
-      if(not g2_sn_set):
-        g2_sn = ai_gear_force_angle_n
-        g2_sn_set = True
+  g2_param['positive_base_radius'] = g2_brp
+  g2_param['negative_base_radius'] = g2_brn
   g2_param['positive_slope_angle'] = g2_sp
   g2_param['negative_slope_angle'] = g2_sn
   # initial position
