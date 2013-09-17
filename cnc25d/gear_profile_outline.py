@@ -270,12 +270,12 @@ def calc_low_level_gear_parameters(ai_param):
       (inau, inaa, inax, inay, inati) = search_point_of_involute_to_circle((g_ox, g_oy), g_brn, 0, -1, g_ar, initial_step, radian_epsilon_2)
     ai_param['low_negative_addendum_angle'] = inaa
     # intersection of positive involute and the dedendum circle
-    ipdu=0; ipda=0;
+    ipdu=0; ipda=0; ipdti=0;
     if(g_brp<g_dr): # check for external gear
       (ipdu, ipda, ipdx, ipdy, ipdti) = search_point_of_involute_to_circle((g_ox, g_oy), g_brp, 0, 1, g_dr, initial_step, radian_epsilon_2)
     #ai_param['low_positive_dedendum_angle'] = ipda
     # intersection of negative involute and the dedendum circle
-    indu=0; inda=0;
+    indu=0; inda=0; indti=0;
     if(g_brn<g_dr): # check for external gear
       (indu, inda, indx, indy, indti) = search_point_of_involute_to_circle((g_ox, g_oy), g_brn, 0, -1, g_dr, initial_step, radian_epsilon_2)
     #ai_param['low_negative_dedendum_angle'] = inda
@@ -316,6 +316,9 @@ def calc_low_level_gear_parameters(ai_param):
       i1u_nb = g_irn
       i1u_ini = inau
       i1u_inc = (indu-inau)/i1u_nb # <0
+      i1_dtri = math.fmod(indti-inda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
+      i1_dbl = max(0, g_brn-g_dr) # dedendum_base_length
+      i1_hsl = float(g_hh+i1_dbl)/math.cos(i1_dtri) + g_stn*math.tan(i1_dtri) # hollow slope length
       i1_thickness = g_stn
       i2_base = g_brp
       i2_offset = pi_module_angle-top_land/2-ipaa
@@ -323,6 +326,9 @@ def calc_low_level_gear_parameters(ai_param):
       i2u_nb = g_irp
       i2u_ini = ipdu
       i2u_inc = (ipau-ipdu)/i2u_nb # >0
+      i2_dtri = math.fmod(ipdti-ipda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
+      i2_dbl = max(0, g_brp-g_dr) # dedendum_base_length
+      i2_hsl = float(g_hh+i2_dbl)/math.cos(i2_dtri) +  g_stp*math.tan(i2_dtri) # hollow slope length
       i2_thickness = g_stp
       ha1 = top_land/2 + full_negative_involute
     elif(g_type=='i'): # positive > hollow > negative
@@ -333,6 +339,8 @@ def calc_low_level_gear_parameters(ai_param):
       i1u_nb = g_irp
       i1u_ini = ipau
       i1u_inc = (ipdu-ipau)/i1u_nb # >0
+      i1_dtri = math.fmod(ipdti-ipda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
+      i1_hsl = float(g_hh)/math.cos(i1_dtri) + g_stp*math.tan(i1_dtri) # hollow slope length
       i1_thickness = g_stp
       i2_base = g_brn
       i2_offset = pi_module_angle-top_land/2-inaa
@@ -340,9 +348,12 @@ def calc_low_level_gear_parameters(ai_param):
       i2u_nb = g_irn
       i2u_ini = indu
       i2u_inc = (inau-indu)/i2u_nb # >0
+      i2_dtri = math.fmod(indti-inda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
+      i2_hsl = float(g_hh)/math.cos(i2_dtri) + g_stn*math.tan(i2_dtri) # hollow slope length
       i2_thickness = g_stn
       ha1 = top_land/2 + full_positive_involute
       #print("dbg663: ipaa {:0.3f}".format(ipaa))
+    #print("dbg553: i1_hsl {:0.3f}  i2_hsl {:0.3f}  g_rbr {:0.3f} g_hh  {:0.3f}".format(i1_hsl, i2_hsl, g_rbr, g_hh))
     #
     #pi_module_angle = 2*math.pi/g_n
     hl1 = g_dr
@@ -360,8 +371,8 @@ def calc_low_level_gear_parameters(ai_param):
       closed = False
     # return
     make_low_parameters = (g_type, pi_module_angle,
-      i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness,
-      i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
+      i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_hsl, i1_thickness,
+      i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_hsl, i2_thickness,
       hl1, hl2, ha1, ha2, g_rbr, hlm, ham, tlm,
       g_ox, g_oy, portion_tooth_nb, g_pfe, g_ple, closed)
     # info
@@ -430,7 +441,7 @@ def calc_low_level_gear_parameters(ai_param):
   r_cllgp = (make_low_parameters, info_txt)
   return(r_cllgp)
 
-def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, ai_u_ini, ai_u_inc, ai_thickness, ai_tooth_angle):
+def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, ai_u_ini, ai_u_inc, ai_thickness, ai_hi, ai_hsl, ai_rbr, ai_tooth_angle):
   """ from subset of low-level parameter, generates an involute_to_circle format B outline
   """
   # precision
@@ -448,7 +459,28 @@ def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, 
     u += ai_u_inc
   #print("dbg444: involute_C:", involute_C)
   r_involute_B = cnc25d_api.smooth_outline_c_curve(involute_C, radian_epsilon, 0, "involute_outline")
-  return(r_involute_B)
+  # hollow slope
+  r_hollow_slope_A = ()
+  inv_tangent = (1 + math.copysign(1, ai_u_inc) * ai_hi)/2
+  inv_tangent = (1 + math.copysign(1, ai_u_inc))/2
+  if(ai_hi==1):
+    p2x = involute_C[0][0]
+    p2y = involute_C[0][1]
+    p2t = involute_C[0][2] + inv_tangent * math.pi
+    p1x = p2x + ai_hsl * math.cos(p2t)
+    p1y = p2y + ai_hsl * math.sin(p2t)
+    r_hollow_slope_A = ((p1x, p1y, ai_rbr), (p2x, p2y, 0))
+  elif(ai_hi==-1):
+    p1x = involute_C[-1][0]
+    p1y = involute_C[-1][1]
+    p1t = involute_C[-1][2] + inv_tangent * math.pi
+    p2x = p1x + ai_hsl * math.cos(p1t)
+    p2y = p1y + ai_hsl * math.sin(p1t)
+    r_hollow_slope_A = ((p1x, p1y, 0), (p2x, p2y, ai_rbr))
+  else:
+    print("ERR563: Error, the hollow index {:d} can only be 1 or -1".format(ai_hi))
+    sys.exit(2)
+  return(r_involute_B, r_hollow_slope_A)
 
 def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
   """ create the outline of a gear definied by ai_low_parameters
@@ -457,8 +489,8 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
   """
   # get ai_low_parameters
   (gear_type, pi_module_angle,
-    i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness,
-    i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
+    i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_hsl, i1_thickness,
+    i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_hsl, i2_thickness,
     hl1, hl2, ha1, ha2, hrbr, hlm, ham, tlm,
     ox, oy, portion_tooth_nb, first_end, last_end, closed) = ai_low_parameters
   # precision
@@ -474,7 +506,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     if(first_end==1):
       start_of_profile_B = [(ox+tlm*math.cos(tooth_angle), oy+tlm*math.sin(tooth_angle))]
     else:
-      start_of_profile_B = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, tooth_angle-pi_module_angle)
+      (start_of_profile_B, start_of_hollow_slope_A) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, 1, i2_hsl, hrbr, tooth_angle-pi_module_angle)
       # gearwheel hollow
       if(first_end==3):
         hollow_A = []
@@ -489,16 +521,18 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
   ### bulk of the gearwheel_portion
   for tooth in range(portion_tooth_nb):
     # first involute
-    first_involute_B = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, tooth_angle)
+    (first_involute_B, first_hollow_slope_A) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, -1, i1_hsl, hrbr, tooth_angle)
+    # second involute
+    (second_involute_B, second_hollow_slope_A) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, 1, i2_hsl, hrbr, tooth_angle)
     # gearwheel hollow
     hollow_A = []
-    hollow_A.append((ox+hl1*math.cos(tooth_angle+ha1), oy+hl1*math.sin(tooth_angle+ha1), 0))
-    hollow_A.append((ox+hl2*math.cos(tooth_angle+ha1), oy+hl2*math.sin(tooth_angle+ha1), hrbr))
-    hollow_A.append((ox+hl2*math.cos(tooth_angle+ha2), oy+hl2*math.sin(tooth_angle+ha2), hrbr))
-    hollow_A.append((ox+hl1*math.cos(tooth_angle+ha2), oy+hl1*math.sin(tooth_angle+ha2), 0))
+    #hollow_A.append((ox+hl1*math.cos(tooth_angle+ha1), oy+hl1*math.sin(tooth_angle+ha1), 0))
+    #hollow_A.append((ox+hl2*math.cos(tooth_angle+ha1), oy+hl2*math.sin(tooth_angle+ha1), hrbr))
+    #hollow_A.append((ox+hl2*math.cos(tooth_angle+ha2), oy+hl2*math.sin(tooth_angle+ha2), hrbr))
+    #hollow_A.append((ox+hl1*math.cos(tooth_angle+ha2), oy+hl1*math.sin(tooth_angle+ha2), 0))
+    hollow_A.extend(first_hollow_slope_A)
+    hollow_A.extend(second_hollow_slope_A)
     hollow_B = cnc25d_api.cnc_cut_outline(hollow_A, "hollow")
-    # second involute
-    second_involute_B = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, tooth_angle)
     # assembly
     r_final_outline.extend(first_involute_B)
     r_final_outline.extend(hollow_B[1:-1])
@@ -512,7 +546,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     if(first_end==1):
       end_of_profile_B = [(ox+tlm*math.cos(tooth_angle), oy+tlm*math.sin(tooth_angle))]
     else:
-      end_of_profile_B = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, tooth_angle)
+      (end_of_profile_B, end_of_hollow_slope_A) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, -1, i1_hsl, hrbr, tooth_angle)
       # gearwheel hollow
       if(first_end==3):
         hollow_A = []
@@ -537,8 +571,8 @@ def ideal_involute_tooth_outline(ai_low_parameters, ai_angle_position, ai_thickn
   radian_epsilon = gpo_radian_epsilon
   # get ai_low_parameters
   (gear_type, pi_module_angle,
-    i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness,
-    i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness,
+    i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_hsl, i1_thickness,
+    i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_hsl, i2_thickness,
     hl1, hl2, ha1, ha2, hrbr, hlm, ham, tlm,
     ox, oy, portion_tooth_nb, first_end, last_end, closed) = ai_low_parameters
   # precision
