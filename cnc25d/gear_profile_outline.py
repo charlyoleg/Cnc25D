@@ -912,12 +912,14 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   # precision
   #radian_epsilon = math.pi/1000
   radian_epsilon = gpo_radian_epsilon
+  # rotation_direction alias
+  rd = ai_rotation_direction
   # unpack place_low_param
   #(place_low_param, tmp_info) = pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
   (place_low_param_common, place_low_param_positive2, place_low_param_negative2) = ai_place_low_param
-  if(ai_rotation_direction==1):
+  if(rd==1):
     place_low_param_oriented = place_low_param_positive2
-  elif(ai_rotation_direction==-1):
+  elif(rd==-1):
     place_low_param_oriented = place_low_param_negative2
   #() = place_low_param_common
   (g1_type, g1_pr, g1_ox, g1_oy, g1_bi, g1_ks, g1_pc,
@@ -927,16 +929,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   #() = place_low_param_oriented
   (g1_br, g1_sa, g1_po, g1_lo, g2_br, g2_sa, g2_po, g2_lo, rfa, KL, KE1, BE1, KE2, BE2) = place_low_param_oriented
   ## gear system related
-  # real_force_angle
-  real_force_angle = calc_real_force_angle(g1_type, g1_pr, g1_br, g2_type, g2_pr, g2_br, aal, g1_sa, g2_sa)
-  #print("dbg743: real_force_angle:", real_force_angle)
-  #AB = g1_pr+g2_pr+aal
-  AB = abs(g1_ks*g1_pc*g1_pr+g2_ks*g2_pc*g2_pr+aal)
-  # alternative for AB
-  AB2 = math.sqrt((g2_ox-g1_ox)**2+(g2_oy-g1_oy)**2)
-  if(abs(AB2-AB)>radian_epsilon):
-    print("ERR314: Error with the calculation of AB {:0.3f} or {:0.3f}".format(AB, AB2))
-    sys.exit(2)
+  ## real_force_angle
+  #rfa = calc_real_force_angle(g1_type, g1_pr, g1_br, g2_type, g2_pr, g2_br, aal, g1_sa, g2_sa)
+  ## AB = g1_pr+g2_pr+aal
+  #AB = abs(g1_ks*g1_pc*g1_pr+g2_ks*g2_pc*g2_pr+aal)
   ## g1 related
   if((g1_type=='e')or(g1_type=='i')):
     # get the angle of the closest middle of addendum to the contact point
@@ -948,26 +944,15 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
         aa = aa + g1_tl
     contact_g1_tooth_angle = aa - g1_po + g1g2_a
     contact_g1_tooth_relative_angle = aa - g1_po # relative to the inter-axis
-    # g1_involute_offset_angle (see the documentation for the exact definition)
-    #g1_involute_offset_angle = contact_g1_tooth_relative_angle + g1_lo
     # g1_contact_u : involute parameter for g1 of the contact point
-    #g1_contact_u = real_force_angle + ai_rotation_direction*g1_involute_offset_angle
-    g1_contact_u = real_force_angle + ai_rotation_direction * g1_ks * (contact_g1_tooth_relative_angle + g1_lo)
-    #print("dbg558: g1_lo {:0.3f}  contact_g1_tooth_relative_angle {:0.3f}  real_force_angle {:0.3f}".format(g1_lo, contact_g1_tooth_relative_angle, real_force_angle))
+    g1_contact_u = rfa + rd * g1_ks * (contact_g1_tooth_relative_angle + g1_lo)
+    #print("dbg558: g1_lo {:0.3f}  contact_g1_tooth_relative_angle {:0.3f}  rfa {:0.3f}".format(g1_lo, contact_g1_tooth_relative_angle, rfa))
     # contact point coordinates (method 1)
-    (cx, cy, ti) = sample_of_gear_tooth_profile((g1_ox, g1_oy), g1_br, contact_g1_tooth_angle+g1_lo, -1*g1_ks*ai_rotation_direction, 0, g1_contact_u)
+    (cx, cy, ti) = sample_of_gear_tooth_profile((g1_ox, g1_oy), g1_br, contact_g1_tooth_angle+g1_lo, -1*g1_ks*rd, 0, g1_contact_u)
     #print("dbg858: contact point (method1): cx: {:0.2f}  cy: {:0.2f}  ti: {:0.2f}".format(cx, cy, ti))
   elif(g1_type=='l'): # linear-gear (aka gearbar)
     # some geometry
-    KD = g2_br*math.tan(g1_sa)
-    AD = g2_br/math.cos(g1_sa)
-    BD = AB-AD
-    DE = BD/math.sin(g1_sa)
-    KE = KD+DE
-    BE = BD/math.tan(g1_sa)
-    if(BD<0):
-      print("ERR853: Error, BD {:0.3f} is negative".format(BD))
-      sys.exit(2)
+    #(KE1, BE1, BD1) = linear_gear_geometry(g1_sa, g2_br, AB)
     # contact_g1_tooth_position
     aa = ai_g1_position + g1_po
     while(abs(aa)>g1_tl/2+radian_epsilon):
@@ -976,11 +961,11 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
       else:
         aa = aa + g1_tl
     contact_g1_tooth_position = aa - g1_po
-    g1_contact_u = (contact_g1_tooth_position-ai_rotation_direction*BE)*math.cos(g1_sa)
-    g1_position2 = ai_rotation_direction*BE + g1_contact_u/math.cos(g2_sa) - g1_lo
-    dc = (g1_position2+g1_lo-ai_rotation_direction*BE)*math.cos(g1_sa)
-    cx = g1_ox + ai_rotation_direction*BE*math.cos(g1_bi-math.pi/2) + dc*math.cos(g1_bi-math.pi/2-ai_rotation_direction*g1_sa)
-    cy = g1_oy + ai_rotation_direction*BE*math.sin(g1_bi-math.pi/2) + dc*math.sin(g1_bi-math.pi/2-ai_rotation_direction*g1_sa)
+    g1_contact_u = (contact_g1_tooth_position-rd*BE1)*math.cos(g1_sa)
+    g1_position2 = rd*BE1 + g1_contact_u/math.cos(g2_sa) - g1_lo
+    dc = (g1_position2+g1_lo-rd*BE1)*math.cos(g1_sa)
+    cx = g1_ox + rd*BE1*math.cos(g1_bi-math.pi/2) + dc*math.cos(g1_bi-math.pi/2-rd*g1_sa)
+    cy = g1_oy + rd*BE1*math.sin(g1_bi-math.pi/2) + dc*math.sin(g1_bi-math.pi/2-rd*g1_sa)
     #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
     # ti
     ti = g1_sa
@@ -1008,17 +993,14 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     # alternative
     xAB = math.atan2(g2_oy-g1_oy, g2_ox-g1_ox)
     xAC = math.atan2(cy-g1_oy, cx-g1_ox)
-    #BAC2 = math.fmod(xAC-xAB+5*math.pi, 2*math.pi)-math.pi
     BAC2 = math.fmod(xAC-xAB+9*math.pi/2, math.pi)-math.pi/2
     xBA = math.atan2(g1_oy-g2_oy, g1_ox-g2_ox)
     xBC = math.atan2(cy-g2_oy, cx-g2_ox)
-    #ABC2 = math.fmod(xBC-xBA+5*math.pi, 2*math.pi)-math.pi
     ABC2 = math.fmod(xBC-xBA+9*math.pi/2, math.pi)-math.pi/2
     #print("dbg557: xBA {:0.3f}  xBC {:0.3f}".format(xBA, xBC))
     # sign BAC, ABC
     BAC = math.copysign(BAC, BAC2)
-#    ABC = -1*g1_ks*g2_ks* math.copysign(ABC, BAC2)
-    ABC = ABC2
+    ABC = math.copysign(ABC, ABC2)
     # check BAC and BAC2
     if(abs(BAC2-BAC)>radian_epsilon):
       print("ERR689: Error in the calculation of BAC {:0.3f} or BAC2 {:0.3f} !".format(BAC, BAC2))
@@ -1030,10 +1012,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   #print("dbg334: BAC: {:0.3f}".format(BAC))
   #print("dbg335: ABC: {:0.3f}".format(ABC))
   ## speed / radial angle
-  g1_sra = ai_rotation_direction*g1_ks*real_force_angle+BAC
+  g1_sra = rd*g1_ks*rfa+BAC
   # alternative
   if((g1_type=='e')or(g1_type=='i')):
-    g1_sra2 = ai_rotation_direction*g1_ks*math.atan(g1_contact_u)
+    g1_sra2 = rd*g1_ks*math.atan(g1_contact_u)
     if(abs(g1_sra2-g1_sra)>radian_epsilon):
       print("ERR414: Error in calculation of g1_sra {:0.3f} or g1_sra2 {:0.3f}".format(g1_sra, g1_sra2))
       sys.exit(2)
@@ -1051,13 +1033,9 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   if((g2_type=='e')or(g2_type=='i')):
     ## g2_contact_u : involute parameter for g2 of the contact point
     # several mathods:
-    g2_sra = ai_rotation_direction*g1_ks*real_force_angle+ABC
+    g2_sra = rd*g1_ks*rfa+ABC
     # length KL (see documentation  graphic gear_position.svg)
-    #KL = math.sqrt(AB**2 - (g1_br*(1+float(g2_n)/g1_n))**2) # kind of pythagor
-    #KL = math.sqrt(AB**2 - (g1_br+g2_br)**2) # kind of pythagor
-    KL = math.sin(real_force_angle)*AB
-    #print("dbg631: KL {:0.5f}".format(KL))
-    #g2_contact_u1 = float(KL - g1_contact_u*g1_br)/g2_br
+    #KL = math.sin(rfa)*AB
     g2_contact_u1 = g1_ks*float(KL - g2_ks*g1_contact_u*g1_br)/g2_br
     if((g1_type=='e')or(g1_type=='i')):
       g2_contact_u2 = math.tan(abs(g2_sra))
@@ -1070,10 +1048,9 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
         sys.exit(2)
     g2_contact_u = g2_contact_u1 # select the method for g2_contact_u
     ## c2_position
-    #g2_position = g1g2_a + math.pi - ai_rotation_direction*(real_force_angle - g2_contact_u) - g2_lo
-    g2_position = g1g2_a + (1+g1_ks*g2_ks)/2*math.pi - ai_rotation_direction*g1_ks*(real_force_angle - g2_contact_u) - g2_lo
+    g2_position = g1g2_a + (1+g1_ks*g2_ks)/2*math.pi - rd*g1_ks*(rfa - g2_contact_u) - g2_lo
     # c2 coordinates
-    (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_lo, -1*ai_rotation_direction*g1_ks, 0, g2_contact_u)
+    (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_lo, -1*rd*g1_ks, 0, g2_contact_u)
     if(abs(math.fmod(ti-t2i, math.pi/2))>radian_epsilon):
       print("ERR874: Error, the tangents ti {:0.3f} and ti2 {:0.3f} are not equal (modulo pi)".format(ti, t2i))
       #sys.exit(2)
@@ -1083,33 +1060,25 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     c2_speed = float(c2_speed_radial)/math.cos(g2_sra)
     c2_speed_tangential = c2_speed*math.sin(g2_sra)
     # alternative
-    c2_speed_tangential2 = ai_rotation_direction*g1_ks*c2_speed_radial*g2_contact_u
+    c2_speed_tangential2 = rd*g1_ks*c2_speed_radial*g2_contact_u
     if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon):
       print("ERR336: Error in the calculation of c2_speed_tangential {:0.3f} or c2_speed_tangential2 {:0.3f}".format(c2_speed_tangential, c2_speed_tangential2))
       #sys.exit(2)
     g2_rotation_speed = float(c2_speed)/BC
   elif(g2_type=='l'): # linear-gear (aka gearbar)
-    KD = g1_br*math.tan(g2_sa)
-    AD = g1_br/math.cos(g2_sa)
-    BD = AB-AD
-    DE = BD/math.sin(g2_sa)
-    KE = KD+DE
-    BE = BD/math.tan(g2_sa)
-    #if(BD<0):
-    #  print("ERR852: Error, BD {:0.3f} is negative".format(BD))
-    #  sys.exit(2)
-    g2_contact_u = ai_rotation_direction*(g1_contact_u*g1_br-KE)
-    g2_position = ai_rotation_direction*BE + g2_contact_u/math.cos(g2_sa) - g2_lo
-    dc = (g2_position+g2_lo-ai_rotation_direction*BE)*math.cos(g2_sa)
-    c2x = g2_ox + ai_rotation_direction*BE*math.cos(g2_bi-math.pi/2) + dc*math.cos(g2_bi-math.pi/2-ai_rotation_direction*g2_sa)
-    c2y = g2_oy + ai_rotation_direction*BE*math.sin(g2_bi-math.pi/2) + dc*math.sin(g2_bi-math.pi/2-ai_rotation_direction*g2_sa)
+    #(KE2, BE2, BD2) = linear_gear_geometry(g2_sa, g1_br, AB)
+    g2_contact_u = rd*(g1_contact_u*g1_br-KE2)
+    g2_position = rd*BE2 + g2_contact_u/math.cos(g2_sa) - g2_lo
+    dc = (g2_position+g2_lo-rd*BE2)*math.cos(g2_sa)
+    c2x = g2_ox + rd*BE2*math.cos(g2_bi-math.pi/2) + dc*math.cos(g2_bi-math.pi/2-rd*g2_sa)
+    c2y = g2_oy + rd*BE2*math.sin(g2_bi-math.pi/2) + dc*math.sin(g2_bi-math.pi/2-rd*g2_sa)
     #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
-    if(abs(math.fmod(ti - (-1*ai_rotation_direction*g2_sa), math.pi/2))>radian_epsilon):
+    if(abs(math.fmod(ti - (-1*rd*g2_sa), math.pi/2))>radian_epsilon):
       print("ERR875: Error, the tangents ti {:0.3f} and slope g2_sa {:0.3f} are not equal (modulo pi)".format(ti, g2_sa))
       sys.exit(2)
     c2_speed_radial = c1_speed_radial
     c2_speed = float(c2_speed_radial)/math.cos(g2_sa)
-    c2_speed_tangential = ai_rotation_direction*c2_speed*math.sin(g2_sa)
+    c2_speed_tangential = rd*c2_speed*math.sin(g2_sa)
     g2_rotation_speed = c2_speed
   # friction between g1 and g2
   tangential_friction = c2_speed_tangential - c1_speed_tangential
@@ -1120,7 +1089,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   scaled_c2_speed_radial = c2_speed_radial*speed_scale # *g2_module *g2_pr ???
   scaled_c2_speed_tangential = c2_speed_tangential*speed_scale
   # normal-tangential reference frame
-  nxa = ti+ai_rotation_direction*math.pi/2
+  nxa = ti+rd*math.pi/2
   txa = nxa+math.pi/2
   #
   c1rx = cx+scaled_c1_speed_radial*math.cos(nxa)
