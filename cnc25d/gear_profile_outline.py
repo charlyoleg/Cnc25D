@@ -731,115 +731,6 @@ def calc_real_force_angle(ai_g1_type, ai_g1_pr, ai_g1_br, ai_g2_type, ai_g2_pr, 
 # positioning
 #############################################################################
 
-def tmp_f(ai_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale):
-  # get the hight level parameters
-  g_type  = ai_param['gear_type']
-  g_n     = ai_param['full_tooth_nb']
-  g_m     = ai_param['module']
-  g_pr    = ai_param['primitive_radius']
-  g_adp   = ai_param['addendum_dedendum_parity']
-  g_thh   = ai_param['tooth_half_height']
-  g_ar    = ai_param['addendum_radius']
-  g_dr    = ai_param['dedendum_radius']
-  g_brp   = ai_param['positive_base_radius']
-  g_brn   = ai_param['negative_base_radius']
-  g_ox    = ai_param['center_ox']
-  g_oy    = ai_param['center_oy']
-  g_rbr   = ai_param['gear_router_bit_radius']
-  g_hr    = ai_param['hollow_radius']
-  g_irp   = ai_param['positive_involute_resolution']
-  g_irn   = ai_param['negative_involute_resolution']
-  g_stp   = ai_param['positive_skin_thickness']
-  g_stn   = ai_param['negative_skin_thickness']
-  g_ptn   = ai_param['portion_tooth_nb']
-  g_pfe   = ai_param['portion_first_end']
-  g_ple   = ai_param['portion_last_end']
-  g_bi    = ai_param['gearbar_inclination']
-  g_sp    = ai_param['positive_slope_angle']
-  g_sn    = ai_param['negative_slope_angle']
-  g_ah    = ai_param['addendum_height']
-  g_dh    = ai_param['dedendum_height']
-  g_hh    = ai_param['hollow_height']
-  g_ks    = ai_param['gear_sign']
-  g_pc    = ai_param['position_coefficient']
-  # precision
-  #radian_epsilon = math.pi/1000
-  r_low_parameters = ()
-  if((g_type=='e')or(g_type=='i')):
-    pi_module_angle             = ai_param['pi_module_angle']
-    top_land                    = ai_param['top_land']
-    bottom_land                 = ai_param['bottom_land']
-    addendum_positive_involute  = ai_param['addendum_positive_involute']
-    addendum_negative_involute  = ai_param['addendum_negative_involute']
-    dedendum_positive_involute  = ai_param['dedendum_positive_involute']
-    dedendum_negative_involute  = ai_param['dedendum_negative_involute']
-    ipaa                        = ai_param['low_positive_addendum_angle']
-    inaa                        = ai_param['low_negative_addendum_angle']
-    if(g_type=='e'): # negative > hollow > positive
-      # low1: to create the gear-profile outline
-      i1_base = g_brn
-      i2_base = g_brp
-      # low2: to calculate g2_position
-      #i1_primitive_offset = top_land/2-inpa #>0
-      #i2_primitive_offset = -1*(top_land/2+ippa) #<0
-      i1_primitive_offset = float(top_land)/2+addendum_negative_involute #>0
-      i2_primitive_offset = -1*(float(top_land)/2+addendum_positive_involute) #<0
-      i1_offset2 = top_land/2-inaa # >0
-      i2_offset2 = -1*(top_land/2+ipaa) # <0
-      driven_ip_base = g_brp
-      driven_ip_offset = i2_offset2
-      driven_in_base = g_brn
-      driven_in_offset = i1_offset2
-    elif(g_type=='i'): # positive > hollow > negative
-      # low1
-      i1_base = g_brp
-      i2_base = g_brn
-      # low2
-      # gearring with positive rotation, push with positive involute
-      i1_primitive_offset = float(top_land)/2+addendum_positive_involute #>0
-      i2_primitive_offset = -1*(float(top_land)/2+addendum_negative_involute) #<0
-      i1_offset2 = top_land/2-ipaa
-      i2_offset2 = -1*top_land/2-inaa
-      driven_ip_base = g_brp
-      driven_ip_offset = i1_offset2
-      driven_in_base = g_brn
-      driven_in_offset = i2_offset2
-      #print("dbg663: ipaa {:0.3f}".format(ipaa))
-    #
-    # return
-    place_low_parameters = (g_type, pi_module_angle, g_n, g_pr, g_ox, g_oy, g_ks, g_pc, g_bi,
-      i1_base, i1_primitive_offset, i1_offset2,
-      i2_base, i2_primitive_offset, i2_offset2,
-      driven_ip_base, driven_ip_offset, driven_in_base, driven_in_offset)
-  elif(g_type=='l'):
-    # linear gear make low parameters
-    pi_module         = ai_param['pi_module']
-    top_land          = ai_param['top_land']
-    bottom_land       = ai_param['bottom_land']
-    positive_addendum = ai_param['addendum_positive_slope']
-    negative_addendum = ai_param['addendum_negative_slope']
-    positive_dedendum = ai_param['dedendum_positive_slope']
-    negative_dedendum = ai_param['dedendum_negative_slope']
-    # linear gear place low parameters
-    i1_base = g_sn
-    i1_primitive_offset = -1*(top_land/2+negative_addendum)
-    i1_offset2 = -1*(top_land/2+negative_addendum+negative_dedendum)
-    i2_base = g_sp
-    i2_primitive_offset = top_land/2+positive_addendum
-    i2_offset2 = top_land/2+positive_addendum+positive_dedendum
-    driven_ip_base = g_sp
-    driven_ip_offset = i2_primitive_offset
-    driven_in_base = g_sn
-    driven_in_offset = i1_primitive_offset
-    # return
-    place_low_parameters = (g_type, pi_module, g_n, g_pr, g_ox, g_oy, g_ks, g_pc, g_bi,
-      i1_base, i1_primitive_offset, i1_offset2,
-      i2_base, i2_primitive_offset, i2_offset2,
-      driven_ip_base, driven_ip_offset, driven_in_base, driven_in_offset)
-  #return
-  r_low_parameters = place_low_parameters
-  return(r_low_parameters)
-
 def linear_gear_geometry(ai_g_sa, ai_br, ai_AB):
   """ calculation of the geometry relative to a e-l or l-e gear
   """
@@ -862,10 +753,6 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
   # precision
   radian_epsilon = math.pi/1000
   ### place_low_parameters
-  # old way
-  g1_place_low_parameters = tmp_f(ai_g1_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
-  g2_place_low_parameters = tmp_f(ai_g2_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
-  # new way
   # get g1 high-level parameters
   g1_type  = ai_g1_param['gear_type']
   if((g1_type=='e')or(g1_type=='i')): # g1_tl and g1_gc are used to find out the current tooth involved
@@ -1015,51 +902,19 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
     info_txt += "WARN05: Warning, the addendum_dedendum_parity are not complementary. g1_adp {:0.3f}  g2_adp {:0.3f}\n".format(g1_adp, g2_adp)
   #print("{:s}".format(info_txt))
   # return
-  place_low_parameters = (g1_place_low_parameters, g2_place_low_parameters, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale, place_low_param)
-  r_ppc = (place_low_parameters, info_txt)
+  r_ppc = (place_low_param, info_txt)
   return(r_ppc)
 
 #def g2_position_calculation(ai_g1_param, ai_g2_param, ai_rotation_direction, ai_g1_position, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale):
 def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_position):
   """ calculation of the angle position of the second gear and other related parameters (speed, friction)
   """
-  #((g1_place_low_parameters, g2_place_low_parameters), tmp_info) = pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
-  (g1_place_low_parameters, g2_place_low_parameters, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale, place_low_param) = ai_place_low_param
-  # get ai_g1_low_parameters
-  (g1_gear_type, g1_pi_module_angle, g1_n, g1_pr, g1_ox, g1_oy, g1_ks, g1_pc, g1_bi,
-    g1_i1_base, g1_i1_primitive_offset, g1_i1_offset2,
-    g1_i2_base, g1_i2_primitive_offset, g1_i2_offset2,
-    g1_driven_ip_base, g1_driven_ip_offset, g1_driven_in_base, g1_driven_in_offset) = g1_place_low_parameters
-  # get ai_g2_low_parameters
-  (g2_gear_type, g2_pi_module_angle, g2_n, g2_pr, g2_ox, g2_oy, g2_ks, g2_pc, g2_bi,
-    g2_i1_base, g2_i1_primitive_offset, g2_i1_offset2,
-    g2_i2_base, g2_i2_primitive_offset, g2_i2_offset2,
-    g2_driven_ip_base, g2_driven_ip_offset, g2_driven_in_base, g2_driven_in_offset) = g2_place_low_parameters
   # precision
   #radian_epsilon = math.pi/1000
   radian_epsilon = gpo_radian_epsilon
-  # select parameter depending on ai_rotation_direction
-  if(ai_rotation_direction==1): # rotation_direction positive (g1 driving, g2 driven) : g1_negative_involute with g2_negative_involute
-    g1_primitive_offset = g1_i1_primitive_offset
-    g1_br = g1_i1_base
-    g1_involute_offset = g1_i1_offset2
-    g1_sa = g1_i1_base
-  else:
-    g1_primitive_offset = g1_i2_primitive_offset
-    g1_br = g1_i2_base
-    g1_involute_offset = g1_i2_offset2
-    g1_sa = g1_i2_base
-  # g2 parameter depend on g1_ks and rotation_direction
-  if(ai_rotation_direction*g1_ks==1):
-    g2_br = g2_driven_in_base
-    g2_involute_offset = g2_driven_in_offset
-    g2_sa = g2_driven_in_base
-  else:
-    g2_br = g2_driven_ip_base
-    g2_involute_offset = g2_driven_ip_offset
-    g2_sa = g2_driven_ip_base
   # unpack place_low_param
-  (place_low_param_common, place_low_param_positive2, place_low_param_negative2) = place_low_param
+  #(place_low_param, tmp_info) = pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_g1_rotation_speed, ai_speed_scale)
+  (place_low_param_common, place_low_param_positive2, place_low_param_negative2) = ai_place_low_param
   if(ai_rotation_direction==1):
     place_low_param_oriented = place_low_param_positive2
   elif(ai_rotation_direction==-1):
@@ -1071,14 +926,6 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     g1_tl, g1_gc, AB) = place_low_param_common
   #() = place_low_param_oriented
   (g1_br, g1_sa, g1_po, g1_lo, g2_br, g2_sa, g2_po, g2_lo, rfa, KL, KE1, BE1, KE2, BE2) = place_low_param_oriented
-  ###### tmp check
-  if(g1_po!=g1_primitive_offset):
-    print("ERR001: g1_po {:0.3f}  g1_primitive_offset {:0.3f}".format(g1_po, g1_primitive_offset))
-  if(g1_lo!=g1_involute_offset):
-    print("ERR002: g1_lo {:0.3f}  g1_involute_offset {:0.3f}".format(g1_lo, g1_involute_offset))
-  if(g2_lo!=g2_involute_offset):
-    print("ERR003: g2_lo {:0.3f}  g2_involute_offset {:0.3f}".format(g2_lo, g2_involute_offset))
-    print("dbg552: g2_po", g2_po)
   ## gear system related
   # real_force_angle
   real_force_angle = calc_real_force_angle(g1_type, g1_pr, g1_br, g2_type, g2_pr, g2_br, aal, g1_sa, g2_sa)
@@ -1093,22 +940,22 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   ## g1 related
   if((g1_type=='e')or(g1_type=='i')):
     # get the angle of the closest middle of addendum to the contact point
-    aa = ai_g1_position + g1_po - ai_g1g2_a
+    aa = ai_g1_position + g1_po - g1g2_a
     while(abs(aa)>g1_tl/2+radian_epsilon):
       if(aa>0):
         aa = aa - g1_tl
       else:
         aa = aa + g1_tl
-    contact_g1_tooth_angle = aa - g1_po + ai_g1g2_a
+    contact_g1_tooth_angle = aa - g1_po + g1g2_a
     contact_g1_tooth_relative_angle = aa - g1_po # relative to the inter-axis
     # g1_involute_offset_angle (see the documentation for the exact definition)
-    #g1_involute_offset_angle = contact_g1_tooth_relative_angle + g1_involute_offset
+    #g1_involute_offset_angle = contact_g1_tooth_relative_angle + g1_lo
     # g1_contact_u : involute parameter for g1 of the contact point
     #g1_contact_u = real_force_angle + ai_rotation_direction*g1_involute_offset_angle
-    g1_contact_u = real_force_angle + ai_rotation_direction * g1_ks * (contact_g1_tooth_relative_angle + g1_involute_offset)
-    #print("dbg558: g1_involute_offset {:0.3f}  contact_g1_tooth_relative_angle {:0.3f}  real_force_angle {:0.3f}".format(g1_involute_offset, contact_g1_tooth_relative_angle, g1_involute_offset))
+    g1_contact_u = real_force_angle + ai_rotation_direction * g1_ks * (contact_g1_tooth_relative_angle + g1_lo)
+    #print("dbg558: g1_lo {:0.3f}  contact_g1_tooth_relative_angle {:0.3f}  real_force_angle {:0.3f}".format(g1_lo, contact_g1_tooth_relative_angle, real_force_angle))
     # contact point coordinates (method 1)
-    (cx, cy, ti) = sample_of_gear_tooth_profile((g1_ox, g1_oy), g1_br, contact_g1_tooth_angle+g1_involute_offset, -1*g1_ks*ai_rotation_direction, 0, g1_contact_u)
+    (cx, cy, ti) = sample_of_gear_tooth_profile((g1_ox, g1_oy), g1_br, contact_g1_tooth_angle+g1_lo, -1*g1_ks*ai_rotation_direction, 0, g1_contact_u)
     #print("dbg858: contact point (method1): cx: {:0.2f}  cy: {:0.2f}  ti: {:0.2f}".format(cx, cy, ti))
   elif(g1_type=='l'): # linear-gear (aka gearbar)
     # some geometry
@@ -1130,8 +977,8 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
         aa = aa + g1_tl
     contact_g1_tooth_position = aa - g1_po
     g1_contact_u = (contact_g1_tooth_position-ai_rotation_direction*BE)*math.cos(g1_sa)
-    g1_position2 = ai_rotation_direction*BE + g1_contact_u/math.cos(g2_sa) - g1_involute_offset
-    dc = (g1_position2+g1_involute_offset-ai_rotation_direction*BE)*math.cos(g1_sa)
+    g1_position2 = ai_rotation_direction*BE + g1_contact_u/math.cos(g2_sa) - g1_lo
+    dc = (g1_position2+g1_lo-ai_rotation_direction*BE)*math.cos(g1_sa)
     cx = g1_ox + ai_rotation_direction*BE*math.cos(g1_bi-math.pi/2) + dc*math.cos(g1_bi-math.pi/2-ai_rotation_direction*g1_sa)
     cy = g1_oy + ai_rotation_direction*BE*math.sin(g1_bi-math.pi/2) + dc*math.sin(g1_bi-math.pi/2-ai_rotation_direction*g1_sa)
     #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
@@ -1193,11 +1040,11 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   ## speed of c1 (contact point of g1)
   # c1 speed
   if((g1_type=='e')or(g1_type=='i')):
-    c1_speed = AC*ai_g1_rotation_speed
+    c1_speed = AC*g1_rotation_speed
     c1_speed_radial = c1_speed*math.cos(g1_sra)
     c1_speed_tangential = c1_speed*math.sin(g1_sra)
   elif(g1_type=='l'): # linear-gear (aka gearbar)
-    c1_speed = ai_g1_rotation_speed * g1_tl * 5
+    c1_speed = g1_rotation_speed * g1_tl * 5
     c1_speed_radial = c1_speed*math.cos(g1_sa)
     c1_speed_tangential = c1_speed*math.sin(g1_sa)
   ### g2_position, g2_contact_u, c2x, c2y, c2_speed_radial, c2_speed, c2_speed_tangential, g2_rotation_speed
@@ -1223,10 +1070,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
         sys.exit(2)
     g2_contact_u = g2_contact_u1 # select the method for g2_contact_u
     ## c2_position
-    #g2_position = ai_g1g2_a + math.pi - ai_rotation_direction*(real_force_angle - g2_contact_u) - g2_involute_offset
-    g2_position = ai_g1g2_a + (1+g1_ks*g2_ks)/2*math.pi - ai_rotation_direction*g1_ks*(real_force_angle - g2_contact_u) - g2_involute_offset
+    #g2_position = g1g2_a + math.pi - ai_rotation_direction*(real_force_angle - g2_contact_u) - g2_lo
+    g2_position = g1g2_a + (1+g1_ks*g2_ks)/2*math.pi - ai_rotation_direction*g1_ks*(real_force_angle - g2_contact_u) - g2_lo
     # c2 coordinates
-    (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_involute_offset, -1*ai_rotation_direction*g1_ks, 0, g2_contact_u)
+    (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_lo, -1*ai_rotation_direction*g1_ks, 0, g2_contact_u)
     if(abs(math.fmod(ti-t2i, math.pi/2))>radian_epsilon):
       print("ERR874: Error, the tangents ti {:0.3f} and ti2 {:0.3f} are not equal (modulo pi)".format(ti, t2i))
       #sys.exit(2)
@@ -1252,8 +1099,8 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     #  print("ERR852: Error, BD {:0.3f} is negative".format(BD))
     #  sys.exit(2)
     g2_contact_u = ai_rotation_direction*(g1_contact_u*g1_br-KE)
-    g2_position = ai_rotation_direction*BE + g2_contact_u/math.cos(g2_sa) - g2_involute_offset
-    dc = (g2_position+g2_involute_offset-ai_rotation_direction*BE)*math.cos(g2_sa)
+    g2_position = ai_rotation_direction*BE + g2_contact_u/math.cos(g2_sa) - g2_lo
+    dc = (g2_position+g2_lo-ai_rotation_direction*BE)*math.cos(g2_sa)
     c2x = g2_ox + ai_rotation_direction*BE*math.cos(g2_bi-math.pi/2) + dc*math.cos(g2_bi-math.pi/2-ai_rotation_direction*g2_sa)
     c2y = g2_oy + ai_rotation_direction*BE*math.sin(g2_bi-math.pi/2) + dc*math.sin(g2_bi-math.pi/2-ai_rotation_direction*g2_sa)
     #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
@@ -1268,10 +1115,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   tangential_friction = c2_speed_tangential - c1_speed_tangential
   ## speed outline
   # scale the outline
-  scaled_c1_speed_radial = c1_speed_radial*ai_speed_scale # *g1_module *g1_pr ???
-  scaled_c1_speed_tangential = c1_speed_tangential*ai_speed_scale
-  scaled_c2_speed_radial = c2_speed_radial*ai_speed_scale # *g2_module *g2_pr ???
-  scaled_c2_speed_tangential = c2_speed_tangential*ai_speed_scale
+  scaled_c1_speed_radial = c1_speed_radial*speed_scale # *g1_module *g1_pr ???
+  scaled_c1_speed_tangential = c1_speed_tangential*speed_scale
+  scaled_c2_speed_radial = c2_speed_radial*speed_scale # *g2_module *g2_pr ???
+  scaled_c2_speed_tangential = c2_speed_tangential*speed_scale
   # normal-tangential reference frame
   nxa = ti+ai_rotation_direction*math.pi/2
   txa = nxa+math.pi/2
