@@ -45,9 +45,9 @@ initial_tkinter_canvas_width = 400
 initial_tkinter_canvas_height = 400
 tkinter_canvas_margin_x = 20
 tkinter_canvas_margin_y = 20
-g_step_angle_speed = 1/100.0
-g_slow_angle_speed = 1/1000.0
-g_fast_angle_speed = 16*g_slow_angle_speed
+g_fast_angle_speed = 1.0
+g_step_angle_speed = float(g_fast_angle_speed)/8
+g_slow_angle_speed = float(g_fast_angle_speed)/16
 g_step_period = 100 # ms
 
 ################################################################
@@ -869,15 +869,16 @@ def test_canvas_graphic_2(ai_rotation_direction, ai_angle):
   """ Sub-function for test 1
       Also example of the callback function for add_canvas_graphic_function
   """
+  l_angle = float(ai_angle)/100
   polygon_test_2 = (
-    30*math.cos(ai_angle+1.0*math.pi/2), 30*math.sin(ai_angle+1.0*math.pi/2),
-    35*math.cos(ai_angle+1.5*math.pi/2), 35*math.sin(ai_angle+1.5*math.pi/2),
-    20*math.cos(ai_angle+2.0*math.pi/2), 20*math.sin(ai_angle+2.0*math.pi/2),
-    50*math.cos(ai_angle+2.5*math.pi/2), 50*math.sin(ai_angle+2.5*math.pi/2),
-    40*math.cos(ai_angle+3.0*math.pi/2), 40*math.sin(ai_angle+3.0*math.pi/2),
-    30*math.cos(ai_angle+3.5*math.pi/2), 30*math.sin(ai_angle+3.5*math.pi/2),
-    25*math.cos(ai_angle+4.0*math.pi/2), 25*math.sin(ai_angle+4.0*math.pi/2),
-    35*math.cos(ai_angle+4.5*math.pi/2), 35*math.sin(ai_angle+4.5*math.pi/2))
+    30*math.cos(l_angle+1.0*math.pi/2), 30*math.sin(l_angle+1.0*math.pi/2),
+    35*math.cos(l_angle+1.5*math.pi/2), 35*math.sin(l_angle+1.5*math.pi/2),
+    20*math.cos(l_angle+2.0*math.pi/2), 20*math.sin(l_angle+2.0*math.pi/2),
+    50*math.cos(l_angle+2.5*math.pi/2), 50*math.sin(l_angle+2.5*math.pi/2),
+    40*math.cos(l_angle+3.0*math.pi/2), 40*math.sin(l_angle+3.0*math.pi/2),
+    30*math.cos(l_angle+3.5*math.pi/2), 30*math.sin(l_angle+3.5*math.pi/2),
+    25*math.cos(l_angle+4.0*math.pi/2), 25*math.sin(l_angle+4.0*math.pi/2),
+    35*math.cos(l_angle+4.5*math.pi/2), 35*math.sin(l_angle+4.5*math.pi/2))
   r_canvas_graph = []
   r_canvas_graph.append(('graphic_polygon', polygon_test_2, '', 'red', 1))
   return(r_canvas_graph)

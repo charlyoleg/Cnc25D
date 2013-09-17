@@ -520,12 +520,15 @@ def figure_simple_display(ai_figure, ai_overlay_figure=[], ai_parameter_info="")
   fsd_canvas = Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_fsd_canvas_graphics(ai_rotation_direction, ai_angle_position):
+    # angle position
+    l_angle_position = float(ai_angle_position)/100
+    #
     r_canvas_graphics = []
     for ol in overlay_figure:
-      rotated_ol = cnc_outline.outline_rotate(ol, 0, 0, ai_angle_position) # rotation of center (0,0) and angle ai_angle_position
+      rotated_ol = cnc_outline.outline_rotate(ol, 0, 0, l_angle_position) # rotation of center (0,0) and angle l_angle_position
       r_canvas_graphics.append(('overlay_lines', outline_arc_line(rotated_ol, 'tkinter'), 'orange', 2))
     for ol in graphic_figure:
-      rotated_ol = cnc_outline.outline_rotate(ol, 0, 0, ai_angle_position) # rotation of center (0,0) and angle ai_angle_position
+      rotated_ol = cnc_outline.outline_rotate(ol, 0, 0, l_angle_position) # rotation of center (0,0) and angle l_angle_position
       r_canvas_graphics.append(('graphic_lines', outline_arc_line(rotated_ol, 'tkinter'), 'red', 1))
     return(r_canvas_graphics)
   # end of callback function
@@ -725,6 +728,9 @@ def outline_arc_line_test1():
   my_canvas = Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
+    # angle position
+    l_angle_position = float(ai_angle_position)/100
+    #
     r_canvas_graphics = []
     for i_ol in l_ols:
       r_canvas_graphics.append(('graphic_lines', outline_arc_line(i_ol, 'tkinter'), 'red', 2))

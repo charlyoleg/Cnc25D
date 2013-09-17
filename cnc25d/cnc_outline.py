@@ -1300,6 +1300,8 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
+    # angle position
+    l_angle_position = float(ai_angle_position)/100
     # outline_c : closed, CW
     # settings for no error
     delta_x = 0.15
@@ -1308,12 +1310,12 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
     #delta_x = 0.25
     #delta_y = 0.25
     outline_c1 = cnc_cut_outline(outline_shift_xy(outline_reverse(outline_close(outline_a(0))),
-      -100, 1.0+delta_x*math.cos(ai_angle_position), 500, 1.0+delta_y*math.sin(ai_angle_position)), 'cnc_cut_outline_test3_c1')
+      -100, 1.0+delta_x*math.cos(l_angle_position), 500, 1.0+delta_y*math.sin(l_angle_position)), 'cnc_cut_outline_test3_c1')
     outline_c2 = cnc_cut_outline(outline_shift_xy(outline_reverse(outline_close(outline_a(ai_sw_router_bit_radius))),
-      -100, 1.0+delta_x*math.cos(ai_angle_position), 500, 1.0+delta_y*math.sin(ai_angle_position)), 'cnc_cut_outline_test3_c2')
+      -100, 1.0+delta_x*math.cos(l_angle_position), 500, 1.0+delta_y*math.sin(l_angle_position)), 'cnc_cut_outline_test3_c2')
     # outline_d : closed, CCW, rotate
-    outline_d1 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(0),500/2,420/2,math.pi/7+ai_angle_position)), 'cnc_cut_outline_test3_d1'), 600,1,600,1)
-    outline_d2 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(-1*ai_sw_router_bit_radius),500/2,420/2,math.pi/7+ai_angle_position)), 'cnc_cut_outline_test3_d2'), 600,1,600,1)
+    outline_d1 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(0),500/2,420/2,math.pi/7+l_angle_position)), 'cnc_cut_outline_test3_d1'), 600,1,600,1)
+    outline_d2 = outline_shift_xy(cnc_cut_outline(outline_close(outline_rotate(outline_a(-1*ai_sw_router_bit_radius),500/2,420/2,math.pi/7+l_angle_position)), 'cnc_cut_outline_test3_d2'), 600,1,600,1)
     #
     r_canvas_graphics = []
     r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_a1, 'tkinter'), 'red', 1))
@@ -1401,6 +1403,9 @@ def cnc_cut_outline_test4(ai_sw_router_bit_radius):
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics_t4(ai_rotation_direction, ai_angle_position):
+    # angle position
+    l_angle_position = float(ai_angle_position)/100
+    #
     r_canvas_graphics = []
     r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_a1, 'tkinter'), 'red', 1))
     r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_a2, 'tkinter'), 'green', 2))
@@ -1439,6 +1444,9 @@ def cnc_cut_outline_test5(ai_sw_router_bit_radius):
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics_t5(ai_rotation_direction, ai_angle_position):
+    # angle position
+    l_angle_position = float(ai_angle_position)/100
+    #
     r_canvas_graphics = []
     r_canvas_graphics.append(('graphic_lines', outline_backends.outline_arc_line(outline_b1, 'tkinter'), 'green', 2))
     r_canvas_graphics.append(('overlay_lines', outline_backends.outline_arc_line(outline_b2, 'tkinter'), 'red', 1))

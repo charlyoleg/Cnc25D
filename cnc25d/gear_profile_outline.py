@@ -245,8 +245,8 @@ def calc_low_level_gear_parameters(ai_param):
   if((g_type=='e')or(g_type=='i')):
     ### search points
     initial_step = (g_ar-g_dr)/4
-    pi_module_angle = 2*math.pi/g_n
-    ai_param['pi_module_angle'] = pi_module_angle
+    #pi_module_angle = 2*math.pi/g_n
+    pi_module_angle = ai_param['pi_module_angle']
     # intersection of positive involute and the primitive circle
     if(g_brp>g_pr-radian_epsilon):
       print("ERR987: Error, g_brp {:0.2f} is bigger than g_pr {:0.2f}!".format(g_brp, g_pr))

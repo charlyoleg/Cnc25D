@@ -370,8 +370,16 @@ def gear_profile(
   g2_m = g1_m
   g1_param['module'] = g1_m
   g2_param['module'] = g2_m
-  g1_param['pi_module'] = g1_m * math.pi
-  g2_param['pi_module'] = g2_m * math.pi
+  g1_pi_module = g1_m * math.pi
+  g2_pi_module = g2_m * math.pi
+  g1_param['pi_module'] = g1_pi_module
+  g2_param['pi_module'] = g2_pi_module
+  if((g1_type=='i')or(g1_type=='e')):
+    g1_pi_module_angle = 2*math.pi/g1_n
+    g1_param['pi_module_angle'] = g1_pi_module_angle
+  if(g2_exist and ((g2_type=='i')or(g2_type=='e'))):
+    g2_pi_module_angle = 2*math.pi/g2_n
+    g2_param['pi_module_angle'] = g2_pi_module_angle
   # primitive radius
   g1_pr = 0
   if((g1_type=='i')or(g1_type=='e')):
@@ -808,11 +816,11 @@ def gear_profile(
       """
       #global g1_position_curve_table, g2_position_curve_table, g2_rotation_speed_curve_table, tangential_friction_curve_table # no need of global because just append element to lists
       ## gear position
-      # g1_position
+      # g1_position : assuming that ai_angle_position is incremented by 1.0 in fast_speed
       if((g1_type=='e')or(g1_type=='i')):
-        g1_position = g1_ia+ai_angle_position
+        g1_position = g1_ia+ai_angle_position*float(g1_pi_module_angle)/20 # 20th of pi_module_angle (angular tooth pitch)
       elif(g1_type=='l'):
-        g1_position = g1_ia+ai_angle_position*g1_m*10
+        g1_position = g1_ia+ai_angle_position*float(g1_pi_module)/20 # 20th of pi_module (linear tooth pitch)
       ## get outline_B
       lg1_outline_B = gear_profile_outline(g1_make_low_param, g1_position)
       lg1_ideal_involute = ideal_tooth_outline(g1_make_low_param, g1_position, 0)
