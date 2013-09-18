@@ -51,11 +51,11 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 > mkdir Tmp
 > cd Tmp
 > cnc25d_example_generator.py
-> python box_wood_frame_example.py
+> python eg01_box_wood_frame_example.py
 ## freecad doesn't get the virtualenv python package path and doesn't read PYTHONPATH. So, you must add the path to the python library explicitly
 > #export PYTHONPATH=$PYTHONPATH:../test_cnc25d_distrib/lib/python2.7/site-packages
-> #freecad box_wood_frame_example.py
-> freecad -P ../test_cnc25d_distrib/lib/python2.7/site-packages box_wood_frame_example.py
+> #freecad eg01_box_wood_frame_example.py
+> freecad -P ../test_cnc25d_distrib/lib/python2.7/site-packages eg01_box_wood_frame_example.py
 > deactivate
 - upload distribution
 > python setup.py sdist upload
