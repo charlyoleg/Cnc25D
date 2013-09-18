@@ -232,7 +232,7 @@ def gearwheel(
       ai_gear_addendum_height_pourcentage = ai_gear_addendum_height_pourcentage,
       ai_gear_dedendum_height_pourcentage = ai_gear_dedendum_height_pourcentage,
       ai_gear_hollow_height_pourcentage   = ai_gear_hollow_height_pourcentage,
-      ai_gear_router_bit_radius           = ai_gear_router_bit_radius,
+      ai_gear_router_bit_radius           = gear_router_bit_radius,
       # positive involute
       ai_gear_base_diameter       = ai_gear_base_diameter,
       ai_gear_force_angle         = ai_gear_force_angle,
@@ -417,7 +417,7 @@ gear_router_bit_radius:         \t{:0.3f}
 wheel_hollow_router_bit_radius: \t{:0.3f}
 axle_router_bit_radius:         \t{:0.3f}
 cnc_router_bit_radius:          \t{:0.3f}
-""".format(gear_router_bit_radius, wheel_hollow_router_bit_radius, axle_router_bit_radius, ai_gear_router_bit_radius)
+""".format(gear_router_bit_radius, wheel_hollow_router_bit_radius, axle_router_bit_radius, ai_cnc_router_bit_radius)
   #print(gearwheel_parameter_info)
 
   # display with Tkinter
