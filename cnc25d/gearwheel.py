@@ -179,7 +179,9 @@ def gearwheel(
       ai_cnc_router_bit_radius          = '1.0',
       ### view the gearwheel with tkinter
       ai_tkinter_view = False,
-      ai_output_file_basename = ''):
+      ai_output_file_basename = '',
+      ### optional
+      ai_args_in_txt = ""):
   """
   The main function of the script.
   It generates a gearwheel according to the function arguments
@@ -396,6 +398,7 @@ def gearwheel(
   gw_figure_overlay.extend(wheel_hollow_figure_overlay)
   # gearwheel_parameter_info
   gearwheel_parameter_info = "\nGearwheel parameter info:\n"
+  gearwheel_parameter_info += "\n" + ai_args_in_txt + "\n\n"
   gearwheel_parameter_info += gear_profile_info
   gearwheel_parameter_info += """
 axle_type:    \t{:s}
@@ -433,7 +436,7 @@ cnc_router_bit_radius:          \t{:0.3f}
 # gearwheel argparse_to_function
 ################################################################
 
-def gearwheel_argparse_wrapper(ai_gw_args):
+def gearwheel_argparse_wrapper(ai_gw_args, ai_args_in_txt=""):
   """
   wrapper function of gearwheel() to call it using the gearwheel_parser.
   gearwheel_parser is mostly used for debug and non-regression tests.
@@ -524,7 +527,9 @@ def gearwheel_argparse_wrapper(ai_gw_args):
            ai_cnc_router_bit_radius          = ai_gw_args.sw_cnc_router_bit_radius,
            ### design output : view the gearwheel with tkinter or write files
            ai_tkinter_view = tkinter_view,
-           ai_output_file_basename = ai_gw_args.sw_output_file_basename)
+           ai_output_file_basename = ai_gw_args.sw_output_file_basename,
+           ### optional
+           ai_args_in_txt = ai_args_in_txt)
   return(r_gw)
 
 ################################################################
@@ -596,12 +601,13 @@ def gearwheel_cli(ai_args=None):
   gearwheel_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
   help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
   effective_args = cnc25d_api.get_effective_args(ai_args)
+  effective_args_in_txt = "gearwheel arguments: " + ' '.join(effective_args)
   gw_args = gearwheel_parser.parse_args(effective_args)
   print("dbg111: start making gearwheel")
   if(gw_args.sw_run_self_test):
     r_gw = gearwheel_self_test()
   else:
-    r_gw = gearwheel_argparse_wrapper(gw_args)
+    r_gw = gearwheel_argparse_wrapper(gw_args, effective_args_in_txt)
   print("dbg999: end of script")
   return(r_gw)
 
