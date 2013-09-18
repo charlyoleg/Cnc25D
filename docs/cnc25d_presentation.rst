@@ -250,6 +250,13 @@ For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 Releases
 ========
 
+Release 0.1.6
+-------------
+Released on 2013-10-01
+
+* Use arc primitives for generating DXF and SVG files
+* finalization of gear_profile.py and gearwheel.py
+
 Release 0.1.5
 -------------
 Released on 2013-09-18

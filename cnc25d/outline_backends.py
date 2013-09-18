@@ -312,15 +312,27 @@ def outline_arc_line_with_svgwrite(ai_segments, ai_outline_closed):
       #svg_line.stroke('black', width=1)
       svg_outline.append(svg_line)
     elif(segment_type=='arc'):
-      arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
-      arc_polyline_svg = []
-      for i in arc_polyline:
-        arc_polyline_svg.append(tuple(i))
-      svg_polyline = svgwrite.shapes.Polyline(arc_polyline_svg)
-      svg_polyline.fill('green', opacity=0.25).stroke('black', width=1)
-      #svg_polyline.fill('green', opacity=0.0).stroke('black', width=1)   # opacity=0.0 doesn't work!
-      #svg_polyline.stroke('black', width=1)
-      svg_outline.append(svg_polyline)
+      (lia, ptix, ptiy, u, v, w, uv, vw, uw) = arc_3_points_to_radius_center_angles(point_start, point_mid, point_end)
+      large_arc_flag = 0
+      if(abs(uw)>math.pi):
+        large_arc_flag = 1
+      sweep_flag = 1
+      if(uw<0):
+        sweep_flag = 0
+      target_x = point_end[0] - point_start[0]
+      target_y = point_end[1] - point_start[1]
+      svg_arc_path = svgwrite.path.Path(d="M{:0.2f},{:0.2f} a{:0.2f},{:0.2f} 0 {:d},{:d} {:0.2f},{:0.2f}".format(point_start[0], point_start[1], lia, lia, large_arc_flag, sweep_flag, target_x, target_y))
+      svg_arc_path.fill('green', opacity=0.1).stroke('black', width=1)
+      svg_outline.append(svg_arc_path)
+      #arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
+      #arc_polyline_svg = []
+      #for i in arc_polyline:
+      #  arc_polyline_svg.append(tuple(i))
+      #svg_polyline = svgwrite.shapes.Polyline(arc_polyline_svg)
+      #svg_polyline.fill('green', opacity=0.25).stroke('black', width=1)
+      ##svg_polyline.fill('green', opacity=0.0).stroke('black', width=1)   # opacity=0.0 doesn't work!
+      ##svg_polyline.stroke('black', width=1)
+      #svg_outline.append(svg_polyline)
   r_outline = svg_outline
   return(r_outline)
 
