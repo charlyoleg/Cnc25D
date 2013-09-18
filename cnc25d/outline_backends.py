@@ -65,6 +65,7 @@ import design_help # just for get_effective_args() and mkdir_p
 
 unit_circle_resolution = 6
 #default_dxf_layer_name = 'CNC25D'
+global_epsilon = math.pi/1000
 
 ################################################################
 # ******** sub-functions for the API ***********
@@ -87,9 +88,8 @@ def complete_circle(ai_center, ai_radius, ai_resolution):
     r_points.append([ai_center[0]+ai_radius*math.cos(i*angle_resolution), ai_center[1]+ai_radius*math.sin(i*angle_resolution)])
   return(r_points)
 
-def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
-  """ From three points (list of 6 floats) creates a polyline (list of 2*n flaots) representing the arc of circle defined by the three points
-      ai_resolution sets the mamximum number of intermediate points to create
+def arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end):
+  """ From three points (A,B,C: equivalent to 6 floats) computes the radius, the center (I) and the angles ((Ix,IA), (Ix,IB), (Ix,IC)) of the arc passing through A, B and C
   """
   # interpretation of the three points
   ptax = ai_start[0]
@@ -102,8 +102,9 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   #print("dbg502: ptb: {:6.01f}  {:6.01f}".format(ptbx, ptby))
   #print("dbg503: ptc: {:6.01f}  {:6.01f}".format(ptcx, ptcy))
   # epsilon definiton to be tolerant to calculation imprecision
-  epilon = math.pi/1000 # can be used to compare radian and sine
-  #print("dbg747: epilon:", epilon)
+  #epsilon = math.pi/1000 # can be used to compare radian and sine
+  epsilon = global_epsilon # to speed up run time
+  #print("dbg747: epsilon:", epsilon)
   # check
   if((ptax==ptbx)and(ptay==ptby)):
     print("ERR807: Error, point_A and point_B are identical!")
@@ -118,11 +119,11 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   # length of [AB] and [BC]
   lab = math.sqrt((ptbx-ptax)**2+(ptby-ptay)**2)
   lbc = math.sqrt((ptcx-ptbx)**2+(ptcy-ptby)**2)
-  if(lab<epilon):
+  if(lab<epsilon):
     print("ERR811: Error, A and B are almost identical")
     print("dbg559: pta={:0.2f} {:0.2f}  ptb={:0.2f} {:0.2f}  ptc={:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
     sys.exit(2)
-  if(lbc<epilon):
+  if(lbc<epsilon):
     print("ERR812: Error, B and C are almost identical")
     sys.exit(2)
   # calculation of cos(e), cos(f), sin(e) and sin(f)
@@ -136,19 +137,17 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   #print("dbg307: sin_f: ", sin_f)
   is_colinear = (math.copysign(1, sin_e)*cos_e)-(math.copysign(1,sin_f)*cos_f)
   #print("dbg556: is_colinear:", is_colinear)
-  if(abs(is_colinear)<epilon):
+  if(abs(is_colinear)<epsilon):
     #print("ERR810: Error, A, B, C are colinear. Arc can not be created!")
     #sys.exit(2)
-    if(lab>100*epilon):
+    if(lab>100*epsilon):
       pass # to let comment the following warning
       #print("WARN810: Arc ABC is replaced by the line AC, because A,B,C are colinear!")
       #print("dbg559: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
       #print("dbg558: is_colinear:", is_colinear)
       #print("dbg557: lab:", lab)
-    r_polyline = []
-    r_polyline.append([ptax, ptay])
-    r_polyline.append([ptcx, ptcy])
-    return(r_polyline)
+    r_a3ptrca = (0, 0, 0, 0, 0, 0)
+    return(r_a3ptrca)
   # Calculation of M and N
   ptmx = (ptax+ptbx)/2
   ptmy = (ptay+ptby)/2
@@ -163,10 +162,10 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   kix = sin_f*(cos_e*ptmx+sin_e*ptmy)-sin_e*(cos_f*ptnx+sin_f*ptny)
   liy = sin_e*cos_f-sin_f*cos_e
   kiy = cos_f*(cos_e*ptmx+sin_e*ptmy)-cos_e*(cos_f*ptnx+sin_f*ptny)
-  if(abs(lix)<epilon):
+  if(abs(lix)<epsilon):
     print("ERR813: Error, A, B and C are almost colinear. Arc can not be created!")
     sys.exit(2)
-  if(abs(liy)<epilon):
+  if(abs(liy)<epsilon):
     print("ERR814: Error, A, B and C are almost colinear. Arc can not be created!")
     sys.exit(2)
   #print("dbg124: lix:", lix)
@@ -180,12 +179,12 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   lia = math.sqrt((ptax-ptix)**2+(ptay-ptiy)**2)
   lib = math.sqrt((ptbx-ptix)**2+(ptby-ptiy)**2)
   lic = math.sqrt((ptcx-ptix)**2+(ptcy-ptiy)**2)
-  if(abs(lib-lia)>epilon):
+  if(abs(lib-lia)>epsilon):
     #print("dbg404: lia:", lia)
     #print("dbg405: lib:", lib)
     print("ERR815: I is not equidistant from A and B!")
     sys.exit(2)
-  if(abs(lic-lib)>epilon):
+  if(abs(lic-lib)>epsilon):
     #print("dbg402: lib:", lib)
     #print("dbg403: lic:", lic)
     print("ERR816: I is not equidistant from B and C!")
@@ -208,6 +207,24 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
     ccw_ncw = 0
     uv = uv - 2*math.pi
     vw = vw - 2*math.pi
+    uw = uw - 2*math.pi
+  r_a3ptrca = (lia, ptix, ptiy, u, v, w, uv, vw, uw)
+  return(r_a3ptrca)
+
+def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
+  """ From three points (list of 6 floats) creates a polyline (list of 2*n floats) representing the arc of circle defined by the three points
+      ai_resolution sets the maximum number of intermediate points to create
+  """
+  ### precision
+  #epsilon = math.pi/1000 # can be used to compare radian and sine
+  epsilon = global_epsilon # to speed up run time
+  ### get radius, center and angles
+  (lia, ptix, ptiy, u, v, w, uv, vw, uw) = arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end)
+  ### colinear case
+  if(lia==0):
+    r_polyline = (ai_start, ai_end)
+    return(r_polyline)
+  ### real arc case
   # calculation of the angle resolution:
   if(ai_resolution<3):
     print("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution))
@@ -225,13 +242,13 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   #print("dbg742: vw angle resolution: bcsa:", bcsa)
   # polyline construction
   r_polyline = []
-  r_polyline.append([ptax, ptay])
+  r_polyline.append(ai_start)
   for i in range(abip):
     r_polyline.append([ptix+lia*math.cos(u+(i+1)*absa), ptiy+lia*math.sin(u+(i+1)*absa)])
-  r_polyline.append([ptbx, ptby])
+  r_polyline.append(ai_middle)
   for i in range(bcip):
     r_polyline.append([ptix+lia*math.cos(v+(i+1)*bcsa), ptiy+lia*math.sin(v+(i+1)*bcsa)])
-  r_polyline.append([ptcx, ptcy])
+  r_polyline.append(ai_end)
   return(r_polyline)
 
 def outline_arc_line_with_freecad(ai_segments, ai_outline_closed):
@@ -335,14 +352,23 @@ def outline_arc_line_with_dxfwrite(ai_segments, ai_outline_closed):
       dxf_line = DXFEngine.line(start=point_start, end=point_end)
       dxf_outline.append(dxf_line)
     elif(segment_type=='arc'):
-      arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
-      arc_polyline_dxf = []
-      for i in arc_polyline:
-        arc_polyline_dxf.append(tuple(i))
-      #dxf_polyline = DXFEngine.polyline(arc_polyline_dxf, color=7, layer=default_dxf_layer_name)
-      #dxf_polyline = DXFEngine.polyline(arc_polyline_dxf, flags=DXFEngine.POLYLINE_3D_POLYLINE)
-      dxf_polyline = DXFEngine.polyline(arc_polyline_dxf)
-      dxf_outline.append(dxf_polyline)
+      (lia, ptix, ptiy, u, v, w, uv, vw, uw) = arc_3_points_to_radius_center_angles(point_start, point_mid, point_end)
+      u2 = u
+      w2 = u + uw
+      if(uw<0):
+        #w2 = u + uw + 2*math.pi
+        u2 = w
+        w2 = u
+      dxf_arc = DXFEngine.arc(lia, (ptix, ptiy), u2*180/math.pi, w2*180/math.pi)
+      dxf_outline.append(dxf_arc)
+      #arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
+      #arc_polyline_dxf = []
+      #for i in arc_polyline:
+      #  arc_polyline_dxf.append(tuple(i))
+      ##dxf_polyline = DXFEngine.polyline(arc_polyline_dxf, color=7, layer=default_dxf_layer_name)
+      ##dxf_polyline = DXFEngine.polyline(arc_polyline_dxf, flags=DXFEngine.POLYLINE_3D_POLYLINE)
+      #dxf_polyline = DXFEngine.polyline(arc_polyline_dxf)
+      #dxf_outline.append(dxf_polyline)
   r_outline = dxf_outline
   return(r_outline)
 
