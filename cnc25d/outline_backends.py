@@ -146,7 +146,7 @@ def arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end):
       #print("dbg559: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
       #print("dbg558: is_colinear:", is_colinear)
       #print("dbg557: lab:", lab)
-    r_a3ptrca = (0, 0, 0, 0, 0, 0)
+    r_a3ptrca = (0, 0, 0, 0, 0, 0, 0, 0, 0)
     return(r_a3ptrca)
   # Calculation of M and N
   ptmx = (ptax+ptbx)/2

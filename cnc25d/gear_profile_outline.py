@@ -198,7 +198,7 @@ def calc_low_level_gear_parameters(ai_param):
   g_m     = ai_param['module']
   g_pr    = ai_param['primitive_radius']
   g_adp   = ai_param['addendum_dedendum_parity']
-  g_thh   = ai_param['tooth_half_height']
+  #g_thh   = ai_param['tooth_half_height']
   g_ar    = ai_param['addendum_radius']
   g_dr    = ai_param['dedendum_radius']
   g_brp   = ai_param['positive_base_radius']
