@@ -421,7 +421,7 @@ cnc_router_bit_radius:          \t{:0.3f}
   if(ai_tkinter_view):
     cnc25d_api.figure_simple_display(gw_figure, gw_figure_overlay, gearwheel_parameter_info)
   # generate output file
-  cnc25d_api.generate_output_file(gw_figure, ai_output_file_basename, ai_gear_profile_height)
+  cnc25d_api.generate_output_file(gw_figure, ai_output_file_basename, ai_gear_profile_height, gearwheel_parameter_info)
 
   ### return the gearwheel as FreeCAD Part object
   #r_gw = cnc25d_api.figure_to_freecad_25d_part(gw_figure, ai_gear_profile_height)

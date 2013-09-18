@@ -52,7 +52,7 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 #   cnc25d_api.mkdir_p(directory) => 0
 #   cnc25d_api.get_effective_args(default_args) => [args]
 #   cnc25d_api.generate_output_file_add_argument(argparse_parser) => argparse_parser
-#   cnc25d_api.generate_output_file(figure, filename, extrusion_height) => 0
+#   cnc25d_api.generate_output_file(figure, filename, extrusion_height, info_txt) => 0
 
 
 ################################################################

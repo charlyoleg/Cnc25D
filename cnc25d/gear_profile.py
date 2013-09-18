@@ -763,38 +763,40 @@ def gear_profile(
   (g1_make_low_param, g1_info_low) = calc_low_level_gear_parameters(g1_param)
   g1_outline_B = gear_profile_outline(g1_make_low_param, g1_ia)
   # output info
-  parameter_info_txt1 = gear_high_level_parameter_to_text("Gear-profile 1:", g1_param)
-  parameter_info_txt1 += g1_info_low
-  #print(parameter_info_txt1)
+  g1_info_txt = gear_high_level_parameter_to_text("Gear-profile 1:", g1_param)
+  g1_info_txt += g1_info_low
+  #print(g1_info_txt)
+  
+  ### generate the second gear outline
+  g1g2_info_txt = g1_info_txt
+  if(g2_exist):
+    ### g2
+    #print("dbg369: Prepare the second gear ..")
+    #print("dbg521: g2_high_parameters:", g2_high_parameters)
+    g2_ia = 0
+    (g2_make_low_param, g2_info_low) = calc_low_level_gear_parameters(g2_param)
+    #print("dbg653: g2_make_low_param:", g2_make_low_param)
+    g2_outline_B = gear_profile_outline(g2_make_low_param, g2_ia)
+    ### g2_position
+    (place_low_parameters, place_info) = pre_g2_position_calculation(g1_param, g2_param, aal, g1g2_a, g1_rotation_speed, speed_scale)
+    # output info
+    sys_info_txt = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
+    sys_info_txt += real_force_info
+    sys_info_txt += place_info
+    g2_info_txt = gear_high_level_parameter_to_text("Gear-profile 2:", g2_param)
+    g2_info_txt += g2_info_low
+    #print(sys_info_txt + g2_info_txt)
+    g1g2_info_txt += sys_info_txt + g2_info_txt
+    #print("dbg689: g2_outline_B is ready")
 
   ### simulation
   if(ai_simulation_enable):
     print("Launch the simulation with Tkinter ..")
     # initialization
-    g1_ideal_involute = ideal_tooth_outline(g1_make_low_param, g1_ia, 0)
-    g1_ideal_tooth = ideal_tooth_outline(g1_make_low_param, g1_ia, 1)
-    parameter_info_txt = parameter_info_txt1
-    if(g2_exist):
-      ### g2
-      #print("dbg369: Prepare the second gear ..")
-      #print("dbg521: g2_high_parameters:", g2_high_parameters)
-      g2_ia = 0
-      (g2_make_low_param, g2_info_low) = calc_low_level_gear_parameters(g2_param)
-      #print("dbg653: g2_make_low_param:", g2_make_low_param)
-      g2_outline_B = gear_profile_outline(g2_make_low_param, g2_ia)
-      ### g2_position
-      (place_low_parameters, place_info) = pre_g2_position_calculation(g1_param, g2_param, aal, g1g2_a, g1_rotation_speed, speed_scale)
-      # output info
-      parameter_info_txt2 = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
-      parameter_info_txt2 += real_force_info
-      parameter_info_txt2 += place_info
-      parameter_info_txt3 = gear_high_level_parameter_to_text("Gear-profile 2:", g2_param)
-      parameter_info_txt3 += g2_info_low
-      #print(parameter_info_txt2 + parameter_info_txt3)
-      parameter_info_txt += parameter_info_txt2 + parameter_info_txt3
-      #print("dbg689: g2_outline_B is ready")
+    #g1_ideal_involute = ideal_tooth_outline(g1_make_low_param, g1_ia, 0)
+    #g1_ideal_tooth = ideal_tooth_outline(g1_make_low_param, g1_ia, 1)
     ### gear_profile parameter info in the log
-    print(parameter_info_txt)
+    print(g1g2_info_txt)
     ### static figure
     inter_axis_outline = ((g1_ix, g1_iy), (g2_ix, g2_iy))
     ### matplotlib curve table
@@ -802,11 +804,6 @@ def gear_profile(
     g2_position_curve_table = []
     g2_rotation_speed_curve_table = []
     tangential_friction_curve_table = []
-    # initialization to avoid strange matplotlib representation (particularly on g2_rotation_speed)
-    #g1_position_curve_table.append(0.0)
-    #g2_position_curve_table.append(0.0)
-    #g2_rotation_speed_curve_table.append(1.0)
-    #tangential_friction_curve_table.append(0.0)
     ### start Tkinter
     tk_root = Tkinter.Tk()
     my_canvas = cnc25d_api.Two_Canvas(tk_root)
@@ -887,16 +884,16 @@ def gear_profile(
       ('tangential\nfriction\n(mm/s)', tangential_friction_curve_table, 'bo'))
     # end of callback functions
     my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
-    my_canvas.add_parameter_info(parameter_info_txt)
+    my_canvas.add_parameter_info(g1g2_info_txt)
     my_canvas.add_curve_graphic_table(gear_profile_mpl_curves)
     tk_root.mainloop()
     del (my_canvas, tk_root) # because Tkinter could be used again later in this script
 
   ### output files
   gp_figure = [g1_outline_B] # select the outlines to be writen in files
-  cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height)
+  cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height, g1g2_info_txt)
 
-  r_gp = (g1_outline_B, g1_param, parameter_info_txt1)
+  r_gp = (g1_outline_B, g1_param, g1_info_txt)
   return(r_gp)
 
 ################################################################
