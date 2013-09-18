@@ -354,13 +354,7 @@ def calc_low_level_gear_parameters(ai_param):
       ha1 = top_land/2 + full_positive_involute
       #print("dbg663: ipaa {:0.3f}".format(ipaa))
     #print("dbg553: i1_hsl {:0.3f}  i2_hsl {:0.3f}  g_rbr {:0.3f} g_hh  {:0.3f}".format(i1_hsl, i2_hsl, g_rbr, g_hh))
-    #
-    #pi_module_angle = 2*math.pi/g_n
-    hl1 = g_dr
-    hl2 = g_hr
-    #ha1 = top_land/2 + full_negative_involute or full_positive_involute
-    ha2 = ha1 + bottom_land
-    hlm = hl2*math.cos(bottom_land/2) # this is to ensure nice junction of split gearwheel
+    hlm = g_hr*math.cos(bottom_land/2) # this is to ensure nice junction of split gearwheel
     ham = ha1 + bottom_land/2
     tlm = g_ar*math.cos(top_land/2) # this is to ensure nice junction of split gearwheel
     if(g_ptn==0):
@@ -373,7 +367,7 @@ def calc_low_level_gear_parameters(ai_param):
     make_low_parameters = (g_type, pi_module_angle,
       i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_hsl, i1_thickness,
       i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_hsl, i2_thickness,
-      hl1, hl2, ha1, ha2, g_rbr, hlm, ham, tlm,
+      g_rbr, hlm, ham, tlm,
       g_ox, g_oy, portion_tooth_nb, g_pfe, g_ple, closed)
     # info
     info_txt = "Gear profile details:\n"
@@ -491,7 +485,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
   (gear_type, pi_module_angle,
     i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_hsl, i1_thickness,
     i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_hsl, i2_thickness,
-    hl1, hl2, ha1, ha2, hrbr, hlm, ham, tlm,
+    hrbr, hlm, ham, tlm,
     ox, oy, portion_tooth_nb, first_end, last_end, closed) = ai_low_parameters
   # precision
   #radian_epsilon = math.pi/1000
@@ -511,8 +505,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
       if(first_end==3):
         hollow_A = []
         hollow_A.append((ox+hlm*math.cos(tooth_angle-pi_module_angle+ham), oy+hlm*math.sin(tooth_angle-pi_module_angle+ham), 0))
-        hollow_A.append((ox+hl2*math.cos(tooth_angle-pi_module_angle+ha2), oy+hl2*math.sin(tooth_angle-pi_module_angle+ha2), hrbr))
-        hollow_A.append((ox+hl1*math.cos(tooth_angle-pi_module_angle+ha2), oy+hl1*math.sin(tooth_angle-pi_module_angle+ha2), 0))
+        hollow_A.extend(start_of_hollow_slope_A)
         hollow_B = cnc25d_api.cnc_cut_outline(hollow_A, "hollow")
         half_hollow = hollow_B[0:-1]
     # assembly
@@ -526,10 +519,6 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     (second_involute_B, second_hollow_slope_A) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, 1, i2_hsl, hrbr, tooth_angle)
     # gearwheel hollow
     hollow_A = []
-    #hollow_A.append((ox+hl1*math.cos(tooth_angle+ha1), oy+hl1*math.sin(tooth_angle+ha1), 0))
-    #hollow_A.append((ox+hl2*math.cos(tooth_angle+ha1), oy+hl2*math.sin(tooth_angle+ha1), hrbr))
-    #hollow_A.append((ox+hl2*math.cos(tooth_angle+ha2), oy+hl2*math.sin(tooth_angle+ha2), hrbr))
-    #hollow_A.append((ox+hl1*math.cos(tooth_angle+ha2), oy+hl1*math.sin(tooth_angle+ha2), 0))
     hollow_A.extend(first_hollow_slope_A)
     hollow_A.extend(second_hollow_slope_A)
     hollow_B = cnc25d_api.cnc_cut_outline(hollow_A, "hollow")
@@ -543,15 +532,14 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
   if(last_end>0):
     half_hollow = []
     end_of_profile_B = []
-    if(first_end==1):
+    if(last_end==1):
       end_of_profile_B = [(ox+tlm*math.cos(tooth_angle), oy+tlm*math.sin(tooth_angle))]
     else:
       (end_of_profile_B, end_of_hollow_slope_A) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, -1, i1_hsl, hrbr, tooth_angle)
       # gearwheel hollow
-      if(first_end==3):
+      if(last_end==3):
         hollow_A = []
-        hollow_A.append((ox+hl1*math.cos(tooth_angle+ha1), oy+hl1*math.sin(tooth_angle+ha1), 0))
-        hollow_A.append((ox+hl2*math.cos(tooth_angle+ha1), oy+hl2*math.sin(tooth_angle+ha1), hrbr))
+        hollow_A.extend(end_of_hollow_slope_A)
         hollow_A.append((ox+hlm*math.cos(tooth_angle+ham), oy+hlm*math.sin(tooth_angle+ham), 0))
         hollow_B = cnc25d_api.cnc_cut_outline(hollow_A, "hollow")
         half_hollow = hollow_B[1:]
@@ -573,7 +561,7 @@ def ideal_involute_tooth_outline(ai_low_parameters, ai_angle_position, ai_thickn
   (gear_type, pi_module_angle,
     i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_hsl, i1_thickness,
     i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_hsl, i2_thickness,
-    hl1, hl2, ha1, ha2, hrbr, hlm, ham, tlm,
+    hrbr, hlm, ham, tlm,
     ox, oy, portion_tooth_nb, first_end, last_end, closed) = ai_low_parameters
   # precision
   ideal = 8 # additional_sampling_for_ideal_curve. it's a multiplicator
