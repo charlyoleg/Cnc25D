@@ -285,11 +285,25 @@ def gear_profile(
       ### output
       ai_gear_profile_height = 1.0,
       ai_simulation_enable = False,
-      ai_output_file_basename = ''):
+      ai_output_file_basename = '',
+      #### optional
+      ai_args_in_txt = ''):
   """
   The main function of the script.
   It generates a gear_profile according to the function arguments
   """
+  ## log all input parameters
+  input_parameter_info_txt = "### first gear\n# general\nai_gear_type {:s}\nai_gear_tooth_nb {:d}\nai_gear_module {:0.3f}\nai_gear_primitive_diameter {:0.3f}\nai_gear_addendum_dedendum_parity {:0.3f}\n".format(ai_gear_type, ai_gear_tooth_nb, ai_gear_module, ai_gear_primitive_diameter, ai_gear_addendum_dedendum_parity)
+  input_parameter_info_txt += "# tooth height\nai_gear_tooth_half_height {:0.3f}\nai_gear_addendum_height_pourcentage {:0.3f}\nai_gear_dedendum_height_pourcentage {:0.3f}\nai_gear_hollow_height_pourcentage {:0.3f}\nai_gear_router_bit_radius {:0.3f}\n".format(ai_gear_tooth_half_height, ai_gear_addendum_height_pourcentage, ai_gear_dedendum_height_pourcentage, ai_gear_hollow_height_pourcentage, ai_gear_router_bit_radius)
+  input_parameter_info_txt += "# positive involute\nai_gear_base_diameter {:0.3f}\nai_gear_force_angle {:0.3f}\nai_gear_tooth_resolution_n {:d}\nai_gear_skin_thickness {:0.3f}\n".format(ai_gear_base_diameter, ai_gear_force_angle, ai_gear_tooth_resolution, ai_gear_skin_thickness)
+  input_parameter_info_txt += "# negative involute (if zero, negative involute = positive involute)\nai_gear_base_diameter_n {:0.3f}\nai_gear_force_angle_n {:0.3f}\nai_gear_tooth_resolution_n {:d}\nai_gear_skin_thickness_n {:0.3f}\n".format(ai_gear_base_diameter_n, ai_gear_force_angle_n, ai_gear_tooth_resolution_n, ai_gear_skin_thickness_n)
+  input_parameter_info_txt += "### second gear\n# general\nai_second_gear_type {:s}\nai_second_gear_tooth_nb {:d}\nai_second_gear_primitive_diameter {:0.3f}\nai_second_gear_addendum_dedendum_parity {:0.3f}\n".format(ai_second_gear_type, ai_second_gear_tooth_nb, ai_second_gear_primitive_diameter, ai_second_gear_addendum_dedendum_parity)
+  input_parameter_info_txt += "# tooth height\nai_second_gear_tooth_half_height {:0.3f}\nai_second_gear_addendum_height_pourcentage {:0.3f}\nai_second_gear_dedendum_height_pourcentage {:0.3f}\nai_second_gear_hollow_height_pourcentage {:0.3f}\nai_second_gear_router_bit_radius {:0.3f}\n".format(ai_second_gear_tooth_half_height, ai_second_gear_addendum_height_pourcentage, ai_second_gear_dedendum_height_pourcentage, ai_second_gear_hollow_height_pourcentage, ai_second_gear_router_bit_radius)
+  input_parameter_info_txt += "# positive involute\nai_second_gear_base_diameter {:0.3f}\nai_second_gear_tooth_resolution {:d}\nai_second_gear_skin_thickness {:0.3f}\n".format(ai_second_gear_base_diameter, ai_second_gear_tooth_resolution, ai_second_gear_skin_thickness)
+  input_parameter_info_txt += "# negative involute (if zero, negative involute = positive involute)\nai_second_gear_base_diameter_n {:0.3f}\nai_second_gear_tooth_resolution_n {:d}\nai_second_gear_skin_thickness_n {:0.3f}\n".format(ai_second_gear_base_diameter_n, ai_second_gear_tooth_resolution_n, ai_second_gear_skin_thickness_n)
+  input_parameter_info_txt += "### gearbar specific\nai_gearbar_slope {:0.3f}\nai_gearbar_slope_n {:0.3f}\n".format(ai_gearbar_slope, ai_gearbar_slope_n)
+  input_parameter_info_txt += "### position\n# first gear position\nai_center_position_x {:0.3f}\nai_center_position_y {:0.3f}\nai_gear_initial_angle {:0.3f}\n# second gear position\nai_second_gear_position_angle {:0.3f}\nai_second_gear_additional_axis_length {:0.3f}\n".format(ai_center_position_x, ai_center_position_y, ai_gear_initial_angle, ai_second_gear_position_angle, ai_second_gear_additional_axis_length)
+  input_parameter_info_txt += "### portion\nai_portion_tooth_nb {:d}\nai_portion_first_end {:d}\nai_portion_last_end {:d}\n".format(ai_portion_tooth_nb, ai_portion_first_end, ai_portion_last_end)
   ## epsilon for rounding
   radian_epsilon = math.pi/1000
   ##### gear-profile high-level parameters
@@ -788,6 +802,7 @@ def gear_profile(
     #print(sys_info_txt + g2_info_txt)
     g1g2_info_txt += sys_info_txt + g2_info_txt
     #print("dbg689: g2_outline_B is ready")
+    exhaustive_info_txt = ai_args_in_txt + '\n\n' + g1g2_info_txt + '\n\n' + input_parameter_info_txt
 
   ### simulation
   if(ai_simulation_enable):
@@ -891,7 +906,7 @@ def gear_profile(
 
   ### output files
   gp_figure = [g1_outline_B] # select the outlines to be writen in files
-  cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height, g1g2_info_txt)
+  cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height, exhaustive_info_txt)
 
   r_gp = (g1_outline_B, g1_param, g1_info_txt)
   return(r_gp)
@@ -900,7 +915,7 @@ def gear_profile(
 # gear_profile argparse_to_function
 ################################################################
 
-def gear_profile_argparse_wrapper(ai_gp_args):
+def gear_profile_argparse_wrapper(ai_gp_args, ai_args_in_txt=''):
   """
   wrapper function of gear_profile() to call it using the gear_profile_parser.
   gear_profile_parser is mostly used for debug and non-regression tests.
@@ -974,7 +989,9 @@ def gear_profile_argparse_wrapper(ai_gp_args):
                       ### output
                       ai_gear_profile_height  = ai_gp_args.sw_gear_profile_height,
                       ai_simulation_enable    = run_simulation,    # ai_gp_args.sw_simulation_enable,
-                      ai_output_file_basename = ai_gp_args.sw_output_file_basename)
+                      ai_output_file_basename = ai_gp_args.sw_output_file_basename,
+                      ### optional
+                      ai_args_in_txt          = ai_args_in_txt)
   return(r_gp)
 
 ################################################################
@@ -1044,12 +1061,14 @@ def gear_profile_cli(ai_args=None):
   gear_profile_parser.add_argument('--run_self_test','--rst', action='store_true', default=False, dest='sw_run_self_test',
     help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
   effective_args = cnc25d_api.get_effective_args(ai_args)
+  effective_args_in_txt = ' '.join(effective_args)
+  #print("dbg557: effective_args:", effective_args)
   gp_args = gear_profile_parser.parse_args(effective_args)
   print("dbg111: start making gear_profile")
   if(gp_args.sw_run_self_test):
     r_gp = gear_profile_self_test()
   else:
-    r_gp = gear_profile_argparse_wrapper(gp_args)
+    r_gp = gear_profile_argparse_wrapper(gp_args, effective_args_in_txt)
   print("dbg999: end of script")
   return(r_gp)
 
