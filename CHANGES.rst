@@ -2,6 +2,12 @@
 Release History
 ###############
 
+0.1.5 (2013-09-18)
+==================
+
+* GPL v3 is applied to this Python package.
+
+
 0.1.4 (2013-09-11)
 ==================
 
@@ -23,7 +29,6 @@ Release History
 * All Cnc25D API function are gathered in the cnc25d_api module
 * Box wood frame design example generates also BRep in addition to STL and DXF.
 * Box wood frame design example support router_bit radius up to 4.9 mm with all others parameters at default.
-* LGPL v3 is applied to this Python package.
 
 
 0.1.2 (2013-06-18)

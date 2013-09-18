@@ -238,7 +238,7 @@ License
 
 (C\) Copyright 2013 charlyoleg
 
-The Cnc25D Python package is under `GNU Lesser General Public License`_ version 3 or any latter (LGPL_ v3+).
+The Cnc25D Python package is under `GNU General Public License`_ version 3 or any latter (GPL_ v3+).
 
 Feedback and contact
 ====================
@@ -250,9 +250,15 @@ For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 Releases
 ========
 
+Release 0.1.5
+-------------
+Released on 2013-09-18
+
+* GPL v3 is applied to this Python package.
+
 Release 0.1.4
 -------------
-Released on 2013-09-01
+Released on 2013-09-11
 
 * Python package created with setuptools (instead of distribute)
 * add API function smooth_outline_c_curve() approximates a curve defined by points and tangents with arcs.
@@ -272,7 +278,6 @@ Released on 2013-08-13
 * All Cnc25D API function are gathered in the cnc25d_api module
 * Box wood frame design example generates also BRep in addition to STL and DXF.
 * Box wood frame design example support router_bit radius up to 4.9 mm with all others parameters at default.
-* LGPL v3 is applied to this Python package.
 
 Release 0.1.2
 -------------
@@ -309,8 +314,8 @@ Released on 2013-06-04
 .. _`Cnc25D daily built documentation` : https://cnc25d.readthedocs.org
 .. _PyPI : https://pypi.python.org/pypi/Cnc25D
 
-.. _`GNU Lesser General Public License` : http://www.gnu.org/licenses/translations.html
-.. _`LGPL` : http://www.gnu.org/licenses/translations.html
+.. _`GNU General Public License` : http://www.gnu.org/licenses/translations.html
+.. _`GPL` : http://www.gnu.org/licenses/translations.html
 
 .. _DXF : http://en.wikipedia.org/wiki/AutoCAD_DXF
 .. _STL : http://en.wikipedia.org/wiki/STL_%28file_format%29
