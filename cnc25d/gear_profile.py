@@ -780,6 +780,8 @@ def gear_profile(
   g1_info_txt = gear_high_level_parameter_to_text("Gear-profile 1:", g1_param)
   g1_info_txt += g1_info_low
   #print(g1_info_txt)
+  g1g2_info_txt = g1_info_txt
+  exhaustive_info_txt = '\n\nstart of gear_profile info\n\n' + ai_args_in_txt + '\n\n' + g1_info_txt + '\n\n' + input_parameter_info_txt + '\nend of gear_profile info\n\n'
   
   ### generate the second gear outline
   g1g2_info_txt = g1_info_txt
@@ -802,7 +804,7 @@ def gear_profile(
     #print(sys_info_txt + g2_info_txt)
     g1g2_info_txt += sys_info_txt + g2_info_txt
     #print("dbg689: g2_outline_B is ready")
-    exhaustive_info_txt = ai_args_in_txt + '\n\n' + g1g2_info_txt + '\n\n' + input_parameter_info_txt
+    exhaustive_info_txt = '\n\nstart of gear_profile info\n\n' + ai_args_in_txt + '\n\n' + g1g2_info_txt + '\n\n' + input_parameter_info_txt + '\nend of gear_profile info\n\n'
 
   ### simulation
   if(ai_simulation_enable):
@@ -908,7 +910,7 @@ def gear_profile(
   gp_figure = [g1_outline_B] # select the outlines to be writen in files
   cnc25d_api.generate_output_file(gp_figure, ai_output_file_basename, ai_gear_profile_height, exhaustive_info_txt)
 
-  r_gp = (g1_outline_B, g1_param, g1_info_txt)
+  r_gp = (g1_outline_B, g1_param, exhaustive_info_txt)
   return(r_gp)
 
 ################################################################
@@ -1061,7 +1063,7 @@ def gear_profile_cli(ai_args=None):
   gear_profile_parser.add_argument('--run_self_test','--rst', action='store_true', default=False, dest='sw_run_self_test',
     help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
   effective_args = cnc25d_api.get_effective_args(ai_args)
-  effective_args_in_txt = ' '.join(effective_args)
+  effective_args_in_txt = "gear_profile arguments: " + ' '.join(effective_args)
   #print("dbg557: effective_args:", effective_args)
   gp_args = gear_profile_parser.parse_args(effective_args)
   print("dbg111: start making gear_profile")

@@ -415,10 +415,11 @@ wheel_hollow_router_bit_radius: \t{:0.3f}
 axle_router_bit_radius:         \t{:0.3f}
 cnc_router_bit_radius:          \t{:0.3f}
 """.format(gear_router_bit_radius, wheel_hollow_router_bit_radius, axle_router_bit_radius, ai_gear_router_bit_radius)
-  print(gearwheel_parameter_info)
+  #print(gearwheel_parameter_info)
 
   # display with Tkinter
   if(ai_tkinter_view):
+    print(gearwheel_parameter_info)
     cnc25d_api.figure_simple_display(gw_figure, gw_figure_overlay, gearwheel_parameter_info)
   # generate output file
   cnc25d_api.generate_output_file(gw_figure, ai_output_file_basename, ai_gear_profile_height, gearwheel_parameter_info)
