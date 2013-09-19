@@ -245,7 +245,7 @@ def calc_low_level_gear_parameters(ai_param):
   r_low_parameters = ()
   if((g_type=='e')or(g_type=='i')):
     ### search points
-    initial_step = (g_ar-g_dr)/4
+    initial_step = float(g_ar-g_dr)/4
     #pi_module_angle = 2*math.pi/g_n
     pi_module_angle = ai_param['pi_module_angle']
     # intersection of positive involute and the primitive circle
@@ -312,21 +312,21 @@ def calc_low_level_gear_parameters(ai_param):
     if(g_type=='e'): # negative > hollow > positive
       # low1: to create the gear-profile outline
       i1_base = g_brn
-      i1_offset = top_land/2-inaa
+      i1_offset = float(top_land)/2-inaa
       i1_sign = -1
       i1u_nb = g_irn
       i1u_ini = inau
-      i1u_inc = (indu-inau)/i1u_nb # <0
+      i1u_inc = float(indu-inau)/i1u_nb # <0
       i1_dtri = math.fmod(indti-inda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
       i1_dbl = max(0, g_brn-g_dr) # dedendum_base_length
       i1_hsl = float(g_hh+i1_dbl)/math.cos(i1_dtri) + g_stn*math.tan(i1_dtri) # hollow slope length
       i1_thickness = g_stn
       i2_base = g_brp
-      i2_offset = pi_module_angle-top_land/2-ipaa
+      i2_offset = pi_module_angle-float(top_land)/2-ipaa
       i2_sign = 1
       i2u_nb = g_irp
       i2u_ini = ipdu
-      i2u_inc = (ipau-ipdu)/i2u_nb # >0
+      i2u_inc = float(ipau-ipdu)/i2u_nb # >0
       i2_dtri = math.fmod(ipdti-ipda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
       i2_dbl = max(0, g_brp-g_dr) # dedendum_base_length
       i2_hsl = float(g_hh+i2_dbl)/math.cos(i2_dtri) +  g_stp*math.tan(i2_dtri) # hollow slope length
@@ -335,20 +335,20 @@ def calc_low_level_gear_parameters(ai_param):
     elif(g_type=='i'): # positive > hollow > negative
       # low1
       i1_base = g_brp
-      i1_offset = top_land/2-ipaa
+      i1_offset = float(top_land)/2-ipaa
       i1_sign = 1
       i1u_nb = g_irp
       i1u_ini = ipau
-      i1u_inc = (ipdu-ipau)/i1u_nb # >0
+      i1u_inc = float(ipdu-ipau)/i1u_nb # >0
       i1_dtri = math.fmod(ipdti-ipda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
       i1_hsl = float(g_hh)/math.cos(i1_dtri) + g_stp*math.tan(i1_dtri) # hollow slope length
       i1_thickness = g_stp
       i2_base = g_brn
-      i2_offset = pi_module_angle-top_land/2-inaa
+      i2_offset = pi_module_angle-float(top_land)/2-inaa
       i2_sign = -1
       i2u_nb = g_irn
       i2u_ini = indu
-      i2u_inc = (inau-indu)/i2u_nb # >0
+      i2u_inc = float(inau-indu)/i2u_nb # >0
       i2_dtri = math.fmod(indti-inda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
       i2_hsl = float(g_hh)/math.cos(i2_dtri) + g_stn*math.tan(i2_dtri) # hollow slope length
       i2_thickness = g_stn
@@ -389,20 +389,21 @@ def calc_low_level_gear_parameters(ai_param):
         print("ERR973: Error, BI {:0.3f} and BI2 {:0.3f} are not equal".format(BI, BI2))
         sys.exit(2)
       # check the position of the router_bit
-      IO = g_rbr / math.sin(AIB/2)
-      AIO = AIB/2
+      AIO = float(AIB)/2
+      IO = g_rbr / math.sin(AIO)
       AIF = math.pi-a
       OIF = abs(AIF-AIO)
       IFl = IO * math.cos(OIF)
       IHl = AI * math.sin(a)
       FHl = IHl-IFl
-      if(FHl<1.1*g_hh): # in this case the hollow is optmized
+      #print("dbg974: IO {:0.3f}  FHl {:0.3f}  g_hh {:0.3f}".format(IO, FHl, g_hh))
+      if(FHl<(1.15*g_hh-g_rbr)): # in this case the hollow is optmized
         ho = True
         i1_hsl = AI
         i2_hsl = BI
     ### portion
     hlm = g_hr*math.cos(bottom_land/2) # this is to ensure nice junction of split gearwheel
-    ham = ha1 + bottom_land/2
+    ham = ha1 + float(bottom_land)/2
     tlm = g_ar*math.cos(top_land/2) # this is to ensure nice junction of split gearwheel
     if(g_ptn==0):
       portion_tooth_nb = g_n

@@ -60,7 +60,7 @@ from gear_profile_outline import *
 ################################################################
 # module variable
 ################################################################
-gp_radian_epsilon = math.pi/1000
+#gp_radian_epsilon = math.pi/1000
 g1_rotation_speed = 1 # rad/s
 speed_scale = 0.2 #1
 
@@ -308,7 +308,7 @@ def gear_profile(
   input_parameter_info_txt += "### position\n# first gear position\nai_center_position_x {:0.3f}\nai_center_position_y {:0.3f}\nai_gear_initial_angle {:0.3f}\n# second gear position\nai_second_gear_position_angle {:0.3f}\nai_second_gear_additional_axis_length {:0.3f}\n".format(ai_center_position_x, ai_center_position_y, ai_gear_initial_angle, ai_second_gear_position_angle, ai_second_gear_additional_axis_length)
   input_parameter_info_txt += "### portion\nai_portion_tooth_nb {:d}\nai_portion_first_end {:d}\nai_portion_last_end {:d}\n".format(ai_portion_tooth_nb, ai_portion_first_end, ai_portion_last_end)
   ## epsilon for rounding
-  radian_epsilon = math.pi/1000
+  #radian_epsilon = math.pi/1000
   ##### gear-profile high-level parameters
   g1_param = {}   # first gear high-level parameters
   g2_param = {}   # second gear high-level parameters
@@ -695,14 +695,14 @@ def gear_profile(
   g2_param['gear_router_bit_radius'] = g2_rbr
   # hollow
   g1_h_delta = g1_thh*float(ai_gear_hollow_height_pourcentage)/100
-  if(g1_h_delta<g1_rbr):
+  if(g1_h_delta<1.05*g1_rbr):
     print("WARN218: Warning, g1_h_delta {:0.2f} is smaller than the router_bit_radius {:0.2f}. gear_hollow_height_pourcentage {:0.2f} should be set to {:0.2f}".format(g1_h_delta, g1_rbr, ai_gear_hollow_height_pourcentage, 100.0*g1_rbr/g1_thh))
-    g1_h_delta = g1_rbr + 10*radian_epsilon
+    g1_h_delta = 1.05*g1_rbr
   g2_h_delta = g2_thh*float(ai_second_gear_hollow_height_pourcentage)/100
   if(g2_exist):
-    if(g2_h_delta<g2_rbr):
+    if(g2_h_delta<1.05*g2_rbr):
       print("WARN219: Warning, g2_h_delta {:0.2f} is smaller than the second_router_bit_radius {:0.2f}. second_gear_hollow_height_pourcentage {:0.2f} should be set to {:0.2f}".format(g2_h_delta, g2_rbr, ai_second_gear_hollow_height_pourcentage, 100.0*g2_rbr/g2_thh))
-      g2_h_delta = g2_rbr + 10*radian_epsilon
+      g2_h_delta = 1.05*g2_rbr
   g1_hr = g1_dr - g1_as*g1_h_delta
   g2_hr = g2_dr - g2_as*g2_h_delta
   g1_param['hollow_height'] = g1_h_delta
