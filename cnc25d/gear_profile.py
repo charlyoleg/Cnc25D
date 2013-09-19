@@ -948,7 +948,7 @@ def gear_profile(
     my_canvas.add_curve_graphic_table(gear_profile_mpl_curves)
     tk_root.mainloop()
     del (my_canvas, tk_root) # because Tkinter could be used again later in this script
-    #time.sleep(0.3) # delay to help Tkinter to close properly
+    #time.sleep(2) # delay to help Tkinter to close properly
 
   ### output files
   gp_figure = [g1_outline_B] # select the outlines to be writen in files
