@@ -999,7 +999,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   # angle CBA
   if(AC+BC==AB):
   #if(abs(AC+BC-AB)<radian_epsilon):
-    print("WARN468: Warning, the triangle ABC is flat")
+    #print("WARN468: Warning, the triangle ABC is flat") # it happens from time to time, don't worry :O
     BAC = 0
     ABC = 0
   elif(AC+BC<AB):

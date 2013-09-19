@@ -204,8 +204,11 @@ def gear_high_level_parameter_to_text(ai_prefix_txt, ai_param):
   r_txt += "primitive radius:         \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['primitive_radius'], 2*ai_param['primitive_radius'])
   r_txt += "addendum-dedendum parity: \t{:0.2f} %\n".format(100*ai_param['addendum_dedendum_parity'])
   r_txt += "tooth half height:        \t{:0.3f}\n".format(ai_param['tooth_half_height'])
-  r_txt += "positive base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['positive_base_radius'], 2*ai_param['positive_base_radius'])
-  r_txt += "negative base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['negative_base_radius'], 2*ai_param['negative_base_radius'])
+  if((ai_param['gear_type']=='e')or(ai_param['gear_type']=='i')):
+    r_txt += "positive base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['positive_base_radius'], 2*ai_param['positive_base_radius'])
+    r_txt += "negative base radius:     \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['negative_base_radius'], 2*ai_param['negative_base_radius'])
+  elif(ai_param['gear_type']=='l'):
+    r_txt += "linear gear: inclination: {:0.3f} (radian)  {:0.3f} (degree)  positive slope: {:0.3f} (radian)  {:0.3f} (degree)  negative slope: {:0.3f} (radian)  {:0.3f}\n".format(ai_param['gearbar_inclination'], ai_param['gearbar_inclination']*180/math.pi, ai_param['positive_slope_angle'], ai_param['positive_slope_angle']*180/math.pi, ai_param['negative_slope_angle'], ai_param['negative_slope_angle']*180/math.pi)
   r_txt += "addendum radius:          \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['addendum_radius'], 2*ai_param['addendum_radius'])
   r_txt += "dedendum radius:          \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['dedendum_radius'], 2*ai_param['dedendum_radius'])
   r_txt += "gear hollow radius:       \t{:0.3f}   \tdiameter: {:0.3f}\n".format(ai_param['hollow_radius'], 2*ai_param['hollow_radius'])
@@ -214,8 +217,7 @@ def gear_high_level_parameter_to_text(ai_prefix_txt, ai_param):
   r_txt += "profile resolution (positive, negative):       \t{:d}     \t{:d}\n".format(ai_param['positive_involute_resolution'], ai_param['negative_involute_resolution'])
   r_txt += "profile skin thickness (positive, negative):   \t{:0.3f}  \t{:0.3f}\n".format(ai_param['positive_skin_thickness'], ai_param['negative_skin_thickness'])
   r_txt += "gear portion:   \ttooth_nb: {:d}   \tstart: {:d}  \tstop: {:d}\n".format(ai_param['portion_tooth_nb'], ai_param['portion_first_end'], ai_param['portion_last_end'])
-  r_txt += "first tooth position angle:   \t{:0.3f} (radian)  \t{:0.3f} (degree)\n".format(ai_param['initial_angle'], ai_param['initial_angle']*180/math.pi)
-  r_txt += "linear gear: inclination: {:0.3f} (radian)  {:0.3f} (degree)  positive slope: {:0.3f} (radian)  {:0.3f} (degree)  negative slope: {:0.3f} (radian)  {:0.3f}\n".format(ai_param['gearbar_inclination'], ai_param['gearbar_inclination']*180/math.pi, ai_param['positive_slope_angle'], ai_param['positive_slope_angle']*180/math.pi, ai_param['negative_slope_angle'], ai_param['negative_slope_angle']*180/math.pi)
+  #r_txt += "first tooth position angle:   \t{:0.3f} (radian)  \t{:0.3f} (degree)\n".format(ai_param['initial_angle'], ai_param['initial_angle']*180/math.pi)
   return(r_txt)
 
 
@@ -423,7 +425,7 @@ def gear_profile(
   g2_param['addendum_dedendum_parity'] = g2_adp
   # inter-axis additional length
   aal = ai_second_gear_additional_axis_length
-  if(aal>0):
+  if(aal!=0):
     if(not g2_exist):
       print("ERR120: Error, set second_gear_tooth_nb to use second_gear_additional_axis_length")
       sys.exit(2)
@@ -494,7 +496,9 @@ def gear_profile(
   g1_sn = 0
   if((g1_type=='e')or(g1_type=='i')):
     # positive involute : positive_base_radius
-    g1_brp = g1_small_r
+    g1_brp = g1_small_r # default value
+    if(g2_exist and (g2_type=='e') and (g2_n<g1_n)):
+      g1_brp = float(g2_small_r*g1_n)/g2_n # default value when running with a smaller gear
     g1_brp_set = False
     if(ai_gear_base_diameter>0):
       g1_brp = float(ai_gear_base_diameter)/2
@@ -795,10 +799,40 @@ def gear_profile(
     g2_outline_B = gear_profile_outline(g2_make_low_param, g2_ia)
     ### g2_position
     (place_low_parameters, place_info) = pre_g2_position_calculation(g1_param, g2_param, aal, g1g2_a, g1_rotation_speed, speed_scale)
+    (g2_iap, g2_rotation_speed_p, tmp_tangential_friction, tmp_c1_speed_outline, tmp_c2_speed_outline) = g2_position_calculation(place_low_parameters, 1, g1_ia)
+    (g2_ian, g2_rotation_speed_n, tmp_tangential_friction, tmp_c1_speed_outline, tmp_c2_speed_outline) = g2_position_calculation(place_low_parameters,-1, g1_ia)
+    if((g2_type=='e')or(g2_type=='i')):
+      g2_ia_modulo = g2_pi_module_angle
+    elif(g2_type=='l'):
+      g2_ia_modulo = g2_pi_module
+    g2_iap_ox = math.fmod(g2_iap+2*math.pi+0.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
+    g2_ian_ox = math.fmod(g2_ian+2*math.pi+0.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
+    g2_ia_slack = math.fmod(g2_iap_ox - g2_ian_ox + 2.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
+    initial_position_info_txt = "Initial position: "
+    initial_speed_info_txt = "Initial speed: "
+    if((g1_type=='e')or(g1_type=='i')):
+      initial_position_info_txt += "g1_ia: {:0.3f} (radian)  {:0.3f} (degree)\n".format(g1_ia, g1_ia*180/math.pi)
+      initial_speed_info_txt += "g1_initial_speed: {:0.3f} (radian/s)  {:0.3f} (revolution/s)\n".format(g1_rotation_speed, g1_rotation_speed/math.pi)
+    elif(g1_type=='l'):
+      initial_position_info_txt += "g1_ia: {:0.3f} (mm)\n".format(g1_ia)
+      initial_speed_info_txt += "g1_initial_speed: {:0.3f} (mm/s)\n".format(g1_rotation_speed)
+    if((g2_type=='e')or(g2_type=='i')):
+      initial_position_info_txt += "g2_iap: {:0.3f} (radian)  {:0.3f} (degree)  g2_iap_ox: {:0.3f} (radian)  {:0.3f} (degree)\n".format(g2_iap, g2_iap*180/math.pi, g2_iap_ox, g2_iap_ox*180/math.pi)
+      initial_position_info_txt += "g2_ian: {:0.3f} (radian)  {:0.3f} (degree)  g2_ian_ox: {:0.3f} (radian)  {:0.3f} (degree)\n".format(g2_ian, g2_ian*180/math.pi, g2_ian_ox, g2_ian_ox*180/math.pi)
+      initial_position_info_txt += "g2_ia_slack: {:0.5f} (radian)  {:0.5f} (degree)\n".format(g2_ia_slack, g2_ia_slack*180/math.pi)
+      initial_speed_info_txt += "g2_initial_speed: positive:  {:0.3f} (rad/s)  {:0.3f} (rev/s)  negative:  {:0.3f} (rad/s)  {:0.3f} (rev/s)\n".format(g2_rotation_speed_p, g2_rotation_speed_p/math.pi, g2_rotation_speed_n, g2_rotation_speed_n/math.pi)
+    elif(g2_type=='l'):
+      initial_position_info_txt += "g2_iap: {:0.3f} (mm)  g2_iap_ox: {:0.3f} (mm)\n".format(g2_iap, g2_iap_ox)
+      initial_position_info_txt += "g2_ian: {:0.3f} (mm)  g2_ian_ox: {:0.3f} (mm)\n".format(g2_ian, g2_ian_ox)
+      initial_position_info_txt += "g2_ia_slack: {:0.5f} (mm)\n".format(g2_ia_slack)
+      initial_speed_info_txt += "g2_initial_speed: positive:  {:0.3f} (mm/s)  negative: {:0.3f} (mm/s)\n".format(g2_rotation_speed_p, g2_rotation_speed_n)
+    g2_param['initial_angle'] = g2_iap
     # output info
     sys_info_txt = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
     sys_info_txt += real_force_info
     sys_info_txt += place_info
+    sys_info_txt += initial_position_info_txt
+    sys_info_txt += initial_speed_info_txt
     g2_info_txt = gear_high_level_parameter_to_text("Gear-profile 2:", g2_param)
     g2_info_txt += g2_info_low
     #print(sys_info_txt + g2_info_txt)
