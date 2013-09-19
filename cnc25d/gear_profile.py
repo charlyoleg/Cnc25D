@@ -418,7 +418,7 @@ def gear_profile(
       sys.exit(2)
     else:
       print("WARN211: Warning, second_gear_addendum_dedendum_parity is used for irregular cases.")
-      g2_adp = ai_second_gear_addendum_dedendum_parity
+      g2_adp = float(ai_second_gear_addendum_dedendum_parity)/100
   if((g2_adp<=0)or(g2_adp>=1)):
     print("ERR119: Error, the second_gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(ai_second_gear_addendum_dedendum_parity))
     sys.exit(2)
@@ -1050,32 +1050,32 @@ def gear_profile_self_test():
   Look at the simulation Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"                                    , "--gear_tooth_nb 17"],
-    ["external-external test"                           , "--gear_tooth_nb 17 --second_gear_tooth_nb 21 --gear_module 10.0 --gear_skin_thickness 1.0 --gear_router_bit_radius 2.0 --simulation_enable"],
-    ["external-internal test"                           , "--gear_tooth_nb 17"],
-    ["internal-external test"                           , "--gear_tooth_nb 17"],
-    ["external-linear test"                             , "--gear_tooth_nb 20 --gear_module 10 --second_gear_type l --gearbar_slope 0.3 --gearbar_slope_n 0.6 --gear_router_bit_radius 3 --second_gear_tooth_nb 5 --second_gear_router_bit_radius 2"],
-    ["linear-external test"                             , "--gear_tooth_nb 17"],
-    ["simple reduction (ratio<1)"                       , "--gear_tooth_nb 20 --second_gear_tooth_nb 25 --gear_module 10.0 --gear_skin_thickness 0.0 --gear_router_bit_radius 1.5 --gear_base_diameter 182.0 --gear_base_diameter_n 165.0"],
-    ["simple transmission (ratio=1)"                    , "--gear_tooth_nb 13 --second_gear_tooth_nb 13"],
-    ["simple multiplication (ratio>1)"                  , "--gear_tooth_nb 19 --second_gear_tooth_nb 16"],
-    ["big ratio and zoom"                               , "--gear_tooth_nb 19 --second_gear_tooth_nb 137"],
-    ["single gear with same primitive and base circle"  , "--gear_tooth_nb 17 --gear_base_diameter 16.5"],
-    ["single gear with small base circle"               , "--gear_tooth_nb 27 --gear_base_diameter 23.5"],
-    ["with first and second angle and inter-axis length" , "--gear_tooth_nb 17 --second_gear_tooth_nb 21 --gear_initial_angle {:0.3f} --second_gear_position_angle {:0.3f} --second_gear_additional_axis_length 0.2".format(15*math.pi/180, 40.0*math.pi/180)],
-    ["other with first and second angle"                , "--gear_tooth_nb 17 --second_gear_tooth_nb 15 --gear_initial_angle  {:0.3f} --second_gear_position_angle  {:0.3f}".format(-5*math.pi/180, 170.0*math.pi/180)],
-    ["with force angle constraint"                      , "--gear_tooth_nb 17 --second_gear_tooth_nb 27 --gear_force_angle {:0.3f}".format(20*math.pi/180)],
-    ["first base radius constraint"                     , "--gear_tooth_nb 26 --second_gear_tooth_nb 23 --gear_base_diameter 23.0"],
-    ["second base radius constraint"                    , "--gear_tooth_nb 17 --second_gear_tooth_nb 23 --second_gear_primitive_diameter 20.3"],
-    ["fine draw resolution"                             , "--gear_tooth_nb 17 --second_gear_tooth_nb 19 --gear_tooth_resolution 10"],
-    ["ratio 1 and dedendum at 30%%"                     , "--gear_tooth_nb 17 --second_gear_tooth_nb 17 --gear_dedendum_height_pourcentage 30.0 --second_gear_addendum_height_pourcentage 30.0"],
-    ["ratio > 1 and dedendum at 40%%"                   , "--gear_tooth_nb 17 --second_gear_tooth_nb 23 --gear_dedendum_height_pourcentage 40.0 --second_gear_addendum_height_pourcentage 40.0"],
-    ["ratio > 1 and addendum at 80%%"                   , "--gear_tooth_nb 17 --second_gear_tooth_nb 17 --gear_addendum_height_pourcentage 80.0 --second_gear_dedendum_height_pourcentage 80.0"],
-    ["ratio > 1 and dedendum at 140%%"                  , "--gear_tooth_nb 17 --second_gear_tooth_nb 21 --gear_dedendum_height_pourcentage 140.0"],
-    ["ratio > 1 and small tooth height"                 , "--gear_tooth_nb 17 --second_gear_tooth_nb 29 --gear_tooth_half_height 1.3 --second_gear_tooth_half_height 1.3"],
-    ["ratio > 1 and big tooth height"                   , "--gear_tooth_nb 17 --second_gear_tooth_nb 29 --gear_tooth_half_height 2.3 --second_gear_tooth_half_height 2.3"],
+    #["simplest test"                                    , "--gear_tooth_nb 17"],
+    #["external-external test"                           , "--gear_tooth_nb 17 --second_gear_tooth_nb 21 --gear_module 10.0 --gear_skin_thickness 1.0 --gear_router_bit_radius 2.0 --simulation_enable"],
+    #["external-internal test"                           , "--gear_tooth_nb 17"],
+    #["internal-external test"                           , "--gear_tooth_nb 17"],
+    #["external-linear test"                             , "--gear_tooth_nb 20 --gear_module 10 --second_gear_type l --gearbar_slope 0.3 --gearbar_slope_n 0.6 --gear_router_bit_radius 3 --second_gear_tooth_nb 5 --second_gear_router_bit_radius 2"],
+    #["linear-external test"                             , "--gear_tooth_nb 17"],
+    #["simple reduction (ratio<1)"                       , "--gear_tooth_nb 20 --second_gear_tooth_nb 25 --gear_module 10.0 --gear_skin_thickness 0.0 --gear_router_bit_radius 1.5 --gear_base_diameter 182.0 --gear_base_diameter_n 165.0"],
+    #["simple transmission (ratio=1)"                    , "--gear_tooth_nb 13 --second_gear_tooth_nb 13"],
+    #["simple multiplication (ratio>1)"                  , "--gear_tooth_nb 19 --second_gear_tooth_nb 16"],
+    #["big ratio and zoom"                               , "--gear_tooth_nb 19 --second_gear_tooth_nb 137"],
+    #["single gear with same primitive and base circle"  , "--gear_tooth_nb 17 --gear_base_diameter 16.5"],
+    #["single gear with small base circle"               , "--gear_tooth_nb 27 --gear_base_diameter 23.5"],
+    #["with first and second angle and inter-axis length" , "--gear_tooth_nb 17 --second_gear_tooth_nb 21 --gear_initial_angle {:0.3f} --second_gear_position_angle {:0.3f} --second_gear_additional_axis_length 0.2".format(15*math.pi/180, 40.0*math.pi/180)],
+    #["other with first and second angle"                , "--gear_tooth_nb 17 --second_gear_tooth_nb 15 --gear_initial_angle  {:0.3f} --second_gear_position_angle  {:0.3f}".format(-5*math.pi/180, 170.0*math.pi/180)],
+    #["with force angle constraint"                      , "--gear_tooth_nb 17 --second_gear_tooth_nb 27 --gear_force_angle {:0.3f}".format(20*math.pi/180)],
+    #["first base radius constraint"                     , "--gear_tooth_nb 26 --second_gear_tooth_nb 23 --gear_base_diameter 23.0"],
+    #["second base radius constraint"                    , "--gear_tooth_nb 17 --second_gear_tooth_nb 23 --second_gear_primitive_diameter 20.3"],
+    #["fine draw resolution"                             , "--gear_tooth_nb 17 --second_gear_tooth_nb 19 --gear_tooth_resolution 10"],
+    #["ratio 1 and dedendum at 30%%"                     , "--gear_tooth_nb 17 --second_gear_tooth_nb 17 --gear_dedendum_height_pourcentage 30.0 --second_gear_addendum_height_pourcentage 30.0"],
+    #["ratio > 1 and dedendum at 40%%"                   , "--gear_tooth_nb 17 --second_gear_tooth_nb 23 --gear_dedendum_height_pourcentage 40.0 --second_gear_addendum_height_pourcentage 40.0"],
+    #["ratio > 1 and addendum at 80%%"                   , "--gear_tooth_nb 17 --second_gear_tooth_nb 17 --gear_addendum_height_pourcentage 80.0 --second_gear_dedendum_height_pourcentage 80.0"],
+    #["ratio > 1 and dedendum at 140%%"                  , "--gear_tooth_nb 17 --second_gear_tooth_nb 21 --gear_dedendum_height_pourcentage 140.0"],
+    ["ratio > 1 and small tooth height"                 , "--gear_tooth_nb 17 --second_gear_tooth_nb 29 --gear_tooth_half_height 0.7 --second_gear_tooth_half_height 0.8"],
+    ["ratio > 1 and big tooth height"                   , "--gear_tooth_nb 17 --second_gear_tooth_nb 29 --gear_tooth_half_height 1.15 --second_gear_tooth_half_height 1.17"],
     ["ratio > 1 and addendum-dedendum parity"           , "--gear_tooth_nb 30 --second_gear_tooth_nb 37 --gear_addendum_dedendum_parity 60.0 --second_gear_addendum_dedendum_parity 40.0"],
-    ["file generation"                                  , "--gear_tooth_nb 17 --center_position_x 100 --center_position_y 50 --output_file_basename self_test_output/"],
+    ["file generation"                                  , "--gear_tooth_nb 17 --center_position_x 100 --center_position_y 50 --output_file_basename test_output/gear_profile_run_self_test.dxf"],
     ["interior gear"                                    , "--gear_tooth_nb 17 --second_gear_tooth_nb 14 --gear_type i"],
     ["interior gear"                                    , "--gear_tooth_nb 25 --second_gear_tooth_nb 17 --gear_type i --second_gear_position_angle {:0.3f}".format(30.0*math.pi/180)],
     ["interior second gear"                             , "--gear_tooth_nb 17 --second_gear_tooth_nb 29 --second_gear_type i"],
