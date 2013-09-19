@@ -47,6 +47,7 @@ import sys, argparse
 #import os, errno
 #import re
 import Tkinter # to display the outline in a small GUI
+#import time # for time.sleep to help Tkinter to finish properly
 # FreeCAD
 #import Part
 #from FreeCAD import Base
@@ -947,6 +948,7 @@ def gear_profile(
     my_canvas.add_curve_graphic_table(gear_profile_mpl_curves)
     tk_root.mainloop()
     del (my_canvas, tk_root) # because Tkinter could be used again later in this script
+    #time.sleep(0.3) # delay to help Tkinter to close properly
 
   ### output files
   gp_figure = [g1_outline_B] # select the outlines to be writen in files

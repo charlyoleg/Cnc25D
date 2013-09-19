@@ -53,6 +53,7 @@ import sys, argparse
 import svgwrite
 from dxfwrite import DXFEngine
 import Tkinter
+#import time # for time.sleep to help Tkinter to finish properly
 import display_backend
 import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate, closed(), check_outline_format() and ideal_outline()
 import export_2d # just for test enhancement
@@ -574,6 +575,7 @@ def figure_simple_display(ai_figure, ai_overlay_figure=[], ai_parameter_info="")
   fsd_canvas.add_parameter_info(ai_parameter_info)
   tk_root.mainloop()
   #del (tk_root, fsd_canvas)
+  #time.sleep(0.3)
   return(0)
 
 def write_figure_in_svg(ai_figure, ai_filename):
@@ -778,6 +780,7 @@ def outline_arc_line_test1():
   my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
   tk_root.mainloop()
   del (my_canvas, tk_root) # because Tkinter will be used again later in this script
+  #time.sleep(0.3)
   ### test the figure-level functions
   wfl_outer_rectangle_B = [
     [-60, -40],

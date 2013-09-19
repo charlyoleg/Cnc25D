@@ -584,6 +584,15 @@ class Two_Canvas():
           matplotlib.pyplot.xlabel(self.curve_graphic_table[0][1])
       matplotlib.pyplot.show()
 
+  def quit_Two_Canvas(self):
+    """ Destroy the Two_Canvas Tkinter application
+    """
+    self.frame_b.destroy()
+    self.frame_c.destroy()
+    self.frame_a.destroy()
+    self.tktop.destroy()
+    
+
   def createWidgets(self):
     """ Create the widgets of the main window with their layout and also the zoom window and parameter window
     """
@@ -691,7 +700,8 @@ class Two_Canvas():
     self.button_quit = Tkinter.Button(self.frame_button_options)
     self.button_quit["text"] = "Quit",
     #self.button_quit["command"] = self.frame_a.quit
-    self.button_quit["command"] = self.tktop.destroy
+    #self.button_quit["command"] = self.tktop.destroy
+    self.button_quit["command"] = self.quit_Two_Canvas
     self.button_quit.pack(side=Tkinter.LEFT)
     #
     ## second window with canvas_b
@@ -748,6 +758,7 @@ class Two_Canvas():
     #self.curve_points = []
     #
     self.createWidgets()
+    self.tktop.protocol("WM_DELETE_WINDOW", self.quit_Two_Canvas) # change the behaviour of the window X button
     # initiate the time simulation
     self.simulation_step()
 
