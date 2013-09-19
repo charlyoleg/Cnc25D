@@ -796,7 +796,7 @@ def gear_profile(
     g2_ia = 0
     (g2_make_low_param, g2_info_low) = calc_low_level_gear_parameters(g2_param)
     #print("dbg653: g2_make_low_param:", g2_make_low_param)
-    g2_outline_B = gear_profile_outline(g2_make_low_param, g2_ia)
+    #g2_outline_B = gear_profile_outline(g2_make_low_param, g2_ia)
     ### g2_position
     (place_low_parameters, place_info) = pre_g2_position_calculation(g1_param, g2_param, aal, g1g2_a, g1_rotation_speed, speed_scale)
     (g2_iap, g2_rotation_speed_p, tmp_tangential_friction, tmp_c1_speed_outline, tmp_c2_speed_outline) = g2_position_calculation(place_low_parameters, 1, g1_ia)
@@ -844,8 +844,12 @@ def gear_profile(
   if(ai_simulation_enable):
     print("Launch the simulation with Tkinter ..")
     # initialization
-    #g1_ideal_involute = ideal_tooth_outline(g1_make_low_param, g1_ia, 0)
-    #g1_ideal_tooth = ideal_tooth_outline(g1_make_low_param, g1_ia, 1)
+    #g1_ideal_involute = ideal_tooth_outline(g1_make_low_param, 0, 0)
+    #g1_ideal_tooth = ideal_tooth_outline(g1_make_low_param, 0, 1)
+    #if(g2_exist):
+    #  g2_outline_B = gear_profile_outline(g2_make_low_param, 0)
+    #  g2_ideal_involute = ideal_tooth_outline(g2_make_low_param, 0, 0)
+    #  g2_ideal_tooth = ideal_tooth_outline(g2_make_low_param, 0, 1)
     ### gear_profile parameter info in the log
     print(g1g2_info_txt)
     ### static figure
@@ -869,28 +873,32 @@ def gear_profile(
         g1_position = g1_ia+ai_angle_position*float(g1_pi_module_angle)/20 # 20th of pi_module_angle (angular tooth pitch)
       elif(g1_type=='l'):
         g1_position = g1_ia+ai_angle_position*float(g1_pi_module)/20 # 20th of pi_module (linear tooth pitch)
+      # g2_position
+      if(g2_exist):
+        #g2_position = g2_ia-ai_angle_position # completely wrong, just waiting for the good formula
+        (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline) = g2_position_calculation(place_low_parameters, ai_rotation_direction, g1_position)
       ## get outline_B
       lg1_outline_B = gear_profile_outline(g1_make_low_param, g1_position)
       lg1_ideal_involute = ideal_tooth_outline(g1_make_low_param, g1_position, 0)
       lg1_ideal_tooth = ideal_tooth_outline(g1_make_low_param, g1_position, 1)
       if(g2_exist):
-        # g2_position
-        #g2_position = g2_ia-ai_angle_position # completely wrong, just waiting for the good formula
-        (g2_position, g2_rotation_speed, tangential_friction, c1_speed_outline, c2_speed_outline) = g2_position_calculation(place_low_parameters, ai_rotation_direction, g1_position)
         lg2_outline_B = gear_profile_outline(g2_make_low_param, g2_position)
         lg2_ideal_involute = ideal_tooth_outline(g2_make_low_param, g2_position, 0)
         lg2_ideal_tooth = ideal_tooth_outline(g2_make_low_param, g2_position, 1)
-        # action_line
+      ## alternative to get outline_B
+      #lg1_outline_B = cnc25d_api.outline_rotate(g1_outline_B, g1_ix, g1_iy, g1_position-g1_ia)
+      #lg1_ideal_involute = cnc25d_api.outline_rotate(g1_ideal_involute, g1_ix, g1_iy, g1_position)
+      #lg1_ideal_tooth = cnc25d_api.outline_rotate(g1_ideal_tooth, g1_ix, g1_iy, g1_position)
+      #if(g2_exist):
+      #  lg2_outline_B = cnc25d_api.outline_rotate(g2_outline_B, g2_ix, g2_iy, g2_position)
+      #  lg2_ideal_involute = cnc25d_api.outline_rotate(g2_ideal_involute, g2_ix, g2_iy, g2_position)
+      #  lg2_ideal_tooth = cnc25d_api.outline_rotate(g2_ideal_tooth, g2_ix, g2_iy, g2_position)
+      # action_line
+      if(g2_exist):
         if(ai_rotation_direction==1):
           action_line_outline = positive_rotation_action_line_outline
         else:
           action_line_outline = negative_rotation_action_line_outline
-      ## alternative to get outline_B
-      #lg1_outline_B = cnc25d_api.outline_rotate(g1_outline_B, g1_ix, g1_iy, ai_angle_position)
-      #lg1_ideal_involute = cnc25d_api.outline_rotate(g1_ideal_involute, g1_ix, g1_iy, ai_angle_position)
-      #lg1_ideal_tooth = cnc25d_api.outline_rotate(g1_ideal_tooth, g1_ix, g1_iy, ai_angle_position)
-      #if(g2_exist):
-      #  lg2_outline_B = cnc25d_api.outline_rotate(g2_outline_B, g2_ix, g2_iy, -ai_angle_position)
       ## make graphic
       r_canvas_graphics = []
       r_canvas_graphics.append(('graphic_lines', cnc25d_api.outline_arc_line(lg1_outline_B, 'tkinter'), 'red', 1))
