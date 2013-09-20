@@ -307,8 +307,9 @@ def calc_low_level_gear_parameters(ai_param):
     ai_param['full_negative_involute'] = full_negative_involute
     ai_param['positive_primitive_offset'] = -1*g_ks*(float(top_land)/2 + addendum_positive_involute)
     ai_param['negative_primitive_offset'] =  1*g_ks*(float(top_land)/2 + addendum_negative_involute)
-    ai_param['positive_location_offset'] = -1*g_ks*(float(top_land)/2 + ipaa)
-    ai_param['negative_location_offset'] =  1*g_ks*(float(top_land)/2 - inaa)
+    ai_param['positive_location_offset'] = -1*g_ks*(float(top_land)/2 + g_ks*ipaa)
+    ai_param['negative_location_offset'] =  1*g_ks*(float(top_land)/2 - g_ks*inaa)
+    #print("dbg223: g_ks {:d}  top_land {:0.3f}  ipaa {:0.3f}  inaa {:0.3f}  positive_location_offset {:0.3f}  negative_location_offset {:0.3f}".format(g_ks, top_land, ipaa, inaa, ai_param['positive_location_offset'],  ai_param['negative_location_offset']))
     if(g_type=='e'): # negative > hollow > positive
       # low1: to create the gear-profile outline
       i1_base = g_brn
@@ -396,12 +397,12 @@ def calc_low_level_gear_parameters(ai_param):
       # check the position of the router_bit
       AIO = float(AIB)/2
       IO = g_rbr / math.sin(AIO)
-      AIF = math.pi-a
+      AIF = math.pi/2-a
       OIF = abs(AIF-AIO)
       IFl = IO * math.cos(OIF)
       IHl = AI * math.sin(a)
       Xh = g_hh - (IHl-IFl)
-      #print("dbg974: IO {:0.3f}  FHl {:0.3f}  g_hh {:0.3f}".format(IO, FHl, g_hh))
+      #print("dbg974: IO {:0.3f}  IFl {:0.3f}  IHl {:0.3f}  g_hh {:0.3f}  g_rbr {:0.3f}  Xh {:0.3f}".format(IO, IFl, IHl, g_hh, g_rbr, Xh))
       if(Xh>(0.9*g_rbr)): # in this case the hollow is optmized
         ho = True
         i1_hsl = AI
@@ -423,7 +424,7 @@ def calc_low_level_gear_parameters(ai_param):
       ho, g_rbr, hlm, ham, tlm,
       g_ox, g_oy, portion_tooth_nb, g_pfe, g_ple, closed)
     # info
-    info_txt = "Gear profile details:\n"
+    info_txt = "Gear profile details: hollow with {:d} corner\n".format(1 if(ho) else 2)
     info_txt += "positive involute: \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_positive_involute, g_pr*full_positive_involute, 100*full_positive_involute/pi_module_angle)
     info_txt += "negative involute: \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(full_negative_involute, g_pr*full_negative_involute, 100*full_negative_involute/pi_module_angle)
     info_txt += "top land:          \t{:0.3f} (radian)  \t{:0.3f} (mm)  \t{:0.2f} %\n".format(top_land, g_ar*top_land, 100*top_land/pi_module_angle)
@@ -1067,12 +1068,17 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   # length of BC
   BC = math.sqrt((cx-g2_ox)**2+(cy-g2_oy)**2)
   # angle CBA
-  if(AC+BC==AB):
+  max_ABC = max(AB,AC, BC)
+  min_ABC = min(AB,AC, BC)
+  med_ABC = AB+AC+BC-max_ABC-min_ABC
+  #if(AC+BC==AB):
   #if(abs(AC+BC-AB)<radian_epsilon):
+  if(min_ABC+med_ABC==max_ABC):
+  #if(abs(min_ABC+med_ABC-max_ABC)<radian_epsilon):
     #print("WARN468: Warning, the triangle ABC is flat") # it happens from time to time, don't worry :O
     BAC = 0
     ABC = 0
-  elif(AC+BC<AB):
+  elif(min_ABC+med_ABC<max_ABC):
     print("ERR478: Error of length in the triangle ABC")
     sys.exit(20)
   else:
@@ -1269,7 +1275,7 @@ def info_on_real_force_angle(ai_g1_param, ai_g2_param, ai_sys_param, ai_rotation
   CX = g1_ox + math.cos(g1g2_a)*AC
   CY = g1_oy + math.sin(g1g2_a)*AC
   # force line equation
-  real_force_inclination = g1g2_a + rd*(math.pi/2 - real_force_angle) # angle (Ox, force)
+  real_force_inclination = g1g2_a + rd*(math.pi/2 - g1_sign*real_force_angle) # angle (Ox, force)
   Flx = math.sin(real_force_inclination)
   Fly = -1*math.cos(real_force_inclination)
   Fk = -1*(Flx*CX+Fly*CY)
