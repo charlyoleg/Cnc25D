@@ -294,7 +294,7 @@ def calc_low_level_gear_parameters(ai_param):
       print("dbg553: g_pr {:0.3f}  g_brp {:0.3f}  g_brn {:0.3f}".format(g_pr, g_brp, g_brn))
       sys.exit(2)
     bottom_land = pi_module_angle*(1-g_adp)-(dedendum_positive_involute+dedendum_negative_involute)
-    if(bottom_land*g_dr<2*g_rbr+radian_epsilon): # a bit stricter than router_bit_radius
+    if(bottom_land*g_dr<2.1*g_rbr): # a bit stricter than router_bit_radius
       print("ERR990: Error, the bottom_land {:0.2f} is negative or too small compare to the router_bit_radius {:0.2f} ({:0.2f} < {:0.2f})!".format(bottom_land, g_rbr, bottom_land*g_dr, 2*g_rbr))
       sys.exit(2)
     ai_param['top_land'] = top_land
@@ -360,7 +360,12 @@ def calc_low_level_gear_parameters(ai_param):
     if((g_ks*i1_dtri>0)or(g_ks*i2_dtri<0)):
       print("ERR234: i1_dtri {:0.3f} >0 or i2_dtri {:0.3f} < 0".format(g_ks*i1_dtri, g_ks*i2_dtri))
       sys.exit(2)
-    ABh = bottom_land_length # see documentation graphic of hollow optimization
+    cos_i1_dtri = math.cos(i1_dtri)
+    cos_i2_dtri = math.cos(i2_dtri)
+    if((cos_i1_dtri<radian_epsilon)or(cos_i1_dtri<radian_epsilon)):
+      print("ERR632: i1_dtri {:0.3f} or i2_dtri {:0.3f} are too closed to pi/2 or even bigger!".format(i1_dtri, i2_dtri))
+      sys.exit(2)
+    ABh = bottom_land_length-i1_thickness/cos_i1_dtri-i2_thickness/cos_i2_dtri # see documentation graphic of hollow optimization
     a = math.pi/2-abs(i1_dtri)
     b = math.pi/2-abs(i2_dtri)
     AIB = math.pi - (a + b)
@@ -395,9 +400,9 @@ def calc_low_level_gear_parameters(ai_param):
       OIF = abs(AIF-AIO)
       IFl = IO * math.cos(OIF)
       IHl = AI * math.sin(a)
-      FHl = IHl-IFl
+      Xh = g_hh - (IHl-IFl)
       #print("dbg974: IO {:0.3f}  FHl {:0.3f}  g_hh {:0.3f}".format(IO, FHl, g_hh))
-      if(FHl<(1.15*g_hh-g_rbr)): # in this case the hollow is optmized
+      if(Xh>(0.9*g_rbr)): # in this case the hollow is optmized
         ho = True
         i1_hsl = AI
         i2_hsl = BI
