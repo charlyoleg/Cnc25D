@@ -47,7 +47,7 @@ import sys, argparse
 #import os, errno
 #import re
 import Tkinter # to display the outline in a small GUI
-#import time # for time.sleep to help Tkinter to finish properly
+import time # for time.sleep to help Tkinter to finish properly
 # FreeCAD
 #import Part
 #from FreeCAD import Base
@@ -732,9 +732,10 @@ def gear_profile(
   g1_stn = g1_stp
   if(ai_gear_skin_thickness_n!=0):
     g1_stn = ai_gear_skin_thickness_n
-  g2_stp = g1_stp
-  if(ai_second_gear_skin_thickness!=0):
-    g2_stp = ai_second_gear_skin_thickness
+  g2_stp = ai_second_gear_skin_thickness
+  #g2_stp = g1_stp
+  #if(ai_second_gear_skin_thickness!=0):
+  #  g2_stp = ai_second_gear_skin_thickness
   g2_stn = g2_stp
   if(ai_second_gear_skin_thickness_n!=0):
     g2_stn = ai_second_gear_skin_thickness_n
@@ -742,6 +743,7 @@ def gear_profile(
   g1_param['negative_skin_thickness'] = g1_stn
   g2_param['positive_skin_thickness'] = g2_stp
   g2_param['negative_skin_thickness'] = g2_stn
+  #print("dbg972: ai_second_gear_skin_thickness {:0.3f}  g2_stp {:0.3f}  g2_param_positive_skin_thickness {:0.3f}".format(ai_second_gear_skin_thickness, g2_stp, g2_param['positive_skin_thickness']))
   # portion
   g1_ptn = 0 # 0: full first gear
   g1_pfe = 0
@@ -951,7 +953,7 @@ def gear_profile(
     my_canvas.add_curve_graphic_table(gear_profile_mpl_curves)
     tk_root.mainloop()
     del (my_canvas, tk_root) # because Tkinter could be used again later in this script
-    #time.sleep(2) # delay to help Tkinter to close properly
+    time.sleep(1) # delay to help Tkinter to close properly
 
   ### output files
   gp_figure = [g1_outline_B] # select the outlines to be writen in files
@@ -1063,7 +1065,7 @@ def gear_profile_self_test():
     ["simple transmission (ratio=1)"    , "--gear_tooth_nb 13 --second_gear_tooth_nb 13"],
     ["simple multiplication (ratio>1)"  , "--gear_tooth_nb 19 --second_gear_tooth_nb 16"],
     ["big ratio and zoom"               , "--gear_tooth_nb 19 --second_gear_tooth_nb 137"],
-    ["single gear with same primitive and base circle"  , "--gear_tooth_nb 17 --gear_base_diameter 16.5"],
+    ["single gear with same primitive and base circle"  , "--gear_tooth_nb 17 --gear_base_diameter 16.9"],
     ["single gear with small base circle"               , "--gear_tooth_nb 27 --gear_base_diameter 23.5"],
     ["with first and second angle and inter-axis length" , "--gear_tooth_nb 17 --second_gear_tooth_nb 21 --gear_initial_angle {:0.3f} --second_gear_position_angle {:0.3f} --second_gear_additional_axis_length 0.2".format(15*math.pi/180, 40.0*math.pi/180)],
     ["other with first and second angle"       , "--gear_tooth_nb 17 --second_gear_tooth_nb 15 --gear_initial_angle  {:0.3f} --second_gear_position_angle  {:0.3f}".format(-5*math.pi/180, 170.0*math.pi/180)],
@@ -1097,7 +1099,7 @@ def gear_profile_self_test():
     ["gear_portion 2 3"                    , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --cut_portion 10 2 3"],
     ["gear_portion 3 0"                    , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --cut_portion 10 3 0"],
     ["skin_thickness >0"                   , "--gear_tooth_nb 25 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --gear_skin_thickness 1.0"],
-    ["skin_thickness >0 asymmetric"        , "--gear_tooth_nb 25 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --gear_skin_thickness 1.0 --gear_skin_thickness_n 1.5 --second_gear_skin_thickness 0"],
+    ["skin_thickness >0 asymmetric"        , "--gear_tooth_nb 25 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --gear_skin_thickness 1.0 --gear_skin_thickness_n 1.5 --second_gear_skin_thickness 1"],
     ["skin_thickness <0 asymmetric"        , "--gear_tooth_nb 25 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --gear_skin_thickness -1.0 --gear_skin_thickness_n -1.5 --second_gear_skin_thickness 0"],
     ["skin_thickness full asymmetric"      , "--gear_tooth_nb 25 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --gear_skin_thickness -1.0 --gear_skin_thickness_n 1.5 --second_gear_skin_thickness 0"]]
 
