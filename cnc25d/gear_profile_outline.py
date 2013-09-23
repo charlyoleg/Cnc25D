@@ -63,6 +63,7 @@ gpo_radian_epsilon_1000 = math.pi/1000 #0.003
 gpo_radian_epsilon_10000 = gpo_radian_epsilon_1000/10 #0.0003
 gpo_radian_epsilon_100 = gpo_radian_epsilon_1000*10 # 0.03
 gpo_radian_epsilon_10 = gpo_radian_epsilon_1000*100 # 0.3
+gpo_radian_epsilon_5 = gpo_radian_epsilon_1000*200 # 0.7
 gpo_radian_big_epsilon = math.pi/5 # almost 1 mm !
 
 ################################################################
@@ -1050,6 +1051,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   radian_epsilon_10000 = gpo_radian_epsilon_10000
   radian_epsilon_100 = gpo_radian_epsilon_100
   radian_epsilon_10 = gpo_radian_epsilon_10
+  radian_epsilon_5 = gpo_radian_epsilon_5
   # rotation_direction alias
   rd = ai_rotation_direction
   # unpack place_low_param
@@ -1187,10 +1189,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     g2_contact_u3 = math.sqrt((float(BC)/g2_br)**2-1)
     if((g1_type=='e')or(g1_type=='i')):
       g2_contact_u1 = g1_ks*float(KL - g2_ks*g1_contact_u*g1_br)/g2_br
-      if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon_1000):
+      if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon_100):
         print("ERR331: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u1, g2_contact_u2))
         sys.exit(2)
-      if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon_1000):
+      if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon_100):
         print("ERR332: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u1, g2_contact_u3))
         sys.exit(2)
     g2_contact_u = g2_contact_u3 # select the method for g2_contact_u
@@ -1209,7 +1211,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     c2_speed_tangential = c2_speed*math.sin(g2_sra)
     # alternative
     c2_speed_tangential2 = rd*g1_ks*c2_speed_radial*g2_contact_u
-    if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon_10):
+    if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon_5):
       print("ERR336: Error in the calculation of c2_speed_tangential {:0.3f} or c2_speed_tangential2 {:0.3f}".format(c2_speed_tangential, c2_speed_tangential2))
       print("dbg967: radian_epsilon_1000 {:0.6f}  radian_epsilon_10000 {:0.6f}".format(radian_epsilon_1000, radian_epsilon_10000))
       sys.exit(2)
