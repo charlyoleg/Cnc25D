@@ -59,7 +59,10 @@ import small_geometry # use some well-tested functions from the internal of the 
 ################################################################
 # module variable
 ################################################################
-gpo_radian_epsilon = math.pi/1000
+gpo_radian_epsilon_1000 = math.pi/1000 #0.003
+gpo_radian_epsilon_10000 = gpo_radian_epsilon_1000/10 #0.0003
+gpo_radian_epsilon_100 = gpo_radian_epsilon_1000*10 # 0.03
+gpo_radian_epsilon_10 = gpo_radian_epsilon_1000*100 # 0.3
 gpo_radian_big_epsilon = math.pi/5 # almost 1 mm !
 
 ################################################################
@@ -520,7 +523,7 @@ def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, 
   """
   # precision
   #radian_epsilon=math.pi/1000 # unefficient because this function is used often
-  radian_epsilon = gpo_radian_epsilon
+  radian_epsilon = gpo_radian_epsilon_1000
   #
   u = ai_u_ini
   involute_C = []
@@ -568,7 +571,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     ox, oy, portion_tooth_nb, first_end, last_end, closed) = ai_low_parameters
   # precision
   #radian_epsilon = math.pi/1000
-  radian_epsilon = gpo_radian_epsilon
+  radian_epsilon = gpo_radian_epsilon_1000
   radian_big_epsilon =  gpo_radian_big_epsilon
   # hollow_gear_type
   if(gear_type=='e'):
@@ -652,7 +655,7 @@ def ideal_involute_tooth_outline(ai_low_parameters, ai_angle_position, ai_thickn
   """
   # precision
   #radian_epsilon=math.pi/1000 # unefficient because this function is used often
-  radian_epsilon = gpo_radian_epsilon
+  radian_epsilon = gpo_radian_epsilon_1000
   # get ai_low_parameters
   (gear_type, pi_module_angle,
     i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_hsl, i1_thickness,
@@ -696,7 +699,7 @@ def slope_outline(ai_ox, ai_oy, ai_bi, ai_offset, ai_slope_angle, ai_sign, ai_to
   """
   # precision
   #radian_epsilon=math.pi/1000 # unefficient because this function is used often
-  radian_epsilon = gpo_radian_epsilon
+  radian_epsilon = gpo_radian_epsilon_1000
   #
   slope_angle = ai_bi + ai_sign*ai_slope_angle
   thickness_angle = slope_angle - ai_sign*math.pi/2
@@ -724,7 +727,7 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   """
   # precision
   #radian_epsilon = math.pi/1000
-  #radian_epsilon = gpo_radian_epsilon
+  #radian_epsilon = gpo_radian_epsilon_1000
   radian_big_epsilon =  gpo_radian_big_epsilon
   # get ai_low_parameters
   #(g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, g_pfe, g_ple, g_sp, g_sn, g_ah, g_dh, g_hh, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset) = ai_low_parameters
@@ -1043,7 +1046,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   """
   # precision
   #radian_epsilon = math.pi/1000
-  radian_epsilon = gpo_radian_epsilon
+  radian_epsilon_1000 = gpo_radian_epsilon_1000
+  radian_epsilon_10000 = gpo_radian_epsilon_10000
+  radian_epsilon_100 = gpo_radian_epsilon_100
+  radian_epsilon_10 = gpo_radian_epsilon_10
   # rotation_direction alias
   rd = ai_rotation_direction
   # unpack place_low_param
@@ -1069,7 +1075,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   if((g1_type=='e')or(g1_type=='i')):
     # get the angle of the closest middle of addendum to the contact point
     aa = ai_g1_position + g1_po - g1g2_a
-    while(abs(aa)>g1_tl/2+radian_epsilon):
+    while(abs(aa)>g1_tl/2+radian_epsilon_1000):
       if(aa>0):
         aa = aa - g1_tl
       else:
@@ -1088,7 +1094,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     #(KE1, BE1, BD1) = linear_gear_geometry(g1_sa, g2_br, AB)
     # contact_g1_tooth_position
     aa = ai_g1_position + g1_po
-    while(abs(aa)>g1_tl/2+radian_epsilon):
+    while(abs(aa)>g1_tl/2+radian_epsilon_1000):
       if(aa>0):
         aa = aa - g1_tl
       else:
@@ -1113,10 +1119,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   min_ABC = min(AB,AC, BC)
   med_ABC = AB+AC+BC-max_ABC-min_ABC
   #if(AC+BC==AB):
-  #if(abs(AC+BC-AB)<radian_epsilon):
+  #if(abs(AC+BC-AB)<radian_epsilon_1000):
   #if(min_ABC+med_ABC==max_ABC):
-  #if((max_ABC>=min_ABC+med_ABC-radian_epsilon)and(max_ABC<min_ABC+med_ABC+radian_epsilon)):
-  if(abs(min_ABC+med_ABC-max_ABC)<radian_epsilon):
+  #if((max_ABC>=min_ABC+med_ABC-radian_epsilon_1000)and(max_ABC<min_ABC+med_ABC+radian_epsilon_1000)):
+  if(abs(min_ABC+med_ABC-max_ABC)<radian_epsilon_10000):
     #print("WARN468: Warning, the triangle ABC is flat") # it happens from time to time, don't worry :O
     BAC = 0
     ABC = 0
@@ -1143,11 +1149,11 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     BAC = math.copysign(BAC, BAC2)
     ABC = math.copysign(ABC, ABC2)
     # check BAC and BAC2
-    if(abs(BAC2-BAC)>radian_epsilon):
+    if(abs(BAC2-BAC)>radian_epsilon_1000):
       print("ERR689: Error in the calculation of BAC {:0.3f} or BAC2 {:0.3f} !".format(BAC, BAC2))
       sys.exit(2)
     # check ABC and ABC2
-    if(abs(ABC2-ABC)>radian_epsilon):
+    if(abs(ABC2-ABC)>radian_epsilon_1000):
       print("ERR688: Error in the calculation of ABC {:0.3f} or ABC2 {:0.3f} !".format(ABC, ABC2))
       sys.exit(2)
   #print("dbg334: BAC: {:0.3f}".format(BAC))
@@ -1157,8 +1163,8 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   # alternative
   if((g1_type=='e')or(g1_type=='i')):
     g1_sra2 = rd*g1_ks*math.atan(g1_contact_u)
-    if(abs(g1_sra2-g1_sra)>radian_epsilon):
-      print("ERR414: Error in calculation of g1_sra {:0.3f} or g1_sra2 {:0.3f}".format(g1_sra, g1_sra2))
+    if(abs(g1_sra2-g1_sra)>radian_epsilon_100):
+      print("ERR417: Error in calculation of g1_sra {:0.3f} or g1_sra2 {:0.3f}".format(g1_sra, g1_sra2))
       sys.exit(2)
   ## speed of c1 (contact point of g1)
   # c1 speed
@@ -1181,10 +1187,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     g2_contact_u3 = math.sqrt((float(BC)/g2_br)**2-1)
     if((g1_type=='e')or(g1_type=='i')):
       g2_contact_u1 = g1_ks*float(KL - g2_ks*g1_contact_u*g1_br)/g2_br
-      if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon):
+      if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon_1000):
         print("ERR331: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u1, g2_contact_u2))
         sys.exit(2)
-      if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon):
+      if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon_1000):
         print("ERR332: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u1, g2_contact_u3))
         sys.exit(2)
     g2_contact_u = g2_contact_u3 # select the method for g2_contact_u
@@ -1193,9 +1199,9 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     # c2 coordinates
     (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_lo, -1*rd*g1_ks, 0, g2_contact_u)
     #print("dbg326: g2_position {:0.3f}  g2_lo {:0.3f}  g2_contact_u {:0.3f}  t2i {:0.3f}".format(g2_position, g2_lo, g2_contact_u, t2i))
-    if(abs(math.fmod(ti-t2i+4.5*math.pi, math.pi) - 0.5*math.pi)>radian_epsilon):
+    if(abs(math.fmod(ti-t2i+4.5*math.pi, math.pi) - 0.5*math.pi)>radian_epsilon_1000):
       print("ERR874: Error, the tangents ti {:0.3f} and t2i {:0.3f} are not equal (modulo pi)".format(ti, t2i))
-      #sys.exit(2)
+      sys.exit(2)
     #print("dbg632: g2_ox {:0.3f}  g2_oy {:0.3f}  g2_br {:0.3f}".format(g2_ox, g2_oy, g2_br))
     ## speed of c2 (contact point of g2)
     c2_speed_radial = c1_speed_radial
@@ -1203,9 +1209,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     c2_speed_tangential = c2_speed*math.sin(g2_sra)
     # alternative
     c2_speed_tangential2 = rd*g1_ks*c2_speed_radial*g2_contact_u
-    if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon):
+    if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon_10):
       print("ERR336: Error in the calculation of c2_speed_tangential {:0.3f} or c2_speed_tangential2 {:0.3f}".format(c2_speed_tangential, c2_speed_tangential2))
-      #sys.exit(2)
+      print("dbg967: radian_epsilon_1000 {:0.6f}  radian_epsilon_10000 {:0.6f}".format(radian_epsilon_1000, radian_epsilon_10000))
+      sys.exit(2)
     g2_rotation_speed = float(c2_speed)/BC
   elif(g2_type=='l'): # linear-gear (aka gearbar)
     #(KE2, BE2, BD2) = linear_gear_geometry(g2_sa, g1_br, AB)
@@ -1215,7 +1222,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     c2x = g2_ox + rd*BE2*math.cos(g2_bi-math.pi/2) + dc*math.cos(g2_bi-math.pi/2-rd*g2_sa)
     c2y = g2_oy + rd*BE2*math.sin(g2_bi-math.pi/2) + dc*math.sin(g2_bi-math.pi/2-rd*g2_sa)
     #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
-    if(abs(math.fmod(ti - (g2_bi-1*rd*g2_sa)+4.5*math.pi, math.pi)-0.5*math.pi)>radian_epsilon):
+    if(abs(math.fmod(ti - (g2_bi-1*rd*g2_sa)+4.5*math.pi, math.pi)-0.5*math.pi)>radian_epsilon_1000):
       print("ERR875: Error, the tangents ti {:0.3f} and slope g2_sa {:0.3f} are not equal (modulo pi)".format(ti, g2_sa))
       sys.exit(2)
     c2_speed_radial = c1_speed_radial
