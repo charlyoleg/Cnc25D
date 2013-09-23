@@ -813,7 +813,10 @@ def gear_profile(
       g2_ia_modulo = g2_pi_module
     g2_iap_ox = math.fmod(g2_iap+2*math.pi+0.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
     g2_ian_ox = math.fmod(g2_ian+2*math.pi+0.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
-    g2_ia_slack = math.fmod(g2_iap_ox - g2_ian_ox + 2.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
+    slack_sign = 1
+    if((g1_type=='i')or(g2_type=='i')or(g2_type=='l')):
+      slack_sign = -1
+    g2_ia_slack = math.fmod(slack_sign*(g2_iap_ox - g2_ian_ox) + 4.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
     initial_position_info_txt = "Initial position: "
     initial_speed_info_txt = "Initial speed: "
     if((g1_type=='e')or(g1_type=='i')):

@@ -962,7 +962,7 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
     KL_rp2 = math.sqrt(AB**2 - (g1_ks*g1_br_rp+g2_ks*g2_br_rp)**2) # kind of pythagor
     KL_rn2 = math.sqrt(AB**2 - (g1_ks*g1_br_rn+g2_ks*g2_br_rn)**2) # kind of pythagor
     if(abs(KL_rp2-KL_rp)>radian_epsilon):
-      print("ERR875: Error, KL_rp {:0.3f} and KL_rp2 {:0.3f} are too different!".format(KL_rp, KL_rp2))
+      print("ERR815: Error, KL_rp {:0.3f} and KL_rp2 {:0.3f} are too different!".format(KL_rp, KL_rp2))
       sys.exit(2)
     if(abs(KL_rn2-KL_rn)>radian_epsilon):
       print("ERR876: Error, KL_rn {:0.3f} and KL_rn2 {:0.3f} are too different!".format(KL_rn, KL_rn2))
@@ -1114,13 +1114,15 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   med_ABC = AB+AC+BC-max_ABC-min_ABC
   #if(AC+BC==AB):
   #if(abs(AC+BC-AB)<radian_epsilon):
-  if(min_ABC+med_ABC==max_ABC):
-  #if(abs(min_ABC+med_ABC-max_ABC)<radian_epsilon):
+  #if(min_ABC+med_ABC==max_ABC):
+  #if((max_ABC>=min_ABC+med_ABC-radian_epsilon)and(max_ABC<min_ABC+med_ABC+radian_epsilon)):
+  if(abs(min_ABC+med_ABC-max_ABC)<radian_epsilon):
     #print("WARN468: Warning, the triangle ABC is flat") # it happens from time to time, don't worry :O
     BAC = 0
     ABC = 0
   elif(min_ABC+med_ABC<max_ABC):
     print("ERR478: Error of length in the triangle ABC")
+    print("dbg637: AB {:0.3f}  AC {:0.3f}  BC {:0.3f}".format(AB, AC, BC))
     sys.exit(20)
   else:
     # law of cosine (Al-Kashi) in ABC
@@ -1213,7 +1215,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     c2x = g2_ox + rd*BE2*math.cos(g2_bi-math.pi/2) + dc*math.cos(g2_bi-math.pi/2-rd*g2_sa)
     c2y = g2_oy + rd*BE2*math.sin(g2_bi-math.pi/2) + dc*math.sin(g2_bi-math.pi/2-rd*g2_sa)
     #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
-    if(abs(math.fmod(ti - (-1*rd*g2_sa)+4.5*math.pi, math.pi)-0.5*math.pi)>radian_epsilon):
+    if(abs(math.fmod(ti - (g2_bi-1*rd*g2_sa)+4.5*math.pi, math.pi)-0.5*math.pi)>radian_epsilon):
       print("ERR875: Error, the tangents ti {:0.3f} and slope g2_sa {:0.3f} are not equal (modulo pi)".format(ti, g2_sa))
       sys.exit(2)
     c2_speed_radial = c1_speed_radial
