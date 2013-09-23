@@ -1096,10 +1096,11 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     contact_g1_tooth_position = aa - g1_po
     g1_contact_u = (contact_g1_tooth_position+g1_lo-rd*BE1)*math.cos(g1_sa)
     g1_position2 = rd*BE1 + g1_contact_u/math.cos(g1_sa) - g1_lo
-    dc = (g1_position2+g1_lo-rd*BE1)*math.cos(g1_sa)
-    cx = g1_ox + rd*BE1*math.cos(g1_bi-math.pi/2) + dc*math.cos(g1_bi-math.pi/2-rd*g1_sa)
-    cy = g1_oy + rd*BE1*math.sin(g1_bi-math.pi/2) + dc*math.sin(g1_bi-math.pi/2-rd*g1_sa)
-    #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
+    ec = (g1_position2+g1_lo-rd*BE1)*math.cos(g1_sa)
+    cx = g1_ox + rd*BE1*math.cos(g1_bi-math.pi/2) + ec*math.cos(g1_bi-math.pi/2-rd*g1_sa)
+    cy = g1_oy + rd*BE1*math.sin(g1_bi-math.pi/2) + ec*math.sin(g1_bi-math.pi/2-rd*g1_sa)
+    #print("dbg989: g2_position {:0.3f}   ec {:0.3f}".format(g2_position, ec))
+    #print("dbg753: rd {:d}  g1_bi {:0.3f}  BE1 {:0.3f}  ec {:0.3f}".format(rd, g1_bi, BE1, ec))
     # ti
     ti = g1_bi-rd*g1_sa
   ## triangle ABC
@@ -1311,7 +1312,10 @@ def info_on_real_force_angle(ai_g1_param, ai_g2_param, ai_sys_param, ai_rotation
   #r_info += "{:s} Real Force Angle = {:0.2f} radian ({:0.2f} degree)\n".format(rotation_name, real_force_angle, real_force_angle*180/math.pi)
   # coordinate of C (intersection of axis-line and force-line)
   #AC = float((ai_g1_pr+ai_g2_pr+aal)*ai_g1_n)/(ai_g1_n+ai_g2_n)
-  AC = g1_br/math.cos(real_force_angle)
+  if((g1_type=='e')or(g1_type=='i')):
+    AC = g1_br/math.cos(real_force_angle)
+  elif(g1_type=='l'):
+    AC = aal
   CX = g1_ox + math.cos(g1g2_a)*AC
   CY = g1_oy + math.sin(g1g2_a)*AC
   # force line equation
