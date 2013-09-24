@@ -929,8 +929,9 @@ def gear_profile(
         #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g2_ix, g2_iy, g2_brn), 'tkinter'), 'brown', 1))
         #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_ar), 'tkinter'), 'green', 1))
         #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g2_ix, g2_iy, g2_ar), 'tkinter'), 'green', 1))
-        #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_dr), 'tkinter'), 'green', 1))
-        #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_hr), 'tkinter'), 'green', 1))
+      # g1 debug circle
+      r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_dr), 'tkinter'), 'green', 1))
+      r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_hr), 'tkinter'), 'green', 1))
       # inter-axis
       r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(inter_axis_outline, 'tkinter'), 'green', 1))
       ## update matplotlib curve_table
@@ -1103,9 +1104,11 @@ def gear_profile_self_test():
     ["linear-external with angle and aal"   , "--gear_tooth_nb 10 --gear_type l --second_gear_tooth_nb 19 --gear_module 10.0 --second_gear_base_diameter 160 --gear_router_bit_radius 1.3 --second_gear_position_angle 1.5708 --second_gear_additional_axis_length 1.5"],
     ["external-external with angle and negative aal" , "--gear_tooth_nb 21 --second_gear_tooth_nb 19 --gear_module 10.0 --second_gear_position_angle 2.1 --second_gear_additional_axis_length -1.8"],
     ["gear_portion 0 1"                    , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --cut_portion 10 0 1"],
-    ["gear_portion 1 2"                    , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --cut_portion 10 1 2"],
+    ["gear_portion 1 2 with big base"      , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --cut_portion 10 1 2 --gear_base_diameter 460"],
     ["gear_portion 2 3"                    , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --cut_portion 10 2 3"],
     ["gear_portion 3 0"                    , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --cut_portion 10 3 0"],
+    ["gear_portion 3 2"                    , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --cut_portion 10 3 2 --gear_base_diameter 460"],
+    ["gear_portion 2 3"                    , "--gear_tooth_nb 24 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 3.0 --cut_portion 10 2 3 --gear_base_diameter 400"],
     ["skin_thickness >0"                   , "--gear_tooth_nb 25 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --gear_skin_thickness 1.0"],
     ["skin_thickness >0 asymmetric"        , "--gear_tooth_nb 25 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --gear_skin_thickness 1.0 --gear_skin_thickness_n 1.5 --second_gear_skin_thickness 1"],
     ["skin_thickness <0 asymmetric"        , "--gear_tooth_nb 25 --second_gear_tooth_nb 18 --gear_module 20.0 --gear_router_bit_radius 2.0 --gear_skin_thickness -1.0 --gear_skin_thickness_n -1.5 --second_gear_skin_thickness 0"],

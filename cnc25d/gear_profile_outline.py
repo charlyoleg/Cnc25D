@@ -64,7 +64,7 @@ gpo_radian_epsilon_1000 = math.pi/1000 #0.003
 gpo_radian_epsilon_100000 = gpo_radian_epsilon_1000/100 #0.0003
 #gpo_radian_epsilon_100 = gpo_radian_epsilon_1000*10 # 0.03
 gpo_radian_epsilon_10 = gpo_radian_epsilon_1000*100 # 0.3
-gpo_radian_big_epsilon = math.pi/5 # almost 1 mm !
+#gpo_radian_big_epsilon = math.pi/5 # almost 1 mm !
 
 ################################################################
 # gear_profile help functions (including involute_to_circle)
@@ -363,7 +363,8 @@ def calc_low_level_gear_parameters(ai_param):
       #print("dbg663: ipaa {:0.3f}".format(ipaa))
     #print("dbg553: i1_hsl {:0.3f}  i2_hsl {:0.3f}  g_rbr {:0.3f} g_hh  {:0.3f}".format(i1_hsl, i2_hsl, g_rbr, g_hh))
     ### optimization of i1_hsl and i2_hsl
-    bottom_land_length = bottom_land * g_dr
+    #bottom_land_length = bottom_land * g_dr
+    bottom_land_length = 2 * g_dr * math.sin(bottom_land/2)
     if((g_ks*i1_dtri>0)or(g_ks*i2_dtri<0)):
       print("ERR234: Error, i1_dtri {:0.3f} >0 or i2_dtri {:0.3f} < 0".format(g_ks*i1_dtri, g_ks*i2_dtri))
       sys.exit(2)
@@ -373,8 +374,8 @@ def calc_low_level_gear_parameters(ai_param):
       print("ERR632: Error, i1_dtri {:0.3f} or i2_dtri {:0.3f} are too closed to pi/2 or even bigger!".format(i1_dtri, i2_dtri))
       sys.exit(2)
     ABh = bottom_land_length-i1_thickness/cos_i1_dtri-i2_thickness/cos_i2_dtri # see documentation graphic of hollow optimization
-    a = math.pi/2-abs(i1_dtri)
-    b = math.pi/2-abs(i2_dtri)
+    a = math.pi/2-abs(i1_dtri) - bottom_land/2
+    b = math.pi/2-abs(i2_dtri) - bottom_land/2
     AIB = math.pi - (a + b)
     ho = False # hollow_optimization
     if(AIB>radian_epsilon):
@@ -549,6 +550,7 @@ def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, 
     p1x = p2x + (ai_dsl + ai_hsl) * math.cos(p2t)
     p1y = p2y + (ai_dsl + ai_hsl) * math.sin(p2t)
     r_hollow_slope_A = ((p1x, p1y, ai_rbr), (p2x, p2y, 0))
+    r_ti = p2t
   elif(ai_he==-1):
     p1x = involute_C[-1][0]
     p1y = involute_C[-1][1]
@@ -556,10 +558,11 @@ def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, 
     p2x = p1x + (ai_dsl + ai_hsl) * math.cos(p1t)
     p2y = p1y + (ai_dsl + ai_hsl) * math.sin(p1t)
     r_hollow_slope_A = ((p1x, p1y, 0), (p2x, p2y, ai_rbr))
+    r_ti = p1t
   else:
     print("ERR563: Error, the hollow end {:d} can only be 1 or -1".format(ai_he))
     sys.exit(2)
-  return(r_involute_B, r_hollow_slope_A)
+  return(r_involute_B, r_hollow_slope_A, r_ti)
 
 def half_hollow_outline(ai_tooth_angle, ai_sx, ai_sy, ai_si, ai_hrbr, ai_ham, ai_first_nlast, ai_ox, ai_oy):
   """ generate the half-hollow outline for the end_type 3
@@ -567,7 +570,7 @@ def half_hollow_outline(ai_tooth_angle, ai_sx, ai_sy, ai_si, ai_hrbr, ai_ham, ai
   # rename variable
   fnl = ai_first_nlast
   # center of the half-hollow arc
-  csx = ai_si+fnl*math.pi
+  csx = ai_si+fnl*math.pi/2
   cx = ai_sx + ai_hrbr*math.cos(csx)
   cy = ai_sy + ai_hrbr*math.sin(csx)
   # angle (SOC)
@@ -576,7 +579,9 @@ def half_hollow_outline(ai_tooth_angle, ai_sx, ai_sy, ai_si, ai_hrbr, ai_ham, ai
   sox = math.atan2((ai_sy-ai_oy)/osl, (ai_sx-ai_ox)/osl)
   cox = math.atan2((cy-ai_oy)/ocl, (cx-ai_ox)/ocl)
   soc = math.fmod(fnl*(sox-cox)+5*math.pi, 2*math.pi) - math.pi
+  #print("dbg581: cox {:0.3f}  soc {:0.3f}".format(cox, soc))
   if(soc<ai_ham):
+    #print("dbg731: large half-hollow {:d}".format(fnl))
     ## P
     pcx = cox+math.pi
     px = cx + ai_hrbr*math.cos(pcx)
@@ -586,7 +591,8 @@ def half_hollow_outline(ai_tooth_angle, ai_sx, ai_sy, ai_si, ai_hrbr, ai_ham, ai
     tox = ai_tooth_angle - fnl * ai_ham
     tx = ai_ox + otl * math.cos(tox)
     ty = ai_oy + otl * math.sin(tox)
-  else:
+  else: # this case is very rare (maybe impossible because of the restriction on hrbr). So this code has not been tested yet!
+    print("dbg732: narrow half-hollow {:d}".format(fnl))
     ## P (identical with T)
     # angle poc
     pox = ai_tooth_angle - fnl * ai_ham
@@ -603,16 +609,16 @@ def half_hollow_outline(ai_tooth_angle, ai_sx, ai_sy, ai_si, ai_hrbr, ai_ham, ai
     py = cy + ai_hrbr*math.sin(pcx)
   ## Q
   # angle scp = scx - pcx = csx+pi - pcx
-  scx = scx + math.pi
-  scp = math.fmod(fnl*(scx - pcx)+5*math.pi, 2*math.pi) - math.pi
+  scx = csx + math.pi
+  scp = math.fmod(pcx - scx +5*math.pi, 2*math.pi) - math.pi
   qsx = scx + scp/2
   qx = cx + ai_hrbr*math.cos(qsx)
   qy = cy + ai_hrbr*math.sin(qsx)
   # half-hollow outline
   if(soc<ai_ham):
-    r_hho = ((tx,ty), (px,py), (qx,qy, sx,sy))
+    r_hho = [(tx,ty), (px,py), (qx,qy, ai_sx,ai_sy)]
   else:
-    r_hho = ((px,py), (qx,qy, sx,sy))
+    r_hho = [(px,py), (qx,qy, ai_sx,ai_sy)]
   if(fnl==-1):
     r_hho = cnc25d_api.outline_reverse(r_hho)
   return(r_hho)
@@ -631,7 +637,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
   # precision
   #radian_epsilon = math.pi/1000
   radian_epsilon = gpo_radian_epsilon_1000
-  radian_big_epsilon =  gpo_radian_big_epsilon
+  #radian_big_epsilon =  gpo_radian_big_epsilon
   # hollow_gear_type
   if(gear_type=='e'):
     hgt = 1
@@ -650,39 +656,38 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     if(first_end==1):
       start_of_profile_B = [(ox+tlm*math.cos(tooth_angle), oy+tlm*math.sin(tooth_angle))]
     elif(first_end==2):
-      (start_of_profile_B, tooth_slope_A) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, hgt, 1, i2_dsl, 0, 0, tooth_angle-pi_module_angle)
+      (start_of_profile_B, tooth_slope_A, s_ti) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, hgt, 1, i2_dsl, 0, 0, tooth_angle-pi_module_angle)
       if(i2_dsl>0):
         half_hollow =  cnc25d_api.cnc_cut_outline(tooth_slope_A, "dedendum_base_line")
     elif(first_end==3):
-      (start_of_profile_B, tooth_slope_A) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, hgt, 1, i2_dsl, 0.3*hrbr, 0, tooth_angle-pi_module_angle)
-      half_hollow = half_hollow_outline(tooth_angle-pi_module_angle, tooth_slope_A[0][0], tooth_slope_A[0][1], start_of_profile_B[0][2], hrbr, ham, 1, ox, oy)
-      half_hollow.append(tooth_slope_A[1])
-#      hollow_A = []
-#      hollow_A.append((ox+hlm*math.cos(tooth_angle-pi_module_angle+ham), oy+hlm*math.sin(tooth_angle-pi_module_angle+ham), 0))
-#      hollow_A.extend(tooth_slope_A)
-#      hollow_B = cnc25d_api.cnc_cut_outline(hollow_A, "hollow")
-#      half_hollow = hollow_B[0:-1]
+      (start_of_profile_B, tooth_slope_A, s_ti) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, hgt, 1, i2_dsl, 0.3*hrbr, 0, tooth_angle-pi_module_angle)
+      half_hollow = half_hollow_outline(tooth_angle, tooth_slope_A[0][0], tooth_slope_A[0][1], s_ti, hrbr, ham, 1, ox, oy)
+      half_hollow.append((tooth_slope_A[1][0], tooth_slope_A[1][1]))
     # assembly
     r_final_outline.extend(half_hollow)
     r_final_outline.extend(start_of_profile_B)
   ### bulk of the gearwheel_portion
   for tooth in range(portion_tooth_nb):
     # first involute
-    (first_involute_B, first_hollow_slope_A) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, hgt, -1, i1_dsl, i1_hsl, hrbr, tooth_angle)
+    (first_involute_B, first_hollow_slope_A, s_ti) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, hgt, -1, i1_dsl, i1_hsl, hrbr, tooth_angle)
     # second involute
-    (second_involute_B, second_hollow_slope_A) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, hgt, 1, i2_dsl, i2_hsl, hrbr, tooth_angle)
+    (second_involute_B, second_hollow_slope_A, s_ti) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, hgt, 1, i2_dsl, i2_hsl, hrbr, tooth_angle)
     # gearwheel hollow
-    # check the optimization
-    if(ho):
-      if((abs(first_hollow_slope_A[1][0]-second_hollow_slope_A[0][0])>radian_big_epsilon)or(abs(first_hollow_slope_A[1][1]-second_hollow_slope_A[0][1])>radian_big_epsilon)):
-        print("ERR582: the hollow optimization intersection is wrong: x1 {:0.3f}   x2 {:0.3f}  y1 {:0.3f}   y2 {:0.3f}".format(first_hollow_slope_A[1][0], second_hollow_slope_A[0][0], first_hollow_slope_A[1][1], second_hollow_slope_A[0][1]))
-        sys.exit(2)
     hollow_A = []
     hollow_A.extend(first_hollow_slope_A)
     if(ho):
       hollow_A.append(second_hollow_slope_A[1])
     else:
       hollow_A.extend(second_hollow_slope_A)
+    # check the optimization
+    if(ho):
+      if((abs(first_hollow_slope_A[1][0]-second_hollow_slope_A[0][0])>radian_epsilon)or(abs(first_hollow_slope_A[1][1]-second_hollow_slope_A[0][1])>radian_epsilon)):
+        # this error happens from time to time because of the approximation of the dedendum circle into a line
+        print("ERR582: the hollow optimization intersection is wrong: x1 {:0.3f}   x2 {:0.3f}  y1 {:0.3f}   y2 {:0.3f}".format(first_hollow_slope_A[1][0], second_hollow_slope_A[0][0], first_hollow_slope_A[1][1], second_hollow_slope_A[0][1]))
+        #hollow_A = []
+        #hollow_A.extend(first_hollow_slope_A)
+        #hollow_A.extend(second_hollow_slope_A)
+        sys.exit(2)
     hollow_B = cnc25d_api.cnc_cut_outline(hollow_A, "hollow")
     # assembly
     r_final_outline.extend(first_involute_B)
@@ -697,19 +702,14 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     if(last_end==1):
       end_of_profile_B = [(ox+tlm*math.cos(tooth_angle), oy+tlm*math.sin(tooth_angle))]
     elif(last_end==2):
-      (end_of_profile_B, tooth_slope_A) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, hgt, -1, i1_dsl, 0, 0, tooth_angle)
+      (end_of_profile_B, tooth_slope_A, s_ti) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, hgt, -1, i1_dsl, 0, 0, tooth_angle)
       if(i1_dsl>0):
         half_hollow = cnc25d_api.cnc_cut_outline(tooth_slope_A, "base_dedendum_line")
     # gearwheel hollow
     elif(last_end==3):
-      (end_of_profile_B, tooth_slope_A) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, hgt, -1, i1_dsl, 0.3*hrbr, 0, tooth_angle)
-      half_hollow.append(tooth_slope_A[0])
-      half_hollow.extend(half_hollow_outline(tooth_angle-pi_module_angle, tooth_slope_A[0][0], tooth_slope_A[0][1], start_of_profile_B[0][2], hrbr, ham, -1, ox, oy))
-      #hollow_A = []
-      #hollow_A.extend(end_of_hollow_slope_A)
-      #hollow_A.append((ox+hlm*math.cos(tooth_angle+ham), oy+hlm*math.sin(tooth_angle+ham), 0))
-      #hollow_B = cnc25d_api.cnc_cut_outline(hollow_A, "hollow")
-      #half_hollow = hollow_B[1:]
+      (end_of_profile_B, tooth_slope_A, s_ti) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, hgt, -1, i1_dsl, 0.3*hrbr, 0, tooth_angle)
+      half_hollow.append((tooth_slope_A[0][0], tooth_slope_A[0][1]))
+      half_hollow.extend(half_hollow_outline(tooth_angle, tooth_slope_A[1][0], tooth_slope_A[1][1], s_ti, hrbr, ham, -1, ox, oy))
     # assembly
     r_final_outline.extend(end_of_profile_B)
     r_final_outline.extend(half_hollow)
@@ -796,7 +796,7 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   # precision
   #radian_epsilon = math.pi/1000
   #radian_epsilon = gpo_radian_epsilon_1000
-  radian_big_epsilon =  gpo_radian_big_epsilon
+  #radian_big_epsilon =  gpo_radian_big_epsilon
   # get ai_low_parameters
   #(g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, g_pfe, g_ple, g_sp, g_sn, g_ah, g_dh, g_hh, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset) = ai_low_parameters
   (g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, middle_tooth, g_pfe, g_ple, tlh, blh, blx, ho,
@@ -827,7 +827,7 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
     l_positive_slope = slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, g_rbr, tangential_position) # positive slope
     l_negative_slope = slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position+pi_module) # negative slope
     if(ho):
-      if((abs(l_negative_slope[0][0]-l_positive_slope[1][0])>radian_big_epsilon)or(abs(l_negative_slope[0][1]-l_positive_slope[1][1])>radian_big_epsilon)):
+      if((abs(l_negative_slope[0][0]-l_positive_slope[1][0])>radian_epsilon)or(abs(l_negative_slope[0][1]-l_positive_slope[1][1])>radian_epsilon)):
         print("ERR583: the gearbar hollow optimization intersection is wrong: x1 {:0.3f}   x2 {:0.3f}  y1 {:0.3f}   y2 {:0.3f}".format(l_positive_slope[1][0], l_negative_slope[0][0], l_positive_slope[1][1], l_negative_slope[0][1]))
         sys.exit(2)
     gearbar_A.extend(l_positive_slope)
