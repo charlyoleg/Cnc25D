@@ -542,35 +542,13 @@ def gearwheel_self_test():
   Look at the simulation Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"                                    , ""],
-    ["simplest test with simulation"                    , "--simulation_enable"],
-    ["simple reduction (ratio<1)"                       , "--second_gear_tooth_nb 21 --simulation_enable"],
-    ["simple transmission (ratio=1)"                    , "--gear_tooth_nb 13 --second_gear_tooth_nb 13 --simulation_enable"],
-    ["simple multiplication (ratio>1)"                  , "--gear_tooth_nb 19 --second_gear_tooth_nb 16 --simulation_enable"],
-    ["big ratio and zoom"                               , "--gear_tooth_nb 19 --second_gear_tooth_nb 137 --simulation_zoom 4.0 --simulation_enable"],
-    ["single gear with same primitive and base circle"  , "--gear_tooth_nb 17 --gear_base_diameter 17.0 --simulation_enable"],
-    ["single gear with small base circle"               , "--gear_tooth_nb 27 --gear_base_diameter 23.5 --simulation_enable"],
-    ["with first and second angle and inter-axis length" , "--second_gear_tooth_nb 21 --gear_initial_angle {:f} --second_gear_position_angle {:f} --second_gear_additional_axis_length 0.2 --simulation_enable".format(15*math.pi/180, 40.0*math.pi/180)],
-    ["other with first and second angle"                , "--second_gear_tooth_nb 15 --gear_initial_angle  {:f} --second_gear_position_angle  {:f} --simulation_enable".format(-5*math.pi/180, 170.0*math.pi/180)],
-    ["with force angle constraint"                      , "--gear_tooth_nb 17 --second_gear_tooth_nb 27 --gear_force_angle {:f} --simulation_enable".format(20*math.pi/180)],
-    ["first base radius constraint"                     , "--gear_tooth_nb 26 --second_gear_tooth_nb 23 --gear_base_diameter 23.0 --simulation_enable"],
-    ["second base radius constraint"                    , "--second_gear_tooth_nb 23 --second_gear_primitive_diameter 20.3 --simulation_enable"],
-    ["fine draw resolution"                             , "--second_gear_tooth_nb 19 --gear_tooth_resolution 10 --simulation_enable"],
-    ["ratio 1 and dedendum at 30%%"                     , "--second_gear_tooth_nb 17 --gear_dedendum_height_pourcentage 30.0 --second_gear_addendum_height_pourcentage 30.0 --simulation_enable"],
-    ["ratio > 1 and dedendum at 40%%"                   , "--second_gear_tooth_nb 23 --gear_dedendum_height_pourcentage 40.0 --second_gear_addendum_height_pourcentage 40.0 --simulation_enable"],
-    ["ratio > 1 and addendum at 80%%"                   , "--second_gear_tooth_nb 17 --gear_addendum_height_pourcentage 80.0 --second_gear_dedendum_height_pourcentage 80.0 --simulation_enable"],
-    ["ratio > 1 and dedendum at 160%%"                  , "--second_gear_tooth_nb 21 --gear_dedendum_height_pourcentage 160.0 --simulation_enable"],
-    ["ratio > 1 and small tooth height"                 , "--second_gear_tooth_nb 29 --gear_tooth_half_height 1.3 --second_gear_tooth_half_height 1.3 --simulation_enable"],
-    ["ratio > 1 and big tooth height"                   , "--second_gear_tooth_nb 29 --gear_tooth_half_height 2.3 --second_gear_tooth_half_height 2.3 --simulation_enable"],
-    ["ratio > 1 and addendum-dedendum parity"           , "--gear_tooth_nb 30 --second_gear_tooth_nb 37 --gear_addendum_dedendum_parity 60.0 --second_gear_addendum_dedendum_parity 40.0 --simulation_enable"],
-    ["file generation"                                  , "--center_position_x 100 --center_position_y 50 --output_file_basename self_test_output/"],
-    ["interior gear"                                    , "--second_gear_tooth_nb 14 --gear_type ie --simulation_enable"],
-    ["interior gear"                                    , "--gear_tooth_nb 25 --second_gear_tooth_nb 17 --gear_type ie --second_gear_position_angle {:f} --simulation_enable".format(30.0*math.pi/180)],
-    ["interior second gear"                             , "--second_gear_tooth_nb 29 --gear_type ei --simulation_enable"],
-    ["interior second gear"                             , "--second_gear_tooth_nb 24 --gear_type ei --second_gear_position_angle {:f} --simulation_enable".format(-75*math.pi/180)],
-    ["interior gear"                                    , "--second_gear_tooth_nb 14 --gear_type ie --gear_addendum_height_pourcentage 75.0 --simulation_enable"],
-    ["cremailliere"                                     , "--gear_type ce --gear_tooth_nb 3 --second_gear_tooth_nb 20 --gear_primitive_diameter 15 --gear_base_diameter 20 --simulation_enable"],
-    ["cremailliere with angle"                          , "--gear_type ce --gear_tooth_nb 12 --second_gear_tooth_nb 20 --gear_primitive_diameter 40 --gear_base_diameter 20 --gear_initial_angle {:f} --simulation_enable".format(40*math.pi/180)]]
+    ["simplest test"                  , "--gear_tooth_nb 21 --gear_module 10.0 --axle_type rectangle --axle_x_width 30 --axle_y_width 40 --axle_router_bit_radius 8.0 --cnc_router_bit_radius 3.0"],
+    ["with gearwheel hollow 1 leg"    , "--gear_tooth_nb 25 --gear_module 10.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 20 --axle_router_bit_radius 4.0 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 1 --wheel_hollow_leg_width 20.0 --wheel_hollow_leg_angle 0.9 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 200.0 --wheel_hollow_router_bit_radius 15.0"],
+    ["with gearwheel hollow 3 legs"   , "--gear_tooth_nb 24 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 3 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 40.0 --wheel_hollow_external_diameter 180.0 --wheel_hollow_router_bit_radius 15.0"],
+    ["with gearwheel hollow 7 legs"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 30.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0"],
+    ["with gear_profile simulation"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --simulation"],
+    ["with gear_profile simulation"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --output_file_basename test_output/gearwheel_self_test.dxf"],
+    ["last test"                      , "--gear_tooth_nb 30 --gear_module 10.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gear_profile().')
   gearwheel_parser = gear_profile.gear_profile_add_argument(gearwheel_parser, 1)
