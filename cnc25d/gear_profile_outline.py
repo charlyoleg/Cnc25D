@@ -62,7 +62,7 @@ import small_geometry # use some well-tested functions from the internal of the 
 gpo_radian_epsilon_1000 = math.pi/1000 #0.003
 #gpo_radian_epsilon_10000 = gpo_radian_epsilon_1000/10 #0.0003
 gpo_radian_epsilon_100000 = gpo_radian_epsilon_1000/100 #0.0003
-#gpo_radian_epsilon_100 = gpo_radian_epsilon_1000*10 # 0.03
+gpo_radian_epsilon_100 = gpo_radian_epsilon_1000*10 # 0.03
 gpo_radian_epsilon_10 = gpo_radian_epsilon_1000*100 # 0.3
 #gpo_radian_big_epsilon = math.pi/5 # almost 1 mm !
 
@@ -374,33 +374,33 @@ def calc_low_level_gear_parameters(ai_param):
       print("ERR632: Error, i1_dtri {:0.3f} or i2_dtri {:0.3f} are too closed to pi/2 or even bigger!".format(i1_dtri, i2_dtri))
       sys.exit(2)
     ABh = bottom_land_length-i1_thickness/cos_i1_dtri-i2_thickness/cos_i2_dtri # see documentation graphic of hollow optimization
-    a = math.pi/2-abs(i1_dtri) - bottom_land/2
-    b = math.pi/2-abs(i2_dtri) - bottom_land/2
+    a = math.pi/2-abs(i1_dtri) - g_ks * bottom_land/2
+    b = math.pi/2-abs(i2_dtri) - g_ks * bottom_land/2
     AIB = math.pi - (a + b)
     ho = False # hollow_optimization
     if(AIB>radian_epsilon):
       ### AI, BI (this method has too much imprecision when a=pi/2 or b=pi/2)
-      #tan_a = math.tan(a)
-      #tan_b = math.tan(b)
-      #tan_a_plus_tan_b = tan_a+tan_b
-      #xi = 0
-      #yi = 0
-      #if(tan_a_plus_tan_b>radian_epsilon):
-      #  xi = tan_b*ABh/tan_a_plus_tan_b
-      #  yi = tan_a*xi
-      #AI = math.sqrt(xi**2+yi**2)
-      #BI = math.sqrt((ABh-xi)**2+yi**2)
+      tan_a = math.tan(a)
+      tan_b = math.tan(b)
+      tan_a_plus_tan_b = tan_a+tan_b
+      xi = 0
+      yi = 0
+      if(tan_a_plus_tan_b>radian_epsilon):
+        xi = tan_b*ABh/tan_a_plus_tan_b
+        yi = tan_a*xi
+      AI = math.sqrt(xi**2+yi**2)
+      BI = math.sqrt((ABh-xi)**2+yi**2)
       ## alternative with the law of sine: BI/sin(a) = AI/sin(b) = ABh/sin(AIB)
-      AI2 = ABh*math.sin(a)/math.sin(AIB)
-      BI2 = ABh*math.sin(b)/math.sin(AIB)
-      #if(abs(AI2-AI)>radian_epsilon):
-      #  print("ERR972: Error, AI {:0.3f} and AI2 {:0.3f} are not equal".format(AI, AI2))
-      #  print("dbg647: a {:0.3f}  b {:0.3f}  AIB {:0.3f}  ABh {:0.3f}".format(a, b, AIB, ABh))
-      #  sys.exit(2)
-      #if(abs(BI2-BI)>radian_epsilon):
-      #  print("ERR973: Error, BI {:0.3f} and BI2 {:0.3f} are not equal".format(BI, BI2))
-      #  sys.exit(2)
-      # check the position of the router_bit
+      AI2 = ABh*math.sin(b)/math.sin(AIB)
+      BI2 = ABh*math.sin(a)/math.sin(AIB)
+      if(abs(AI2-AI)>radian_epsilon):
+        print("ERR972: Error, AI {:0.3f} and AI2 {:0.3f} are not equal".format(AI, AI2))
+        print("dbg647: a {:0.3f}  b {:0.3f}  AIB {:0.3f}  ABh {:0.3f}".format(a, b, AIB, ABh))
+        sys.exit(2)
+      if(abs(BI2-BI)>radian_epsilon):
+        print("ERR973: Error, BI {:0.3f} and BI2 {:0.3f} are not equal".format(BI, BI2))
+        sys.exit(2)
+      # select the method for AI and BI
       AI = AI2
       BI = BI2
       AIO = float(AIB)/2
@@ -493,8 +493,8 @@ def calc_low_level_gear_parameters(ai_param):
     b = math.pi/2-abs(g_sn)
     AIB = math.pi - (a + b)
     if(AIB>radian_epsilon):
-      AI = ABh*math.sin(a)/math.sin(AIB)
-      BI = ABh*math.sin(b)/math.sin(AIB)
+      AI = ABh*math.sin(b)/math.sin(AIB)
+      BI = ABh*math.sin(a)/math.sin(AIB)
       AIO = float(AIB)/2
       IO = g_rbr / math.sin(AIO)
       AIF = math.pi/2-a
@@ -682,7 +682,6 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     # check the optimization
     if(ho):
       if((abs(first_hollow_slope_A[1][0]-second_hollow_slope_A[0][0])>radian_epsilon)or(abs(first_hollow_slope_A[1][1]-second_hollow_slope_A[0][1])>radian_epsilon)):
-        # this error happens from time to time because of the approximation of the dedendum circle into a line
         print("ERR582: the hollow optimization intersection is wrong: x1 {:0.3f}   x2 {:0.3f}  y1 {:0.3f}   y2 {:0.3f}".format(first_hollow_slope_A[1][0], second_hollow_slope_A[0][0], first_hollow_slope_A[1][1], second_hollow_slope_A[0][1]))
         #hollow_A = []
         #hollow_A.extend(first_hollow_slope_A)
@@ -795,7 +794,7 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   """
   # precision
   #radian_epsilon = math.pi/1000
-  #radian_epsilon = gpo_radian_epsilon_1000
+  radian_epsilon = gpo_radian_epsilon_1000
   #radian_big_epsilon =  gpo_radian_big_epsilon
   # get ai_low_parameters
   #(g_type, pi_module, g_ox, g_oy, g_bi, bar_tooth_nb, g_pfe, g_ple, g_sp, g_sn, g_ah, g_dh, g_hh, g_rbr, g_stp, g_stn, gb_p_offset, gb_n_offset) = ai_low_parameters
@@ -1116,7 +1115,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   #radian_epsilon = math.pi/1000
   radian_epsilon_1000 = gpo_radian_epsilon_1000
   radian_epsilon_100000 = gpo_radian_epsilon_100000
-  #radian_epsilon_100 = gpo_radian_epsilon_100
+  radian_epsilon_100 = gpo_radian_epsilon_100
   radian_epsilon_10 = gpo_radian_epsilon_10
   # rotation_direction alias
   rd = ai_rotation_direction
@@ -1231,7 +1230,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   # alternative
   if((g1_type=='e')or(g1_type=='i')):
     g1_sra2 = rd*g1_ks*math.atan(g1_contact_u)
-    if(abs(g1_sra2-g1_sra)>radian_epsilon_1000):
+    if(abs(g1_sra2-g1_sra)>radian_epsilon_100):
       print("ERR417: Error in calculation of g1_sra {:0.3f} or g1_sra2 {:0.3f}".format(g1_sra, g1_sra2))
       sys.exit(2)
   ## speed of c1 (contact point of g1)
@@ -1255,10 +1254,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     g2_contact_u3 = math.sqrt((float(BC)/g2_br)**2-1)
     if((g1_type=='e')or(g1_type=='i')):
       g2_contact_u1 = g1_ks*float(KL - g2_ks*g1_contact_u*g1_br)/g2_br
-      if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon_1000):
+      if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon_10):
         print("ERR331: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u1, g2_contact_u2))
         sys.exit(2)
-      if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon_1000):
+      if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon_10):
         print("ERR332: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u1, g2_contact_u3))
         sys.exit(2)
     g2_contact_u = g2_contact_u3 # select the method for g2_contact_u

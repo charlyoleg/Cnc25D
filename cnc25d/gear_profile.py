@@ -930,8 +930,8 @@ def gear_profile(
         #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_ar), 'tkinter'), 'green', 1))
         #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g2_ix, g2_iy, g2_ar), 'tkinter'), 'green', 1))
       # g1 debug circle
-      r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_dr), 'tkinter'), 'green', 1))
-      r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_hr), 'tkinter'), 'green', 1))
+      #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_dr), 'tkinter'), 'green', 1))
+      #r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line((g1_ix, g1_iy, g1_hr), 'tkinter'), 'green', 1))
       # inter-axis
       r_canvas_graphics.append(('overlay_lines', cnc25d_api.outline_arc_line(inter_axis_outline, 'tkinter'), 'green', 1))
       ## update matplotlib curve_table
