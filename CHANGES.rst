@@ -2,6 +2,13 @@
 Release History
 ###############
 
+0.1.6 (2013-09-25)
+==================
+
+* Use arc primitives for generating DXF and SVG files
+* finalization of gear_profile.py and gearwheel.py
+
+
 0.1.5 (2013-09-18)
 ==================
 

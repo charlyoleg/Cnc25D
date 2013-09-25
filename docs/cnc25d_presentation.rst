@@ -250,9 +250,21 @@ For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 Releases
 ========
 
+Release 0.1.7
+-------------
+Released on 2013-11-01
+
+* gearring (aka annulus)
+* gearbar (aka rack)
+* epicyclic
+* gearlever
+* split_gearwheel
+* bone-axle
+* gear_art  
+
 Release 0.1.6
 -------------
-Released on 2013-10-01
+Released on 2013-09-25
 
 * Use arc primitives for generating DXF and SVG files
 * finalization of gear_profile.py and gearwheel.py
