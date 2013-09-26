@@ -268,8 +268,8 @@ def gearring(
     print("ERR211: Error, ai_holder_crenel_position {:0.3f} is too small compare to holder_hole_radius {:03f}".format(ai_holder_crenel_position, holder_hole_radius))
     sys.exit(2)
   # ai_holder_crenel_width
-  if(ai_holder_crenel_width<2.1*ai_holder_crenel_router_bit_radius):
-    print("ERR215: Error, ai_holder_crenel_width {:0.3} is too small compare to ai_holder_crenel_router_bit_radius {:0.3f}".format(ai_holder_crenel_width, ai_holder_crenel_router_bit_radius))
+  if(ai_holder_crenel_width<2.1*holder_crenel_router_bit_radius):
+    print("ERR215: Error, ai_holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(ai_holder_crenel_width, holder_crenel_router_bit_radius))
     sys.exit(2)
   # ai_gear_tooth_nb
   if(ai_gear_tooth_nb>0): # create a gear_profile
@@ -379,7 +379,7 @@ def gearring(
       end_angle = ai_holder_position_angle + (i+1)*angle_incr - holder_crenel_half_angle
       holder_A.append([g1_ix+holder_radius*math.cos(middle_angle), g1_iy+holder_radius*math.sin(middle_angle),
                         g1_ix+holder_radius*math.cos(end_angle), g1_iy+holder_radius*math.sin(end_angle), holder_smoothing_radius])
-    holder_A[-1][-1] = 0
+    holder_A[-1] = [holder_A[-1][0], holder_A[-1][1], holder_A[0][0], holder_A[0][1], 0]
     holder_figure.append(cnc25d_api.cnc_cut_outline(holder_A, "holder_A"))
     holder_figure_overlay.append(cnc25d_api.ideal_outline(holder_A, "holder_A"))
   ### holder-hole outline
@@ -420,7 +420,7 @@ gear_router_bit_radius:           \t{:0.3f}
 holder_crenel_router_bit_radius:  \t{:0.3f}
 holder_smoothing_radius:          \t{:0.3f}
 cnc_router_bit_radius:            \t{:0.3f}
-""".format(gear_router_bit_radius, ai_holder_crenel_router_bit_radius, holder_smoothing_radius, ai_cnc_router_bit_radius)
+""".format(gear_router_bit_radius, holder_crenel_router_bit_radius, holder_smoothing_radius, ai_cnc_router_bit_radius)
   #print(gearring_parameter_info)
 
   # display with Tkinter
@@ -547,9 +547,14 @@ def gearring_self_test():
   Look at the simulation Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"                  , "--gear_tooth_nb 25 --gear_module 10 --holder_diameter 280.0 --cnc_router_bit_radius 3.0"],
-    ["no tooth"                       , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --holder_diameter 120.0 --cnc_router_bit_radius 3.0"],
-    ["last test"                      , "--gear_tooth_nb 30 --gear_module 10.0 --holder_diameter 340.0"]]
+    ["simplest test"    , "--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --cnc_router_bit_radius 2.0"],
+    ["no tooth"         , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --holder_diameter 120.0 --cnc_router_bit_radius 2.0 --holder_crenel_number 7"],
+    ["no holder-hole"   , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 20.0 --cnc_router_bit_radius 2.0 --holder_hole_diameter 0.0"],
+    ["no crenel"        , "--gear_tooth_nb 29 --gear_module 10 --holder_diameter 340.0 --holder_crenel_width 20.0 --holder_crenel_number 0"],
+    ["small crenel"     , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 1 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0"],
+    ["narrow crenel"    , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 4 --holder_position_angle 0.785 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0"],
+    ["output dxf"    , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 2 --holder_position_angle 0.785 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0 --output_file_basename test_output/gearring_self_test.dxf"],
+    ["last test"        , "--gear_tooth_nb 30 --gear_module 10.0 --holder_diameter 340.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearring_parser = argparse.ArgumentParser(description='Command line interface for the function gearring().')
   gearring_parser = gear_profile.gear_profile_add_argument(gearring_parser, 1)

@@ -28,6 +28,7 @@ Contents:
    gear_profile_theory
    gear_profile_implementation
    gearwheel_design
+   gearring_design
 
 Indices and tables
 ==================
