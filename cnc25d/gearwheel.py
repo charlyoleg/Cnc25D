@@ -23,7 +23,7 @@
 """
 gearwheel.py is a parametric generator of gearwheels.
 The main function return the gear-wheel as FreeCAD Part object.
-You can also simulate or view of the gearwheel and get a DXF, SVG or BRep or the gearwheel
+You can also simulate or view of the gearwheel and get a DXF, SVG or BRep file.
 """
 
 ################################################################
@@ -293,11 +293,11 @@ def gearwheel(
       sys.exit(2)
     g1_ix = ai_center_position_x
     g1_iy = ai_center_position_y
-    gear_profile_B = (g1_ix, g1_iy, ai_gear_primitive_diameter/2)
+    gear_profile_B = (g1_ix, g1_iy, float(ai_gear_primitive_diameter)/2)
     gear_profile_info = "\nSimple circle (no-gear-profile):\n"
-    gear_profile_info += "outline circle radius: \t{:0.3f}  \tdiameter: {:0.3f}\n".format(ai_gear_primitive_diameter/2, ai_gear_primitive_diameter)
+    gear_profile_info += "outline circle radius: \t{:0.3f}  \tdiameter: {:0.3f}\n".format(ai_gear_primitive_diameter/2.0, ai_gear_primitive_diameter)
     gear_profile_info += "gear center (x, y):   \t{:0.3f}  \t{:0.3f}\n".format(g1_ix, g1_iy)
-    minimal_gear_profile_radius = ai_gear_primitive_diameter/2
+    minimal_gear_profile_radius = float(ai_gear_primitive_diameter)/2
   ### check parameter coherence (part 2)
   if(ai_wheel_hollow_leg_number>0):
     # wheel_hollow_external_diameter
@@ -324,13 +324,13 @@ def gearwheel(
   axle_figure = []
   axle_figure_overlay = []
   if(ai_axle_type=='circle'):
-    axle_figure.append([g1_ix, g1_iy, axle_diameter/2])
+    axle_figure.append([g1_ix, g1_iy, axle_diameter/2.0])
   elif(ai_axle_type=='rectangle'):
     axle_A = [
-      [g1_ix-ai_axle_x_width/2, g1_iy-ai_axle_y_width/2, -1*axle_router_bit_radius],
-      [g1_ix+ai_axle_x_width/2, g1_iy-ai_axle_y_width/2, -1*axle_router_bit_radius],
-      [g1_ix+ai_axle_x_width/2, g1_iy+ai_axle_y_width/2, -1*axle_router_bit_radius],
-      [g1_ix-ai_axle_x_width/2, g1_iy+ai_axle_y_width/2, -1*axle_router_bit_radius]]
+      [g1_ix-ai_axle_x_width/2.0, g1_iy-ai_axle_y_width/2.0, -1*axle_router_bit_radius],
+      [g1_ix+ai_axle_x_width/2.0, g1_iy-ai_axle_y_width/2.0, -1*axle_router_bit_radius],
+      [g1_ix+ai_axle_x_width/2.0, g1_iy+ai_axle_y_width/2.0, -1*axle_router_bit_radius],
+      [g1_ix-ai_axle_x_width/2.0, g1_iy+ai_axle_y_width/2.0, -1*axle_router_bit_radius]]
     axle_A = cnc25d_api.outline_close(axle_A)
     axle_figure.append(cnc25d_api.cnc_cut_outline(axle_A, "axle_A"))
     axle_figure_overlay.append(cnc25d_api.ideal_outline(axle_A, "axle_A"))
@@ -340,35 +340,35 @@ def gearwheel(
   wheel_hollow_figure_overlay = []
   if(ai_wheel_hollow_leg_number>0):
     wh_angle = 2*math.pi/ai_wheel_hollow_leg_number
-    wh_leg_top_angle1 = math.asin((ai_wheel_hollow_leg_width/2+wheel_hollow_router_bit_radius)/(ai_wheel_hollow_external_diameter/2-wheel_hollow_router_bit_radius))
+    wh_leg_top_angle1 = math.asin(float(ai_wheel_hollow_leg_width/2.0+wheel_hollow_router_bit_radius)/(ai_wheel_hollow_external_diameter/2.0-wheel_hollow_router_bit_radius))
     if(wh_angle<2*wh_leg_top_angle1+radian_epsilon):
       print("ERR664: Error, wh_angle {:0.2f} too small compare to wh_leg_top_angle {:0.2f}!".format(wh_angle, wh_leg_top_angle))
       sys.exit(2)
-    wh_leg_bottom_angle1 = math.asin((ai_wheel_hollow_leg_width/2+wheel_hollow_router_bit_radius)/(ai_wheel_hollow_internal_diameter/2+wheel_hollow_router_bit_radius))
+    wh_leg_bottom_angle1 = math.asin(float(ai_wheel_hollow_leg_width/2.0+wheel_hollow_router_bit_radius)/(ai_wheel_hollow_internal_diameter/2.0+wheel_hollow_router_bit_radius))
     #wh_leg_top_angle2 = math.asin((ai_wheel_hollow_leg_width/2)/(ai_wheel_hollow_external_diameter/2))
-    wh_leg_top_angle2 = math.asin(ai_wheel_hollow_leg_width/ai_wheel_hollow_external_diameter)
+    wh_leg_top_angle2 = math.asin(float(ai_wheel_hollow_leg_width)/ai_wheel_hollow_external_diameter)
     #wh_leg_bottom_angle2 = math.asin((ai_wheel_hollow_leg_width/2)/(ai_wheel_hollow_internal_diameter/2))
-    wh_leg_bottom_angle2 = math.asin(ai_wheel_hollow_leg_width/ai_wheel_hollow_internal_diameter)
+    wh_leg_bottom_angle2 = math.asin(float(ai_wheel_hollow_leg_width)/ai_wheel_hollow_internal_diameter)
     # angular coordinates of the points
     wh_top1_a = ai_wheel_hollow_leg_angle+wh_leg_top_angle2
-    wh_top2_a = ai_wheel_hollow_leg_angle+wh_angle/2
+    wh_top2_a = ai_wheel_hollow_leg_angle+wh_angle/2.0
     wh_top3_a = ai_wheel_hollow_leg_angle+wh_angle-wh_leg_top_angle2
     wh_bottom1_a = ai_wheel_hollow_leg_angle+wh_leg_bottom_angle2
-    wh_bottom2_a = ai_wheel_hollow_leg_angle+wh_angle/2
+    wh_bottom2_a = ai_wheel_hollow_leg_angle+wh_angle/2.0
     wh_bottom3_a = ai_wheel_hollow_leg_angle+wh_angle-wh_leg_bottom_angle2
     # Cartesian coordinates of the points
-    wh_top1_x = g1_ix + ai_wheel_hollow_external_diameter/2*math.cos(wh_top1_a)
-    wh_top1_y = g1_iy + ai_wheel_hollow_external_diameter/2*math.sin(wh_top1_a)
-    wh_top2_x = g1_ix + ai_wheel_hollow_external_diameter/2*math.cos(wh_top2_a)
-    wh_top2_y = g1_iy + ai_wheel_hollow_external_diameter/2*math.sin(wh_top2_a)
-    wh_top3_x = g1_ix + ai_wheel_hollow_external_diameter/2*math.cos(wh_top3_a)
-    wh_top3_y = g1_iy + ai_wheel_hollow_external_diameter/2*math.sin(wh_top3_a)
-    wh_bottom1_x = g1_ix + ai_wheel_hollow_internal_diameter/2*math.cos(wh_bottom1_a)
-    wh_bottom1_y = g1_iy + ai_wheel_hollow_internal_diameter/2*math.sin(wh_bottom1_a)
-    wh_bottom2_x = g1_ix + ai_wheel_hollow_internal_diameter/2*math.cos(wh_bottom2_a)
-    wh_bottom2_y = g1_iy + ai_wheel_hollow_internal_diameter/2*math.sin(wh_bottom2_a)
-    wh_bottom3_x = g1_ix + ai_wheel_hollow_internal_diameter/2*math.cos(wh_bottom3_a)
-    wh_bottom3_y = g1_iy + ai_wheel_hollow_internal_diameter/2*math.sin(wh_bottom3_a)
+    wh_top1_x = g1_ix + ai_wheel_hollow_external_diameter/2.0*math.cos(wh_top1_a)
+    wh_top1_y = g1_iy + ai_wheel_hollow_external_diameter/2.0*math.sin(wh_top1_a)
+    wh_top2_x = g1_ix + ai_wheel_hollow_external_diameter/2.0*math.cos(wh_top2_a)
+    wh_top2_y = g1_iy + ai_wheel_hollow_external_diameter/2.0*math.sin(wh_top2_a)
+    wh_top3_x = g1_ix + ai_wheel_hollow_external_diameter/2.0*math.cos(wh_top3_a)
+    wh_top3_y = g1_iy + ai_wheel_hollow_external_diameter/2.0*math.sin(wh_top3_a)
+    wh_bottom1_x = g1_ix + ai_wheel_hollow_internal_diameter/2.0*math.cos(wh_bottom1_a)
+    wh_bottom1_y = g1_iy + ai_wheel_hollow_internal_diameter/2.0*math.sin(wh_bottom1_a)
+    wh_bottom2_x = g1_ix + ai_wheel_hollow_internal_diameter/2.0*math.cos(wh_bottom2_a)
+    wh_bottom2_y = g1_iy + ai_wheel_hollow_internal_diameter/2.0*math.sin(wh_bottom2_a)
+    wh_bottom3_x = g1_ix + ai_wheel_hollow_internal_diameter/2.0*math.cos(wh_bottom3_a)
+    wh_bottom3_y = g1_iy + ai_wheel_hollow_internal_diameter/2.0*math.sin(wh_bottom3_a)
     # create one outline
     if(wh_angle<2*wh_leg_bottom_angle1+radian_epsilon):
       wh_outline_A = [
@@ -548,9 +548,10 @@ def gearwheel_self_test():
     ["with gearwheel hollow 7 legs"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 30.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0"],
     ["with gear_profile simulation"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --simulation"],
     ["with gear_profile simulation"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --output_file_basename test_output/gearwheel_self_test.dxf"],
+    ["no tooth"                       , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 20 --axle_router_bit_radius 3.0 --wheel_hollow_leg_number 4 --wheel_hollow_leg_width 10.0 --wheel_hollow_internal_diameter 40.0  --wheel_hollow_external_diameter 80.0 --wheel_hollow_router_bit_radius 8.0"],
     ["last test"                      , "--gear_tooth_nb 30 --gear_module 10.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
-  gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gear_profile().')
+  gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')
   gearwheel_parser = gear_profile.gear_profile_add_argument(gearwheel_parser, 1)
   gearwheel_parser = gearwheel_add_argument(gearwheel_parser)
   gearwheel_parser = cnc25d_api.generate_output_file_add_argument(gearwheel_parser)
