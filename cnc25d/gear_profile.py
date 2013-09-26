@@ -75,11 +75,12 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
       0:all for gear_profile_cli() and gear_profile_self_test()
       1:restriction for gearwheel
       2:restriction for gearring
+      3:restriction for gearbar
   """
   r_parser = ai_parser
   ### first gear
   # general
-  if((ai_variant!=1)and(ai_variant!=2)):
+  if((ai_variant!=1)and(ai_variant!=2)and(ai_variant!=3)):
     r_parser.add_argument('--gear_type','--gt', action='store', default='e', dest='sw_gear_type',
       help="Select the type of gear. Possible values: 'e', 'i', 'l'. Default: 'e'")
   r_parser.add_argument('--gear_tooth_nb','--gtn', action='store', type=int, default=0, dest='sw_gear_tooth_nb',
@@ -121,7 +122,7 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
     help="If not zero, add or remove radial thickness on the gear negative involute. Default: 0.0")
   ### second gear
   # general
-  if(ai_variant!=2):
+  if((ai_variant!=2)and(ai_variant!=3)):
     r_parser.add_argument('--second_gear_type','--sgt', action='store', default='e', dest='sw_second_gear_type',
       help="Select the type of gear. Possible values: 'e', 'i', 'l'. Default: 'e'")
   r_parser.add_argument('--second_gear_tooth_nb','--sgtn', action='store', type=int, default=0, dest='sw_second_gear_tooth_nb',
@@ -174,7 +175,7 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
   r_parser.add_argument('--second_gear_additional_axis_length','--sgaal', action='store', type=float, default=0.0, dest='sw_second_gear_additional_axis_length',
     help="Set an additional value for the inter-axis length between the first and the second gear_profiles. Default: 0.0")
   ### portion
-  if(ai_variant!=1):
+  if((ai_variant!=1)and(ai_variant!=2)):
     r_parser.add_argument('--cut_portion','--cp', action='store', nargs=3, type=int, default=(0, 0, 0), dest='sw_cut_portion',
       help="(N, first_end, last_end) If N>1, cut a portion of N tooth ofthe gear_profile. first_end and last_end defines in details where the profile stop (0: slope-top, 1: top-middle, 2: slope-bottom, 3: hollow-middle). Default: (0,0,0)")
   ### output

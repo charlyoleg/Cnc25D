@@ -66,16 +66,16 @@ def gearbar_add_argument(ai_parser):
   """
   r_parser = ai_parser
   ### gearbar
-  r_parser.add_argument('--gearbar_height','--gh', action='store', type=float, default=20.0, dest='sw_gearbar_height',
+  r_parser.add_argument('--gearbar_height','--gbh', action='store', type=float, default=20.0, dest='sw_gearbar_height',
     help="Set the height of the gearbar (from the bottom to the gear-profile primitive line). Default: 20.0")
   ### gearbar-hole
-  r_parser.add_argument('--gearbar_hole_height_position','--ghhp', action='store', type=float, default=10.0, dest='sw_gearbar_hole_height_position',
+  r_parser.add_argument('--gearbar_hole_height_position','--gbhhp', action='store', type=float, default=10.0, dest='sw_gearbar_hole_height_position',
     help="Set the height from the bottom of the gearbar to the center of the gearbar-hole. Default: 10.0")
-  r_parser.add_argument('--gearbar_hole_diameter','--ghd', action='store', type=float, default=10.0, dest='sw_gearbar_hole_diameter',
+  r_parser.add_argument('--gearbar_hole_diameter','--gbhd', action='store', type=float, default=10.0, dest='sw_gearbar_hole_diameter',
     help="Set the diameter of the gearbar-hole. If equal to 0.0, there are no gearbar-hole. Default: 10.0")
-  r_parser.add_argument('--gearbar_hole_offset','--gho', action='store', type=int, default=0, dest='sw_gearbar_hole_offset',
+  r_parser.add_argument('--gearbar_hole_offset','--gbho', action='store', type=int, default=0, dest='sw_gearbar_hole_offset',
     help="Set the initial number of teeth to position the first gearbar-hole. Default: 0")
-  r_parser.add_argument('--gearbar_hole_increment','--ghi', action='store', type=int, default=1, dest='sw_gearbar_hole_increment',
+  r_parser.add_argument('--gearbar_hole_increment','--gbhi', action='store', type=int, default=1, dest='sw_gearbar_hole_increment',
     help="Set the number of teeth between two gearbar-holes. Default: 1")
   # return
   return(r_parser)
@@ -135,8 +135,8 @@ def gearbar(
       ai_second_gear_tooth_resolution_n = 0,
       ai_second_gear_skin_thickness_n = 0.0,
       ### gearbar specific
-      #ai_gearbar_slope = 0.0,
-      #ai_gearbar_slope_n = 0.0,
+      ai_gearbar_slope = 0.0,
+      ai_gearbar_slope_n = 0.0,
       ### position
       # first gear position
       ai_center_position_x = 0.0,
@@ -146,9 +146,9 @@ def gearbar(
       ai_second_gear_position_angle = 0.0,
       ai_second_gear_additional_axis_length = 0.0,
       ### portion
-      #ai_portion_tooth_nb = 0,
-      #ai_portion_first_end = 0,
-      #ai_portion_last_end =0,
+      ai_portion_tooth_nb = 0,
+      ai_portion_first_end = 0,
+      ai_portion_last_end =0,
       ### output
       ai_gear_profile_height = 1.0,
       ai_simulation_enable = False,
@@ -173,53 +173,27 @@ def gearbar(
   ### precision
   radian_epsilon = math.pi/1000
   ### check parameter coherence (part 1)
-  holder_radius = float(ai_holder_diameter)/2
-  holder_hole_position_radius = ai_holder_hole_position_radius
-  if(holder_hole_position_radius==0):
-    holder_hole_position_radius = holder_radius
-  holder_hole_radius = float(ai_holder_hole_diameter)/2
-  holder_maximal_radius = holder_hole_position_radius + ai_holder_crenel_position + ai_holder_crenel_height
-  holder_maximal_height = holder_maximal_radius - holder_radius
-  holder_crenel_half_width = float(ai_holder_crenel_width)/2
-  holder_crenel_with_wall_half_width = holder_crenel_half_width + ai_holder_crenel_skin_width
-  holder_crenel_half_angle = math.asin(float(holder_crenel_with_wall_half_width)/holder_radius)
-  holder_crenel_x_position = math.sqrt((holder_radius)**2 - (holder_crenel_with_wall_half_width)**2)
-  additional_holder_maximal_height = holder_radius - holder_crenel_x_position
-  holder_maximal_height_plus = holder_maximal_height + additional_holder_maximal_height
-  holder_side_outer_smoothing_radius = min(0.8*ai_holder_crenel_skin_width, float(holder_maximal_height_plus)/4)
-  holder_side_straigth_length = holder_maximal_height_plus - holder_side_outer_smoothing_radius
-  # get the router_bit_radius
-  gear_router_bit_radius = ai_gear_router_bit_radius
-  if(ai_cnc_router_bit_radius>gear_router_bit_radius):
-    gear_router_bit_radius = ai_cnc_router_bit_radius
-  holder_crenel_router_bit_radius = ai_holder_crenel_router_bit_radius
-  if(ai_cnc_router_bit_radius>holder_crenel_router_bit_radius):
-    holder_crenel_router_bit_radius = ai_cnc_router_bit_radius
-  holder_smoothing_radius = ai_holder_smoothing_radius
-  if(holder_smoothing_radius==0):
-    holder_smoothing_radius = 0.9*holder_side_straigth_length
-  if(ai_cnc_router_bit_radius>holder_smoothing_radius):
-    holder_smoothing_radius = ai_cnc_router_bit_radius
-  # ai_holder_crenel_height
-  if(ai_holder_crenel_number>0):
-    if((0.9*holder_side_straigth_length)<holder_smoothing_radius):
-      print("ERR218: Error, the holder-crenel-wall-side height is too small: holder_side_straigth_length {:0.3f}  holder_smoothing_radius {:0.3f}".format(holder_side_straigth_length, holder_smoothing_radius))
-      sys.exit(2)
-  # ai_holder_crenel_position
-  if(ai_holder_crenel_position<holder_hole_radius):
-    print("ERR211: Error, ai_holder_crenel_position {:0.3f} is too small compare to holder_hole_radius {:03f}".format(ai_holder_crenel_position, holder_hole_radius))
-    sys.exit(2)
-  # ai_holder_crenel_width
-  if(ai_holder_crenel_width<2.1*holder_crenel_router_bit_radius):
-    print("ERR215: Error, ai_holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(ai_holder_crenel_width, holder_crenel_router_bit_radius))
+  gearbar_hole_radius = float(ai_gearbar_hole_diameter)/2
+  # ai_gearbar_hole_height_position
+  if((ai_gearbar_hole_height_position+gearbar_hole_radius)>ai_gearbar_height):
+    print("ERR215: Error, ai_gearbar_hole_height_position {:0.3} and gearbar_hole_radius {:0.3f} are too big compare to ai_gearbar_height {:0.3f} !".format(ai_gearbar_hole_height_position, gearbar_hole_radius, ai_gearbar_height))
     sys.exit(2)
   # ai_gear_tooth_nb
   if(ai_gear_tooth_nb>0): # create a gear_profile
+    center_position_x = ai_center_position_x
+    center_position_y = ai_center_position_y
+    gear_initial_angle = ai_gear_initial_angle
+    second_gear_position_angle = ai_second_gear_position_angle
+    if(not ai_simulation_enable):
+      center_position_x = 0
+      center_position_y = 0
+      gear_initial_angle = 0
+      second_gear_position_angle = math.pi/2
     ### get the gear_profile
     (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(
       ### first gear
       # general
-      ai_gear_type                      = 'i',
+      ai_gear_type                      = 'l',
       ai_gear_tooth_nb                  = ai_gear_tooth_nb,
       ai_gear_module                    = ai_gear_module,
       ai_gear_primitive_diameter        = ai_gear_primitive_diameter,
@@ -229,7 +203,7 @@ def gearbar(
       ai_gear_addendum_height_pourcentage = ai_gear_addendum_height_pourcentage,
       ai_gear_dedendum_height_pourcentage = ai_gear_dedendum_height_pourcentage,
       ai_gear_hollow_height_pourcentage   = ai_gear_hollow_height_pourcentage,
-      ai_gear_router_bit_radius           = gear_router_bit_radius,
+      ai_gear_router_bit_radius           = ai_gear_router_bit_radius,
       # positive involute
       ai_gear_base_diameter       = ai_gear_base_diameter,
       ai_gear_force_angle         = ai_gear_force_angle,
@@ -261,108 +235,111 @@ def gearbar(
       ai_second_gear_tooth_resolution_n = ai_second_gear_tooth_resolution_n,
       ai_second_gear_skin_thickness_n   = ai_second_gear_skin_thickness_n,
       ### gearbar specific
-      #ai_gearbar_slope                  = ai_gearbar_slope,
-      #ai_gearbar_slope_n                = ai_gearbar_slope_n,
+      ai_gearbar_slope                  = ai_gearbar_slope,
+      ai_gearbar_slope_n                = ai_gearbar_slope_n,
       ### position
       # first gear position
-      ai_center_position_x                    = ai_center_position_x,
-      ai_center_position_y                    = ai_center_position_y,
-      ai_gear_initial_angle                   = ai_gear_initial_angle,
+      ai_center_position_x                    = center_position_x,
+      ai_center_position_y                    = center_position_y,
+      ai_gear_initial_angle                   = gear_initial_angle,
       # second gear position
-      ai_second_gear_position_angle           = ai_second_gear_position_angle,
+      ai_second_gear_position_angle           = second_gear_position_angle,
       ai_second_gear_additional_axis_length   = ai_second_gear_additional_axis_length,
       ### portion
-      ai_portion_tooth_nb     = 0,
-      ai_portion_first_end    = 0,
-      ai_portion_last_end     = 0,
+      ai_portion_tooth_nb     = ai_portion_tooth_nb,
+      ai_portion_first_end    = ai_portion_first_end,
+      ai_portion_last_end     = ai_portion_last_end,
       ### output
       ai_gear_profile_height  = ai_gear_profile_height,
       ai_simulation_enable    = ai_simulation_enable,    # ai_simulation_enable,
       ai_output_file_basename = '')
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
-    maximal_gear_profile_radius = gear_profile_parameters['hollow_radius']
-    g1_ix = gear_profile_parameters['center_ox']
-    g1_iy = gear_profile_parameters['center_oy']
+    minimal_gear_profile_height = ai_gearbar_height - (gear_profile_parameters['hollow_height'] + gear_profile_parameters['dedendum_height'])
+    #g1_ix = gear_profile_parameters['center_ox']
+    #g1_iy = gear_profile_parameters['center_oy']
+    gearbar_length = gear_profile_B[-1][0] - gear_profile_B[0][0]
+    pi_module = gear_profile_parameters['pi_module']
+    pfe = gear_profile_parameters['portion_first_end']
+    full_positive_slope = gear_profile_parameters['full_positive_slope']
+    full_negative_slope = gear_profile_parameters['full_negative_slope']
+    bottom_land = gear_profile_parameters['bottom_land']
+    top_land = gear_profile_parameters['top_land']
+    if((top_land + full_positive_slope + bottom_land + full_negative_slope)!=pi_module):
+      print("ERR269: Error with top_land {:0.3f}  full_positive_slope {:0.3f}  bottom_land {:0.3f}  full_negative_slope {:0.3f} and pi_module  {:0.3f}".format(top_land, full_positive_slope, bottom_land, full_negative_slope, pi_module))
+      sys.exit(2)
+    if(pfe==0):
+      first_tooth_position = full_positive_slope + bottom_land + full_negative_slope + float(top_land)/2
+    elif(pfe==1):
+      first_tooth_position = full_positive_slope + bottom_land + full_negative_slope + top_land
+    elif(pfe==2):
+      first_tooth_position = full_negative_slope + float(top_land)/2
+    elif(pfe==3):
+      first_tooth_position = float(bottom_land)/2 + full_negative_slope + float(top_land)/2
+    gear_profile_B = cnc25d_api.outline_shift_xy(gear_profile_B, -1*gear_profile_B[0][0], 1, ai_gearbar_height, 1)
   else: # no gear_profile, just a circle
     if(ai_gear_primitive_diameter<radian_epsilon):
-      print("ERR885: Error, the no-gear-profile circle outline diameter ai_gear_primitive_diameter {:0.2f} is too small!".format(ai_gear_primitive_diameter))
+      print("ERR885: Error, the no-gear-profile line outline length ai_gear_primitive_diameter {:0.2f} is too small!".format(ai_gear_primitive_diameter))
       sys.exit(2)
-    g1_ix = ai_center_position_x
-    g1_iy = ai_center_position_y
-    gear_profile_B = (g1_ix, g1_iy, float(ai_gear_primitive_diameter)/2)
-    gear_profile_info = "\nSimple circle (no-gear-profile):\n"
-    gear_profile_info += "outline circle radius: \t{:0.3f}  \tdiameter: {:0.3f}\n".format(ai_gear_primitive_diameter/2.0, ai_gear_primitive_diameter)
-    gear_profile_info += "gear center (x, y):   \t{:0.3f}  \t{:0.3f}\n".format(g1_ix, g1_iy)
-    maximal_gear_profile_radius = float(ai_gear_primitive_diameter)/2
+    #g1_ix = ai_center_position_x
+    #g1_iy = ai_center_position_y
+    gearbar_length = ai_gear_primitive_diameter
+    gear_profile_B = ((0, ai_gearbar_height),(gearbar_length, ai_gearbar_height))
+    gear_profile_info = "\nSimple line (no-gear-profile):\n"
+    gear_profile_info += "outline line length: \t{:0.3f}\n".format(gearbar_length)
+    minimal_gear_profile_height = ai_gearbar_height
+    pi_module = ai_gear_module * math.pi
+    first_tooth_position = float(pi_module)/2
+
   ### check parameter coherence (part 2)
-  # hollow_circle and holder-hole
-  if(maximal_gear_profile_radius>(holder_hole_position_radius-holder_hole_radius)):
-    print("ERR303: Error, holder-hole are too closed from the gear_hollow_circle: maximal_gear_profile_radius {:0.3f}  holder_hole_position_radius {:0.3f}  holder_hole_radius {:0.3f}".format(maximal_gear_profile_radius, holder_hole_position_radius, holder_hole_radius))
+  # minimal_gear_profile_height
+  if(minimal_gear_profile_height<radian_epsilon):
+    print("ERR265: Error, minimal_gear_profile_height {:0.3f} is too small".format(minimal_gear_profile_height))
     sys.exit(2)
-  ### holder outline
-  holder_figure = []
-  holder_figure_overlay = []
-  if(ai_holder_crenel_number==0):
-    holder_figure.append([g1_ix, g1_iy, holder_radius])
-  elif(ai_holder_crenel_number>0):
-    angle_incr = 2*math.pi/ai_holder_crenel_number
-    if((angle_incr-2*holder_crenel_half_angle)<math.pi/10):
-      print("ERR369: Error, no enough space between the crenel: angle_incr {:0.3f}  holder_crenel_half_angle {:0.3f}".format(angle_incr, holder_crenel_half_angle))
+  # gearbar_hole_diameter
+  if((ai_gearbar_hole_height_position+gearbar_hole_radius)>minimal_gear_profile_height):
+    print("ERR269: Error, ai_gearbar_hole_height_position {:0.3f} and gearbar_hole_radius {:0.3f} are too big compare to minimal_gear_profile_height {:0.3f}".format(ai_gearbar_hole_height_position, gearbar_hole_radius, minimal_gear_profile_height))
+    sys.exit(2)
+  # pi_module
+  if(gearbar_hole_radius>0):
+    if(pi_module==0):
+      print("ERR277: Error, pi_module is null")
       sys.exit(2)
-    holder_A = []
-    first_angle = ai_holder_position_angle - holder_crenel_half_angle
-    holder_A.append([g1_ix+holder_radius*math.cos(first_angle), g1_iy+holder_radius*math.sin(first_angle), holder_smoothing_radius])
-    for i in range(ai_holder_crenel_number):
-      holder_A .extend(make_holder_crenel(holder_maximal_height_plus, ai_holder_crenel_height, ai_holder_crenel_skin_width, holder_crenel_half_width, 
-                                          holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius, holder_smoothing_radius,
-                                          holder_crenel_x_position, ai_holder_position_angle+i*angle_incr, g1_ix, g1_iy))
-      middle_angle = ai_holder_position_angle + (i+0.5)*angle_incr
-      end_angle = ai_holder_position_angle + (i+1)*angle_incr - holder_crenel_half_angle
-      holder_A.append([g1_ix+holder_radius*math.cos(middle_angle), g1_iy+holder_radius*math.sin(middle_angle),
-                        g1_ix+holder_radius*math.cos(end_angle), g1_iy+holder_radius*math.sin(end_angle), holder_smoothing_radius])
-    holder_A[-1] = [holder_A[-1][0], holder_A[-1][1], holder_A[0][0], holder_A[0][1], 0]
-    holder_figure.append(cnc25d_api.cnc_cut_outline(holder_A, "holder_A"))
-    holder_figure_overlay.append(cnc25d_api.ideal_outline(holder_A, "holder_A"))
-  ### holder-hole outline
-  holder_hole_figure = []
-  if((ai_holder_crenel_number>0)and(holder_hole_radius>0)):
-    for i in range(ai_holder_crenel_number):
-      hole_angle = ai_holder_position_angle+i*angle_incr
-      holder_hole_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
+
+  ### gearbar outline
+  gearbar_outline = gear_profile_B
+  gearbar_outline.append((gearbar_outline[-1][0], 0))
+  gearbar_outline.append((0, 0))
+  gearbar_outline.append((0, gearbar_outline[0][1]))
+  ### gearbar-hole figure
+  gearbar_hole_figure = []
+  if((gearbar_hole_radius>0)and(pi_module>0)):
+    hole_x = first_tooth_position + ai_gearbar_hole_offset * pi_module
+    while(hole_x<gearbar_length):
+      gearbar_hole_figure.append([hole_x, ai_gearbar_hole_height_position, gearbar_hole_radius])
+      hole_x += ai_gearbar_hole_increment * pi_module
 
   ### design output
-  gb_figure = [gear_profile_B]
-  gb_figure.extend(holder_figure)
-  gb_figure.extend(holder_hole_figure)
+  gb_figure = [gearbar_outline]
+  gb_figure.extend(gearbar_hole_figure)
   # ideal_outline in overlay
   gb_figure_overlay = []
-  gb_figure_overlay.extend(holder_figure_overlay)
   # gearbar_parameter_info
   gearbar_parameter_info = "\nGearbar parameter info:\n"
   gearbar_parameter_info += "\n" + ai_args_in_txt + "\n\n"
   gearbar_parameter_info += gear_profile_info
   gearbar_parameter_info += """
-holder_diameter: \t{:0.3f}
-holder_crenel_number: \t{:d}
-holder_position_angle: \t{:0.3f}
-""".format(ai_holder_diameter, ai_holder_crenel_number, ai_holder_position_angle)
+gearbar_length: \t{:0.3f}
+gearbar_height: \t{:0.3f}
+minimal_gear_profile_height: \t{:0.3f}
+""".format(gearbar_length, ai_gearbar_height, minimal_gear_profile_height)
   gearbar_parameter_info += """
-holder_hole_position_radius: \t{:0.3f}
-holder_hole_diameter: \t{:0.3f}
-""".format(holder_hole_position_radius, ai_holder_hole_diameter)
-  gearbar_parameter_info += """
-holder_crenel_position: \t{:0.3f}
-holder_crenel_height: \t{:0.3f}
-holder_crenel_width: \t{:0.3f}
-holder_crenel_skin_width: \t{:0.3f}
-""".format(ai_holder_crenel_position, ai_holder_crenel_height, ai_holder_crenel_width, ai_holder_crenel_skin_width)
-  gearbar_parameter_info += """
-gear_router_bit_radius:           \t{:0.3f}
-holder_crenel_router_bit_radius:  \t{:0.3f}
-holder_smoothing_radius:          \t{:0.3f}
-cnc_router_bit_radius:            \t{:0.3f}
-""".format(gear_router_bit_radius, holder_crenel_router_bit_radius, holder_smoothing_radius, ai_cnc_router_bit_radius)
+gearbar_hole_height_position: \t{:0.3f}
+gearbar_hole_diameter: \t{:0.3f}
+gearbar_hole_offset: \t{:d}
+gearbar_hole_increment: \t{:d}
+pi_module: \t{:0.3f}
+""".format(ai_gearbar_hole_height_position, ai_gearbar_hole_diameter, ai_gearbar_hole_offset, ai_gearbar_hole_increment, pi_module)
   #print(gearbar_parameter_info)
 
   # display with Tkinter
@@ -437,8 +414,8 @@ def gearbar_argparse_wrapper(ai_gb_args, ai_args_in_txt=""):
            ai_second_gear_tooth_resolution_n = ai_gb_args.sw_second_gear_tooth_resolution_n,
            ai_second_gear_skin_thickness_n   = ai_gb_args.sw_second_gear_skin_thickness_n,
            ### gearbar specific
-           #ai_gearbar_slope                  = ai_gb_args.sw_gearbar_slope,
-           #ai_gearbar_slope_n                = ai_gb_args.sw_gearbar_slope_n,
+           ai_gearbar_slope                  = ai_gb_args.sw_gearbar_slope,
+           ai_gearbar_slope_n                = ai_gb_args.sw_gearbar_slope_n,
            ### position
            # first gear position
            ai_center_position_x                    = ai_gb_args.sw_center_position_x,
@@ -448,17 +425,17 @@ def gearbar_argparse_wrapper(ai_gb_args, ai_args_in_txt=""):
            ai_second_gear_position_angle           = ai_gb_args.sw_second_gear_position_angle,
            ai_second_gear_additional_axis_length   = ai_gb_args.sw_second_gear_additional_axis_length,
            ### portion
-           #ai_portion_tooth_nb     = ai_gb_args.sw_cut_portion[0],
-           #ai_portion_first_end    = ai_gb_args.sw_cut_portion[1],
-           #ai_portion_last_end     = ai_gb_args.sw_cut_portion[2],
+           ai_portion_tooth_nb     = ai_gb_args.sw_cut_portion[0],
+           ai_portion_first_end    = ai_gb_args.sw_cut_portion[1],
+           ai_portion_last_end     = ai_gb_args.sw_cut_portion[2],
            ### output
            ai_gear_profile_height  = ai_gb_args.sw_gear_profile_height,
            ai_simulation_enable    = ai_gb_args.sw_simulation_enable,    # ai_gb_args.sw_simulation_enable,
            #ai_output_file_basename = ai_gb_args.sw_output_file_basename,
            ##### from gearbar
-           ### holder
+           ### gearbar
            ai_gearbar_height                = ai_gb_args.sw_gearbar_height,
-           ### holder-hole
+           ### gearbar-hole
            ai_gearbar_hole_height_position  = ai_gb_args.sw_gearbar_hole_height_position,
            ai_gearbar_hole_diameter         = ai_gb_args.sw_gearbar_hole_diameter,
            ai_gearbar_hole_offset           = ai_gb_args.sw_gearbar_hole_offset,
@@ -486,11 +463,11 @@ def gearbar_self_test():
     ["no crenel"        , "--gear_tooth_nb 29 --gear_module 10 --holder_diameter 340.0 --holder_crenel_width 20.0 --holder_crenel_number 0"],
     ["small crenel"     , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 1 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0"],
     ["narrow crenel"    , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 4 --holder_position_angle 0.785 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0"],
-    ["output dxf"    , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 2 --holder_position_angle 0.785 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0 --output_file_basename test_output/gearring_self_test.dxf"],
+    ["output dxf"    , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 2 --holder_position_angle 0.785 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0 --output_file_basename test_output/gearbar_self_test.dxf"],
     ["last test"        , "--gear_tooth_nb 30 --gear_module 10.0 --holder_diameter 340.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
-  gearbar_parser = gear_profile.gear_profile_add_argument(gearbar_parser, 1)
+  gearbar_parser = gear_profile.gear_profile_add_argument(gearbar_parser, 3)
   gearbar_parser = gearbar_add_argument(gearbar_parser)
   gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser)
   for i in range(len(test_case_switch)):
@@ -511,7 +488,7 @@ def gearbar_cli(ai_args=None):
   """
   # gearbar parser
   gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
-  gearbar_parser = gear_profile.gear_profile_add_argument(gearbar_parser, 1)
+  gearbar_parser = gear_profile.gear_profile_add_argument(gearbar_parser, 3)
   gearbar_parser = gearbar_add_argument(gearbar_parser)
   gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser)
   # switch for self_test
@@ -536,5 +513,5 @@ def gearbar_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearbar.py says hello!\n")
   #my_gb = gearbar_cli()
-  my_gb = gearbar_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0".split())
+  my_gb = gearbar_cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0".split())
 

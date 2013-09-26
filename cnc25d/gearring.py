@@ -557,7 +557,7 @@ def gearring_self_test():
     ["last test"        , "--gear_tooth_nb 30 --gear_module 10.0 --holder_diameter 340.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearring_parser = argparse.ArgumentParser(description='Command line interface for the function gearring().')
-  gearring_parser = gear_profile.gear_profile_add_argument(gearring_parser, 1)
+  gearring_parser = gear_profile.gear_profile_add_argument(gearring_parser, 2)
   gearring_parser = gearring_add_argument(gearring_parser)
   gearring_parser = cnc25d_api.generate_output_file_add_argument(gearring_parser)
   for i in range(len(test_case_switch)):
@@ -578,7 +578,7 @@ def gearring_cli(ai_args=None):
   """
   # gearring parser
   gearring_parser = argparse.ArgumentParser(description='Command line interface for the function gearring().')
-  gearring_parser = gear_profile.gear_profile_add_argument(gearring_parser, 1)
+  gearring_parser = gear_profile.gear_profile_add_argument(gearring_parser, 2)
   gearring_parser = gearring_add_argument(gearring_parser)
   gearring_parser = cnc25d_api.generate_output_file_add_argument(gearring_parser)
   # switch for self_test
