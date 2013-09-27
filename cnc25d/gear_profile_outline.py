@@ -807,19 +807,21 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   # start of the gearbar
   gearbar_A = []
   if(g_pfe==3): # start on hollow_middle
-    hollow_middle_x = g_ox + (tangential_position-pi_module+blx)*math.cos(g_bi+math.pi/2) + blh*math.cos(g_bi+math.pi)
-    hollow_middle_y = g_oy + (tangential_position-pi_module+blx)*math.sin(g_bi+math.pi/2) + blh*math.sin(g_bi+math.pi)
+    hollow_middle_x = g_ox + (tangential_position-pi_module+blx)*math.cos(g_bi-math.pi/2) + blh*math.cos(g_bi+math.pi)
+    hollow_middle_y = g_oy + (tangential_position-pi_module+blx)*math.sin(g_bi-math.pi/2) + blh*math.sin(g_bi+math.pi)
     gearbar_A.append((hollow_middle_x, hollow_middle_y, 0)) # hollow middle
     gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position)) # negative slope
   elif(g_pfe==2): # start on the negative slope
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, 0, tangential_position)) # negative slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, 0, g_stn, 0, tangential_position)) # negative slope
   elif(g_pfe==1): # start on the top middle
-    top_middle_x = g_ox + tangential_position*math.cos(g_bi+math.pi/2) + tlh*math.cos(g_bi)
-    top_middle_y = g_oy + tangential_position*math.sin(g_bi+math.pi/2) + tlh*math.sin(g_bi)
+    top_middle_x = g_ox + tangential_position*math.cos(g_bi-math.pi/2) + tlh*math.cos(g_bi)
+    top_middle_y = g_oy + tangential_position*math.sin(g_bi-math.pi/2) + tlh*math.sin(g_bi)
     gearbar_A.append((top_middle_x, top_middle_y, 0)) # top middle
-  if(gearbar_A!=[]):
+  if(len(gearbar_A)>1):
     gearbar_B = cnc25d_api.cnc_cut_outline(gearbar_A, "start of gearbar")
     r_final_outline.extend(gearbar_B)
+  elif(len(gearbar_A)==1):
+    r_final_outline.append((gearbar_A[0][0], gearbar_A[0][1]))
   # bulk of the gearbar
   for tooth in range(bar_tooth_nb):
     gearbar_A = []
@@ -843,18 +845,20 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
   gearbar_A = []
   if(g_ple==3): # stop on hollow_middle
     gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, g_rbr, tangential_position)) # positive slope
-    hollow_middle_x = g_ox + (tangential_position+blx)*math.cos(g_bi+math.pi/2) + blh*math.cos(g_bi+math.pi)
-    hollow_middle_y = g_oy + (tangential_position+blx)*math.sin(g_bi+math.pi/2) + blh*math.sin(g_bi+math.pi)
+    hollow_middle_x = g_ox + (tangential_position+blx)*math.cos(g_bi-math.pi/2) + blh*math.cos(g_bi+math.pi)
+    hollow_middle_y = g_oy + (tangential_position+blx)*math.sin(g_bi-math.pi/2) + blh*math.sin(g_bi+math.pi)
     gearbar_A.append((hollow_middle_x, hollow_middle_y, 0)) # hollow middle
   elif(g_ple==2): # stop on the positive slope
-    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, g_hlp, g_stp, 0, tangential_position)) # positive slope
+    gearbar_A.extend(slope_outline(g_ox, g_oy, g_bi, gb_p_offset, g_sp,  1, g_alp, g_dlp, 0, g_stp, 0, tangential_position)) # positive slope
   elif(g_ple==1): # stop on the top middle
-    top_middle_x = g_ox + tangential_position*math.cos(g_bi+math.pi/2) + tlh*math.cos(g_bi)
-    top_middle_y = g_oy + tangential_position*math.sin(g_bi+math.pi/2) + tlh*math.sin(g_bi)
+    top_middle_x = g_ox + tangential_position*math.cos(g_bi-math.pi/2) + tlh*math.cos(g_bi)
+    top_middle_y = g_oy + tangential_position*math.sin(g_bi-math.pi/2) + tlh*math.sin(g_bi)
     gearbar_A.append((top_middle_x, top_middle_y, 0)) # top middle
-  if(gearbar_A!=[]):
+  if(len(gearbar_A)>1):
     gearbar_B = cnc25d_api.cnc_cut_outline(gearbar_A, "end of gearbar")
     r_final_outline.extend(gearbar_B)
+  elif(len(gearbar_A)==1):
+    r_final_outline.append((gearbar_A[0][0], gearbar_A[0][1]))
   #return
   return(r_final_outline)
 

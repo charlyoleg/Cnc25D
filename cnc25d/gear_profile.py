@@ -157,10 +157,11 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
   r_parser.add_argument('--second_gear_skin_thickness_n','--sgstn', action='store', type=float, default=0.0, dest='sw_second_gear_skin_thickness_n',
     help="If not zero, add or remove radial thickness on the gear negative involute. Default: 0.0")
   ### gearbar specific (used by gearbar1 and gearbar2)
-  r_parser.add_argument('--gearbar_slope','--gbs', action='store', type=float, default=0.0, dest='sw_gearbar_slope',
-    help="if not zero, set the tooth slope angle for the gearbar. Default 0.0")
-  r_parser.add_argument('--gearbar_slope_n','--gbsn', action='store', type=float, default=0.0, dest='sw_gearbar_slope_n',
-    help="if not zero, set the tooth negative slope angle for the gearbar. Default 0.0")
+  if(ai_variant!=2):
+    r_parser.add_argument('--gearbar_slope','--gbs', action='store', type=float, default=0.0, dest='sw_gearbar_slope',
+      help="if not zero, set the tooth slope angle for the gearbar. Default 0.0")
+    r_parser.add_argument('--gearbar_slope_n','--gbsn', action='store', type=float, default=0.0, dest='sw_gearbar_slope_n',
+      help="if not zero, set the tooth negative slope angle for the gearbar. Default 0.0")
   ### position
   # first gear position
   r_parser.add_argument('--center_position_x','--cpx', action='store', type=float, default=0.0, dest='sw_center_position_x',

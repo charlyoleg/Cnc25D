@@ -180,15 +180,6 @@ def gearbar(
     sys.exit(2)
   # ai_gear_tooth_nb
   if(ai_gear_tooth_nb>0): # create a gear_profile
-    center_position_x = ai_center_position_x
-    center_position_y = ai_center_position_y
-    gear_initial_angle = ai_gear_initial_angle
-    second_gear_position_angle = ai_second_gear_position_angle
-    if(not ai_simulation_enable):
-      center_position_x = 0
-      center_position_y = 0
-      gear_initial_angle = 0
-      second_gear_position_angle = math.pi/2
     ### get the gear_profile
     (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(
       ### first gear
@@ -239,11 +230,11 @@ def gearbar(
       ai_gearbar_slope_n                = ai_gearbar_slope_n,
       ### position
       # first gear position
-      ai_center_position_x                    = center_position_x,
-      ai_center_position_y                    = center_position_y,
-      ai_gear_initial_angle                   = gear_initial_angle,
+      ai_center_position_x                    = ai_center_position_x,
+      ai_center_position_y                    = ai_center_position_y,
+      ai_gear_initial_angle                   = ai_gear_initial_angle,
       # second gear position
-      ai_second_gear_position_angle           = second_gear_position_angle,
+      ai_second_gear_position_angle           = ai_second_gear_position_angle,
       ai_second_gear_additional_axis_length   = ai_second_gear_additional_axis_length,
       ### portion
       ai_portion_tooth_nb     = ai_portion_tooth_nb,
@@ -255,9 +246,14 @@ def gearbar(
       ai_output_file_basename = '')
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
+    ## gear_profile_B rotation / translation transformation
+    g1_ix = gear_profile_parameters['center_ox']
+    g1_iy = gear_profile_parameters['center_oy']
+    g1_inclination = gear_profile_parameters['gearbar_inclination']
+    gear_profile_B = cnc25d_api.outline_rotate(gear_profile_B, g1_ix, g1_iy, -1*g1_inclination + math.pi/2)
+    gear_profile_B = cnc25d_api.outline_shift_xy(gear_profile_B, -1*gear_profile_B[0][0], 1, -1*g1_iy + ai_gearbar_height, 1)
+    ## get some parameters
     minimal_gear_profile_height = ai_gearbar_height - (gear_profile_parameters['hollow_height'] + gear_profile_parameters['dedendum_height'])
-    #g1_ix = gear_profile_parameters['center_ox']
-    #g1_iy = gear_profile_parameters['center_oy']
     gearbar_length = gear_profile_B[-1][0] - gear_profile_B[0][0]
     pi_module = gear_profile_parameters['pi_module']
     pfe = gear_profile_parameters['portion_first_end']
@@ -276,7 +272,6 @@ def gearbar(
       first_tooth_position = full_negative_slope + float(top_land)/2
     elif(pfe==3):
       first_tooth_position = float(bottom_land)/2 + full_negative_slope + float(top_land)/2
-    gear_profile_B = cnc25d_api.outline_shift_xy(gear_profile_B, -1*gear_profile_B[0][0], 1, ai_gearbar_height, 1)
   else: # no gear_profile, just a circle
     if(ai_gear_primitive_diameter<radian_epsilon):
       print("ERR885: Error, the no-gear-profile line outline length ai_gear_primitive_diameter {:0.2f} is too small!".format(ai_gear_primitive_diameter))
@@ -284,7 +279,7 @@ def gearbar(
     #g1_ix = ai_center_position_x
     #g1_iy = ai_center_position_y
     gearbar_length = ai_gear_primitive_diameter
-    gear_profile_B = ((0, ai_gearbar_height),(gearbar_length, ai_gearbar_height))
+    gear_profile_B = [(0, ai_gearbar_height),(gearbar_length, ai_gearbar_height)]
     gear_profile_info = "\nSimple line (no-gear-profile):\n"
     gear_profile_info += "outline line length: \t{:0.3f}\n".format(gearbar_length)
     minimal_gear_profile_height = ai_gearbar_height
@@ -303,7 +298,7 @@ def gearbar(
   # pi_module
   if(gearbar_hole_radius>0):
     if(pi_module==0):
-      print("ERR277: Error, pi_module is null")
+      print("ERR277: Error, pi_module is null. You might need to use --gear_module")
       sys.exit(2)
 
   ### gearbar outline
@@ -315,7 +310,8 @@ def gearbar(
   gearbar_hole_figure = []
   if((gearbar_hole_radius>0)and(pi_module>0)):
     hole_x = first_tooth_position + ai_gearbar_hole_offset * pi_module
-    while(hole_x<gearbar_length):
+    while(hole_x<(gearbar_length-gearbar_hole_radius)):
+      #print("dbg312: hole_x {:0.3f}".format(hole_x))
       gearbar_hole_figure.append([hole_x, ai_gearbar_hole_height_position, gearbar_hole_radius])
       hole_x += ai_gearbar_hole_increment * pi_module
 
@@ -457,14 +453,15 @@ def gearbar_self_test():
   Look at the simulation Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"    , "--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --cnc_router_bit_radius 2.0"],
-    ["no tooth"         , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --holder_diameter 120.0 --cnc_router_bit_radius 2.0 --holder_crenel_number 7"],
-    ["no holder-hole"   , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 20.0 --cnc_router_bit_radius 2.0 --holder_hole_diameter 0.0"],
-    ["no crenel"        , "--gear_tooth_nb 29 --gear_module 10 --holder_diameter 340.0 --holder_crenel_width 20.0 --holder_crenel_number 0"],
-    ["small crenel"     , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 1 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0"],
-    ["narrow crenel"    , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 4 --holder_position_angle 0.785 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0"],
-    ["output dxf"    , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 2 --holder_position_angle 0.785 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0 --output_file_basename test_output/gearbar_self_test.dxf"],
-    ["last test"        , "--gear_tooth_nb 30 --gear_module 10.0 --holder_diameter 340.0"]]
+    ["simplest test"    , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0"],
+    ["no tooth"         , "--gear_tooth_nb 0 --gear_primitive_diameter 500.0 --gearbar_height 30.0 --gearbar_hole_height_position 15.0 --gear_module 10.0"],
+    ["no gearbar-hole"  , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --gearbar_hole_diameter 0"],
+    ["ends 3 3"         , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --cut_portion 20 3 3"],
+    ["ends 2 1"         , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --cut_portion 19 2 1"],
+    ["ends 1 3"         , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --cut_portion 18 1 3"],
+    [" gearbar-hole"    , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --cut_portion 17 3 3 --gearbar_hole_offset 1 --gearbar_hole_increment 3"],
+    ["output dxf"       , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --output_file_basename test_output/gearbar_self_test.dxf"],
+    ["last test"        , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
   gearbar_parser = gear_profile.gear_profile_add_argument(gearbar_parser, 3)
