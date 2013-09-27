@@ -2,7 +2,7 @@
 Gearwheel Design
 ================
 
-Ready-to-use parametric *gearwheel* design.
+Ready-to-use parametric *gearwheel* design (a.k.a. spur).
 
 .. image:: images/gearwheel_examples.png
 
@@ -50,7 +50,7 @@ wheel_hollow_leg_number
 gear_tooth_nb
 -------------
 
-*gear_tooth_nb* sets the number of teeth of the gear_profile. It *gear_tooth_nb* is set to zero, the gear_profile is replaced by a simple circle of diameter *gear_primitive_radius*.
+*gear_tooth_nb* sets the number of teeth of the gear_profile. If *gear_tooth_nb* is set to zero, the gear_profile is replaced by a simple circle of diameter *gear_primitive_radius*.
 
 Alignment angles
 ----------------

@@ -178,6 +178,10 @@ def gearbar(
   if((ai_gearbar_hole_height_position+gearbar_hole_radius)>ai_gearbar_height):
     print("ERR215: Error, ai_gearbar_hole_height_position {:0.3} and gearbar_hole_radius {:0.3f} are too big compare to ai_gearbar_height {:0.3f} !".format(ai_gearbar_hole_height_position, gearbar_hole_radius, ai_gearbar_height))
     sys.exit(2)
+  # ai_gearbar_hole_increment
+  if(ai_gearbar_hole_increment==0):
+    print("ERR183: Error gearbar_hole_increment must be bigger than zero!")
+    sys.exit(2)
   # ai_gear_tooth_nb
   if(ai_gear_tooth_nb>0): # create a gear_profile
     ### get the gear_profile
