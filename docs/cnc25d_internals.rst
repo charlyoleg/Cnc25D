@@ -26,11 +26,9 @@ File layout
       box_wood_frame.py                 # box_wood_frame design example
       tests/                       # contains the test files of the cnc25d package
         __init__.py
-        importing_cnc25d.py        # modify sys.path to import the cnc25d library
-        cnc25d_api_macro.py        # usage example of the cnc25d API. Reused by cnc25d_example_generator.py. Can not be executed directly.
-        cnc25d_api_test.py         # executable wrapper of cnc25d_api_macro.py
-        box_wood_frame_macro.py    # usage example of box_wood_frame. Reused by cnc25d_example_generator.py. Can not be executed directly.
-        box_wood_frame_test.py     # executable wrapper of box_wood_frame_macro.py
+        cnc25d_test_env.py          # modify sys.path to import the cnc25d library and then execute one of the following macro-scripts
+        cnc25d_api_macro.py         # usage example of the cnc25d API. Reused by cnc25d_example_generator.py. Can not be executed directly.
+        box_wood_frame_macro.py     # usage example of box_wood_frame. Reused by cnc25d_example_generator.py. Can not be executed directly.
     docs/                               # cnc25d package documentation sources
       box_wood_frame.svg                # SVG draft
       box_wood_frame.txt                # text autmatically extracted from the SVG draft
@@ -48,7 +46,9 @@ File layout
 
 Design example generation
 =========================
-The binary script *cnc25d_example_generator.py* just writes example scripts. These example scripts are actually the files *cnc25d/tests/cnc25d_api_macro.py* and *cnc25d/tests/box_wood_frame_macro.py*. To check these example scripts, you must run their wrapper *scripts cnc25d/tests/cnc25d_api_test.py* and *cnc25d/tests/box_wood_frame_test.py*.
+The binary script *cnc25d_example_generator.py* just writes example scripts. These example scripts are actually the files *cnc25d/tests/cnc25d_api_macro.py* and *cnc25d/tests/box_wood_frame_macro.py*. To check these example scripts, you must run them with *cnc25d_test_env.py*::
+
+  > cnc25d/tests/cnc25d_test_env.py  cnc25d/tests/box_wood_frame_macro.py
 
 Because of the Python package workflow, the example scripts can not be copied after the installation and must be embedded in the binary script *cnc25d_example_generator.py* before the creation of the Python package distribution. This is the purpose of the script *scr/micropreprocessor.py*. The file *bin/cnc25d_example_generator_src.py* contains the skeleton of the script *bin/cnc25d_example_generator.py*. The following command include the example scripts to generate the final script *bin/cnc25d_example_generator.py*::
 
@@ -59,7 +59,7 @@ The purpose of this workflow is to help the maintenance of the generated example
 To create a new design example, follow those steps:
 
 - Create the new design example file in the directory *Cnc25D/cnc25d/tests/* with a file name such as *my_new_design_macro.py*
-- Create a wrapper script (eg: *my_new_design_test.py*) in the same directory that imports the cnc25d package to let run the script *my_new_design_macro.py*
+- Check by executing it with *cnc25d/tests/cnc25d_test_env.py*
 - Add the few lines in the file *Cnc25D/bin/cnc25d_example_generator_src.py* that includes the new script *Cnc25D/cnc25d/tests/my_new_design_macro.py*
 - Regenerate *Cnc25D/bin/cnc25d_example_generator.py* with the command::
   

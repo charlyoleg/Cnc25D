@@ -254,6 +254,8 @@ Release 0.1.7
 -------------
 Released on 2013-11-01
 
+* unify the test-environment of the macro-scripts
+* use python-dictionary as function-argument for designs with many parameters
 * gearring (aka annulus)
 * gearbar (aka rack)
 * epicyclic
