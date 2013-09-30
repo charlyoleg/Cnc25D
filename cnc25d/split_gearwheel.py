@@ -236,7 +236,7 @@ def split_gearwheel(ai_constraints):
       absolute_angle.append(a_start)
       relative_angle.append(math.fmod(a_start-portion_start_angle+5*math.pi, 2*math.pi)-math.pi)
       raw_tooth_nb.append(tooth_nb)
-      print("dbg238: i {:d} raw_tooth_nb {:0.3f}".format(i, raw_tooth_nb[i]))
+      #print("dbg238: i {:d} raw_tooth_nb {:0.3f}".format(i, raw_tooth_nb[i]))
     absolute_angle = absolute_angle[overhead:]
     relative_angle = relative_angle[overhead:]
     raw_tooth_nb = raw_tooth_nb[overhead:]
@@ -246,31 +246,34 @@ def split_gearwheel(ai_constraints):
     portion_gear_last_end = []
     portion_gear_tooth_nb = []
     for i in range(2*split_nb):
+      ii = i-overhead
       if(sg_c['high_split_type']=='h'):
-        portion_gear_tooth_angle.append(absolute_angle[i-overhead]-g1_hma+g1_pma)
+        portion_gear_tooth_angle.append(absolute_angle[ii]-g1_hma+g1_pma)
         portion_gear_first_end.append(3)
         portion_gear_last_end.append(3)
-        portion_gear_tooth_nb.append(raw_tooth_nb[i-overhead+2]+raw_tooth_nb[i-overhead+1]-1)
+        portion_gear_tooth_nb.append(raw_tooth_nb[ii+2]+raw_tooth_nb[ii+1]-1)
       elif(sg_c['high_split_type']=='a'):
-        if(abs(start_relative_angle[i])<=(g1_pma-g1_tl)/2.0):
+        tooth_transfer = 0
+        if(abs(relative_angle[ii])<=(g1_pma-g1_tl)/2.0):
           portion_gear_first_end.append(3)
-          portion_gear_tooth_angle.append(start_absolute_angle[i]+g1_hma)
-        elif(start_relative_angle[i]>=(g1_pma-g1_tl)/2.0):
+          portion_gear_tooth_angle.append(absolute_angle[ii]-g1_hma+g1_pma)
+        elif(relative_angle[ii]>=(g1_pma-g1_tl)/2.0):
           portion_gear_first_end.append(1)
-          portion_gear_tooth_angle.append(start_absolute_angle[i]+g1_hma-g1_pma)
-          raw_tooth_nb[i] += 1
-        elif(start_relative_angle[i]<=-1*(g1_pma-g1_tl)/2.0):
+          portion_gear_tooth_angle.append(absolute_angle[ii]-g1_hma)
+          tooth_transfer = 1
+        elif(relative_angle[ii]<=-1*(g1_pma-g1_tl)/2.0):
           portion_gear_first_end.append(1)
-          portion_gear_tooth_angle.append(start_absolute_angle[i]+g1_hma)
-        if(abs(end_relative_angle[i])<=(g1_pma-g1_tl)/2.0):
-          portion_gear_tooth_nb.append(raw_tooth_nb[i])
+          portion_gear_tooth_angle.append(absolute_angle[ii]-g1_hma+g1_pma)
+        if(abs(relative_angle[ii+2])<=(g1_pma-g1_tl)/2.0):
+          portion_gear_tooth_nb.append(raw_tooth_nb[ii+2]+raw_tooth_nb[ii+1]-1+tooth_transfer)
           portion_gear_last_end.append(3)
-        elif(end_relative_angle[i]>=(g1_pma-g1_tl)/2.0):
-          portion_gear_tooth_nb.append(raw_tooth_nb[i])
+        elif(relative_angle[ii+2]>=(g1_pma-g1_tl)/2.0):
+          portion_gear_tooth_nb.append(raw_tooth_nb[ii+2]+raw_tooth_nb[ii+1]-1+tooth_transfer)
           portion_gear_last_end.append(1)
-        elif(end_relative_angle[i]<=-1*(g1_pma-g1_tl)/2.0):
-          portion_gear_tooth_nb.append(raw_tooth_nb[i]+1)
+        elif(relative_angle[ii+2]<=-1*(g1_pma-g1_tl)/2.0):
+          portion_gear_tooth_nb.append(raw_tooth_nb[ii+2]+raw_tooth_nb[ii+1]-0+tooth_transfer)
           portion_gear_last_end.append(1)
+    #print("dbg276: len(portion_gear_first_end) {:d}  len(portion_gear_last_end) {:d}".format(len(portion_gear_first_end), len(portion_gear_last_end)))
   else: # no gear_profile, just a circle
     if(sg_c['gear_primitive_diameter']<radian_epsilon):
       print("ERR885: Error, the no-gear-profile circle outline diameter sg_c['gear_primitive_diameter'] {:0.2f} is too small!".format(sg_c['gear_primitive_diameter']))
@@ -294,7 +297,7 @@ def split_gearwheel(ai_constraints):
   if(low_hole_circle_radius==0):
     low_hole_circle_radius = low_split_radius + 2*low_hole_radius
   if(high_hole_circle_radius==0):
-    high_hole_circle_radius = high_split_radius - high_hole_radius
+    high_hole_circle_radius = high_split_radius - 1.2*high_hole_radius
   #print("dbg292: high_hole_circle_radius {:0.3f}  high_split_radius {:0.3f}".format(high_hole_circle_radius, high_split_radius))
   ### check parameter coherence (part 2)
   # low_hole_nb and high_hole_nb
@@ -451,9 +454,9 @@ cnc_router_bit_radius:    \t{:0.3f}
     #cnc25d_api.figure_simple_display(sgw_assembly_A_figure, part_figure_list[0], sgw_parameter_info) # for debug
     cnc25d_api.figure_simple_display(sgw_assembly_figure, sgw_assembly_figure_overlay, sgw_parameter_info)
     cnc25d_api.figure_simple_display(sgw_assembly_A_figure, sgw_assembly_B_figure, sgw_parameter_info)
-    for i in range(len(part_figure_list)):
-      #cnc25d_api.figure_simple_display(aligned_part_figure_list[i], part_figure_list[i], sgw_parameter_info)
-      cnc25d_api.figure_simple_display(part_figure_list[i], part_figure_list[i-1], sgw_parameter_info)
+    #for i in range(len(part_figure_list)):
+    #  #cnc25d_api.figure_simple_display(aligned_part_figure_list[i], part_figure_list[i], sgw_parameter_info)
+    #  cnc25d_api.figure_simple_display(part_figure_list[i], part_figure_list[i-1], sgw_parameter_info)
     cnc25d_api.figure_simple_display(sgw_list_of_parts, [], sgw_parameter_info)
       
   ### generate output file
@@ -561,13 +564,13 @@ def split_gearwheel_self_test():
     ["split nb 7"           , "--gear_tooth_nb 31 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 7"],
     ["split nb 8"           , "--gear_tooth_nb 33 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 8"],
     ["portion and tooth nb" , "--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0"],
-    ["no tooth"             , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 3"],
+    ["no tooth"             , "--gear_tooth_nb 0 --gear_primitive_diameter 200.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 3"],
     ["no low hole"          , "--gear_tooth_nb 27 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --low_hole_nb 0"],
     ["no high hole"         , "--gear_tooth_nb 28 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 0"],
     ["split style line"     , "--gear_tooth_nb 30 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --low_split_type line"],
     ["split style addendum" , "--gear_tooth_nb 41 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --high_split_type a --split_nb 10"],
     ["split initial angle"  , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --split_initial_angle 0.1 --gear_initial_angle 0.15"],
-    ["gear simulation"      , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --simulation_enable"],
+    ["gear simulation"      , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --simulation_enable --second_gear_tooth_nb 19"],
     ["output file"          , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --output_file_basename test_output/split_gearwheel_self_test.dxf"],
     ["last test"            , "--gear_tooth_nb 24 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
