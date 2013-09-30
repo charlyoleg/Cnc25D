@@ -230,6 +230,7 @@ def calc_low_level_gear_parameters(ai_param):
   radian_epsilon = math.pi/1000
   radian_epsilon_2 = math.pi/10000
   ### check
+  #print("dbg233: g_ptn: {:d}".format(g_ptn))
   # tooth height check
   #
   if(g_ks*(g_pr-g_dr)<0):

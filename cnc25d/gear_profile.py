@@ -750,7 +750,7 @@ def gear_profile(
   g1_ptn = 0 # 0: full first gear
   g1_pfe = 0
   g1_ple = 0
-  if(ai_portion_tooth_nb>1): # cut a portion of the first gear
+  if(ai_portion_tooth_nb>0): # cut a portion of the first gear
     if(((g1_type=='e')or(g1_type=='i'))and(ai_portion_tooth_nb>=g1_n)):
       print("ERR553: Error, the portion {:d} of gearwheel is bigger than the maximal number of teeth {:d}!".format(ai_portion_tooth_nb, g1_n))
       sys.exit(2)
@@ -760,6 +760,7 @@ def gear_profile(
   g2_ptn = 0 # full second gear
   g2_pfe = 0
   g2_ple = 0
+  #print("dbg763: g1_ptn {:d}  ai_portion_tooth_nb {:d}".format(g1_ptn, ai_portion_tooth_nb))
   g1_param['portion_tooth_nb']  = g1_ptn
   g1_param['portion_first_end'] = g1_pfe
   g1_param['portion_last_end']  = g1_ple
@@ -1059,6 +1060,7 @@ def gear_profile_dictionary_wrapper(ai_constraints):
   #for k in gp_c.viewkeys():
   #  if(gp_c[k] != gpdi[k]):
   #    print("dbg061: for k {:s}, gp_c[k] {:s} != gpdi[k] {:s}".format(k, str(gp_c[k]), str(gpdi[k])))
+  #print("dbg063: gp_c['portion_tooth_nb'] {:d}".format(gp_c['portion_tooth_nb']))
   # wrapper
   r_gp = gear_profile(
                       ### first gear

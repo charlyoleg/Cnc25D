@@ -184,11 +184,12 @@ def split_gearwheel(ai_constraints):
     print("ERR220: Error, sg_c['high_split_type'] {:s} is not valid!".format(sg_c['high_split_type']))
     sys.exit(2)
   # sg_c['split_nb']
-  if(sg_c['split_nb']<2):
-    print("ERR188: Error, split_nb {:d} must be equal or bigger than 2".format(sg_c['split_nb']))
+  split_nb = sg_c['split_nb']
+  if(split_nb<2):
+    print("ERR188: Error, split_nb {:d} must be equal or bigger than 2".format(split_nb))
     sys.exit(2)
-  #portion_angle = 2*math.pi/sg_c['split_nb']
-  portion_angle = math.pi/sg_c['split_nb']
+  #portion_angle = 2*math.pi/split_nb
+  portion_angle = math.pi/split_nb
   #print("dbg190: sg_c['gear_tooth_nb']:", sg_c['gear_tooth_nb'])
   if(sg_c['gear_tooth_nb']>0): # create a gear_profile
     ### get the gear_profile
@@ -212,7 +213,7 @@ def split_gearwheel(ai_constraints):
     high_split_radius = sg_c['high_split_diameter']/2.0
     if(high_split_radius==0):
       high_split_radius = minimal_gear_profile_radius - g1_m
-    # gear_portion
+    ## gear_portion
     g1_pma = gear_profile_parameters['pi_module_angle']
     g1_hma = gear_profile_parameters['hollow_middle_angle']
     g1_ia = gear_profile_parameters['initial_angle']
@@ -220,35 +221,36 @@ def split_gearwheel(ai_constraints):
     if(portion_angle<(1.1*g1_pma)):
       print("ERR219: Error, portion_angle {:0.3f} is too small compare to the pi_module_angle {:0.3f}".format(portion_angle, g1_pma))
       sys.exit(2)
-    start_absolute_angle = []
-    start_relative_angle = []
-    end_relative_angle = []
+    # pre common calculation
+    absolute_angle = []
+    relative_angle = []
     raw_tooth_nb = []
-    for i in range(2*sg_c['split_nb']):
+    a_start = g1_ia + g1_hma
+    overhead = 2 # must be equal or bigger than 2 because of raw_tooth_nb[i-overhead+2]
+    for i in range(2*split_nb+overhead):
       portion_start_angle = sg_c['split_initial_angle'] + (i+0.0) * portion_angle
-      portion_end_angle = sg_c['split_initial_angle'] + (i+2.0) * portion_angle
-      a_start = g1_ia - g1_pma + g1_hma
+      tooth_nb = 0
       while(abs(math.fmod(a_start-portion_start_angle+5*math.pi, 2*math.pi)-math.pi)>g1_pma/2.0):
         a_start += g1_pma
-      p_nb = 0
-      a_end = a_start + g1_pma
-      while(abs(math.fmod(a_end-portion_end_angle+5*math.pi, 2*math.pi)-math.pi)>g1_pma/2.0):
-        p_nb += 1
-        a_end += g1_pma
-      start_absolute_angle.append(a_start)
-      start_relative_angle.append(math.fmod(a_start-portion_start_angle+5*math.pi, 2*math.pi)-math.pi)
-      end_relative_angle.append(math.fmod(a_end-portion_end_angle+5*math.pi, 2*math.pi)-math.pi)
-      raw_tooth_nb.append(p_nb)
+        tooth_nb += 1
+      absolute_angle.append(a_start)
+      relative_angle.append(math.fmod(a_start-portion_start_angle+5*math.pi, 2*math.pi)-math.pi)
+      raw_tooth_nb.append(tooth_nb)
+      print("dbg238: i {:d} raw_tooth_nb {:0.3f}".format(i, raw_tooth_nb[i]))
+    absolute_angle = absolute_angle[overhead:]
+    relative_angle = relative_angle[overhead:]
+    raw_tooth_nb = raw_tooth_nb[overhead:]
+    # final low-parameters
     portion_gear_tooth_angle = []
     portion_gear_first_end = []
     portion_gear_last_end = []
     portion_gear_tooth_nb = []
-    for i in range(2*sg_c['split_nb']):
+    for i in range(2*split_nb):
       if(sg_c['high_split_type']=='h'):
-        portion_gear_tooth_angle.append(start_absolute_angle[i]+g1_hma)
+        portion_gear_tooth_angle.append(absolute_angle[i-overhead]-g1_hma+g1_pma)
         portion_gear_first_end.append(3)
         portion_gear_last_end.append(3)
-        portion_gear_tooth_nb.append(raw_tooth_nb[i])
+        portion_gear_tooth_nb.append(raw_tooth_nb[i-overhead+2]+raw_tooth_nb[i-overhead+1]-1)
       elif(sg_c['high_split_type']=='a'):
         if(abs(start_relative_angle[i])<=(g1_pma-g1_tl)/2.0):
           portion_gear_first_end.append(3)
@@ -329,13 +331,24 @@ def split_gearwheel(ai_constraints):
   ### generate the portion outlines
   part_figure_list = []
   if(sg_c['gear_tooth_nb']>0): # create a gear_profile
-    for i in range(2*sg_c['split_nb']):
+    for i in range(2*split_nb):
+      #print("dbg333:  portion_gear_tooth_nb[i]: {:0.3f}".format(portion_gear_tooth_nb[i]))
+      #print("dbg334:  portion_gear_first_end[i]: {:0.3f}".format(portion_gear_first_end[i]))
+      #print("dbg335:  portion_gear_last_end[i]: {:0.3f}".format(portion_gear_last_end[i]))
+      #print("dbg336:  portion_gear_tooth_angle[i]: {:0.3f}".format(portion_gear_tooth_angle[i]))
+      if(portion_gear_tooth_nb[i]<1):
+        print("ERR338: Error, for i {:d} portion_gear_tooth_nb {:d} smaller than 1".format(i, portion_gear_tooth_nb[i]))
+        sys.exit(2)
       gp_c['portion_tooth_nb']    = portion_gear_tooth_nb[i]
       gp_c['portion_first_end']   = portion_gear_first_end[i]
       gp_c['portion_last_end']    = portion_gear_last_end[i]
       gp_c['gear_initial_angle']  = portion_gear_tooth_angle[i]
       gp_c['simulation_enable'] = False
+      #print("dbg342: gp_c:", gp_c)
+      #print("dbg341: gp_c['portion_tooth_nb']: {:d}".format(gp_c['portion_tooth_nb']))
       (gear_profile_B, trash_gear_profile_parameters, trash_gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gp_c)
+      #print("dbg345: trash_gear_profile_parameters:", trash_gear_profile_parameters)
+      #print("dbg346: trash_gear_profile_parameters['portion_tooth_nb']: {:d}".format(trash_gear_profile_parameters['portion_tooth_nb']))
       tmp_a = sg_c['split_initial_angle'] + (i+2.0)*portion_angle
       tmp_b = sg_c['split_initial_angle'] + (i+1.0)*portion_angle
       tmp_c = sg_c['split_initial_angle'] + (i+0.0)*portion_angle
@@ -347,12 +360,12 @@ def split_gearwheel(ai_constraints):
       low_portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), split_router_bit_radius))
       low_portion_A.append((gear_profile_B[0][0], gear_profile_B[0][1], 0))
       low_portion_B = cnc25d_api.cnc_cut_outline(low_portion_A, "portion_A")
-      portion_B = gear_profile_B
+      portion_B = gear_profile_B[:]
       portion_B.extend(low_portion_B[1:])
       #part_figure_list.append([portion_B])
       part_figure_list.append([portion_B[:]])
   else:
-    for i in range(2*sg_c['split_nb']):
+    for i in range(2*split_nb):
       tmp_a = sg_c['split_initial_angle'] + (i+2.0)*portion_angle
       tmp_b = sg_c['split_initial_angle'] + (i+1.0)*portion_angle
       tmp_c = sg_c['split_initial_angle'] + (i+0.0)*portion_angle
@@ -409,7 +422,7 @@ split_nb:             \t{:d}
 split_initial_angle:  \t{:0.3f} (radian)  \t{:0.3f} (degree)
 high_split_radius:    \t{:0.3f} diameter: \t{:0.3f}
 high_split_type:      \t{:s}
-""".format(sg_c['split_nb'], sg_c['split_initial_angle'], sg_c['split_initial_angle']*180/math.pi, high_split_radius, 2*high_split_radius, sg_c['high_split_type'])
+""".format(split_nb, sg_c['split_initial_angle'], sg_c['split_initial_angle']*180/math.pi, high_split_radius, 2*high_split_radius, sg_c['high_split_type'])
   sgw_parameter_info += """
 low_split_radius:     \t{:0.3f} diameter: \t{:0.3f}
 low_split_type:       \t{:s}
@@ -434,6 +447,8 @@ cnc_router_bit_radius:    \t{:0.3f}
   ### display with Tkinter
   if(sg_c['tkinter_view']):
     print(sgw_parameter_info)
+    #cnc25d_api.figure_simple_display(part_figure_list[0], sgw_assembly_figure_overlay, sgw_parameter_info) # for debug
+    #cnc25d_api.figure_simple_display(sgw_assembly_A_figure, part_figure_list[0], sgw_parameter_info) # for debug
     cnc25d_api.figure_simple_display(sgw_assembly_figure, sgw_assembly_figure_overlay, sgw_parameter_info)
     cnc25d_api.figure_simple_display(sgw_assembly_A_figure, sgw_assembly_B_figure, sgw_parameter_info)
     for i in range(len(part_figure_list)):
@@ -457,22 +472,22 @@ cnc_router_bit_radius:    \t{:0.3f}
     cnc25d_api.generate_output_file(sgw_assembly_A_figure, output_file_basename + "_assembly_A." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
     cnc25d_api.generate_output_file(sgw_assembly_B_figure, output_file_basename + "_assembly_B." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
     cnc25d_api.generate_output_file(sgw_list_of_parts, output_file_basename + "_part_list." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-    for i in range(sg_c['split_nb']):
+    for i in range(split_nb):
       cnc25d_api.generate_output_file(part_figure_list[2*i],    output_file_basename + "_part_A{:d}_placed.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
       cnc25d_api.generate_output_file(part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_placed.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
       cnc25d_api.generate_output_file(aligned_part_figure_list[2*i],    output_file_basename + "_part_A{:d}_aligned.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
       cnc25d_api.generate_output_file(aligned_part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_aligned.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
   elif(output_file_suffix=='brep'):
     #cnc25d_api.generate_output_file(sgw_assembly_figure, output_file_basename + "_assembly", sg_c['gear_profile_height'], sgw_parameter_info)
-    for i in range(sg_c['split_nb']):
+    for i in range(split_nb):
       cnc25d_api.generate_output_file(part_figure_list[2*i],    output_file_basename + "_part_A{:d}_placed".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
       cnc25d_api.generate_output_file(part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_placed".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
       cnc25d_api.generate_output_file(aligned_part_figure_list[2*i],    output_file_basename + "_part_A{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
       cnc25d_api.generate_output_file(aligned_part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
 
   ### return the split_gearwheel as FreeCAD Part object
-  r_sgw = cnc25d_api.figure_to_freecad_25d_part(part_figure_list[0], sg_c['gear_profile_height'])
-  #r_sgw = 1 # this is to spare the freecad computation time during debuging
+  #r_sgw = cnc25d_api.figure_to_freecad_25d_part(part_figure_list[0], sg_c['gear_profile_height'])
+  r_sgw = 1 # this is to spare the freecad computation time during debuging
   return(r_sgw)
 
 ################################################################
@@ -601,7 +616,7 @@ def split_gearwheel_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("split_gearwheel.py says hello!\n")
   #my_sgw = split_gearwheel_cli()
-  #my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2".split())
-  my_sgw = split_gearwheel_cli("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0".split())
+  my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2".split())
+  #my_sgw = split_gearwheel_cli("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0".split())
   #Part.show(my_sgw)
 
