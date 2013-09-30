@@ -972,73 +972,73 @@ def gear_profile(
 # gear_profile wrapper dance
 ################################################################
 
-def gear_profile_dictionary_init(ai_dict = {}):
+def gear_profile_dictionary_init():
   """ create and initiate a gear_profile_dictionary with the default value
       This can be useful when you want to call gear_profile_dictionary_wrapper() without setting all dictionary entries
   """
-  r_gpd = ai_dict
+  r_gpd = {}
   ### first gear
   # general
-  r_gpd['gear_type'] = 'e',
-  r_gpd['gear_tooth_nb'] = 0,
-  r_gpd['gear_module'] = 0.0,
-  r_gpd['gear_primitive_diameter'] = 0.0,
-  r_gpd['gear_addendum_dedendum_parity'] = 50.0,
+  r_gpd['gear_type'] = 'e'
+  r_gpd['gear_tooth_nb'] = 0
+  r_gpd['gear_module'] = 0.0
+  r_gpd['gear_primitive_diameter'] = 0.0
+  r_gpd['gear_addendum_dedendum_parity'] = 50.0
   # tooth height
-  r_gpd['gear_tooth_half_height'] = 0.0,
-  r_gpd['gear_addendum_height_pourcentage'] = 100.0,
-  r_gpd['gear_dedendum_height_pourcentage'] = 100.0,
-  r_gpd['gear_hollow_height_pourcentage'] = 25.0,
-  r_gpd['gear_router_bit_radius'] = 0.1,
+  r_gpd['gear_tooth_half_height'] = 0.0
+  r_gpd['gear_addendum_height_pourcentage'] = 100.0
+  r_gpd['gear_dedendum_height_pourcentage'] = 100.0
+  r_gpd['gear_hollow_height_pourcentage'] = 25.0
+  r_gpd['gear_router_bit_radius'] = 0.1
   # positive involute
-  r_gpd['gear_base_diameter'] = 0.0,
-  r_gpd['gear_force_angle'] = 0.0,
-  r_gpd['gear_tooth_resolution'] = 3,
-  r_gpd['gear_skin_thickness'] = 0.0,
+  r_gpd['gear_base_diameter'] = 0.0
+  r_gpd['gear_force_angle'] = 0.0
+  r_gpd['gear_tooth_resolution'] = 3
+  r_gpd['gear_skin_thickness'] = 0.0
   # negative involute (if zero, negative involute'] = positive involute)
-  r_gpd['gear_base_diameter_n'] = 0.0,
-  r_gpd['gear_force_angle_n'] = 0.0,
-  r_gpd['gear_tooth_resolution_n'] = 0,
-  r_gpd['gear_skin_thickness_n'] = 0.0,
+  r_gpd['gear_base_diameter_n'] = 0.0
+  r_gpd['gear_force_angle_n'] = 0.0
+  r_gpd['gear_tooth_resolution_n'] = 0
+  r_gpd['gear_skin_thickness_n'] = 0.0
   ### second gear
   # general
-  r_gpd['second_gear_type'] = 'e',
-  r_gpd['second_gear_tooth_nb'] = 0,
-  r_gpd['second_gear_primitive_diameter'] = 0.0,
-  r_gpd['second_gear_addendum_dedendum_parity'] = 0.0,
+  r_gpd['second_gear_type'] = 'e'
+  r_gpd['second_gear_tooth_nb'] = 0
+  r_gpd['second_gear_primitive_diameter'] = 0.0
+  r_gpd['second_gear_addendum_dedendum_parity'] = 0.0
   # tooth height
-  r_gpd['second_gear_tooth_half_height'] = 0.0,
-  r_gpd['second_gear_addendum_height_pourcentage'] = 100.0,
-  r_gpd['second_gear_dedendum_height_pourcentage'] = 100.0,
-  r_gpd['second_gear_hollow_height_pourcentage'] = 25.0,
-  r_gpd['second_gear_router_bit_radius'] = 0.0,
+  r_gpd['second_gear_tooth_half_height'] = 0.0
+  r_gpd['second_gear_addendum_height_pourcentage'] = 100.0
+  r_gpd['second_gear_dedendum_height_pourcentage'] = 100.0
+  r_gpd['second_gear_hollow_height_pourcentage'] = 25.0
+  r_gpd['second_gear_router_bit_radius'] = 0.0
   # positive involute
-  r_gpd['second_gear_base_diameter'] = 0.0,
-  r_gpd['second_gear_tooth_resolution'] = 0,
-  r_gpd['second_gear_skin_thickness'] = 0.0,
+  r_gpd['second_gear_base_diameter'] = 0.0
+  r_gpd['second_gear_tooth_resolution'] = 0
+  r_gpd['second_gear_skin_thickness'] = 0.0
   # negative involute (if zero, negative involute'] = positive involute)
-  r_gpd['second_gear_base_diameter_n'] = 0.0,
-  r_gpd['second_gear_tooth_resolution_n'] = 0,
-  r_gpd['second_gear_skin_thickness_n'] = 0.0,
+  r_gpd['second_gear_base_diameter_n'] = 0.0
+  r_gpd['second_gear_tooth_resolution_n'] = 0
+  r_gpd['second_gear_skin_thickness_n'] = 0.0
   ### gearbar specific
-  r_gpd['gearbar_slope'] = 0.0,
-  r_gpd['gearbar_slope_n'] = 0.0,
+  r_gpd['gearbar_slope'] = 0.0
+  r_gpd['gearbar_slope_n'] = 0.0
   ### position
   # first gear position
-  r_gpd['center_position_x'] = 0.0,
-  r_gpd['center_position_y'] = 0.0,
-  r_gpd['gear_initial_angle'] = 0.0,
+  r_gpd['center_position_x'] = 0.0
+  r_gpd['center_position_y'] = 0.0
+  r_gpd['gear_initial_angle'] = 0.0
   # second gear position
-  r_gpd['second_gear_position_angle'] = 0.0,
-  r_gpd['second_gear_additional_axis_length'] = 0.0,
+  r_gpd['second_gear_position_angle'] = 0.0
+  r_gpd['second_gear_additional_axis_length'] = 0.0
   ### portion
-  r_gpd['portion_tooth_nb'] = 0,
-  r_gpd['portion_first_end'] = 0,
-  r_gpd['portion_last_end'] = 0,
+  r_gpd['portion_tooth_nb'] = 0
+  r_gpd['portion_first_end'] = 0
+  r_gpd['portion_last_end'] = 0
   ### output
-  r_gpd['gear_profile_height'] = 1.0,
-  r_gpd['simulation_enable'] = False,
-  r_gpd['output_file_basename'] = '',
+  r_gpd['gear_profile_height'] = 1.0
+  r_gpd['simulation_enable'] = False
+  r_gpd['output_file_basename'] = ''
   #### optional
   r_gpd['args_in_txt'] = ''
   ###### return
@@ -1049,6 +1049,16 @@ def gear_profile_dictionary_wrapper(ai_gp_dict):
   wrapper function of gear_profile() to call it using a gear_profile_dictionary variable.
   """
   #
+  gpdi = gear_profile_dictionary_init()
+  gp_c = gpdi.copy()
+  gp_c.update(ai_gp_dict)
+  if(len(gp_c.viewkeys() - gpdi.viewkeys()) != 0): # check if unknown constraints has been set
+    print("ERR056: Error, unknown gear-profile constraints: {:s}".format(gp_c.viewkeys() - gpdi.viewkeys()))
+    sys.exit(2)
+  #print("dbg058: new gear_profile constraints:")
+  #for k in gp_c.viewkeys():
+  #  if(gp_c[k] != gpdi[k]):
+  #    print("dbg061: for k {:s}, gp_c[k] {:s} != gpdi[k] {:s}".format(k, str(gp_c[k]), str(gpdi[k])))
   # wrapper
   r_gp = gear_profile(
                       ### first gear
@@ -1117,13 +1127,14 @@ def gear_profile_dictionary_wrapper(ai_gp_dict):
                       ai_args_in_txt          = ai_gp_dict['args_in_txt'])
   return(r_gp)
 
-def gear_profile_argparse_to_dictionary(ai_gp_args):
+def gear_profile_argparse_to_dictionary(ai_gp_args, ai_variant=0):
   """ convert a gear_profile_argparse into a gear_profile_dictionary
   """
-  r_gpd = gear_profile_dictionary_init()
+  r_gpd = {}
   ### first gear
   # general
-  r_gpd['gear_type'] = ai_gp_args.sw_gear_type
+  if((ai_variant!=1)and(ai_variant!=2)and(ai_variant!=3)):
+    r_gpd['gear_type'] = ai_gp_args.sw_gear_type
   r_gpd['gear_tooth_nb'] = ai_gp_args.sw_gear_tooth_nb
   r_gpd['gear_module'] = ai_gp_args.sw_gear_module
   r_gpd['gear_primitive_diameter'] = ai_gp_args.sw_gear_primitive_diameter
@@ -1146,7 +1157,8 @@ def gear_profile_argparse_to_dictionary(ai_gp_args):
   r_gpd['gear_skin_thickness_n'] = ai_gp_args.sw_gear_skin_thickness_n
   ### second gear
   # general
-  r_gpd['second_gear_type'] = ai_gp_args.sw_second_gear_type
+  if((ai_variant!=2)and(ai_variant!=3)):
+    r_gpd['second_gear_type'] = ai_gp_args.sw_second_gear_type
   r_gpd['second_gear_tooth_nb'] = ai_gp_args.sw_second_gear_tooth_nb
   r_gpd['second_gear_primitive_diameter'] = ai_gp_args.sw_second_gear_primitive_diameter
   r_gpd['second_gear_addendum_dedendum_parity'] = ai_gp_args.sw_second_gear_addendum_dedendum_parity
@@ -1165,8 +1177,9 @@ def gear_profile_argparse_to_dictionary(ai_gp_args):
   r_gpd['second_gear_tooth_resolution_n'] = ai_gp_args.sw_second_gear_tooth_resolution_n
   r_gpd['second_gear_skin_thickness_n'] = ai_gp_args.sw_second_gear_skin_thickness_n
   ### gearbar specific
-  r_gpd['gearbar_slope'] = ai_gp_args.sw_gearbar_slope
-  r_gpd['gearbar_slope_n'] = ai_gp_args.sw_gearbar_slope_n
+  if(ai_variant!=2):
+    r_gpd['gearbar_slope'] = ai_gp_args.sw_gearbar_slope
+    r_gpd['gearbar_slope_n'] = ai_gp_args.sw_gearbar_slope_n
   ### position
   # first gear position
   r_gpd['center_position_x'] = ai_gp_args.sw_center_position_x
@@ -1176,9 +1189,10 @@ def gear_profile_argparse_to_dictionary(ai_gp_args):
   r_gpd['second_gear_position_angle'] = ai_gp_args.sw_second_gear_position_angle
   r_gpd['second_gear_additional_axis_length'] = ai_gp_args.sw_second_gear_additional_axis_length
   ### portion
-  r_gpd['portion_tooth_nb'] = ai_gp_args.sw_cut_portion[0]
-  r_gpd['portion_first_end'] = ai_gp_args.sw_cut_portion[1]
-  r_gpd['portion_last_end'] = ai_gp_args.sw_cut_portion[2]
+  if((ai_variant!=1)and(ai_variant!=2)):
+    r_gpd['portion_tooth_nb'] = ai_gp_args.sw_cut_portion[0]
+    r_gpd['portion_first_end'] = ai_gp_args.sw_cut_portion[1]
+    r_gpd['portion_last_end'] = ai_gp_args.sw_cut_portion[2]
   ### output
   r_gpd['gear_profile_height'] = ai_gp_args.sw_gear_profile_height
   r_gpd['simulation_enable'] = ai_gp_args.sw_simulation_enable
@@ -1198,7 +1212,8 @@ def gear_profile_argparse_wrapper(ai_gp_args, ai_args_in_txt=''):
   #
   #print("dbg865: ai_gp_args.sw_second_gear_skin_thickness:", ai_gp_args.sw_second_gear_skin_thickness)
   # wrapper
-  gpd = gear_profile_argparse_to_dictionary(ai_gp_args)
+  gpd = {}
+  gpd.update(gear_profile_argparse_to_dictionary(ai_gp_args))
   gpd['args_in_txt'] = ai_args_in_txt
   gpd['simulation_enable'] = run_simulation
   r_gp = gear_profile_dictionary_wrapper(gpd)
