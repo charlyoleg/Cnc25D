@@ -22,7 +22,7 @@
 
 """
 split_gearwheel.py is a parametric generator of split_gearwheels.
-The main function return the split-gear-wheel as FreeCAD Part object.
+The main function return the split-gearwheel as FreeCAD Part object.
 You can also simulate or view of the split-gearwheel and get a DXF, SVG or BRep file.
 """
 
@@ -44,7 +44,7 @@ import math
 import sys, argparse
 #from datetime import datetime
 #import os, errno
-#import re
+import re # to detect .dxf or .svg
 #import Tkinter # to display the outline in a small GUI
 #
 import Part
@@ -117,7 +117,7 @@ def split_gearwheel_add_argument(ai_parser):
     help="Select the type of outline for the inner border of the split-portions. Possible values: 'circle', 'line'. Default: 'circle'")
   ## high_split
   r_parser.add_argument('--high_split_diameter','--hsd', action='store', type=float, default=0.0, dest='sw_high_split_diameter',
-    help="Set the diameter of the high circle of the split-portion. If equal to 0.0, it is set to the dedendum diameter minus tooth_half_height. Default: 0.0")
+    help="Set the diameter of the high circle of the split-portion. If equal to 0.0, it is set to the minimal_gear_profile_radius - tooth_half_height. Default: 0.0")
   r_parser.add_argument('--high_split_type','--hst', action='store', default='h', dest='sw_high_split_type',
     help="Select the type of connection between the split-portion high-circle and the gear-profile. Possible values: 'h'=hollow_only , 'a'=addendum_too. Default: 'h'")
   ## split_router_bit_radius
@@ -125,14 +125,14 @@ def split_gearwheel_add_argument(ai_parser):
     help="Set the split router_bit radius of the split-gearwheel (used at the high-circle corners). Default: 1.0")
   ### low-hole
   r_parser.add_argument('--low_hole_circle_diameter','--lhcd', action='store', type=float, default=0.0, dest='sw_low_hole_circle_diameter',
-    help="Set the diameter of the low-hole circle. Default: 0.0")
+    help="Set the diameter of the low-hole circle. If equal to 0.0, it is set to low_split_diameter + low_hole_diameter. Default: 0.0")
   r_parser.add_argument('--low_hole_diameter','--lhd', action='store', type=float, default=10.0, dest='sw_low_hole_diameter',
     help="Set the diameter of the low-holes. Default: 10.0")
   r_parser.add_argument('--low_hole_nb','--lhn', action='store', type=int, default=1, dest='sw_low_hole_nb',
     help="Set the number of low-holes. Default: 1")
   ### high-hole
   r_parser.add_argument('--high_hole_circle_diameter','--hhcd', action='store', type=float, default=0.0, dest='sw_high_hole_circle_diameter',
-    help="Set the diameter of the high-hole circle. If equal to 0.0, set to high_split_diameter minus high_hole_diameter. Default: 0.0")
+    help="Set the diameter of the high-hole circle. If equal to 0.0, set to high_split_diameter - high_hole_diameter. Default: 0.0")
   r_parser.add_argument('--high_hole_diameter','--hhd', action='store', type=float, default=10.0, dest='sw_high_hole_diameter',
     help="Set the diameter of the high-holes. Default: 10.0")
   r_parser.add_argument('--high_hole_nb','--hhn', action='store', type=int, default=1, dest='sw_high_hole_nb',
@@ -153,7 +153,7 @@ def split_gearwheel(ai_constraints):
   The main function of the script.
   It generates a split-gearwheel according to the function arguments
   """
-  # check the dictionary-arguments ai_constraints
+  ### check the dictionary-arguments ai_constraints
   sgdi = split_gearwheel_dictionary_init()
   sg_c = sgdi.copy()
   sg_c.update(ai_constraints)
@@ -183,182 +183,297 @@ def split_gearwheel(ai_constraints):
   if(not sg_c['high_split_type'] in ('h', 'a')):
     print("ERR220: Error, sg_c['high_split_type'] {:s} is not valid!".format(sg_c['high_split_type']))
     sys.exit(2)
-  # pre_minimal_gear_profile_radius
-  #pre_minimal_gear_profile_radius = 
-#  # ai_axle_x_width
-#  axle_diameter = 0
-#  if(ai_axle_type in('circle','rectangle')):
-#    if(ai_axle_x_width<2*axle_router_bit_radius+radian_epsilon):
-#      print("ERR663: Error, ai_axle_x_width {:0.2f} is too small compare to axle_router_bit_radius {:0.2f}!".format(ai_axle_x_width, axle_router_bit_radius))
-#      sys.exit(2)
-#    axle_diameter = ai_axle_x_width
-#    # ai_axle_y_width
-#    if(ai_axle_type=='rectangle'):
-#      if(ai_axle_y_width<2*axle_router_bit_radius+radian_epsilon):
-#        print("ERR664: Error, ai_axle_y_width {:0.2f} is too small compare to axle_router_bit_radius {:0.2f}!".format(ai_axle_y_width, axle_router_bit_radius))
-#        sys.exit(2)
-#      axle_diameter = math.sqrt(ai_axle_x_width**2+ai_axle_y_width**2)
-  # sg_c['gear_tooth_nb']
+  # sg_c['split_nb']
+  if(sg_c['split_nb']<2):
+    print("ERR188: Error, split_nb {:d} must be equal or bigger than 2".format(sg_c['split_nb']))
+    sys.exit(2)
+  #portion_angle = 2*math.pi/sg_c['split_nb']
+  portion_angle = math.pi/sg_c['split_nb']
   #print("dbg190: sg_c['gear_tooth_nb']:", sg_c['gear_tooth_nb'])
   if(sg_c['gear_tooth_nb']>0): # create a gear_profile
     ### get the gear_profile
-    gpdi = gear_profile.gear_profile_dictionary_init()
-    gpd = dict([ (k, sg_c[k]) for k in gpdi.keys() ]) # extract only the entries of the gear_profile
-    gpd['gear_type'] = 'e'
-    gpd['portion_tooth_nb'] = 0
-    gpd['portion_first_end'] = 0
-    gpd['portion_last_end'] = 0
-    gpd['output_file_basename'] = ''
-    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gpd)
+    gp_ci = gear_profile.gear_profile_dictionary_init()
+    gp_c = dict([ (k, sg_c[k]) for k in gp_ci.keys() ]) # extract only the entries of the gear_profile
+    gp_c['gear_type'] = 'e'
+    gp_c['gear_router_bit_radius'] = gear_router_bit_radius
+    gp_c['portion_tooth_nb'] = 0
+    gp_c['portion_first_end'] = 0
+    gp_c['portion_last_end'] = 0
+    gp_c['output_file_basename'] = ''
+    gp_c['args_in_txt'] = ''
+    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gp_c)
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
     minimal_gear_profile_radius = gear_profile_parameters['hollow_radius']
     g1_ix = gear_profile_parameters['center_ox']
     g1_iy = gear_profile_parameters['center_oy']
+    # high_split_radius
+    g1_m = gear_profile_parameters['module']
+    high_split_radius = sg_c['high_split_diameter']/2.0
+    if(high_split_radius==0):
+      high_split_radius = minimal_gear_profile_radius - g1_m
+    # gear_portion
+    g1_pma = gear_profile_parameters['pi_module_angle']
+    g1_hma = gear_profile_parameters['hollow_middle_angle']
+    g1_ia = gear_profile_parameters['initial_angle']
+    g1_tl = gear_profile_parameters['top_land']
+    if(portion_angle<(1.1*g1_pma)):
+      print("ERR219: Error, portion_angle {:0.3f} is too small compare to the pi_module_angle {:0.3f}".format(portion_angle, g1_pma))
+      sys.exit(2)
+    start_absolute_angle = []
+    start_relative_angle = []
+    end_relative_angle = []
+    raw_tooth_nb = []
+    for i in range(2*sg_c['split_nb']):
+      portion_start_angle = sg_c['split_initial_angle'] + (i+0.0) * portion_angle
+      portion_end_angle = sg_c['split_initial_angle'] + (i+2.0) * portion_angle
+      a_start = g1_ia - g1_pma + g1_hma
+      while(abs(math.fmod(a_start-portion_start_angle+5*math.pi, 2*math.pi)-math.pi)>g1_pma/2.0):
+        a_start += g1_pma
+      p_nb = 0
+      a_end = a_start + g1_pma
+      while(abs(math.fmod(a_end-portion_end_angle+5*math.pi, 2*math.pi)-math.pi)>g1_pma/2.0):
+        p_nb += 1
+        a_end += g1_pma
+      start_absolute_angle.append(a_start)
+      start_relative_angle.append(math.fmod(a_start-portion_start_angle+5*math.pi, 2*math.pi)-math.pi)
+      end_relative_angle.append(math.fmod(a_end-portion_end_angle+5*math.pi, 2*math.pi)-math.pi)
+      raw_tooth_nb.append(p_nb)
+    portion_gear_tooth_angle = []
+    portion_gear_first_end = []
+    portion_gear_last_end = []
+    portion_gear_tooth_nb = []
+    for i in range(2*sg_c['split_nb']):
+      if(sg_c['high_split_type']=='h'):
+        portion_gear_tooth_angle.append(start_absolute_angle[i]+g1_hma)
+        portion_gear_first_end.append(3)
+        portion_gear_last_end.append(3)
+        portion_gear_tooth_nb.append(raw_tooth_nb[i])
+      elif(sg_c['high_split_type']=='a'):
+        if(abs(start_relative_angle[i])<=(g1_pma-g1_tl)/2.0):
+          portion_gear_first_end.append(3)
+          portion_gear_tooth_angle.append(start_absolute_angle[i]+g1_hma)
+        elif(start_relative_angle[i]>=(g1_pma-g1_tl)/2.0):
+          portion_gear_first_end.append(1)
+          portion_gear_tooth_angle.append(start_absolute_angle[i]+g1_hma-g1_pma)
+          raw_tooth_nb[i] += 1
+        elif(start_relative_angle[i]<=-1*(g1_pma-g1_tl)/2.0):
+          portion_gear_first_end.append(1)
+          portion_gear_tooth_angle.append(start_absolute_angle[i]+g1_hma)
+        if(abs(end_relative_angle[i])<=(g1_pma-g1_tl)/2.0):
+          portion_gear_tooth_nb.append(raw_tooth_nb[i])
+          portion_gear_last_end.append(3)
+        elif(end_relative_angle[i]>=(g1_pma-g1_tl)/2.0):
+          portion_gear_tooth_nb.append(raw_tooth_nb[i])
+          portion_gear_last_end.append(1)
+        elif(end_relative_angle[i]<=-1*(g1_pma-g1_tl)/2.0):
+          portion_gear_tooth_nb.append(raw_tooth_nb[i]+1)
+          portion_gear_last_end.append(1)
   else: # no gear_profile, just a circle
     if(sg_c['gear_primitive_diameter']<radian_epsilon):
       print("ERR885: Error, the no-gear-profile circle outline diameter sg_c['gear_primitive_diameter'] {:0.2f} is too small!".format(sg_c['gear_primitive_diameter']))
       sys.exit(2)
+    #gear_profile_B = (g1_ix, g1_iy, float(sg_c['gear_primitive_diameter'])/2)
+    minimal_gear_profile_radius = float(sg_c['gear_primitive_diameter'])/2
     g1_ix = sg_c['center_position_x']
     g1_iy = sg_c['center_position_y']
-    gear_profile_B = (g1_ix, g1_iy, float(sg_c['gear_primitive_diameter'])/2)
     gear_profile_info = "\nSimple circle (no-gear-profile):\n"
     gear_profile_info += "outline circle radius: \t{:0.3f}  \tdiameter: {:0.3f}\n".format(sg_c['gear_primitive_diameter']/2.0, sg_c['gear_primitive_diameter'])
     gear_profile_info += "gear center (x, y):   \t{:0.3f}  \t{:0.3f}\n".format(g1_ix, g1_iy)
-    minimal_gear_profile_radius = float(sg_c['gear_primitive_diameter'])/2
-#  ### check parameter coherence (part 2)
-#  if(ai_wheel_hollow_leg_number>0):
-#    # wheel_hollow_external_diameter
-#    if(ai_wheel_hollow_external_diameter > 2*minimal_gear_profile_radius-radian_epsilon):
-#      print("ERR733: Error, ai_wheel_hollow_external_diameter {:0.2f} is bigger than the gear_hollow_radius {:0.2f}!".format(ai_wheel_hollow_external_diameter, minimal_gear_profile_radius))
-#      sys.exit(2)
-#    if(ai_wheel_hollow_external_diameter < ai_wheel_hollow_internal_diameter+4*wheel_hollow_router_bit_radius):
-#      print("ERR734: Error, ai_wheel_hollow_external_diameter {:0.2f} is too small compare to ai_wheel_hollow_internal_diameter {:0.2f} and wheel_hollow_router_bit_radius {:0.2f}!".format(ai_wheel_hollow_external_diameter, ai_wheel_hollow_internal_diameter, wheel_hollow_router_bit_radius))
-#      sys.exit(2)
-#    # wheel_hollow_leg_width
-#    if(ai_wheel_hollow_leg_width<radian_epsilon):
-#      print("ERR735: Error, ai_wheel_hollow_leg_width {:0.2f} is too small!".format(ai_wheel_hollow_leg_width))
-#      sys.exit(2)
-#    # wheel_hollow_internal_diameter
-#    if(ai_wheel_hollow_internal_diameter<axle_diameter+radian_epsilon):
-#      print("ERR736: Error, ai_wheel_hollow_internal_diameter {:0.2f} is too small compare to axle_diameter {:0.2f}!".format(ai_wheel_hollow_internal_diameter, axle_diameter))
-#      sys.exit(2)
-#    if(ai_wheel_hollow_internal_diameter<ai_wheel_hollow_leg_width+2*radian_epsilon):
-#      print("ERR736: Error, ai_wheel_hollow_internal_diameter {:0.2f} is too small compare to ai_wheel_hollow_leg_width {:0.2f}!".format(ai_wheel_hollow_internal_diameter, ai_wheel_hollow_leg_width))
-#      sys.exit(2)
-#  # 
-#
-#  ### axle
-#  axle_figure = []
-#  axle_figure_overlay = []
-#  if(ai_axle_type=='circle'):
-#    axle_figure.append([g1_ix, g1_iy, axle_diameter/2.0])
-#  elif(ai_axle_type=='rectangle'):
-#    axle_A = [
-#      [g1_ix-ai_axle_x_width/2.0, g1_iy-ai_axle_y_width/2.0, -1*axle_router_bit_radius],
-#      [g1_ix+ai_axle_x_width/2.0, g1_iy-ai_axle_y_width/2.0, -1*axle_router_bit_radius],
-#      [g1_ix+ai_axle_x_width/2.0, g1_iy+ai_axle_y_width/2.0, -1*axle_router_bit_radius],
-#      [g1_ix-ai_axle_x_width/2.0, g1_iy+ai_axle_y_width/2.0, -1*axle_router_bit_radius]]
-#    axle_A = cnc25d_api.outline_close(axle_A)
-#    axle_figure.append(cnc25d_api.cnc_cut_outline(axle_A, "axle_A"))
-#    axle_figure_overlay.append(cnc25d_api.ideal_outline(axle_A, "axle_A"))
-#
-#  ### wheel hollow (a.k.a legs)
-#  wheel_hollow_figure = []
-#  wheel_hollow_figure_overlay = []
-#  if(ai_wheel_hollow_leg_number>0):
-#    wh_angle = 2*math.pi/ai_wheel_hollow_leg_number
-#    wh_leg_top_angle1 = math.asin(float(ai_wheel_hollow_leg_width/2.0+wheel_hollow_router_bit_radius)/(ai_wheel_hollow_external_diameter/2.0-wheel_hollow_router_bit_radius))
-#    if(wh_angle<2*wh_leg_top_angle1+radian_epsilon):
-#      print("ERR664: Error, wh_angle {:0.2f} too small compare to wh_leg_top_angle {:0.2f}!".format(wh_angle, wh_leg_top_angle))
-#      sys.exit(2)
-#    wh_leg_bottom_angle1 = math.asin(float(ai_wheel_hollow_leg_width/2.0+wheel_hollow_router_bit_radius)/(ai_wheel_hollow_internal_diameter/2.0+wheel_hollow_router_bit_radius))
-#    #wh_leg_top_angle2 = math.asin((ai_wheel_hollow_leg_width/2)/(ai_wheel_hollow_external_diameter/2))
-#    wh_leg_top_angle2 = math.asin(float(ai_wheel_hollow_leg_width)/ai_wheel_hollow_external_diameter)
-#    #wh_leg_bottom_angle2 = math.asin((ai_wheel_hollow_leg_width/2)/(ai_wheel_hollow_internal_diameter/2))
-#    wh_leg_bottom_angle2 = math.asin(float(ai_wheel_hollow_leg_width)/ai_wheel_hollow_internal_diameter)
-#    # angular coordinates of the points
-#    wh_top1_a = ai_wheel_hollow_leg_angle+wh_leg_top_angle2
-#    wh_top2_a = ai_wheel_hollow_leg_angle+wh_angle/2.0
-#    wh_top3_a = ai_wheel_hollow_leg_angle+wh_angle-wh_leg_top_angle2
-#    wh_bottom1_a = ai_wheel_hollow_leg_angle+wh_leg_bottom_angle2
-#    wh_bottom2_a = ai_wheel_hollow_leg_angle+wh_angle/2.0
-#    wh_bottom3_a = ai_wheel_hollow_leg_angle+wh_angle-wh_leg_bottom_angle2
-#    # Cartesian coordinates of the points
-#    wh_top1_x = g1_ix + ai_wheel_hollow_external_diameter/2.0*math.cos(wh_top1_a)
-#    wh_top1_y = g1_iy + ai_wheel_hollow_external_diameter/2.0*math.sin(wh_top1_a)
-#    wh_top2_x = g1_ix + ai_wheel_hollow_external_diameter/2.0*math.cos(wh_top2_a)
-#    wh_top2_y = g1_iy + ai_wheel_hollow_external_diameter/2.0*math.sin(wh_top2_a)
-#    wh_top3_x = g1_ix + ai_wheel_hollow_external_diameter/2.0*math.cos(wh_top3_a)
-#    wh_top3_y = g1_iy + ai_wheel_hollow_external_diameter/2.0*math.sin(wh_top3_a)
-#    wh_bottom1_x = g1_ix + ai_wheel_hollow_internal_diameter/2.0*math.cos(wh_bottom1_a)
-#    wh_bottom1_y = g1_iy + ai_wheel_hollow_internal_diameter/2.0*math.sin(wh_bottom1_a)
-#    wh_bottom2_x = g1_ix + ai_wheel_hollow_internal_diameter/2.0*math.cos(wh_bottom2_a)
-#    wh_bottom2_y = g1_iy + ai_wheel_hollow_internal_diameter/2.0*math.sin(wh_bottom2_a)
-#    wh_bottom3_x = g1_ix + ai_wheel_hollow_internal_diameter/2.0*math.cos(wh_bottom3_a)
-#    wh_bottom3_y = g1_iy + ai_wheel_hollow_internal_diameter/2.0*math.sin(wh_bottom3_a)
-#    # create one outline
-#    if(wh_angle<2*wh_leg_bottom_angle1+radian_epsilon):
-#      wh_outline_A = [
-#        [wh_top1_x, wh_top1_y, wheel_hollow_router_bit_radius],
-#        [wh_top2_x, wh_top2_y, wh_top3_x, wh_top3_y, wheel_hollow_router_bit_radius],
-#        [wh_bottom2_x, wh_bottom2_y, wheel_hollow_router_bit_radius]]
-#    else:
-#      wh_outline_A = [
-#        [wh_top1_x, wh_top1_y, wheel_hollow_router_bit_radius],
-#        [wh_top2_x, wh_top2_y, wh_top3_x, wh_top3_y, wheel_hollow_router_bit_radius],
-#        [wh_bottom3_x, wh_bottom3_y, wheel_hollow_router_bit_radius],
-#        [wh_bottom2_x, wh_bottom2_y, wh_bottom1_x, wh_bottom1_y, wheel_hollow_router_bit_radius]]
-#    wh_outline_A = cnc25d_api.outline_close(wh_outline_A)
-#    wh_outline_B = cnc25d_api.cnc_cut_outline(wh_outline_A, "wheel_hollow")
-#    wh_outline_B_ideal = cnc25d_api.ideal_outline(wh_outline_A, "wheel_hollow")
-#    for i in range(ai_wheel_hollow_leg_number):
-#      wheel_hollow_figure.append(cnc25d_api.outline_rotate(wh_outline_B, g1_ix, g1_iy, i*wh_angle))
-#      wheel_hollow_figure_overlay.append(cnc25d_api.outline_rotate(wh_outline_B_ideal, g1_ix, g1_iy, i*wh_angle))
-#
-#  ### design output
-#  gw_figure = [gear_profile_B]
-#  gw_figure.extend(axle_figure)
-#  gw_figure.extend(wheel_hollow_figure)
-#  # ideal_outline in overlay
-#  gw_figure_overlay = []
-#  gw_figure_overlay.extend(axle_figure_overlay)
-#  gw_figure_overlay.extend(wheel_hollow_figure_overlay)
-#  # gearwheel_parameter_info
-#  gearwheel_parameter_info = "\nGearwheel parameter info:\n"
-#  gearwheel_parameter_info += "\n" + ai_args_in_txt + "\n\n"
-#  gearwheel_parameter_info += gear_profile_info
-#  gearwheel_parameter_info += """
-#axle_type:    \t{:s}
-#axle_x_width: \t{:0.3f}
-#axle_y_width: \t{:0.3f}
-#""".format(ai_axle_type, ai_axle_x_width, ai_axle_y_width)
-#  gearwheel_parameter_info += """
-#wheel_hollow_leg_number:          \t{:d}
-#wheel_hollow_leg_width:           \t{:0.3f}
-#wheel_hollow_external_diameter:   \t{:0.3f}
-#wheel_hollow_internal_diameter:   \t{:0.3f}
-#wheel_hollow_leg_angle:           \t{:0.3f}
-#""".format(ai_wheel_hollow_leg_number, ai_wheel_hollow_leg_width, ai_wheel_hollow_external_diameter, ai_wheel_hollow_internal_diameter, ai_wheel_hollow_leg_angle)
-#  gearwheel_parameter_info += """
-#gear_router_bit_radius:         \t{:0.3f}
-#wheel_hollow_router_bit_radius: \t{:0.3f}
-#axle_router_bit_radius:         \t{:0.3f}
-#cnc_router_bit_radius:          \t{:0.3f}
-#""".format(gear_router_bit_radius, wheel_hollow_router_bit_radius, axle_router_bit_radius, ai_cnc_router_bit_radius)
-#  #print(gearwheel_parameter_info)
-#
-#  # display with Tkinter
-#  if(ai_tkinter_view):
-#    print(gearwheel_parameter_info)
-#    cnc25d_api.figure_simple_display(gw_figure, gw_figure_overlay, gearwheel_parameter_info)
-#  # generate output file
-#  cnc25d_api.generate_output_file(gw_figure, ai_output_file_basename, ai_gear_profile_height, gearwheel_parameter_info)
+    if(sg_c['high_split_diameter']!=0):
+      print("WARN221: Warning, the setting high_split_diameter {:0.3f} should not be used when gear_tooth_nb=0".format(sg_c['high_split_diameter']))
+    high_split_radius = minimal_gear_profile_radius
+  # set default value (if set to zero) for high_split_diameter, low_hole_circle_diameter, high_hole_circle_diameter
+  low_split_radius = sg_c['low_split_diameter']/2.0
+  low_hole_radius = sg_c['low_hole_diameter']/2.0
+  low_hole_circle_radius = sg_c['low_hole_circle_diameter']/2.0
+  high_hole_circle_radius = sg_c['high_hole_circle_diameter']/2.0
+  high_hole_radius = sg_c['high_hole_diameter']/2.0
+  if(low_hole_circle_radius==0):
+    low_hole_circle_radius = low_split_radius + 2*low_hole_radius
+  if(high_hole_circle_radius==0):
+    high_hole_circle_radius = high_split_radius - high_hole_radius
+  #print("dbg292: high_hole_circle_radius {:0.3f}  high_split_radius {:0.3f}".format(high_hole_circle_radius, high_split_radius))
+  ### check parameter coherence (part 2)
+  # low_hole_nb and high_hole_nb
+  if(sg_c['low_hole_nb']==0):
+    low_hole_radius = 0
+    sg_c['low_hole_nb']=1
+  if(sg_c['high_hole_nb']==0):
+    high_hole_radius = 0
+    sg_c['high_hole_nb']=1
+  # radial parameters
+  if(low_hole_circle_radius<(low_split_radius + low_hole_radius)):
+    print("ERR230: Error, low_hole_circle_radius {:0.3f} is too small compare to low_split_radius {:0.3f} and low_hole_radius {:0.3f}".format(low_hole_circle_radius, low_split_radius, low_hole_radius))
+    sys.exit(2)
+  if(high_hole_circle_radius<(low_hole_circle_radius + low_hole_radius + high_hole_radius)):
+    print("ERR232: Error, high_hole_circle_radius {:0.3f} is too small compare to low_hole_circle_radius {:0.3f}, low_hole_radius {:0.3f} and high_hole_radius {:0.3f}".format(high_hole_circle_radius, low_hole_circle_radius, low_hole_radius, high_hole_radius))
+    sys.exit(2)
+  if(high_split_radius<(high_hole_circle_radius + high_hole_radius)):
+    print("ERR236: Error, high_split_radius {:0.3f} is too small compare to high_hole_circle_radius {:0.3f} and high_hole_radius {:0.3f}".format(high_split_radius, high_hole_circle_radius, high_hole_radius))
+    sys.exit(2)
+  if(minimal_gear_profile_radius<high_split_radius):
+    print("ERR239: Error, minimal_gear_profile_radius {:0.3f} is smaller than high_split_radius {:0.3f}".format(minimal_gear_profile_radius, high_split_radius))
+    sys.exit(2)
+  # angular (or circumference) parameters
+  low_hole_diameter_angle = math.asin(float(low_hole_radius)/low_hole_circle_radius)
+  low_hole_space_angle = portion_angle/float(sg_c['low_hole_nb'])
+  high_hole_diameter_angle = math.asin(float(high_hole_radius)/high_hole_circle_radius)
+  high_hole_space_angle = portion_angle/float(sg_c['high_hole_nb'])
+  if(low_hole_space_angle<(2*low_hole_diameter_angle+radian_epsilon)):
+    print("ERR253: Error, low_hole_nb {:d} or low_hole_diameter {:0.3f} are too big!".format(sg_c['low_hole_nb'], sg_c['low_hole_diameter']))
+    sys.exit(2)
+  if(high_hole_space_angle<(2*high_hole_diameter_angle+radian_epsilon)):
+    print("ERR255: Error, high_hole_nb {:d} or high_hole_diameter {:0.3f} are too big!".format(sg_c['high_hole_nb'], sg_c['high_hole_diameter']))
+    sys.exit(2)
+  ### generate the portion outlines
+  part_figure_list = []
+  if(sg_c['gear_tooth_nb']>0): # create a gear_profile
+    for i in range(2*sg_c['split_nb']):
+      gp_c['portion_tooth_nb']    = portion_gear_tooth_nb[i]
+      gp_c['portion_first_end']   = portion_gear_first_end[i]
+      gp_c['portion_last_end']    = portion_gear_last_end[i]
+      gp_c['gear_initial_angle']  = portion_gear_tooth_angle[i]
+      gp_c['simulation_enable'] = False
+      (gear_profile_B, trash_gear_profile_parameters, trash_gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gp_c)
+      tmp_a = sg_c['split_initial_angle'] + (i+2.0)*portion_angle
+      tmp_b = sg_c['split_initial_angle'] + (i+1.0)*portion_angle
+      tmp_c = sg_c['split_initial_angle'] + (i+0.0)*portion_angle
+      low_portion_A = []
+      low_portion_A.append((gear_profile_B[-1][0], gear_profile_B[-1][1], 0))
+      low_portion_A.append((g1_ix+high_split_radius*math.cos(tmp_a), g1_iy+high_split_radius*math.sin(tmp_a), split_router_bit_radius))
+      low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_a), g1_iy+low_split_radius*math.sin(tmp_a), 0))
+      low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
+      low_portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), split_router_bit_radius))
+      low_portion_A.append((gear_profile_B[0][0], gear_profile_B[0][1], 0))
+      low_portion_B = cnc25d_api.cnc_cut_outline(low_portion_A, "portion_A")
+      portion_B = gear_profile_B
+      portion_B.extend(low_portion_B[1:])
+      #part_figure_list.append([portion_B])
+      part_figure_list.append([portion_B[:]])
+  else:
+    for i in range(2*sg_c['split_nb']):
+      tmp_a = sg_c['split_initial_angle'] + (i+2.0)*portion_angle
+      tmp_b = sg_c['split_initial_angle'] + (i+1.0)*portion_angle
+      tmp_c = sg_c['split_initial_angle'] + (i+0.0)*portion_angle
+      portion_A = []
+      portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), 0))
+      portion_A.append((g1_ix+high_split_radius*math.cos(tmp_b), g1_iy+high_split_radius*math.sin(tmp_b), g1_ix+high_split_radius*math.cos(tmp_a), g1_iy+high_split_radius*math.sin(tmp_a), 0))
+      portion_A.append((g1_ix+low_split_radius*math.cos(tmp_a), g1_iy+low_split_radius*math.sin(tmp_a), 0))
+      portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
+      portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), 0))
+      portion_B = cnc25d_api.cnc_cut_outline(portion_A, "circle_portion_A")
+      #part_figure_list.append([portion_B])
+      part_figure_list.append([portion_B[:]])
+  ### generate the hole outlines
+  for i in range(len(part_figure_list)):
+    hole_figure = []
+    if(low_hole_radius>0):
+      for j in range(2*sg_c['low_hole_nb']):
+        tmp_a = sg_c['split_initial_angle'] + i*portion_angle + (j+0.5)*low_hole_space_angle
+        hole_figure.append((g1_ix+low_hole_circle_radius*math.cos(tmp_a), g1_iy+low_hole_circle_radius*math.sin(tmp_a), low_hole_radius))
+    if(high_hole_radius>0):
+      for j in range(2*sg_c['high_hole_nb']):
+        tmp_a = sg_c['split_initial_angle'] + i*portion_angle + (j+0.5)*high_hole_space_angle
+        hole_figure.append((g1_ix+high_hole_circle_radius*math.cos(tmp_a), g1_iy+high_hole_circle_radius*math.sin(tmp_a), high_hole_radius))
+    #part_figure_list[i].extend(hole_figure)
+    part_figure_list[i].extend(hole_figure[:])
 
-  ### return the gearwheel as FreeCAD Part object
-  #r_gw = cnc25d_api.figure_to_freecad_25d_part(gw_figure, ai_gear_profile_height)
-  r_gw = 1 # this is to spare the freecad computation time during debuging
-  return(r_gw)
+  ### design output
+  sgw_assembly_figure = []
+  sgw_assembly_A_figure = []
+  sgw_assembly_B_figure = []
+  aligned_part_figure_list = []
+  sgw_list_of_parts = []
+  for i in range(len(part_figure_list)):
+    sgw_assembly_figure.extend(part_figure_list[i])
+    if((i%2)==0):
+      sgw_assembly_A_figure.extend(part_figure_list[i])
+    else:
+      sgw_assembly_B_figure.extend(part_figure_list[i])
+    aligned_part_figure_list.append([])
+    shift_x = 2.2 * (i%2) * minimal_gear_profile_radius
+    shift_y = 2.2 * int(i/2) * minimal_gear_profile_radius
+    for j in range(len(part_figure_list[i])):
+      rotated_outline = cnc25d_api.outline_rotate(part_figure_list[i][j], g1_ix, g1_iy, -1*(sg_c['split_initial_angle'] + i*portion_angle))
+      aligned_part_figure_list[i].append(rotated_outline)
+      sgw_list_of_parts.append(cnc25d_api.outline_shift_xy(rotated_outline, shift_x, 1, shift_y, 1))
+  # ideal_outline in overlay
+  sgw_assembly_figure_overlay = part_figure_list[0]
+  # sgw_parameter_info
+  sgw_parameter_info = "\nSplit-Gearwheel parameter info:\n"
+  sgw_parameter_info += "\n" + sg_c['args_in_txt'] + "\n\n"
+  sgw_parameter_info += gear_profile_info
+  sgw_parameter_info += """
+split_nb:             \t{:d}
+split_initial_angle:  \t{:0.3f} (radian)  \t{:0.3f} (degree)
+high_split_radius:    \t{:0.3f} diameter: \t{:0.3f}
+high_split_type:      \t{:s}
+""".format(sg_c['split_nb'], sg_c['split_initial_angle'], sg_c['split_initial_angle']*180/math.pi, high_split_radius, 2*high_split_radius, sg_c['high_split_type'])
+  sgw_parameter_info += """
+low_split_radius:     \t{:0.3f} diameter: \t{:0.3f}
+low_split_type:       \t{:s}
+""".format(low_split_radius, 2*low_split_radius, sg_c['low_split_type'])
+  sgw_parameter_info += """
+low_hole_circle_radius:   \t{:0.3f} diameter: \t{:0.3f}
+low_hole_radius:          \t{:0.3f} diameter: \t{:0.3f}
+low_hole_nb:              \t{:d}
+""".format(low_hole_circle_radius, 2*low_hole_circle_radius, low_hole_radius, 2*low_hole_radius, sg_c['low_hole_nb'])
+  sgw_parameter_info += """
+high_hole_circle_radius:  \t{:0.3f} diameter: \t{:0.3f}
+high_hole_radius:         \t{:0.3f} diameter: \t{:0.3f}
+high_hole_nb:             \t{:d}
+""".format(high_hole_circle_radius, 2*high_hole_circle_radius, high_hole_radius, 2*high_hole_radius, sg_c['high_hole_nb'])
+  sgw_parameter_info += """
+gear_router_bit_radius:   \t{:0.3f}
+split_router_bit_radius:  \t{:0.3f}
+cnc_router_bit_radius:    \t{:0.3f}
+""".format(gear_router_bit_radius, split_router_bit_radius, sg_c['cnc_router_bit_radius'])
+  #print(sgw_parameter_info)
+
+  ### display with Tkinter
+  if(sg_c['tkinter_view']):
+    print(sgw_parameter_info)
+    cnc25d_api.figure_simple_display(sgw_assembly_figure, sgw_assembly_figure_overlay, sgw_parameter_info)
+    cnc25d_api.figure_simple_display(sgw_assembly_A_figure, sgw_assembly_B_figure, sgw_parameter_info)
+    for i in range(len(part_figure_list)):
+      #cnc25d_api.figure_simple_display(aligned_part_figure_list[i], part_figure_list[i], sgw_parameter_info)
+      cnc25d_api.figure_simple_display(part_figure_list[i], part_figure_list[i-1], sgw_parameter_info)
+    cnc25d_api.figure_simple_display(sgw_list_of_parts, [], sgw_parameter_info)
+      
+  ### generate output file
+  output_file_suffix = ''
+  if(sg_c['output_file_basename']!=''):
+    output_file_suffix = 'brep'
+    output_file_basename = sg_c['output_file_basename']
+    if(re.search('\.dxf$', sg_c['output_file_basename'])):
+      output_file_suffix = 'dxf'
+      output_file_basename = re.sub('\.dxf$', '', sg_c['output_file_basename'])
+    elif(re.search('\.svg$', sg_c['output_file_basename'])):
+      output_file_suffix = 'svg'
+      output_file_basename = re.sub('\.svg$', '', sg_c['output_file_basename'])
+  if((output_file_suffix=='svg')or(output_file_suffix=='dxf')):
+    cnc25d_api.generate_output_file(sgw_assembly_figure, output_file_basename + "_assembly." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
+    cnc25d_api.generate_output_file(sgw_assembly_A_figure, output_file_basename + "_assembly_A." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
+    cnc25d_api.generate_output_file(sgw_assembly_B_figure, output_file_basename + "_assembly_B." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
+    cnc25d_api.generate_output_file(sgw_list_of_parts, output_file_basename + "_part_list." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
+    for i in range(sg_c['split_nb']):
+      cnc25d_api.generate_output_file(part_figure_list[2*i],    output_file_basename + "_part_A{:d}_placed.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
+      cnc25d_api.generate_output_file(part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_placed.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
+      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i],    output_file_basename + "_part_A{:d}_aligned.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
+      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_aligned.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
+  elif(output_file_suffix=='brep'):
+    #cnc25d_api.generate_output_file(sgw_assembly_figure, output_file_basename + "_assembly", sg_c['gear_profile_height'], sgw_parameter_info)
+    for i in range(sg_c['split_nb']):
+      cnc25d_api.generate_output_file(part_figure_list[2*i],    output_file_basename + "_part_A{:d}_placed".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
+      cnc25d_api.generate_output_file(part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_placed".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
+      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i],    output_file_basename + "_part_A{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
+      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
+
+  ### return the split_gearwheel as FreeCAD Part object
+  r_sgw = cnc25d_api.figure_to_freecad_25d_part(part_figure_list[0], sg_c['gear_profile_height'])
+  #r_sgw = 1 # this is to spare the freecad computation time during debuging
+  return(r_sgw)
 
 ################################################################
 # split_gearwheel wrapper dance
@@ -422,14 +537,24 @@ def split_gearwheel_self_test():
   Look at the simulation Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"                  , "--gear_tooth_nb 21 --gear_module 10.0 --axle_type rectangle --axle_x_width 30 --axle_y_width 40 --axle_router_bit_radius 8.0 --cnc_router_bit_radius 3.0"],
-    ["with gearwheel hollow 1 leg"    , "--gear_tooth_nb 25 --gear_module 10.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 20 --axle_router_bit_radius 4.0 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 1 --wheel_hollow_leg_width 20.0 --wheel_hollow_leg_angle 0.9 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 200.0 --wheel_hollow_router_bit_radius 15.0"],
-    ["with gearwheel hollow 3 legs"   , "--gear_tooth_nb 24 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 3 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 40.0 --wheel_hollow_external_diameter 180.0 --wheel_hollow_router_bit_radius 15.0"],
-    ["with gearwheel hollow 7 legs"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 30.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0"],
-    ["with gear_profile simulation"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --simulation"],
-    ["with gear_profile simulation"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --output_file_basename test_output/gearwheel_self_test.dxf"],
-    ["no tooth"                       , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 20 --axle_router_bit_radius 3.0 --wheel_hollow_leg_number 4 --wheel_hollow_leg_width 10.0 --wheel_hollow_internal_diameter 40.0  --wheel_hollow_external_diameter 80.0 --wheel_hollow_router_bit_radius 8.0"],
-    ["last test"                      , "--gear_tooth_nb 30 --gear_module 10.0"]]
+    ["simplest test"        , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2"],
+    ["split nb 2"           , "--gear_tooth_nb 27 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 2"],
+    ["split nb 3"           , "--gear_tooth_nb 26 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 3"],
+    ["split nb 4"           , "--gear_tooth_nb 23 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 4"],
+    ["split nb 5"           , "--gear_tooth_nb 21 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 5"],
+    ["split nb 6"           , "--gear_tooth_nb 29 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 6"],
+    ["split nb 7"           , "--gear_tooth_nb 31 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 7"],
+    ["split nb 8"           , "--gear_tooth_nb 33 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --split_nb 8"],
+    ["portion and tooth nb" , "--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0"],
+    ["no tooth"             , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 3"],
+    ["no low hole"          , "--gear_tooth_nb 27 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --low_hole_nb 0"],
+    ["no high hole"         , "--gear_tooth_nb 28 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 0"],
+    ["split style line"     , "--gear_tooth_nb 30 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --low_split_type line"],
+    ["split style addendum" , "--gear_tooth_nb 41 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --high_split_type a --split_nb 10"],
+    ["split initial angle"  , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --split_initial_angle 0.1 --gear_initial_angle 0.15"],
+    ["gear simulation"      , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --simulation_enable"],
+    ["output file"          , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --output_file_basename test_output/split_gearwheel_self_test.dxf"],
+    ["last test"            , "--gear_tooth_nb 24 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   split_gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function split_gearwheel().')
   split_gearwheel_parser = split_gearwheel_add_argument(split_gearwheel_parser)
@@ -476,5 +601,7 @@ def split_gearwheel_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("split_gearwheel.py says hello!\n")
   #my_sgw = split_gearwheel_cli()
-  my_sgw = split_gearwheel_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto2".split())
+  #my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2".split())
+  my_sgw = split_gearwheel_cli("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0".split())
+  #Part.show(my_sgw)
 

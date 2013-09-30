@@ -206,7 +206,19 @@ def smooth_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_ro
   if(GH<radian_epsilon):
     print("ERR408: the length GH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request))
     sys.exit(1)
-  corner_angle = math.acos((AG**2+AH**2-GH**2)/(2*AH*AG))
+  # law of cosines
+  #corner_angle = math.acos((AG**2+AH**2-GH**2)/(2*AH*AG))
+  corner_cos = (AG**2+AH**2-GH**2)/(2*AH*AG)
+  if(abs(corner_cos)>(1+radian_epsilon)):
+    print("ERR210: Error with math.acos {:0.5f}".format((AG**2+AH**2-GH**2)/(2*AH*AG)))
+    print("dbg211: AG {:0.3f}  AH {:0.3f}  GH {:0.3f}".format(AG, AH, GH))
+    sys.exit(2)
+  elif(corner_cos>=1):
+    corner_angle = 0
+  elif(corner_cos<=-1):
+    corner_angle = math.pi
+  else:
+    corner_angle = math.acos(corner_cos)
   #print("dbg206: corner_angle:", corner_angle)
   if(corner_angle>math.pi-radian_epsilon):
     print("WARN673: Warning, the corner angle {:s} is too flat and won't be smoothed!".format(ai_error_msg_id))

@@ -1044,14 +1044,14 @@ def gear_profile_dictionary_init():
   ###### return
   return(r_gpd)
 
-def gear_profile_dictionary_wrapper(ai_gp_dict):
+def gear_profile_dictionary_wrapper(ai_constraints):
   """
   wrapper function of gear_profile() to call it using a gear_profile_dictionary variable.
   """
   #
   gpdi = gear_profile_dictionary_init()
   gp_c = gpdi.copy()
-  gp_c.update(ai_gp_dict)
+  gp_c.update(ai_constraints)
   if(len(gp_c.viewkeys() - gpdi.viewkeys()) != 0): # check if unknown constraints has been set
     print("ERR056: Error, unknown gear-profile constraints: {:s}".format(gp_c.viewkeys() - gpdi.viewkeys()))
     sys.exit(2)
@@ -1063,68 +1063,68 @@ def gear_profile_dictionary_wrapper(ai_gp_dict):
   r_gp = gear_profile(
                       ### first gear
                       # general
-                      ai_gear_type                      = ai_gp_dict['gear_type'],
-                      ai_gear_tooth_nb                  = ai_gp_dict['gear_tooth_nb'],
-                      ai_gear_module                    = ai_gp_dict['gear_module'],
-                      ai_gear_primitive_diameter        = ai_gp_dict['gear_primitive_diameter'],
-                      ai_gear_addendum_dedendum_parity  = ai_gp_dict['gear_addendum_dedendum_parity'],
+                      ai_gear_type                      = gp_c['gear_type'],
+                      ai_gear_tooth_nb                  = gp_c['gear_tooth_nb'],
+                      ai_gear_module                    = gp_c['gear_module'],
+                      ai_gear_primitive_diameter        = gp_c['gear_primitive_diameter'],
+                      ai_gear_addendum_dedendum_parity  = gp_c['gear_addendum_dedendum_parity'],
                       # tooth height
-                      ai_gear_tooth_half_height           = ai_gp_dict['gear_tooth_half_height'],
-                      ai_gear_addendum_height_pourcentage = ai_gp_dict['gear_addendum_height_pourcentage'],
-                      ai_gear_dedendum_height_pourcentage = ai_gp_dict['gear_dedendum_height_pourcentage'],
-                      ai_gear_hollow_height_pourcentage   = ai_gp_dict['gear_hollow_height_pourcentage'],
-                      ai_gear_router_bit_radius           = ai_gp_dict['gear_router_bit_radius'],
+                      ai_gear_tooth_half_height           = gp_c['gear_tooth_half_height'],
+                      ai_gear_addendum_height_pourcentage = gp_c['gear_addendum_height_pourcentage'],
+                      ai_gear_dedendum_height_pourcentage = gp_c['gear_dedendum_height_pourcentage'],
+                      ai_gear_hollow_height_pourcentage   = gp_c['gear_hollow_height_pourcentage'],
+                      ai_gear_router_bit_radius           = gp_c['gear_router_bit_radius'],
                       # positive involute
-                      ai_gear_base_diameter       = ai_gp_dict['gear_base_diameter'],
-                      ai_gear_force_angle         = ai_gp_dict['gear_force_angle'],
-                      ai_gear_tooth_resolution    = ai_gp_dict['gear_tooth_resolution'],
-                      ai_gear_skin_thickness      = ai_gp_dict['gear_skin_thickness'],
+                      ai_gear_base_diameter       = gp_c['gear_base_diameter'],
+                      ai_gear_force_angle         = gp_c['gear_force_angle'],
+                      ai_gear_tooth_resolution    = gp_c['gear_tooth_resolution'],
+                      ai_gear_skin_thickness      = gp_c['gear_skin_thickness'],
                       # negative involute (if zero, negative involute = positive involute)
-                      ai_gear_base_diameter_n     = ai_gp_dict['gear_base_diameter_n'],
-                      ai_gear_force_angle_n       = ai_gp_dict['gear_force_angle_n'],
-                      ai_gear_tooth_resolution_n  = ai_gp_dict['gear_tooth_resolution_n'],
-                      ai_gear_skin_thickness_n    = ai_gp_dict['gear_skin_thickness_n'],
+                      ai_gear_base_diameter_n     = gp_c['gear_base_diameter_n'],
+                      ai_gear_force_angle_n       = gp_c['gear_force_angle_n'],
+                      ai_gear_tooth_resolution_n  = gp_c['gear_tooth_resolution_n'],
+                      ai_gear_skin_thickness_n    = gp_c['gear_skin_thickness_n'],
                       ### second gear
                       # general
-                      ai_second_gear_type                     = ai_gp_dict['second_gear_type'],
-                      ai_second_gear_tooth_nb                 = ai_gp_dict['second_gear_tooth_nb'],
-                      ai_second_gear_primitive_diameter       = ai_gp_dict['second_gear_primitive_diameter'],
-                      ai_second_gear_addendum_dedendum_parity = ai_gp_dict['second_gear_addendum_dedendum_parity'],
+                      ai_second_gear_type                     = gp_c['second_gear_type'],
+                      ai_second_gear_tooth_nb                 = gp_c['second_gear_tooth_nb'],
+                      ai_second_gear_primitive_diameter       = gp_c['second_gear_primitive_diameter'],
+                      ai_second_gear_addendum_dedendum_parity = gp_c['second_gear_addendum_dedendum_parity'],
                       # tooth height
-                      ai_second_gear_tooth_half_height            = ai_gp_dict['second_gear_tooth_half_height'],
-                      ai_second_gear_addendum_height_pourcentage  = ai_gp_dict['second_gear_addendum_height_pourcentage'],
-                      ai_second_gear_dedendum_height_pourcentage  = ai_gp_dict['second_gear_dedendum_height_pourcentage'],
-                      ai_second_gear_hollow_height_pourcentage    = ai_gp_dict['second_gear_hollow_height_pourcentage'],
-                      ai_second_gear_router_bit_radius            = ai_gp_dict['second_gear_router_bit_radius'],
+                      ai_second_gear_tooth_half_height            = gp_c['second_gear_tooth_half_height'],
+                      ai_second_gear_addendum_height_pourcentage  = gp_c['second_gear_addendum_height_pourcentage'],
+                      ai_second_gear_dedendum_height_pourcentage  = gp_c['second_gear_dedendum_height_pourcentage'],
+                      ai_second_gear_hollow_height_pourcentage    = gp_c['second_gear_hollow_height_pourcentage'],
+                      ai_second_gear_router_bit_radius            = gp_c['second_gear_router_bit_radius'],
                       # positive involute
-                      ai_second_gear_base_diameter      = ai_gp_dict['second_gear_base_diameter'],
-                      ai_second_gear_tooth_resolution   = ai_gp_dict['second_gear_tooth_resolution'],
-                      ai_second_gear_skin_thickness     = ai_gp_dict['second_gear_skin_thickness'],
+                      ai_second_gear_base_diameter      = gp_c['second_gear_base_diameter'],
+                      ai_second_gear_tooth_resolution   = gp_c['second_gear_tooth_resolution'],
+                      ai_second_gear_skin_thickness     = gp_c['second_gear_skin_thickness'],
                       # negative involute (if zero, negative involute = positive involute)
-                      ai_second_gear_base_diameter_n    = ai_gp_dict['second_gear_base_diameter_n'],
-                      ai_second_gear_tooth_resolution_n = ai_gp_dict['second_gear_tooth_resolution_n'],
-                      ai_second_gear_skin_thickness_n   = ai_gp_dict['second_gear_skin_thickness_n'],
+                      ai_second_gear_base_diameter_n    = gp_c['second_gear_base_diameter_n'],
+                      ai_second_gear_tooth_resolution_n = gp_c['second_gear_tooth_resolution_n'],
+                      ai_second_gear_skin_thickness_n   = gp_c['second_gear_skin_thickness_n'],
                       ### gearbar specific
-                      ai_gearbar_slope                  = ai_gp_dict['gearbar_slope'],
-                      ai_gearbar_slope_n                = ai_gp_dict['gearbar_slope_n'],
+                      ai_gearbar_slope                  = gp_c['gearbar_slope'],
+                      ai_gearbar_slope_n                = gp_c['gearbar_slope_n'],
                       ### position
                       # first gear position
-                      ai_center_position_x                    = ai_gp_dict['center_position_x'],
-                      ai_center_position_y                    = ai_gp_dict['center_position_y'],
-                      ai_gear_initial_angle                   = ai_gp_dict['gear_initial_angle'],
+                      ai_center_position_x                    = gp_c['center_position_x'],
+                      ai_center_position_y                    = gp_c['center_position_y'],
+                      ai_gear_initial_angle                   = gp_c['gear_initial_angle'],
                       # second gear position
-                      ai_second_gear_position_angle           = ai_gp_dict['second_gear_position_angle'],
-                      ai_second_gear_additional_axis_length   = ai_gp_dict['second_gear_additional_axis_length'],
+                      ai_second_gear_position_angle           = gp_c['second_gear_position_angle'],
+                      ai_second_gear_additional_axis_length   = gp_c['second_gear_additional_axis_length'],
                       ### portion
-                      ai_portion_tooth_nb     = ai_gp_dict['portion_tooth_nb'],
-                      ai_portion_first_end    = ai_gp_dict['portion_first_end'],
-                      ai_portion_last_end     = ai_gp_dict['portion_last_end'],
+                      ai_portion_tooth_nb     = gp_c['portion_tooth_nb'],
+                      ai_portion_first_end    = gp_c['portion_first_end'],
+                      ai_portion_last_end     = gp_c['portion_last_end'],
                       ### output
-                      ai_gear_profile_height  = ai_gp_dict['gear_profile_height'],
-                      ai_simulation_enable    = ai_gp_dict['simulation_enable'],
-                      ai_output_file_basename = ai_gp_dict['output_file_basename'],
+                      ai_gear_profile_height  = gp_c['gear_profile_height'],
+                      ai_simulation_enable    = gp_c['simulation_enable'],
+                      ai_output_file_basename = gp_c['output_file_basename'],
                       ### optional
-                      ai_args_in_txt          = ai_gp_dict['args_in_txt'])
+                      ai_args_in_txt          = gp_c['args_in_txt'])
   return(r_gp)
 
 def gear_profile_argparse_to_dictionary(ai_gp_args, ai_variant=0):

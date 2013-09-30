@@ -255,10 +255,19 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
 def outline_arc_line_with_freecad(ai_segments, ai_outline_closed):
   """ Generates the arcs and lines outline with the FreeCAD Part API
   """
+  # precision
+  radian_epsilon = global_epsilon
+  #
   constant_z = 0 # FreeCAD.Part works in 3D. So we fix z=0 and just use the XY surface
   fc_vectors = [Base.Vector(ai_segments[0][0], ai_segments[0][1], constant_z)]
   segment_nb = len(ai_segments)-1
   fc_outline = []
+  for i in range(segment_nb-1):
+    if((abs(ai_segments[i][-2]-ai_segments[i+1][-2])<radian_epsilon)and(abs(ai_segments[i][-1]-ai_segments[i+1][-1])<radian_epsilon)):
+      print("ERR264: Error, point of index {:d} and {:d} are identical. x {:0.5f}  y {:0.5f}".format(i,i+1, ai_segments[i][-2], ai_segments[i][-1]))
+      #for j in range(segment_nb):
+      #  print("dbg269: pt {:d}  x {:0.3f}  y {:0.3f}".format(j, ai_segments[j][-2], ai_segments[j][-1]))
+      sys.exit(2)
   for i in range(segment_nb):
     segment_type = 'line'
     fc_vectors.append(Base.Vector(ai_segments[i+1][0], ai_segments[i+1][1], constant_z))

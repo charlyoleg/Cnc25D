@@ -425,6 +425,7 @@ def calc_low_level_gear_parameters(ai_param):
     else:
       portion_tooth_nb = g_ptn
       closed = False
+    ai_param['hollow_middle_angle'] = ham
     # return
     make_low_parameters = (g_type, pi_module_angle,
       i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_dsl, i1_hsl, i1_thickness,
@@ -662,7 +663,6 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     elif(first_end==3):
       (start_of_profile_B, tooth_slope_A, s_ti) = involute_outline(ox, oy, i2_base, i2_offset, i2_sign, i2u_nb, i2u_ini, i2u_inc, i2_thickness, hgt, 1, i2_dsl, 0.3*hrbr, 0, tooth_angle-pi_module_angle)
       half_hollow = half_hollow_outline(tooth_angle, tooth_slope_A[0][0], tooth_slope_A[0][1], s_ti, hrbr, ham, 1, ox, oy)
-      half_hollow.append((tooth_slope_A[1][0], tooth_slope_A[1][1]))
     # assembly
     r_final_outline.extend(half_hollow)
     r_final_outline.extend(start_of_profile_B)
@@ -707,7 +707,6 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     # gearwheel hollow
     elif(last_end==3):
       (end_of_profile_B, tooth_slope_A, s_ti) = involute_outline(ox, oy, i1_base, i1_offset, i1_sign, i1u_nb, i1u_ini, i1u_inc, i1_thickness, hgt, -1, i1_dsl, 0.3*hrbr, 0, tooth_angle)
-      half_hollow.append((tooth_slope_A[0][0], tooth_slope_A[0][1]))
       half_hollow.extend(half_hollow_outline(tooth_angle, tooth_slope_A[1][0], tooth_slope_A[1][1], s_ti, hrbr, ham, -1, ox, oy))
     # assembly
     r_final_outline.extend(end_of_profile_B)
