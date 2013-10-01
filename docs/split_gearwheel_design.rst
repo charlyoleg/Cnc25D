@@ -23,29 +23,41 @@ Split-gearwheel Parameter Dependency
 router_bit_radius
 -----------------
 
-Four router_bit radius are defined: *gear_router_bit_radius*, *wheel_hollow_router_bit_radius*, *axle_router_bit_radius* and *cnc_router_bit_radius*. Each set the router_bit radius for different areas except *cnc_router_bit_radius* that set the mimnimum value for the three other router_bit radius. If an other router_bit radius is smaller than *cnc_router_bit_radius*, it is set to *cnc_router_bit_radius*. So, we have the relations::
+Three router_bit radius are defined: *gear_router_bit_radius*, *split_router_bit_radius*, and *cnc_router_bit_radius*. Each set the router_bit radius for different areas except *cnc_router_bit_radius* that set the mimnimum value for the two other router_bit radius. If an other router_bit radius is smaller than *cnc_router_bit_radius*, it is set to *cnc_router_bit_radius*. So, we have the relations::
 
   cnc_router_bit_radius < gear_router_bit_radius
-  cnc_router_bit_radius < wheel_hollow_router_bit_radius
-  cnc_router_bit_radius < axle_router_bit_radius
+  cnc_router_bit_radius < split_router_bit_radius
 
-axle_type
----------
+split_nb
+--------
 
-Three possible shapes of axle are possible: *none*, *circle* or *rectangle*. *none* means there is no axle (*axle_x_width* and *axle_y_width* are ignored). For *circle*, the parameter *axle_x_width* is used to set the circle diameter (*axle_y_width* is ignored). *axle_x_width* and *axle_y_width* must be bigger than twice *axle_router_bit_radius*::
+*split_nb* defines in how many parts the gearwheel must be split. The *split_gearwheel()* function generates two sets (A and B) of *split_nb* parts. So you get at the end 2*split_nb parts. The set A (respectively B) makes a complete gearwheel. The set-A-gearwheel and the set-B-gearwheel can be stick together to ensure a better stability. The *low-holes* and *high-holes* ensure a good alignment between the set-A parts and set-B parts. The parameters *low_hole_nb* and *high_hole_nb* define the number of holes per half-split-portion i.e. the common portion between a set-A parts and a set-B part.
 
-  2*axle_router_bit_radius < axle_x_width
-  2*axle_router_bit_radius < axle_y_width
+low_split_diameter and high_split_diameter
+------------------------------------------
 
-wheel_hollow_leg_number
------------------------
+The constraints define 5 circles: *low_split_diameter*, *low_hole_circle_diameter*, *high_hole_circle_diameter*, *high_split_diameter* and *minimal_gear_profile_radius* (inferred from the gear-profile). If *gear_tooth_nb* = 0 then *high_split_diameter* = *minimal_gear_profile_radius*. These five circles are strictly included in each others::
 
-*wheel_hollow_leg_number* sets the number of legs (equal the number of wheel_hollows). If you set zero, no wheel_hollow are created and the other parameters related to the wheel_hollow are ignored. *wheel_hollow_internal_diameter* must be bigger than the axle. *wheel_hollow_external_diameter* must be smaller than the *gear_hollow_diameter* (which is not a parameter but derivated from other gear parameter)::
+  low_split_diameter + low_hole_radius < low_hole_circle_diameter
+  low_hole_circle_diameter + low_hole_radius + high_hole_radius < high_hole_circle_diameter
+  high_hole_circle_diameter + high_hole_radius < high_split_diameter
+  high_split_diameter < minimal_gear_profile_radius
 
-  axle_x_width < wheel_hollow_internal_diameter
-  sqrt(axle_x_width²+axle_y_width²) < wheel_hollow_internal_diameter
-  wheel_hollow_internal_diameter + 4*wheel_hollow_router_bit_radius < wheel_hollow_external_diameter
-  wheel_hollow_external_diameter < gear_hollow_diameter
+low_split_type
+--------------
+
+*low_split_type* defines the outline at the low-split-circle::
+
+  circle : the outline is an arc of circle
+  line   : the outline is composed of two lines
+
+high_split_type
+---------------
+
+*high_split_type* defines how to join the split radius with the gear-profile. Indeed the number of gear-teeth and the number of split-portion are independant. In most of the case, the gear-hollow doesn't fit exactly the split radius. The split radius stops at the high-split circle. Then, the outline goes straight to the gear-profile. The angle at the high-split circle is smooth with *split_router_bit_radius*. The possible values for *high_split_type* are::
+
+  'h': the outline goes to the closest gear-hollow middle
+  'a': the outline goes to the addendum middle if it best fits, otherwise it goes to the closest gear-hollow middle
 
 gear_tooth_nb
 -------------
@@ -55,8 +67,7 @@ gear_tooth_nb
 Alignment angles
 ----------------
 
-The rectangle axle is always fixed to the XY-axis. The angle between the first *wheel_hollow leg* (middle of it) and the X-axis is set with *wheel_hollow_leg_angle*. The angle between the first *gear_profile* tooth (middle of the addendum) and the X-axis is set with *gear_initial_angle*.
-
+*gear_initial_angle* sets the angle between the X-axis and the middle of the addendum of the first tooth. *split_initial_angle* sets the angle between the X-axis and the first split radius. Use *gear_initial_angle* or *split_initial_angle* or both to ajust the offset angle between the gear-profile anf the split-portion.
 
 
 
