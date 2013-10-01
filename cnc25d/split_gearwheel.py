@@ -89,6 +89,7 @@ def split_gearwheel_dictionary_init():
   r_sgwd['output_file_basename'] = ''
   ### optional
   r_sgwd['args_in_txt'] = ""
+  r_sgwd['return_type'] = 'int_status' # possible values: 'int_status', 'assembly_A_figure', 'freecad_object'
   #### return
   return(r_sgwd)
 
@@ -359,7 +360,11 @@ def split_gearwheel(ai_constraints):
       low_portion_A.append((gear_profile_B[-1][0], gear_profile_B[-1][1], 0))
       low_portion_A.append((g1_ix+high_split_radius*math.cos(tmp_a), g1_iy+high_split_radius*math.sin(tmp_a), split_router_bit_radius))
       low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_a), g1_iy+low_split_radius*math.sin(tmp_a), 0))
-      low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
+      if(sg_c['low_split_type']=='circle'):
+        low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
+      elif(sg_c['low_split_type']=='line'):
+        low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), 0))
+        low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
       low_portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), split_router_bit_radius))
       low_portion_A.append((gear_profile_B[0][0], gear_profile_B[0][1], 0))
       low_portion_B = cnc25d_api.cnc_cut_outline(low_portion_A, "portion_A")
@@ -376,7 +381,11 @@ def split_gearwheel(ai_constraints):
       portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), 0))
       portion_A.append((g1_ix+high_split_radius*math.cos(tmp_b), g1_iy+high_split_radius*math.sin(tmp_b), g1_ix+high_split_radius*math.cos(tmp_a), g1_iy+high_split_radius*math.sin(tmp_a), 0))
       portion_A.append((g1_ix+low_split_radius*math.cos(tmp_a), g1_iy+low_split_radius*math.sin(tmp_a), 0))
-      portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
+      if(sg_c['low_split_type']=='circle'):
+        portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
+      elif(sg_c['low_split_type']=='line'):
+        portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), 0))
+        portion_A.append((g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
       portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), 0))
       portion_B = cnc25d_api.cnc_cut_outline(portion_A, "circle_portion_A")
       #part_figure_list.append([portion_B])
@@ -488,9 +497,13 @@ cnc_router_bit_radius:    \t{:0.3f}
       cnc25d_api.generate_output_file(aligned_part_figure_list[2*i],    output_file_basename + "_part_A{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
       cnc25d_api.generate_output_file(aligned_part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
 
-  ### return the split_gearwheel as FreeCAD Part object
-  #r_sgw = cnc25d_api.figure_to_freecad_25d_part(part_figure_list[0], sg_c['gear_profile_height'])
-  r_sgw = 1 # this is to spare the freecad computation time during debuging
+  #### return
+  if(sg_c['return_type']=='int_status'):
+    r_sgw = 1
+  elif(sg_c['return_type']=='assembly_A_figure'):
+    r_sgw = sgw_assembly_A_figure
+  elif(sg_c['return_type']=='freecad_object'):
+    r_sgw = cnc25d_api.figure_to_freecad_25d_part(part_figure_list[0], sg_c['gear_profile_height'])
   return(r_sgw)
 
 ################################################################
@@ -567,7 +580,7 @@ def split_gearwheel_self_test():
     ["no tooth"             , "--gear_tooth_nb 0 --gear_primitive_diameter 200.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 3"],
     ["no low hole"          , "--gear_tooth_nb 27 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --low_hole_nb 0"],
     ["no high hole"         , "--gear_tooth_nb 28 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 0"],
-    ["split style line"     , "--gear_tooth_nb 30 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --low_split_type line"],
+    ["split style line"     , "--gear_tooth_nb 30 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --low_split_type line --split_nb 2"],
     ["split style addendum" , "--gear_tooth_nb 41 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --high_split_type a --split_nb 10"],
     ["split initial angle"  , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --split_initial_angle 0.1 --gear_initial_angle 0.15"],
     ["gear simulation"      , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --simulation_enable --second_gear_tooth_nb 19"],
