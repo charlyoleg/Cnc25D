@@ -56,22 +56,145 @@ import os
 import Part
 from FreeCAD import Base
 
+################################################################
+# box_wood_frame dictionary-constraint-arguments default values
+################################################################
+
+def box_wood_frame_dictionary_init():
+  """ create and initiate a box_wood_frame_dictionary with the default value
+  """
+  r_bwfd = {}
+  ### box
+  ## box size
+  r_bwfd['box_width']   = 400.0
+  r_bwfd['box_depth']   = 400.0
+  r_bwfd['box_height']  = 400.0
+  ## box fitting
+  r_bwfd['fitting_height'] = 30.0
+  ### plank
+  r_bwfd['h_plank_width']   = 50.0
+  r_bwfd['v_plank_width']   = 30.0
+  r_bwfd['plank_height']    = 20.0
+  r_bwfd['d_plank_width']   = 30.0
+  r_bwfd['d_plank_height']  = 10.0
+  ### details
+  r_bwfd['crenel_depth']    = 5.0
+  ### diagonal
+  r_bwfd['wall_diagonal_size']            = 50.0
+  r_bwfd['tobo_diagonal_size']            = 100.0
+  r_bwfd['diagonal_lining_top_height']    = 20.0 
+  r_bwfd['diagonal_lining_bottom_height'] = 20.0
+  ### module
+  r_bwfd['module_width'] = 1 # number of bow in a module: 1, 2, 3, 4 or 5
+  ### final details
+  r_bwfd['router_bit_radius'] = 2.0
+  r_bwfd['cutting_extra']     = 2.0
+  r_bwfd['slab_thickness']    = 5.0
+  ### output
+  r_bwfd['output_file_basename'] = ''
+  #### optional
+  r_bwfd['args_in_txt'] = ''
+  r_bwfd['return_type'] = 'int_status' # possible values: 'int_status', 'freecad_object'
+  ###### return
+  return(r_bwfd)
     
+
+################################################################
+# box_wood_frame argparse
+################################################################
+
+def box_wood_frame_add_argument(ai_parser):
+  """ Add the argparse switches relative to the box_wood_frame
+      This function intends to be used by the box_wood_frame_cli and box_wood_frame_self_test
+  """
+  r_parser = ai_parser
+  r_parser.add_argument('--box_width','--bw', action='store', type=float, default=400.0, dest='sw_box_width',
+    help="It sets the width of the box of the grid.")
+  r_parser.add_argument('--box_depth','--bd', action='store', type=float, default=400.0, dest='sw_box_depth',
+    help="It sets the depth of the box of the grid. Per default, it is set to box_width value.")
+  r_parser.add_argument('--box_height','--bh', action='store', type=float, default=400.0, dest='sw_box_height',
+    help="It sets the height of the box of the grid. Per default, it is set to box_width value.")
+  r_parser.add_argument('--fitting_height','--fh', action='store', type=float, default=30.0, dest='sw_fitting_height',
+    help="It sets the height of the fitting that pile up vertically two modules.")
+  r_parser.add_argument('--h_plank_width','--hpw', action='store', type=float, default=50.0, dest='sw_h_plank_width',
+    help="It sets the width of the horizontal planks. Note that the total width of the horizontal plank is plank_width+fitting_height.")
+  r_parser.add_argument('--v_plank_width','--vpw', action='store', type=float, default=30.0, dest='sw_v_plank_width',
+    help="It sets the width of the vertical planks.")
+  r_parser.add_argument('--plank_height','--ph', action='store', type=float, default=20.0, dest='sw_plank_height',
+    help="It sets the height of the vertical and horizontal planks.")
+  r_parser.add_argument('--d_plank_width','--dpw', action='store', type=float, default=30.0, dest='sw_d_plank_width',
+    help="It sets the width of the diagonal planks. Per default the value is set to v_plank_width.")
+  r_parser.add_argument('--d_plank_height','--dph', action='store', type=float, default=10.0, dest='sw_d_plank_height',
+    help="It sets the height of the diagonal planks. If the vaue is zero, the plank_height value will be used. Set a lower value than plank_height to give space for the slab.")
+  r_parser.add_argument('--crenel_depth','--cd', action='store', type=float, default=5.0, dest='sw_crenel_depth',
+    help="It sets the depth of the crenels of the coplanar planks.")
+  r_parser.add_argument('--wall_diagonal_size','--wdz', action='store', type=float, default=50.0, dest='sw_wall_diagonal_size',
+    help="It sets the size of the diagonal lining of the four vertical walls.")
+  r_parser.add_argument('--tobo_diagonal_size','--tbdz', action='store', type=float, default=100.0, dest='sw_tobo_diagonal_size',
+    help="It sets the size of the diagonal lining of the top and bottom faces.")
+  r_parser.add_argument('--diagonal_lining_top_height','--dlth', action='store', type=float, default=20.0, dest='sw_diagonal_lining_top_height',
+    help="It sets the distance between the plank border and the holes for the horizontal top planks.")
+  r_parser.add_argument('--diagonal_lining_bottom_height','--dlbh', action='store', type=float, default=20.0, dest='sw_diagonal_lining_bottom_height',
+    help="It sets the distance between the plank border and the holes for the horizontal bottom planks.")
+  #r_parser.add_argument('--tobo_diagonal_depth','--tdd', action='store', type=float, default=0.0, dest='sw_tobo_diagonal_depth',
+  #  help="It sets the depth of the fitting between tobo_diagonal_lining_plank and horizontal_plank.")
+  r_parser.add_argument('--module_width','--mw', action='store', type=int, default=1, dest='sw_module_width',
+    help="It sets the width of the module in number of box_width.")
+  #r_parser.add_argument('--module_depth','--md', action='store', type=int, default=1, dest='sw_module_depth',
+  #  help="It sets the depth of the module in number of box_depth.")
+  #r_parser.add_argument('--module_height','--mh', action='store', type=int, default=1, dest='sw_module_height',
+  #  help="It sets the height of the module in number of box_height.")
+  r_parser.add_argument('--router_bit_radius','--rr', action='store', type=float, default=2.0, dest='sw_router_bit_radius',
+    help="It sets the radius of the router_bit of the cnc.")
+  r_parser.add_argument('--cutting_extra','--ce', action='store', type=float, default=2.0, dest='sw_cutting_extra',
+    help="It sets the cutting_extra used to see better the fitting in the assembly view.")
+  r_parser.add_argument('--slab_thickness','--st', action='store', type=float, default=5.0, dest='sw_slab_thickness',
+    help="If not zero (the default value), it generates the slabs with this thickness.")
+  r_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
+    help="If not set to the empty string (the default value), it generates a bunch of design files starting with this basename.")
+  return(r_parser)
+
 ################################################################
 # the main function to be re-used
 ################################################################
 
-def box_wood_frame(ai_box_width, ai_box_depth, ai_box_height,
-    ai_fitting_height, ai_h_plank_width, ai_v_plank_width, ai_plank_height,
-    ai_d_plank_width, ai_d_plank_height, ai_crenel_depth,
-    ai_wall_diagonal_size, ai_tobo_diagonal_size,
-    ai_diagonal_lining_top_height, ai_diagonal_lining_bottom_height,
-    ai_module_width, ai_router_bit_radius, ai_cutting_extra,
-    ai_slab_thickness, ai_output_file_basename):
+def box_wood_frame(ai_constraints):
   """
   The main function of the script.
   It generates the pilable box modules according to design parameters
   """
+  ### check the dictionary-arguments ai_constraints
+  bwfdi = box_wood_frame_dictionary_init()
+  bwf_c = bwfdi.copy()
+  bwf_c.update(ai_constraints)
+  #print("dbg155: bwf_c:", bwf_c)
+  if(len(bwf_c.viewkeys() & bwfdi.viewkeys()) != len(bwf_c.viewkeys() | bwfdi.viewkeys())): # check if the dictionary bwf_c has exactly all the keys compare to box_wood_frame_dictionary_init()
+    print("ERR157: Error, bwf_c has too much entries as {:s} or missing entries as {:s}".format(bwf_c.viewkeys() - bwfdi.viewkeys(), bwfdi.viewkeys() - bwf_c.viewkeys()))
+    sys.exit(2)
+  #print("dbg164: new box_wood_frame constraints:")
+  #for k in bwf_c.viewkeys():
+  #  if(bwf_c[k] != bwfdi[k]):
+  #    print("dbg166: for k {:s}, bwf_c[k] {:s} != bwfdi[k] {:s}".format(k, str(bwf_c[k]), str(bwfdi[k])))
+  ## convertion from dictionary to simple variable
+  ai_box_width = bwf_c['box_width']
+  ai_box_depth = bwf_c['box_depth']
+  ai_box_height = bwf_c['box_height']
+  ai_fitting_height = bwf_c['fitting_height']
+  ai_h_plank_width = bwf_c['h_plank_width']
+  ai_v_plank_width = bwf_c['v_plank_width']
+  ai_plank_height = bwf_c['plank_height']
+  ai_d_plank_width = bwf_c['d_plank_width']
+  ai_d_plank_height = bwf_c['d_plank_height']
+  ai_crenel_depth = bwf_c['crenel_depth']
+  ai_wall_diagonal_size = bwf_c['wall_diagonal_size']
+  ai_tobo_diagonal_size = bwf_c['tobo_diagonal_size']
+  ai_diagonal_lining_top_height = bwf_c['diagonal_lining_top_height']
+  ai_diagonal_lining_bottom_height = bwf_c['diagonal_lining_bottom_height']
+  ai_module_width = bwf_c['module_width']
+  ai_router_bit_radius = bwf_c['router_bit_radius']
+  ai_cutting_extra = bwf_c['cutting_extra']
+  ai_slab_thickness = bwf_c['slab_thickness']
+  #ai_output_file_basename = bwf_c['output_file_basename']
   ## check parameter coherence
   minimal_thickness = 5.0 # only used to check the parameter coherence
   if( (ai_plank_height + ai_v_plank_width + ai_wall_diagonal_size + ai_d_plank_height*math.sqrt(2) + minimal_thickness) > ai_box_width/2 ):
@@ -1613,73 +1736,107 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
   return(r_bwf)
 
 ################################################################
+# box_wood_frame wrapper dance
+################################################################
+
+def box_wood_frame_argparse_to_dictionary(ai_bwf_args):
+  """ convert a box_wood_frame_argparse into a box_wood_frame_dictionary
+  """
+  r_bwfd = {}
+  ### box
+  ## box size
+  r_bwfd['box_width']   = ai_bwf_args.sw_box_width
+  r_bwfd['box_depth']   = ai_bwf_args.sw_box_depth
+  r_bwfd['box_height']  = ai_bwf_args.sw_box_height
+  ## box fitting
+  r_bwfd['fitting_height'] = ai_bwf_args.sw_fitting_height
+  ### plank
+  r_bwfd['h_plank_width']   = ai_bwf_args.sw_h_plank_width
+  r_bwfd['v_plank_width']   = ai_bwf_args.sw_v_plank_width
+  r_bwfd['plank_height']    = ai_bwf_args.sw_plank_height
+  r_bwfd['d_plank_width']   = ai_bwf_args.sw_d_plank_width
+  r_bwfd['d_plank_height']  = ai_bwf_args.sw_d_plank_height
+  ### details
+  r_bwfd['crenel_depth']    = ai_bwf_args.sw_crenel_depth
+  ### diagonal
+  r_bwfd['wall_diagonal_size']            = ai_bwf_args.sw_wall_diagonal_size
+  r_bwfd['tobo_diagonal_size']            = ai_bwf_args.sw_tobo_diagonal_size
+  r_bwfd['diagonal_lining_top_height']    = ai_bwf_args.sw_diagonal_lining_top_height
+  r_bwfd['diagonal_lining_bottom_height'] = ai_bwf_args.sw_diagonal_lining_bottom_height
+  ### module
+  r_bwfd['module_width'] = ai_bwf_args.sw_module_width
+  ### final details
+  r_bwfd['router_bit_radius'] = ai_bwf_args.sw_router_bit_radius
+  r_bwfd['cutting_extra']     = ai_bwf_args.sw_cutting_extra
+  r_bwfd['slab_thickness']    = ai_bwf_args.sw_slab_thickness
+  ### output
+  r_bwfd['output_file_basename'] = ai_bwf_args.sw_output_file_basename
+  #### optional
+  #r_bwfd['args_in_txt'] = ''
+  #r_bwfd['return_type'] = ''
+  ### return
+  return(r_bwfd)
+
+def box_wood_frame_argparse_wrapper(ai_bwf_args, ai_args_in_txt=''):
+  """
+  wrapper function of box_wood_frame() to call it using the bwf_parser.
+  bwf_parser is mostly used for debug (cli) and non-regression tests.
+  """
+  # wrapper
+  bwfd = {}
+  bwfd.update(box_wood_frame_argparse_to_dictionary(ai_bwf_args))
+  bwfd['args_in_txt'] = ai_args_in_txt
+  bwfd['return_type'] = 'int_status'
+  r_bwf = box_wood_frame(bwfd)
+  return(r_bwf)
+
+################################################################
+# self test
+################################################################
+
+def box_wood_frame_self_test():
+  """
+  This is the non-regression test of box_wood_frame.
+  """
+  test_case_switch = [
+    ("simple test", "--box_width 600.0"),
+    ("just default value", ""),
+    ("last test", "--box_height 600.0")]
+
+  #print("dbg741: len(test_case_switch):", len(test_case_switch))
+  bwf_parser = argparse.ArgumentParser(description='Command line interface for the function box_wood_frame().')
+  bwf_parser = box_wood_frame_add_argument(bwf_parser, 0)
+  for i in range(len(test_case_switch)):
+    l_test_switch = test_case_switch[i][1]
+    print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
+    l_args = l_test_switch.split()
+    #print("dbg414: l_args:", l_args)
+    st_args = bwf_parser.parse_args(l_args)
+    r_bwfst = box_wood_frame_argparse_wrapper(st_args)
+  return(r_bwfst)
+
+################################################################
 # box_wood_frame command line interface
 ################################################################
 
-def box_wood_frame_cli():
+def box_wood_frame_cli(ai_args=None):
   """ it is the command line interface of box_wood_frame.py when it is used in standalone
   """
   bwf_parser = argparse.ArgumentParser(description='Command line interface for the function box_wood_frame().')
-  bwf_parser.add_argument('--box_width','--bw', action='store', type=float, default=400.0, dest='sw_box_width',
-    help="It sets the width of the box of the grid.")
-  bwf_parser.add_argument('--box_depth','--bd', action='store', type=float, default=400.0, dest='sw_box_depth',
-    help="It sets the depth of the box of the grid. Per default, it is set to box_width value.")
-  bwf_parser.add_argument('--box_height','--bh', action='store', type=float, default=400.0, dest='sw_box_height',
-    help="It sets the height of the box of the grid. Per default, it is set to box_width value.")
-  bwf_parser.add_argument('--fitting_height','--fh', action='store', type=float, default=30.0, dest='sw_fitting_height',
-    help="It sets the height of the fitting that pile up vertically two modules.")
-  bwf_parser.add_argument('--h_plank_width','--hpw', action='store', type=float, default=50.0, dest='sw_h_plank_width',
-    help="It sets the width of the horizontal planks. Note that the total width of the horizontal plank is plank_width+fitting_height.")
-  bwf_parser.add_argument('--v_plank_width','--vpw', action='store', type=float, default=30.0, dest='sw_v_plank_width',
-    help="It sets the width of the vertical planks.")
-  bwf_parser.add_argument('--plank_height','--ph', action='store', type=float, default=20.0, dest='sw_plank_height',
-    help="It sets the height of the vertical and horizontal planks.")
-  bwf_parser.add_argument('--d_plank_width','--dpw', action='store', type=float, default=30.0, dest='sw_d_plank_width',
-    help="It sets the width of the diagonal planks. Per default the value is set to v_plank_width.")
-  bwf_parser.add_argument('--d_plank_height','--dph', action='store', type=float, default=10.0, dest='sw_d_plank_height',
-    help="It sets the height of the diagonal planks. If the vaue is zero, the plank_height value will be used. Set a lower value than plank_height to give space for the slab.")
-  bwf_parser.add_argument('--crenel_depth','--cd', action='store', type=float, default=5.0, dest='sw_crenel_depth',
-    help="It sets the depth of the crenels of the coplanar planks.")
-  bwf_parser.add_argument('--wall_diagonal_size','--wdz', action='store', type=float, default=50.0, dest='sw_wall_diagonal_size',
-    help="It sets the size of the diagonal lining of the four vertical walls.")
-  bwf_parser.add_argument('--tobo_diagonal_size','--tbdz', action='store', type=float, default=100.0, dest='sw_tobo_diagonal_size',
-    help="It sets the size of the diagonal lining of the top and bottom faces.")
-  bwf_parser.add_argument('--diagonal_lining_top_height','--dlth', action='store', type=float, default=20.0, dest='sw_diagonal_lining_top_height',
-    help="It sets the distance between the plank border and the holes for the horizontal top planks.")
-  bwf_parser.add_argument('--diagonal_lining_bottom_height','--dlbh', action='store', type=float, default=20.0, dest='sw_diagonal_lining_bottom_height',
-    help="It sets the distance between the plank border and the holes for the horizontal bottom planks.")
-  #bwf_parser.add_argument('--tobo_diagonal_depth','--tdd', action='store', type=float, default=0.0, dest='sw_tobo_diagonal_depth',
-  #  help="It sets the depth of the fitting between tobo_diagonal_lining_plank and horizontal_plank.")
-  bwf_parser.add_argument('--module_width','--mw', action='store', type=int, default=1, dest='sw_module_width',
-    help="It sets the width of the module in number of box_width.")
-  #bwf_parser.add_argument('--module_depth','--md', action='store', type=int, default=1, dest='sw_module_depth',
-  #  help="It sets the depth of the module in number of box_depth.")
-  #bwf_parser.add_argument('--module_height','--mh', action='store', type=int, default=1, dest='sw_module_height',
-  #  help="It sets the height of the module in number of box_height.")
-  bwf_parser.add_argument('--router_bit_radius','--rr', action='store', type=float, default=2.0, dest='sw_router_bit_radius',
-    help="It sets the radius of the router_bit of the cnc.")
-  bwf_parser.add_argument('--cutting_extra','--ce', action='store', type=float, default=2.0, dest='sw_cutting_extra',
-    help="It sets the cutting_extra used to see better the fitting in the assembly view.")
-  bwf_parser.add_argument('--slab_thickness','--st', action='store', type=float, default=5.0, dest='sw_slab_thickness',
-    help="If not zero (the default value), it generates the slabs with this thickness.")
-  bwf_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
-    help="If not set to the empty string (the default value), it generates a bunch of design files starting with this basename.")
+  bwf_parser = box_wood_frame_add_argument(bwf_parser)
+  # add switch for self_test
+  bwf_parser.add_argument('--run_self_test','--rst', action='store_true', default=False, dest='sw_run_self_test',
+    help='Generate several corner cases of parameter sets and makes the according box_wood_frame')
   # this ensure the possible to use the script with python and freecad
-  arg_index_offset=0
-  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
-    arg_index_offset=1
-    if(len(sys.argv)>=2):
-      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
-        arg_index_offset=2
-  bwf_args = bwf_parser.parse_args(sys.argv[arg_index_offset+1:])
-  print("dbg111: start building the 3D part")
-  r_bwf = box_wood_frame(bwf_args.sw_box_width, bwf_args.sw_box_depth, bwf_args.sw_box_height,
-    bwf_args.sw_fitting_height, bwf_args.sw_h_plank_width, bwf_args.sw_v_plank_width, bwf_args.sw_plank_height,
-    bwf_args.sw_d_plank_width, bwf_args.sw_d_plank_height, bwf_args.sw_crenel_depth,
-    bwf_args.sw_wall_diagonal_size, bwf_args.sw_tobo_diagonal_size,
-    bwf_args.sw_diagonal_lining_top_height, bwf_args.sw_diagonal_lining_bottom_height,
-    bwf_args.sw_module_width, bwf_args.sw_router_bit_radius, bwf_args.sw_cutting_extra,
-    bwf_args.sw_slab_thickness, bwf_args.sw_output_file_basename)
+  effective_args = cnc25d_api.get_effective_args(ai_args)
+  effective_args_in_txt = "box_wood_frame arguments: " + ' '.join(effective_args)
+  #print("dbg557: effective_args:", effective_args)
+  bwf_args = bwf_parser.parse_args(effective_args)
+  print("dbg111: start making the box_wood_frame")
+  if(bwf_args.sw_run_self_test):
+    r_bwf = box_wood_frame_self_test()
+  else:
+    r_bwf = box_wood_frame_argparse_wrapper(bwf_args, effective_args_in_txt)
   print("dbg999: end of script")
   return(r_bwf)
 
@@ -1690,7 +1847,8 @@ def box_wood_frame_cli():
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("box_wood_frame says hello!\n")
-  my_bwf = box_wood_frame_cli()
+  #my_bwf = box_wood_frame_cli()
+  my_bwf = box_wood_frame_cli("--box_height 600.0")
   Part.show(my_bwf)
 
 
