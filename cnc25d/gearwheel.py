@@ -193,7 +193,8 @@ def gearwheel(ai_constraints):
     gp_c['portion_last_end'] = 0
     gp_c['output_file_basename'] = ''
     gp_c['args_in_txt'] = ''
-    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gp_c)
+    gp_c['return_type'] = 'figure_param_info'
+    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(gp_c)
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
     minimal_gear_profile_radius = gear_profile_parameters['hollow_radius']

@@ -203,7 +203,8 @@ def split_gearwheel(ai_constraints):
     gp_c['portion_last_end'] = 0
     gp_c['output_file_basename'] = ''
     gp_c['args_in_txt'] = ''
-    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gp_c)
+    gp_c['return_type'] = 'figure_param_info'
+    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(gp_c)
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
     minimal_gear_profile_radius = gear_profile_parameters['hollow_radius']
@@ -348,9 +349,10 @@ def split_gearwheel(ai_constraints):
       gp_c['portion_last_end']    = portion_gear_last_end[i]
       gp_c['gear_initial_angle']  = portion_gear_tooth_angle[i]
       gp_c['simulation_enable'] = False
+      gp_c['return_type'] = 'figure_param_info'
       #print("dbg342: gp_c:", gp_c)
       #print("dbg341: gp_c['portion_tooth_nb']: {:d}".format(gp_c['portion_tooth_nb']))
-      (gear_profile_B, trash_gear_profile_parameters, trash_gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gp_c)
+      (gear_profile_B, trash_gear_profile_parameters, trash_gear_profile_info) = gear_profile.gear_profile(gp_c)
       #print("dbg345: trash_gear_profile_parameters:", trash_gear_profile_parameters)
       #print("dbg346: trash_gear_profile_parameters['portion_tooth_nb']: {:d}".format(trash_gear_profile_parameters['portion_tooth_nb']))
       tmp_a = sg_c['split_initial_angle'] + (i+2.0)*portion_angle
