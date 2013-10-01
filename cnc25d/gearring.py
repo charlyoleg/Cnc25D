@@ -55,6 +55,43 @@ from FreeCAD import Base
 # cnc25d
 import gear_profile
 
+
+################################################################
+# gearring dictionary-constraint-arguments default values
+################################################################
+
+def gearring_dictionary_init():
+  """ create and initiate a gearring_dictionary with the default value
+  """
+  r_grd = {}
+  #### inherit dictionary entries from gear_profile
+  r_grd.update(gear_profile.gear_profile_dictionary_init())
+  #### gearring dictionary entries
+  ### holder
+  r_grd['holder_diameter']            = 0.0
+  r_grd['holder_crenel_number']       = 6
+  r_grd['holder_position_angle']      = 0.0
+  ### holder-hole
+  r_grd['holder_hole_position_radius']   = 0.0
+  r_grd['holder_hole_diameter']          = 10.0
+  ### holder-crenel
+  r_grd['holder_crenel_position']        = 10.0
+  r_grd['holder_crenel_height']          = 10.0
+  r_grd['holder_crenel_width']           = 10.0
+  r_grd['holder_crenel_skin_width']      = 10.0
+  r_grd['holder_crenel_router_bit_radius']   = 1.0
+  r_grd['holder_smoothing_radius']       = 0.0
+  ### cnc router_bit constraint
+  r_grd['cnc_router_bit_radius']          = '1.0'
+  ### view the gearring with tkinter
+  r_grd['tkinter_view'] = False
+  r_grd['output_file_basename'] = ''
+  ### optional
+  r_grd['args_in_txt'] = ''
+  r_grd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+  #### return
+  return(r_grd)
+
 ################################################################
 # gearring argparse
 ################################################################
@@ -65,6 +102,8 @@ def gearring_add_argument(ai_parser):
   This function intends to be used by the gearring_cli and gearring_self_test
   """
   r_parser = ai_parser
+  ### inherit arguments from gear_profile
+  r_parser = gear_profile.gear_profile_add_argument(r_parser, 2)
   ### holder
   r_parser.add_argument('--holder_diameter','--hd', action='store', type=float, default=0.0, dest='sw_holder_diameter',
     help="Set the holder diameter of the gearring. This is a mandatory input.")
@@ -138,221 +177,98 @@ def make_holder_crenel(ai_holder_maximal_height_plus, ai_holder_crenel_height, a
 # the most important function to be used in other scripts
 ################################################################
 
-def gearring(
-      ##### from gear_profile
-      ### first gear
-      # general
-      #ai_gear_type = 'i',
-      ai_gear_tooth_nb = 0,
-      ai_gear_module = 0.0,
-      ai_gear_primitive_diameter = 0.0,
-      ai_gear_addendum_dedendum_parity = 50.0,
-      # tooth height
-      ai_gear_tooth_half_height = 0.0,
-      ai_gear_addendum_height_pourcentage = 100.0,
-      ai_gear_dedendum_height_pourcentage = 100.0,
-      ai_gear_hollow_height_pourcentage = 25.0,
-      ai_gear_router_bit_radius = 0.1,
-      # positive involute
-      ai_gear_base_diameter = 0.0,
-      ai_gear_force_angle = 0.0,
-      ai_gear_tooth_resolution = 3,
-      ai_gear_skin_thickness = 0.0,
-      # negative involute (if zero, negative involute = positive involute)
-      ai_gear_base_diameter_n = 0.0,
-      ai_gear_force_angle_n = 0.0,
-      ai_gear_tooth_resolution_n = 0,
-      ai_gear_skin_thickness_n = 0.0,
-      ### second gear
-      # general
-      #ai_second_gear_type = 'e',
-      ai_second_gear_tooth_nb = 0,
-      ai_second_gear_primitive_diameter = 0.0,
-      ai_second_gear_addendum_dedendum_parity = 0.0,
-      # tooth height
-      ai_second_gear_tooth_half_height = 0.0,
-      ai_second_gear_addendum_height_pourcentage = 100.0,
-      ai_second_gear_dedendum_height_pourcentage = 100.0,
-      ai_second_gear_hollow_height_pourcentage = 25.0,
-      ai_second_gear_router_bit_radius = 0.0,
-      # positive involute
-      ai_second_gear_base_diameter = 0.0,
-      ai_second_gear_tooth_resolution = 0,
-      ai_second_gear_skin_thickness = 0.0,
-      # negative involute (if zero, negative involute = positive involute)
-      ai_second_gear_base_diameter_n = 0.0,
-      ai_second_gear_tooth_resolution_n = 0,
-      ai_second_gear_skin_thickness_n = 0.0,
-      ### gearbar specific
-      #ai_gearbar_slope = 0.0,
-      #ai_gearbar_slope_n = 0.0,
-      ### position
-      # first gear position
-      ai_center_position_x = 0.0,
-      ai_center_position_y = 0.0,
-      ai_gear_initial_angle = 0.0,
-      # second gear position
-      ai_second_gear_position_angle = 0.0,
-      ai_second_gear_additional_axis_length = 0.0,
-      ### portion
-      #ai_portion_tooth_nb = 0,
-      #ai_portion_first_end = 0,
-      #ai_portion_last_end =0,
-      ### output
-      ai_gear_profile_height = 1.0,
-      ai_simulation_enable = False,
-      #ai_output_file_basename = '',
-      ##### from gearring
-      ### holder
-      ai_holder_diameter            = 0.0,
-      ai_holder_crenel_number       = 6,
-      ai_holder_position_angle      = 0.0,
-      ### holder-hole
-      ai_holder_hole_position_radius   = 0.0,
-      ai_holder_hole_diameter          = 10.0,
-      ### holder-crenel
-      ai_holder_crenel_position        = 10.0,
-      ai_holder_crenel_height          = 10.0,
-      ai_holder_crenel_width           = 10.0,
-      ai_holder_crenel_skin_width      = 10.0,
-      ai_holder_crenel_router_bit_radius   = 1.0,
-      ai_holder_smoothing_radius       = 0.0,
-      ### cnc router_bit constraint
-      ai_cnc_router_bit_radius          = '1.0',
-      ### view the gearring with tkinter
-      ai_tkinter_view = False,
-      ai_output_file_basename = '',
-      ### optional
-      ai_args_in_txt = ""):
+def gearring(ai_constraints):
   """
   The main function of the script.
   It generates a gearring according to the function arguments
   """
+  ### check the dictionary-arguments ai_constraints
+  grdi = gearring_dictionary_init()
+  gr_c = grdi.copy()
+  gr_c.update(ai_constraints)
+  #print("dbg155: gr_c:", gr_c)
+  if(len(gr_c.viewkeys() & grdi.viewkeys()) != len(gr_c.viewkeys() | grdi.viewkeys())): # check if the dictionary gr_c has exactly all the keys compare to gearring_dictionary_init()
+    print("ERR157: Error, gr_c has too much entries as {:s} or missing entries as {:s}".format(gr_c.viewkeys() - grdi.viewkeys(), grdi.viewkeys() - gr_c.viewkeys()))
+    sys.exit(2)
+  #print("dbg164: new gearring constraints:")
+  #for k in gr_c.viewkeys():
+  #  if(gr_c[k] != grdi[k]):
+  #    print("dbg166: for k {:s}, gr_c[k] {:s} != grdi[k] {:s}".format(k, str(gr_c[k]), str(grdi[k])))
   ### precision
   radian_epsilon = math.pi/1000
   ### check parameter coherence (part 1)
-  holder_radius = float(ai_holder_diameter)/2
-  holder_hole_position_radius = ai_holder_hole_position_radius
+  holder_radius = float(gr_c['holder_diameter'])/2
+  holder_hole_position_radius = gr_c['holder_hole_position_radius']
   if(holder_hole_position_radius==0):
     holder_hole_position_radius = holder_radius
-  holder_hole_radius = float(ai_holder_hole_diameter)/2
-  holder_maximal_radius = holder_hole_position_radius + ai_holder_crenel_position + ai_holder_crenel_height
+  holder_hole_radius = float(gr_c['holder_hole_diameter'])/2
+  holder_maximal_radius = holder_hole_position_radius + gr_c['holder_crenel_position'] + gr_c['holder_crenel_height']
   holder_maximal_height = holder_maximal_radius - holder_radius
-  holder_crenel_half_width = float(ai_holder_crenel_width)/2
-  holder_crenel_with_wall_half_width = holder_crenel_half_width + ai_holder_crenel_skin_width
+  holder_crenel_half_width = float(gr_c['holder_crenel_width'])/2
+  holder_crenel_with_wall_half_width = holder_crenel_half_width + gr_c['holder_crenel_skin_width']
   holder_crenel_half_angle = math.asin(float(holder_crenel_with_wall_half_width)/holder_radius)
   holder_crenel_x_position = math.sqrt((holder_radius)**2 - (holder_crenel_with_wall_half_width)**2)
   additional_holder_maximal_height = holder_radius - holder_crenel_x_position
   holder_maximal_height_plus = holder_maximal_height + additional_holder_maximal_height
-  holder_side_outer_smoothing_radius = min(0.8*ai_holder_crenel_skin_width, float(holder_maximal_height_plus)/4)
+  holder_side_outer_smoothing_radius = min(0.8*gr_c['holder_crenel_skin_width'], float(holder_maximal_height_plus)/4)
   holder_side_straigth_length = holder_maximal_height_plus - holder_side_outer_smoothing_radius
   # get the router_bit_radius
-  gear_router_bit_radius = ai_gear_router_bit_radius
-  if(ai_cnc_router_bit_radius>gear_router_bit_radius):
-    gear_router_bit_radius = ai_cnc_router_bit_radius
-  holder_crenel_router_bit_radius = ai_holder_crenel_router_bit_radius
-  if(ai_cnc_router_bit_radius>holder_crenel_router_bit_radius):
-    holder_crenel_router_bit_radius = ai_cnc_router_bit_radius
-  holder_smoothing_radius = ai_holder_smoothing_radius
+  gear_router_bit_radius = gr_c['gear_router_bit_radius']
+  if(gr_c['cnc_router_bit_radius']>gear_router_bit_radius):
+    gear_router_bit_radius = gr_c['cnc_router_bit_radius']
+  holder_crenel_router_bit_radius = gr_c['holder_crenel_router_bit_radius']
+  if(gr_c['cnc_router_bit_radius']>holder_crenel_router_bit_radius):
+    holder_crenel_router_bit_radius = gr_c['cnc_router_bit_radius']
+  holder_smoothing_radius = gr_c['holder_smoothing_radius']
   if(holder_smoothing_radius==0):
     holder_smoothing_radius = 0.9*holder_side_straigth_length
-  if(ai_cnc_router_bit_radius>holder_smoothing_radius):
-    holder_smoothing_radius = ai_cnc_router_bit_radius
-  # ai_holder_crenel_height
-  if(ai_holder_crenel_number>0):
+  if(gr_c['cnc_router_bit_radius']>holder_smoothing_radius):
+    holder_smoothing_radius = gr_c['cnc_router_bit_radius']
+  # gr_c['holder_crenel_height
+  if(gr_c['holder_crenel_number']>0):
     if((0.9*holder_side_straigth_length)<holder_smoothing_radius):
       print("ERR218: Error, the holder-crenel-wall-side height is too small: holder_side_straigth_length {:0.3f}  holder_smoothing_radius {:0.3f}".format(holder_side_straigth_length, holder_smoothing_radius))
       sys.exit(2)
-  # ai_holder_crenel_position
-  if(ai_holder_crenel_position<holder_hole_radius):
-    print("ERR211: Error, ai_holder_crenel_position {:0.3f} is too small compare to holder_hole_radius {:03f}".format(ai_holder_crenel_position, holder_hole_radius))
+  # gr_c['holder_crenel_position']
+  if(gr_c['holder_crenel_position']<holder_hole_radius):
+    print("ERR211: Error, holder_crenel_position {:0.3f} is too small compare to holder_hole_radius {:03f}".format(gr_c['holder_crenel_position'], holder_hole_radius))
     sys.exit(2)
-  # ai_holder_crenel_width
-  if(ai_holder_crenel_width<2.1*holder_crenel_router_bit_radius):
-    print("ERR215: Error, ai_holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(ai_holder_crenel_width, holder_crenel_router_bit_radius))
+  # gr_c['holder_crenel_width']
+  if(gr_c['holder_crenel_width']<2.1*holder_crenel_router_bit_radius):
+    print("ERR215: Error, holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(gr_c['holder_crenel_width'], holder_crenel_router_bit_radius))
     sys.exit(2)
-  # ai_gear_tooth_nb
-  if(ai_gear_tooth_nb>0): # create a gear_profile
+  # gr_c['gear_tooth_nb']
+  if(gr_c['gear_tooth_nb']>0): # create a gear_profile
     ### get the gear_profile
-    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(
-      ### first gear
-      # general
-      ai_gear_type                      = 'i',
-      ai_gear_tooth_nb                  = ai_gear_tooth_nb,
-      ai_gear_module                    = ai_gear_module,
-      ai_gear_primitive_diameter        = ai_gear_primitive_diameter,
-      ai_gear_addendum_dedendum_parity  = ai_gear_addendum_dedendum_parity,
-      # tooth height
-      ai_gear_tooth_half_height           = ai_gear_tooth_half_height,
-      ai_gear_addendum_height_pourcentage = ai_gear_addendum_height_pourcentage,
-      ai_gear_dedendum_height_pourcentage = ai_gear_dedendum_height_pourcentage,
-      ai_gear_hollow_height_pourcentage   = ai_gear_hollow_height_pourcentage,
-      ai_gear_router_bit_radius           = gear_router_bit_radius,
-      # positive involute
-      ai_gear_base_diameter       = ai_gear_base_diameter,
-      ai_gear_force_angle         = ai_gear_force_angle,
-      ai_gear_tooth_resolution    = ai_gear_tooth_resolution,
-      ai_gear_skin_thickness      = ai_gear_skin_thickness,
-      # negative involute (if zero, negative involute = positive involute)
-      ai_gear_base_diameter_n     = ai_gear_base_diameter_n,
-      ai_gear_force_angle_n       = ai_gear_force_angle_n,
-      ai_gear_tooth_resolution_n  = ai_gear_tooth_resolution_n,
-      ai_gear_skin_thickness_n    = ai_gear_skin_thickness_n,
-      ### second gear
-      # general
-      ai_second_gear_type                     = 'e',
-      ai_second_gear_tooth_nb                 = ai_second_gear_tooth_nb,
-      ai_second_gear_primitive_diameter       = ai_second_gear_primitive_diameter,
-      ai_second_gear_addendum_dedendum_parity = ai_second_gear_addendum_dedendum_parity,
-      # tooth height
-      ai_second_gear_tooth_half_height            = ai_second_gear_tooth_half_height,
-      ai_second_gear_addendum_height_pourcentage  = ai_second_gear_addendum_height_pourcentage,
-      ai_second_gear_dedendum_height_pourcentage  = ai_second_gear_dedendum_height_pourcentage,
-      ai_second_gear_hollow_height_pourcentage    = ai_second_gear_hollow_height_pourcentage,
-      ai_second_gear_router_bit_radius            = ai_second_gear_router_bit_radius,
-      # positive involute
-      ai_second_gear_base_diameter      = ai_second_gear_base_diameter,
-      ai_second_gear_tooth_resolution   = ai_second_gear_tooth_resolution,
-      ai_second_gear_skin_thickness     = ai_second_gear_skin_thickness,
-      # negative involute (if zero, negative involute = positive involute)
-      ai_second_gear_base_diameter_n    = ai_second_gear_base_diameter_n,
-      ai_second_gear_tooth_resolution_n = ai_second_gear_tooth_resolution_n,
-      ai_second_gear_skin_thickness_n   = ai_second_gear_skin_thickness_n,
-      ### gearbar specific
-      #ai_gearbar_slope                  = ai_gearbar_slope,
-      #ai_gearbar_slope_n                = ai_gearbar_slope_n,
-      ### position
-      # first gear position
-      ai_center_position_x                    = ai_center_position_x,
-      ai_center_position_y                    = ai_center_position_y,
-      ai_gear_initial_angle                   = ai_gear_initial_angle,
-      # second gear position
-      ai_second_gear_position_angle           = ai_second_gear_position_angle,
-      ai_second_gear_additional_axis_length   = ai_second_gear_additional_axis_length,
-      ### portion
-      ai_portion_tooth_nb     = 0,
-      ai_portion_first_end    = 0,
-      ai_portion_last_end     = 0,
-      ### output
-      ai_gear_profile_height  = ai_gear_profile_height,
-      ai_simulation_enable    = ai_simulation_enable,    # ai_simulation_enable,
-      ai_output_file_basename = '')
+    gp_ci = gear_profile.gear_profile_dictionary_init()
+    gp_c = dict([ (k, gr_c[k]) for k in gp_ci.keys() ]) # extract only the entries of the gear_profile
+    gp_c['gear_type'] = 'i'
+    gp_c['second_gear_type'] = 'e'
+    gp_c['gear_router_bit_radius'] = gear_router_bit_radius
+    gp_c['gearbar_slope'] = 0
+    gp_c['gearbar_slope_n'] = 0
+    gp_c['portion_tooth_nb'] = 0
+    gp_c['portion_first_end'] = 0
+    gp_c['portion_last_end'] = 0
+    gp_c['output_file_basename'] = ''
+    gp_c['args_in_txt'] = ''
+    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gp_c)
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
     maximal_gear_profile_radius = gear_profile_parameters['hollow_radius']
     g1_ix = gear_profile_parameters['center_ox']
     g1_iy = gear_profile_parameters['center_oy']
   else: # no gear_profile, just a circle
-    if(ai_gear_primitive_diameter<radian_epsilon):
-      print("ERR885: Error, the no-gear-profile circle outline diameter ai_gear_primitive_diameter {:0.2f} is too small!".format(ai_gear_primitive_diameter))
+    if(gr_c['gear_primitive_diameter']<radian_epsilon):
+      print("ERR885: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(gr_c['gear_primitive_diameter']))
       sys.exit(2)
-    g1_ix = ai_center_position_x
-    g1_iy = ai_center_position_y
-    gear_profile_B = (g1_ix, g1_iy, float(ai_gear_primitive_diameter)/2)
+    g1_ix = gr_c['center_position_x']
+    g1_iy = gr_c['center_position_y']
+    gear_profile_B = (g1_ix, g1_iy, float(gr_c['gear_primitive_diameter'])/2)
     gear_profile_info = "\nSimple circle (no-gear-profile):\n"
-    gear_profile_info += "outline circle radius: \t{:0.3f}  \tdiameter: {:0.3f}\n".format(ai_gear_primitive_diameter/2.0, ai_gear_primitive_diameter)
+    gear_profile_info += "outline circle radius: \t{:0.3f}  \tdiameter: {:0.3f}\n".format(gr_c['gear_primitive_diameter']/2.0, gr_c['gear_primitive_diameter'])
     gear_profile_info += "gear center (x, y):   \t{:0.3f}  \t{:0.3f}\n".format(g1_ix, g1_iy)
-    maximal_gear_profile_radius = float(ai_gear_primitive_diameter)/2
+    maximal_gear_profile_radius = float(gr_c['gear_primitive_diameter'])/2
   ### check parameter coherence (part 2)
   # hollow_circle and holder-hole
   if(maximal_gear_profile_radius>(holder_hole_position_radius-holder_hole_radius)):
@@ -361,22 +277,22 @@ def gearring(
   ### holder outline
   holder_figure = []
   holder_figure_overlay = []
-  if(ai_holder_crenel_number==0):
+  if(gr_c['holder_crenel_number']==0):
     holder_figure.append([g1_ix, g1_iy, holder_radius])
-  elif(ai_holder_crenel_number>0):
-    angle_incr = 2*math.pi/ai_holder_crenel_number
+  elif(gr_c['holder_crenel_number']>0):
+    angle_incr = 2*math.pi/gr_c['holder_crenel_number']
     if((angle_incr-2*holder_crenel_half_angle)<math.pi/10):
       print("ERR369: Error, no enough space between the crenel: angle_incr {:0.3f}  holder_crenel_half_angle {:0.3f}".format(angle_incr, holder_crenel_half_angle))
       sys.exit(2)
     holder_A = []
-    first_angle = ai_holder_position_angle - holder_crenel_half_angle
+    first_angle = gr_c['holder_position_angle'] - holder_crenel_half_angle
     holder_A.append([g1_ix+holder_radius*math.cos(first_angle), g1_iy+holder_radius*math.sin(first_angle), holder_smoothing_radius])
-    for i in range(ai_holder_crenel_number):
-      holder_A .extend(make_holder_crenel(holder_maximal_height_plus, ai_holder_crenel_height, ai_holder_crenel_skin_width, holder_crenel_half_width, 
+    for i in range(gr_c['holder_crenel_number']):
+      holder_A .extend(make_holder_crenel(holder_maximal_height_plus, gr_c['holder_crenel_height'], gr_c['holder_crenel_skin_width'], holder_crenel_half_width, 
                                           holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius, holder_smoothing_radius,
-                                          holder_crenel_x_position, ai_holder_position_angle+i*angle_incr, g1_ix, g1_iy))
-      middle_angle = ai_holder_position_angle + (i+0.5)*angle_incr
-      end_angle = ai_holder_position_angle + (i+1)*angle_incr - holder_crenel_half_angle
+                                          holder_crenel_x_position, gr_c['holder_position_angle']+i*angle_incr, g1_ix, g1_iy))
+      middle_angle = gr_c['holder_position_angle'] + (i+0.5)*angle_incr
+      end_angle = gr_c['holder_position_angle'] + (i+1)*angle_incr - holder_crenel_half_angle
       holder_A.append([g1_ix+holder_radius*math.cos(middle_angle), g1_iy+holder_radius*math.sin(middle_angle),
                         g1_ix+holder_radius*math.cos(end_angle), g1_iy+holder_radius*math.sin(end_angle), holder_smoothing_radius])
     holder_A[-1] = [holder_A[-1][0], holder_A[-1][1], holder_A[0][0], holder_A[0][1], 0]
@@ -384,9 +300,9 @@ def gearring(
     holder_figure_overlay.append(cnc25d_api.ideal_outline(holder_A, "holder_A"))
   ### holder-hole outline
   holder_hole_figure = []
-  if((ai_holder_crenel_number>0)and(holder_hole_radius>0)):
-    for i in range(ai_holder_crenel_number):
-      hole_angle = ai_holder_position_angle+i*angle_incr
+  if((gr_c['holder_crenel_number']>0)and(holder_hole_radius>0)):
+    for i in range(gr_c['holder_crenel_number']):
+      hole_angle = gr_c['holder_position_angle']+i*angle_incr
       holder_hole_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
 
   ### design output
@@ -398,46 +314,84 @@ def gearring(
   gr_figure_overlay.extend(holder_figure_overlay)
   # gearring_parameter_info
   gearring_parameter_info = "\nGearring parameter info:\n"
-  gearring_parameter_info += "\n" + ai_args_in_txt + "\n\n"
+  gearring_parameter_info += "\n" + gr_c['args_in_txt'] + "\n\n"
   gearring_parameter_info += gear_profile_info
   gearring_parameter_info += """
 holder_diameter: \t{:0.3f}
 holder_crenel_number: \t{:d}
 holder_position_angle: \t{:0.3f}
-""".format(ai_holder_diameter, ai_holder_crenel_number, ai_holder_position_angle)
+""".format(gr_c['holder_diameter'], gr_c['holder_crenel_number'], gr_c['holder_position_angle'])
   gearring_parameter_info += """
 holder_hole_position_radius: \t{:0.3f}
 holder_hole_diameter: \t{:0.3f}
-""".format(holder_hole_position_radius, ai_holder_hole_diameter)
+""".format(holder_hole_position_radius, gr_c['holder_hole_diameter'])
   gearring_parameter_info += """
 holder_crenel_position: \t{:0.3f}
 holder_crenel_height: \t{:0.3f}
 holder_crenel_width: \t{:0.3f}
 holder_crenel_skin_width: \t{:0.3f}
-""".format(ai_holder_crenel_position, ai_holder_crenel_height, ai_holder_crenel_width, ai_holder_crenel_skin_width)
+""".format(gr_c['holder_crenel_position'], gr_c['holder_crenel_height'], gr_c['holder_crenel_width'], gr_c['holder_crenel_skin_width'])
   gearring_parameter_info += """
 gear_router_bit_radius:           \t{:0.3f}
 holder_crenel_router_bit_radius:  \t{:0.3f}
 holder_smoothing_radius:          \t{:0.3f}
 cnc_router_bit_radius:            \t{:0.3f}
-""".format(gear_router_bit_radius, holder_crenel_router_bit_radius, holder_smoothing_radius, ai_cnc_router_bit_radius)
+""".format(gear_router_bit_radius, holder_crenel_router_bit_radius, holder_smoothing_radius, gr_c['cnc_router_bit_radius'])
   #print(gearring_parameter_info)
 
   # display with Tkinter
-  if(ai_tkinter_view):
+  if(gr_c['tkinter_view']):
     print(gearring_parameter_info)
     cnc25d_api.figure_simple_display(gr_figure, gr_figure_overlay, gearring_parameter_info)
   # generate output file
-  cnc25d_api.generate_output_file(gr_figure, ai_output_file_basename, ai_gear_profile_height, gearring_parameter_info)
+  cnc25d_api.generate_output_file(gr_figure, gr_c['output_file_basename'], gr_c['gear_profile_height'], gearring_parameter_info)
 
-  ### return the gearring as FreeCAD Part object
-  #r_gr = cnc25d_api.figure_to_freecad_25d_part(gr_figure, ai_gear_profile_height)
-  r_gr = 1 # this is to spare the freecad computation time during debuging
+  ### return
+  if(gr_c['return_type']=='int_status'):
+    r_gr = 1
+  elif(gr_c['return_type']=='cnc25d_figure'):
+    r_gr = gr_figure
+  elif(gr_c['return_type']=='freecad_object'):
+    r_gr = cnc25d_api.figure_to_freecad_25d_part(gr_figure, gr_c['gear_profile_height'])
+  else:
+    print("ERR346: Error the return_type {:s} is unknown".format(gr_c['return_type']))
+    sys.exit(2)
   return(r_gr)
 
 ################################################################
-# gearring argparse_to_function
+# gearring wrapper dance
 ################################################################
+
+def gearring_argparse_to_dictionary(ai_gr_args):
+  """ convert a gearring_argparse into a gearring_dictionary
+  """
+  r_grd = {}
+  r_grd.update(gear_profile.gear_profile_argparse_to_dictionary(ai_gr_args, 2))
+  ##### from gearring
+  ### holder
+  r_grd['holder_diameter']            = ai_gr_args.sw_holder_diameter
+  r_grd['holder_crenel_number']       = ai_gr_args.sw_holder_crenel_number
+  r_grd['holder_position_angle']      = ai_gr_args.sw_holder_position_angle
+  ### holder-hole
+  r_grd['holder_hole_position_radius']   = ai_gr_args.sw_holder_hole_position_radius
+  r_grd['holder_hole_diameter']          = ai_gr_args.sw_holder_hole_diameter
+  ### holder-crenel
+  r_grd['holder_crenel_position']        = ai_gr_args.sw_holder_crenel_position
+  r_grd['holder_crenel_height']          = ai_gr_args.sw_holder_crenel_height
+  r_grd['holder_crenel_width']           = ai_gr_args.sw_holder_crenel_width
+  r_grd['holder_crenel_skin_width']      = ai_gr_args.sw_holder_crenel_skin_width
+  r_grd['holder_crenel_router_bit_radius']   = ai_gr_args.sw_holder_crenel_router_bit_radius
+  r_grd['holder_smoothing_radius']       = ai_gr_args.sw_holder_smoothing_radius
+  ### cnc router_bit constraint
+  r_grd['cnc_router_bit_radius']          = ai_gr_args.sw_cnc_router_bit_radius
+  ### design output : view the gearring with tkinter or write files
+  #r_grd['tkinter_view'] = tkinter_view
+  r_grd['output_file_basename'] = ai_gr_args.sw_output_file_basename
+  ### optional
+  #r_grd['args_in_txt'] = ''
+  #r_grd['return_type'] = 'int_status'
+  #### return
+  return(r_grd)
 
 def gearring_argparse_wrapper(ai_gr_args, ai_args_in_txt=""):
   """
@@ -449,92 +403,18 @@ def gearring_argparse_wrapper(ai_gr_args, ai_args_in_txt=""):
   if(ai_gr_args.sw_simulation_enable or (ai_gr_args.sw_output_file_basename!='')):
     tkinter_view = False
   # wrapper
-  r_gr = gearring(
-           ##### from gear_profile
-           ### first gear
-           # general
-           #ai_gear_type                      = ai_gr_args.sw_gear_type,
-           ai_gear_tooth_nb                  = ai_gr_args.sw_gear_tooth_nb,
-           ai_gear_module                    = ai_gr_args.sw_gear_module,
-           ai_gear_primitive_diameter        = ai_gr_args.sw_gear_primitive_diameter,
-           ai_gear_addendum_dedendum_parity  = ai_gr_args.sw_gear_addendum_dedendum_parity,
-           # tooth height
-           ai_gear_tooth_half_height           = ai_gr_args.sw_gear_tooth_half_height,
-           ai_gear_addendum_height_pourcentage = ai_gr_args.sw_gear_addendum_height_pourcentage,
-           ai_gear_dedendum_height_pourcentage = ai_gr_args.sw_gear_dedendum_height_pourcentage,
-           ai_gear_hollow_height_pourcentage   = ai_gr_args.sw_gear_hollow_height_pourcentage,
-           ai_gear_router_bit_radius           = ai_gr_args.sw_gear_router_bit_radius,
-           # positive involute
-           ai_gear_base_diameter       = ai_gr_args.sw_gear_base_diameter,
-           ai_gear_force_angle         = ai_gr_args.sw_gear_force_angle,
-           ai_gear_tooth_resolution    = ai_gr_args.sw_gear_tooth_resolution,
-           ai_gear_skin_thickness      = ai_gr_args.sw_gear_skin_thickness,
-           # negative involute (if zero, negative involute = positive involute)
-           ai_gear_base_diameter_n     = ai_gr_args.sw_gear_base_diameter_n,
-           ai_gear_force_angle_n       = ai_gr_args.sw_gear_force_angle_n,
-           ai_gear_tooth_resolution_n  = ai_gr_args.sw_gear_tooth_resolution_n,
-           ai_gear_skin_thickness_n    = ai_gr_args.sw_gear_skin_thickness_n,
-           ### second gear
-           # general
-           #ai_second_gear_type                     = ai_gr_args.sw_second_gear_type,
-           ai_second_gear_tooth_nb                 = ai_gr_args.sw_second_gear_tooth_nb,
-           ai_second_gear_primitive_diameter       = ai_gr_args.sw_second_gear_primitive_diameter,
-           ai_second_gear_addendum_dedendum_parity = ai_gr_args.sw_second_gear_addendum_dedendum_parity,
-           # tooth height
-           ai_second_gear_tooth_half_height            = ai_gr_args.sw_second_gear_tooth_half_height,
-           ai_second_gear_addendum_height_pourcentage  = ai_gr_args.sw_second_gear_addendum_height_pourcentage,
-           ai_second_gear_dedendum_height_pourcentage  = ai_gr_args.sw_second_gear_dedendum_height_pourcentage,
-           ai_second_gear_hollow_height_pourcentage    = ai_gr_args.sw_second_gear_hollow_height_pourcentage,
-           ai_second_gear_router_bit_radius            = ai_gr_args.sw_second_gear_router_bit_radius,
-           # positive involute
-           ai_second_gear_base_diameter      = ai_gr_args.sw_second_gear_base_diameter,
-           ai_second_gear_tooth_resolution   = ai_gr_args.sw_second_gear_tooth_resolution,
-           ai_second_gear_skin_thickness     = ai_gr_args.sw_second_gear_skin_thickness,
-           # negative involute (if zero, negative involute = positive involute)
-           ai_second_gear_base_diameter_n    = ai_gr_args.sw_second_gear_base_diameter_n,
-           ai_second_gear_tooth_resolution_n = ai_gr_args.sw_second_gear_tooth_resolution_n,
-           ai_second_gear_skin_thickness_n   = ai_gr_args.sw_second_gear_skin_thickness_n,
-           ### gearbar specific
-           #ai_gearbar_slope                  = ai_gr_args.sw_gearbar_slope,
-           #ai_gearbar_slope_n                = ai_gr_args.sw_gearbar_slope_n,
-           ### position
-           # first gear position
-           ai_center_position_x                    = ai_gr_args.sw_center_position_x,
-           ai_center_position_y                    = ai_gr_args.sw_center_position_y,
-           ai_gear_initial_angle                   = ai_gr_args.sw_gear_initial_angle,
-           # second gear position
-           ai_second_gear_position_angle           = ai_gr_args.sw_second_gear_position_angle,
-           ai_second_gear_additional_axis_length   = ai_gr_args.sw_second_gear_additional_axis_length,
-           ### portion
-           #ai_portion_tooth_nb     = ai_gr_args.sw_cut_portion[0],
-           #ai_portion_first_end    = ai_gr_args.sw_cut_portion[1],
-           #ai_portion_last_end     = ai_gr_args.sw_cut_portion[2],
-           ### output
-           ai_gear_profile_height  = ai_gr_args.sw_gear_profile_height,
-           ai_simulation_enable    = ai_gr_args.sw_simulation_enable,    # ai_gr_args.sw_simulation_enable,
-           #ai_output_file_basename = ai_gr_args.sw_output_file_basename,
-           ##### from gearring
-           ### holder
-           ai_holder_diameter            = ai_gr_args.sw_holder_diameter,
-           ai_holder_crenel_number       = ai_gr_args.sw_holder_crenel_number,
-           ai_holder_position_angle      = ai_gr_args.sw_holder_position_angle,
-           ### holder-hole
-           ai_holder_hole_position_radius   = ai_gr_args.sw_holder_hole_position_radius,
-           ai_holder_hole_diameter          = ai_gr_args.sw_holder_hole_diameter,
-           ### holder-crenel
-           ai_holder_crenel_position        = ai_gr_args.sw_holder_crenel_position,
-           ai_holder_crenel_height          = ai_gr_args.sw_holder_crenel_height,
-           ai_holder_crenel_width           = ai_gr_args.sw_holder_crenel_width,
-           ai_holder_crenel_skin_width      = ai_gr_args.sw_holder_crenel_skin_width,
-           ai_holder_crenel_router_bit_radius   = ai_gr_args.sw_holder_crenel_router_bit_radius,
-           ai_holder_smoothing_radius       = ai_gr_args.sw_holder_smoothing_radius,
-           ### cnc router_bit constraint
-           ai_cnc_router_bit_radius          = ai_gr_args.sw_cnc_router_bit_radius,
-           ### design output : view the gearring with tkinter or write files
-           ai_tkinter_view = tkinter_view,
-           ai_output_file_basename = ai_gr_args.sw_output_file_basename,
-           ### optional
-           ai_args_in_txt = ai_args_in_txt)
+  grd = gearring_argparse_to_dictionary(ai_gr_args)
+  #grd['gear_type'] = 'i'
+  #grd['second_gear_type'] = 'e'
+  #grd['gearbar_slope'] = 0
+  #grd['gearbar_slope_n'] = 0
+  #grd['portion_tooth_nb'] = 0
+  #grd['portion_first_end'] = 0
+  #grd['portion_last_end'] = 0
+  grd['args_in_txt'] = ai_args_in_txt
+  grd['tkinter_view'] = tkinter_view
+  grd['return_type'] = 'int_status'
+  r_gr = gearring(grd)
   return(r_gr)
 
 ################################################################
@@ -557,7 +437,6 @@ def gearring_self_test():
     ["last test"        , "--gear_tooth_nb 30 --gear_module 10.0 --holder_diameter 340.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearring_parser = argparse.ArgumentParser(description='Command line interface for the function gearring().')
-  gearring_parser = gear_profile.gear_profile_add_argument(gearring_parser, 2)
   gearring_parser = gearring_add_argument(gearring_parser)
   gearring_parser = cnc25d_api.generate_output_file_add_argument(gearring_parser)
   for i in range(len(test_case_switch)):
@@ -578,7 +457,6 @@ def gearring_cli(ai_args=None):
   """
   # gearring parser
   gearring_parser = argparse.ArgumentParser(description='Command line interface for the function gearring().')
-  gearring_parser = gear_profile.gear_profile_add_argument(gearring_parser, 2)
   gearring_parser = gearring_add_argument(gearring_parser)
   gearring_parser = cnc25d_api.generate_output_file_add_argument(gearring_parser)
   # switch for self_test
