@@ -56,6 +56,33 @@ from FreeCAD import Base
 import gear_profile
 
 ################################################################
+# gearbar dictionary-constraint-arguments default values
+################################################################
+
+def gearbar_dictionary_init():
+  """ create and initiate a gearbar_dictionary with the default value
+  """
+  r_gbd = {}
+  #### inherit dictionary entries from gear_profile
+  r_gbd.update(gear_profile.gear_profile_dictionary_init())
+  #### gearbar dictionary entries
+  ### gearbar
+  r_gbd['gearbar_height']                 = 20.0
+  ### gearbar-hole
+  r_gbd['gearbar_hole_height_position']   = 10.0
+  r_gbd['gearbar_hole_diameter']          = 10.0
+  r_gbd['gearbar_hole_offset']            = 0
+  r_gbd['gearbar_hole_increment']         = 1
+  ### view the gearbar with tkinter
+  r_gbd['tkinter_view'] = False
+  r_gbd['output_file_basename'] = ''
+  ### optional
+  r_gbd['args_in_txt'] = ''
+  r_gbd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+  #### return
+  return(r_gbd)
+
+################################################################
 # gearbar argparse
 ################################################################
 
@@ -65,6 +92,8 @@ def gearbar_add_argument(ai_parser):
   This function intends to be used by the gearbar_cli and gearbar_self_test
   """
   r_parser = ai_parser
+  ### inherit arguments from gear_profile
+  r_parser = gear_profile.gear_profile_add_argument(r_parser, 3)
   ### gearbar
   r_parser.add_argument('--gearbar_height','--gbh', action='store', type=float, default=20.0, dest='sw_gearbar_height',
     help="Set the height of the gearbar (from the bottom to the gear-profile primitive line). Default: 20.0")
@@ -89,165 +118,45 @@ def gearbar_add_argument(ai_parser):
 # the most important function to be used in other scripts
 ################################################################
 
-def gearbar(
-      ##### from gear_profile
-      ### first gear
-      # general
-      #ai_gear_type = 'i',
-      ai_gear_tooth_nb = 0,
-      ai_gear_module = 0.0,
-      ai_gear_primitive_diameter = 0.0,
-      ai_gear_addendum_dedendum_parity = 50.0,
-      # tooth height
-      ai_gear_tooth_half_height = 0.0,
-      ai_gear_addendum_height_pourcentage = 100.0,
-      ai_gear_dedendum_height_pourcentage = 100.0,
-      ai_gear_hollow_height_pourcentage = 25.0,
-      ai_gear_router_bit_radius = 0.1,
-      # positive involute
-      ai_gear_base_diameter = 0.0,
-      ai_gear_force_angle = 0.0,
-      ai_gear_tooth_resolution = 3,
-      ai_gear_skin_thickness = 0.0,
-      # negative involute (if zero, negative involute = positive involute)
-      ai_gear_base_diameter_n = 0.0,
-      ai_gear_force_angle_n = 0.0,
-      ai_gear_tooth_resolution_n = 0,
-      ai_gear_skin_thickness_n = 0.0,
-      ### second gear
-      # general
-      #ai_second_gear_type = 'e',
-      ai_second_gear_tooth_nb = 0,
-      ai_second_gear_primitive_diameter = 0.0,
-      ai_second_gear_addendum_dedendum_parity = 0.0,
-      # tooth height
-      ai_second_gear_tooth_half_height = 0.0,
-      ai_second_gear_addendum_height_pourcentage = 100.0,
-      ai_second_gear_dedendum_height_pourcentage = 100.0,
-      ai_second_gear_hollow_height_pourcentage = 25.0,
-      ai_second_gear_router_bit_radius = 0.0,
-      # positive involute
-      ai_second_gear_base_diameter = 0.0,
-      ai_second_gear_tooth_resolution = 0,
-      ai_second_gear_skin_thickness = 0.0,
-      # negative involute (if zero, negative involute = positive involute)
-      ai_second_gear_base_diameter_n = 0.0,
-      ai_second_gear_tooth_resolution_n = 0,
-      ai_second_gear_skin_thickness_n = 0.0,
-      ### gearbar specific
-      ai_gearbar_slope = 0.0,
-      ai_gearbar_slope_n = 0.0,
-      ### position
-      # first gear position
-      ai_center_position_x = 0.0,
-      ai_center_position_y = 0.0,
-      ai_gear_initial_angle = 0.0,
-      # second gear position
-      ai_second_gear_position_angle = 0.0,
-      ai_second_gear_additional_axis_length = 0.0,
-      ### portion
-      ai_portion_tooth_nb = 0,
-      ai_portion_first_end = 0,
-      ai_portion_last_end =0,
-      ### output
-      ai_gear_profile_height = 1.0,
-      ai_simulation_enable = False,
-      #ai_output_file_basename = '',
-      ##### from gearbar
-      ### gearbar
-      ai_gearbar_height                 = 20.0,
-      ### gearbar-hole
-      ai_gearbar_hole_height_position   = 10.0,
-      ai_gearbar_hole_diameter          = 10.0,
-      ai_gearbar_hole_offset            = 0,
-      ai_gearbar_hole_increment         = 1,
-      ### view the gearbar with tkinter
-      ai_tkinter_view = False,
-      ai_output_file_basename = '',
-      ### optional
-      ai_args_in_txt = ""):
+def gearbar(ai_constraints):
   """
   The main function of the script.
   It generates a gearbar according to the function arguments
   """
+  ### check the dictionary-arguments ai_constraints
+  gbdi = gearbar_dictionary_init()
+  gb_c = gbdi.copy()
+  gb_c.update(ai_constraints)
+  #print("dbg155: gb_c:", gb_c)
+  if(len(gb_c.viewkeys() & gbdi.viewkeys()) != len(gb_c.viewkeys() | gbdi.viewkeys())): # check if the dictionary gb_c has exactly all the keys compare to gearbar_dictionary_init()
+    print("ERR157: Error, gb_c has too much entries as {:s} or missing entries as {:s}".format(gb_c.viewkeys() - gbdi.viewkeys(), gbdi.viewkeys() - gb_c.viewkeys()))
+    sys.exit(2)
+  #print("dbg164: new gearbar constraints:")
+  #for k in gb_c.viewkeys():
+  #  if(gb_c[k] != gbdi[k]):
+  #    print("dbg166: for k {:s}, gb_c[k] {:s} != gbdi[k] {:s}".format(k, str(gb_c[k]), str(gbdi[k])))
   ### precision
   radian_epsilon = math.pi/1000
   ### check parameter coherence (part 1)
-  gearbar_hole_radius = float(ai_gearbar_hole_diameter)/2
-  # ai_gearbar_hole_height_position
-  if((ai_gearbar_hole_height_position+gearbar_hole_radius)>ai_gearbar_height):
-    print("ERR215: Error, ai_gearbar_hole_height_position {:0.3} and gearbar_hole_radius {:0.3f} are too big compare to ai_gearbar_height {:0.3f} !".format(ai_gearbar_hole_height_position, gearbar_hole_radius, ai_gearbar_height))
+  gearbar_hole_radius = float(gb_c['gearbar_hole_diameter'])/2
+  # gb_c['gearbar_hole_height_position']
+  if((gb_c['gearbar_hole_height_position']+gearbar_hole_radius)>gb_c['gearbar_height']):
+    print("ERR215: Error, gearbar_hole_height_position {:0.3} and gearbar_hole_radius {:0.3f} are too big compare to gearbar_height {:0.3f} !".format(gb_c['gearbar_hole_height_position'], gearbar_hole_radius, gb_c['gearbar_height']))
     sys.exit(2)
-  # ai_gearbar_hole_increment
-  if(ai_gearbar_hole_increment==0):
+  # gb_c['gearbar_hole_increment']
+  if(gb_c['gearbar_hole_increment']==0):
     print("ERR183: Error gearbar_hole_increment must be bigger than zero!")
     sys.exit(2)
-  # ai_gear_tooth_nb
-  if(ai_gear_tooth_nb>0): # create a gear_profile
+  # gb_c['gear_tooth_nb']
+  if(gb_c['gear_tooth_nb']>0): # create a gear_profile
     ### get the gear_profile
-    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(
-      ### first gear
-      # general
-      ai_gear_type                      = 'l',
-      ai_gear_tooth_nb                  = ai_gear_tooth_nb,
-      ai_gear_module                    = ai_gear_module,
-      ai_gear_primitive_diameter        = ai_gear_primitive_diameter,
-      ai_gear_addendum_dedendum_parity  = ai_gear_addendum_dedendum_parity,
-      # tooth height
-      ai_gear_tooth_half_height           = ai_gear_tooth_half_height,
-      ai_gear_addendum_height_pourcentage = ai_gear_addendum_height_pourcentage,
-      ai_gear_dedendum_height_pourcentage = ai_gear_dedendum_height_pourcentage,
-      ai_gear_hollow_height_pourcentage   = ai_gear_hollow_height_pourcentage,
-      ai_gear_router_bit_radius           = ai_gear_router_bit_radius,
-      # positive involute
-      ai_gear_base_diameter       = ai_gear_base_diameter,
-      ai_gear_force_angle         = ai_gear_force_angle,
-      ai_gear_tooth_resolution    = ai_gear_tooth_resolution,
-      ai_gear_skin_thickness      = ai_gear_skin_thickness,
-      # negative involute (if zero, negative involute = positive involute)
-      ai_gear_base_diameter_n     = ai_gear_base_diameter_n,
-      ai_gear_force_angle_n       = ai_gear_force_angle_n,
-      ai_gear_tooth_resolution_n  = ai_gear_tooth_resolution_n,
-      ai_gear_skin_thickness_n    = ai_gear_skin_thickness_n,
-      ### second gear
-      # general
-      ai_second_gear_type                     = 'e',
-      ai_second_gear_tooth_nb                 = ai_second_gear_tooth_nb,
-      ai_second_gear_primitive_diameter       = ai_second_gear_primitive_diameter,
-      ai_second_gear_addendum_dedendum_parity = ai_second_gear_addendum_dedendum_parity,
-      # tooth height
-      ai_second_gear_tooth_half_height            = ai_second_gear_tooth_half_height,
-      ai_second_gear_addendum_height_pourcentage  = ai_second_gear_addendum_height_pourcentage,
-      ai_second_gear_dedendum_height_pourcentage  = ai_second_gear_dedendum_height_pourcentage,
-      ai_second_gear_hollow_height_pourcentage    = ai_second_gear_hollow_height_pourcentage,
-      ai_second_gear_router_bit_radius            = ai_second_gear_router_bit_radius,
-      # positive involute
-      ai_second_gear_base_diameter      = ai_second_gear_base_diameter,
-      ai_second_gear_tooth_resolution   = ai_second_gear_tooth_resolution,
-      ai_second_gear_skin_thickness     = ai_second_gear_skin_thickness,
-      # negative involute (if zero, negative involute = positive involute)
-      ai_second_gear_base_diameter_n    = ai_second_gear_base_diameter_n,
-      ai_second_gear_tooth_resolution_n = ai_second_gear_tooth_resolution_n,
-      ai_second_gear_skin_thickness_n   = ai_second_gear_skin_thickness_n,
-      ### gearbar specific
-      ai_gearbar_slope                  = ai_gearbar_slope,
-      ai_gearbar_slope_n                = ai_gearbar_slope_n,
-      ### position
-      # first gear position
-      ai_center_position_x                    = ai_center_position_x,
-      ai_center_position_y                    = ai_center_position_y,
-      ai_gear_initial_angle                   = ai_gear_initial_angle,
-      # second gear position
-      ai_second_gear_position_angle           = ai_second_gear_position_angle,
-      ai_second_gear_additional_axis_length   = ai_second_gear_additional_axis_length,
-      ### portion
-      ai_portion_tooth_nb     = ai_portion_tooth_nb,
-      ai_portion_first_end    = ai_portion_first_end,
-      ai_portion_last_end     = ai_portion_last_end,
-      ### output
-      ai_gear_profile_height  = ai_gear_profile_height,
-      ai_simulation_enable    = ai_simulation_enable,    # ai_simulation_enable,
-      ai_output_file_basename = '')
+    gp_ci = gear_profile.gear_profile_dictionary_init()
+    gp_c = dict([ (k, gb_c[k]) for k in gp_ci.keys() ]) # extract only the entries of the gear_profile
+    gp_c['gear_type'] = 'l'
+    gp_c['second_gear_type'] = 'e'
+    gp_c['output_file_basename'] = ''
+    gp_c['args_in_txt'] = ''
+    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile_dictionary_wrapper(gp_c)
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
     ## gear_profile_B rotation / translation transformation
@@ -255,9 +164,9 @@ def gearbar(
     g1_iy = gear_profile_parameters['center_oy']
     g1_inclination = gear_profile_parameters['gearbar_inclination']
     gear_profile_B = cnc25d_api.outline_rotate(gear_profile_B, g1_ix, g1_iy, -1*g1_inclination + math.pi/2)
-    gear_profile_B = cnc25d_api.outline_shift_xy(gear_profile_B, -1*gear_profile_B[0][0], 1, -1*g1_iy + ai_gearbar_height, 1)
+    gear_profile_B = cnc25d_api.outline_shift_xy(gear_profile_B, -1*gear_profile_B[0][0], 1, -1*g1_iy + gb_c['gearbar_height'], 1)
     ## get some parameters
-    minimal_gear_profile_height = ai_gearbar_height - (gear_profile_parameters['hollow_height'] + gear_profile_parameters['dedendum_height'])
+    minimal_gear_profile_height = gb_c['gearbar_height'] - (gear_profile_parameters['hollow_height'] + gear_profile_parameters['dedendum_height'])
     gearbar_length = gear_profile_B[-1][0] - gear_profile_B[0][0]
     pi_module = gear_profile_parameters['pi_module']
     pfe = gear_profile_parameters['portion_first_end']
@@ -277,17 +186,17 @@ def gearbar(
     elif(pfe==3):
       first_tooth_position = float(bottom_land)/2 + full_negative_slope + float(top_land)/2
   else: # no gear_profile, just a circle
-    if(ai_gear_primitive_diameter<radian_epsilon):
-      print("ERR885: Error, the no-gear-profile line outline length ai_gear_primitive_diameter {:0.2f} is too small!".format(ai_gear_primitive_diameter))
+    if(gb_c['gear_primitive_diameter']<radian_epsilon):
+      print("ERR885: Error, the no-gear-profile line outline length gear_primitive_diameter {:0.2f} is too small!".format(gb_c['gear_primitive_diameter']))
       sys.exit(2)
-    #g1_ix = ai_center_position_x
-    #g1_iy = ai_center_position_y
-    gearbar_length = ai_gear_primitive_diameter
-    gear_profile_B = [(0, ai_gearbar_height),(gearbar_length, ai_gearbar_height)]
+    #g1_ix = gb_c['center_position_x
+    #g1_iy = gb_c['center_position_y
+    gearbar_length = gb_c['gear_primitive_diameter']
+    gear_profile_B = [(0, gb_c['gearbar_height']),(gearbar_length, gb_c['gearbar_height'])]
     gear_profile_info = "\nSimple line (no-gear-profile):\n"
     gear_profile_info += "outline line length: \t{:0.3f}\n".format(gearbar_length)
-    minimal_gear_profile_height = ai_gearbar_height
-    pi_module = ai_gear_module * math.pi
+    minimal_gear_profile_height = gb_c['gearbar_height']
+    pi_module = gb_c['gear_module'] * math.pi
     first_tooth_position = float(pi_module)/2
 
   ### check parameter coherence (part 2)
@@ -296,8 +205,8 @@ def gearbar(
     print("ERR265: Error, minimal_gear_profile_height {:0.3f} is too small".format(minimal_gear_profile_height))
     sys.exit(2)
   # gearbar_hole_diameter
-  if((ai_gearbar_hole_height_position+gearbar_hole_radius)>minimal_gear_profile_height):
-    print("ERR269: Error, ai_gearbar_hole_height_position {:0.3f} and gearbar_hole_radius {:0.3f} are too big compare to minimal_gear_profile_height {:0.3f}".format(ai_gearbar_hole_height_position, gearbar_hole_radius, minimal_gear_profile_height))
+  if((gb_c['gearbar_hole_height_position']+gearbar_hole_radius)>minimal_gear_profile_height):
+    print("ERR269: Error, gearbar_hole_height_position {:0.3f} and gearbar_hole_radius {:0.3f} are too big compare to minimal_gear_profile_height {:0.3f}".format(gb_c['gearbar_hole_height_position'], gearbar_hole_radius, minimal_gear_profile_height))
     sys.exit(2)
   # pi_module
   if(gearbar_hole_radius>0):
@@ -313,11 +222,11 @@ def gearbar(
   ### gearbar-hole figure
   gearbar_hole_figure = []
   if((gearbar_hole_radius>0)and(pi_module>0)):
-    hole_x = first_tooth_position + ai_gearbar_hole_offset * pi_module
+    hole_x = first_tooth_position + gb_c['gearbar_hole_offset'] * pi_module
     while(hole_x<(gearbar_length-gearbar_hole_radius)):
       #print("dbg312: hole_x {:0.3f}".format(hole_x))
-      gearbar_hole_figure.append([hole_x, ai_gearbar_hole_height_position, gearbar_hole_radius])
-      hole_x += ai_gearbar_hole_increment * pi_module
+      gearbar_hole_figure.append([hole_x, gb_c['gearbar_hole_height_position'], gearbar_hole_radius])
+      hole_x += gb_c['gearbar_hole_increment'] * pi_module
 
   ### design output
   gb_figure = [gearbar_outline]
@@ -326,37 +235,69 @@ def gearbar(
   gb_figure_overlay = []
   # gearbar_parameter_info
   gearbar_parameter_info = "\nGearbar parameter info:\n"
-  gearbar_parameter_info += "\n" + ai_args_in_txt + "\n\n"
+  gearbar_parameter_info += "\n" + gb_c['args_in_txt'] + "\n\n"
   gearbar_parameter_info += gear_profile_info
   gearbar_parameter_info += """
 gearbar_length: \t{:0.3f}
 gearbar_height: \t{:0.3f}
 minimal_gear_profile_height: \t{:0.3f}
-""".format(gearbar_length, ai_gearbar_height, minimal_gear_profile_height)
+""".format(gearbar_length, gb_c['gearbar_height'], minimal_gear_profile_height)
   gearbar_parameter_info += """
 gearbar_hole_height_position: \t{:0.3f}
 gearbar_hole_diameter: \t{:0.3f}
 gearbar_hole_offset: \t{:d}
 gearbar_hole_increment: \t{:d}
 pi_module: \t{:0.3f}
-""".format(ai_gearbar_hole_height_position, ai_gearbar_hole_diameter, ai_gearbar_hole_offset, ai_gearbar_hole_increment, pi_module)
+""".format(gb_c['gearbar_hole_height_position'], gb_c['gearbar_hole_diameter'], gb_c['gearbar_hole_offset'], gb_c['gearbar_hole_increment'], pi_module)
   #print(gearbar_parameter_info)
 
   # display with Tkinter
-  if(ai_tkinter_view):
+  if(gb_c['tkinter_view']):
     print(gearbar_parameter_info)
     cnc25d_api.figure_simple_display(gb_figure, gb_figure_overlay, gearbar_parameter_info)
   # generate output file
-  cnc25d_api.generate_output_file(gb_figure, ai_output_file_basename, ai_gear_profile_height, gearbar_parameter_info)
+  cnc25d_api.generate_output_file(gb_figure, gb_c['output_file_basename'], gb_c['gear_profile_height'], gearbar_parameter_info)
 
   ### return the gearbar as FreeCAD Part object
-  #r_gb = cnc25d_api.figure_to_freecad_25d_part(gb_figure, ai_gear_profile_height)
+  #r_gb = cnc25d_api.figure_to_freecad_25d_part(gb_figure, gb_c['gear_profile_height'])
   r_gb = 1 # this is to spare the freecad computation time during debuging
+  #### return
+  if(gb_c['return_type']=='int_status'):
+    r_gb = 1
+  elif(gb_c['return_type']=='cnc25d_figure'):
+    r_gb = gb_figure
+  elif(gb_c['return_type']=='freecad_object'):
+    r_gb = cnc25d_api.figure_to_freecad_25d_part(gb_figure, gb_c['gear_profile_height'])
+  else:
+    print("ERR508: Error the return_type {:s} is unknown".format(gb_c['return_type']))
+    sys.exit(2)
   return(r_gb)
 
 ################################################################
-# gearbar argparse_to_function
+# gearbar wrapper dance
 ################################################################
+
+def gearbar_argparse_to_dictionary(ai_gb_args):
+  """ convert a gearbar_argparse into a gearbar_dictionary
+  """
+  r_gbd = {}
+  r_gbd.update(gear_profile.gear_profile_argparse_to_dictionary(ai_gb_args, 3))
+  ##### from gearbar
+  ### gearbar
+  r_gbd['gearbar_height']                = ai_gb_args.sw_gearbar_height
+  ### gearbar-hole
+  r_gbd['gearbar_hole_height_position']  = ai_gb_args.sw_gearbar_hole_height_position
+  r_gbd['gearbar_hole_diameter']         = ai_gb_args.sw_gearbar_hole_diameter
+  r_gbd['gearbar_hole_offset']           = ai_gb_args.sw_gearbar_hole_offset
+  r_gbd['gearbar_hole_increment']        = ai_gb_args.sw_gearbar_hole_increment
+  ### design output : view the gearbar with tkinter or write files
+  #r_gbd['tkinter_view'] = tkinter_view
+  r_gbd['output_file_basename'] = ai_gb_args.sw_output_file_basename
+  ### optional
+  #r_gbd['args_in_txt'] = ''
+  #r_gbd['return_type'] = 'int_status'
+  #### return
+  return(r_gbd)
 
 def gearbar_argparse_wrapper(ai_gb_args, ai_args_in_txt=""):
   """
@@ -368,83 +309,11 @@ def gearbar_argparse_wrapper(ai_gb_args, ai_args_in_txt=""):
   if(ai_gb_args.sw_simulation_enable or (ai_gb_args.sw_output_file_basename!='')):
     tkinter_view = False
   # wrapper
-  r_gb = gearbar(
-           ##### from gear_profile
-           ### first gear
-           # general
-           #ai_gear_type                      = ai_gb_args.sw_gear_type,
-           ai_gear_tooth_nb                  = ai_gb_args.sw_gear_tooth_nb,
-           ai_gear_module                    = ai_gb_args.sw_gear_module,
-           ai_gear_primitive_diameter        = ai_gb_args.sw_gear_primitive_diameter,
-           ai_gear_addendum_dedendum_parity  = ai_gb_args.sw_gear_addendum_dedendum_parity,
-           # tooth height
-           ai_gear_tooth_half_height           = ai_gb_args.sw_gear_tooth_half_height,
-           ai_gear_addendum_height_pourcentage = ai_gb_args.sw_gear_addendum_height_pourcentage,
-           ai_gear_dedendum_height_pourcentage = ai_gb_args.sw_gear_dedendum_height_pourcentage,
-           ai_gear_hollow_height_pourcentage   = ai_gb_args.sw_gear_hollow_height_pourcentage,
-           ai_gear_router_bit_radius           = ai_gb_args.sw_gear_router_bit_radius,
-           # positive involute
-           ai_gear_base_diameter       = ai_gb_args.sw_gear_base_diameter,
-           ai_gear_force_angle         = ai_gb_args.sw_gear_force_angle,
-           ai_gear_tooth_resolution    = ai_gb_args.sw_gear_tooth_resolution,
-           ai_gear_skin_thickness      = ai_gb_args.sw_gear_skin_thickness,
-           # negative involute (if zero, negative involute = positive involute)
-           ai_gear_base_diameter_n     = ai_gb_args.sw_gear_base_diameter_n,
-           ai_gear_force_angle_n       = ai_gb_args.sw_gear_force_angle_n,
-           ai_gear_tooth_resolution_n  = ai_gb_args.sw_gear_tooth_resolution_n,
-           ai_gear_skin_thickness_n    = ai_gb_args.sw_gear_skin_thickness_n,
-           ### second gear
-           # general
-           #ai_second_gear_type                     = ai_gb_args.sw_second_gear_type,
-           ai_second_gear_tooth_nb                 = ai_gb_args.sw_second_gear_tooth_nb,
-           ai_second_gear_primitive_diameter       = ai_gb_args.sw_second_gear_primitive_diameter,
-           ai_second_gear_addendum_dedendum_parity = ai_gb_args.sw_second_gear_addendum_dedendum_parity,
-           # tooth height
-           ai_second_gear_tooth_half_height            = ai_gb_args.sw_second_gear_tooth_half_height,
-           ai_second_gear_addendum_height_pourcentage  = ai_gb_args.sw_second_gear_addendum_height_pourcentage,
-           ai_second_gear_dedendum_height_pourcentage  = ai_gb_args.sw_second_gear_dedendum_height_pourcentage,
-           ai_second_gear_hollow_height_pourcentage    = ai_gb_args.sw_second_gear_hollow_height_pourcentage,
-           ai_second_gear_router_bit_radius            = ai_gb_args.sw_second_gear_router_bit_radius,
-           # positive involute
-           ai_second_gear_base_diameter      = ai_gb_args.sw_second_gear_base_diameter,
-           ai_second_gear_tooth_resolution   = ai_gb_args.sw_second_gear_tooth_resolution,
-           ai_second_gear_skin_thickness     = ai_gb_args.sw_second_gear_skin_thickness,
-           # negative involute (if zero, negative involute = positive involute)
-           ai_second_gear_base_diameter_n    = ai_gb_args.sw_second_gear_base_diameter_n,
-           ai_second_gear_tooth_resolution_n = ai_gb_args.sw_second_gear_tooth_resolution_n,
-           ai_second_gear_skin_thickness_n   = ai_gb_args.sw_second_gear_skin_thickness_n,
-           ### gearbar specific
-           ai_gearbar_slope                  = ai_gb_args.sw_gearbar_slope,
-           ai_gearbar_slope_n                = ai_gb_args.sw_gearbar_slope_n,
-           ### position
-           # first gear position
-           ai_center_position_x                    = ai_gb_args.sw_center_position_x,
-           ai_center_position_y                    = ai_gb_args.sw_center_position_y,
-           ai_gear_initial_angle                   = ai_gb_args.sw_gear_initial_angle,
-           # second gear position
-           ai_second_gear_position_angle           = ai_gb_args.sw_second_gear_position_angle,
-           ai_second_gear_additional_axis_length   = ai_gb_args.sw_second_gear_additional_axis_length,
-           ### portion
-           ai_portion_tooth_nb     = ai_gb_args.sw_cut_portion[0],
-           ai_portion_first_end    = ai_gb_args.sw_cut_portion[1],
-           ai_portion_last_end     = ai_gb_args.sw_cut_portion[2],
-           ### output
-           ai_gear_profile_height  = ai_gb_args.sw_gear_profile_height,
-           ai_simulation_enable    = ai_gb_args.sw_simulation_enable,    # ai_gb_args.sw_simulation_enable,
-           #ai_output_file_basename = ai_gb_args.sw_output_file_basename,
-           ##### from gearbar
-           ### gearbar
-           ai_gearbar_height                = ai_gb_args.sw_gearbar_height,
-           ### gearbar-hole
-           ai_gearbar_hole_height_position  = ai_gb_args.sw_gearbar_hole_height_position,
-           ai_gearbar_hole_diameter         = ai_gb_args.sw_gearbar_hole_diameter,
-           ai_gearbar_hole_offset           = ai_gb_args.sw_gearbar_hole_offset,
-           ai_gearbar_hole_increment        = ai_gb_args.sw_gearbar_hole_increment,
-           ### design output : view the gearbar with tkinter or write files
-           ai_tkinter_view = tkinter_view,
-           ai_output_file_basename = ai_gb_args.sw_output_file_basename,
-           ### optional
-           ai_args_in_txt = ai_args_in_txt)
+  gbd = gearbar_argparse_to_dictionary(ai_gb_args)
+  gbd['args_in_txt'] = ai_args_in_txt
+  gbd['tkinter_view'] = tkinter_view
+  gbd['return_type'] = 'int_status'
+  r_gb = gearbar(gbd)
   return(r_gb)
 
 ################################################################
@@ -468,7 +337,6 @@ def gearbar_self_test():
     ["last test"        , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
-  gearbar_parser = gear_profile.gear_profile_add_argument(gearbar_parser, 3)
   gearbar_parser = gearbar_add_argument(gearbar_parser)
   gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser)
   for i in range(len(test_case_switch)):
@@ -489,7 +357,6 @@ def gearbar_cli(ai_args=None):
   """
   # gearbar parser
   gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
-  gearbar_parser = gear_profile.gear_profile_add_argument(gearbar_parser, 3)
   gearbar_parser = gearbar_add_argument(gearbar_parser)
   gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser)
   # switch for self_test

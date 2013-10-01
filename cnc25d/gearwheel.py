@@ -99,6 +99,8 @@ def gearwheel_add_argument(ai_parser):
   This function intends to be used by the gearwheel_cli, gearwheel_self_test
   """
   r_parser = ai_parser
+  ### inherit arguments from gear_profile
+  r_parser = gear_profile.gear_profile_add_argument(r_parser, 1)
   ### axle
   r_parser.add_argument('--axle_type','--at', action='store', default='none', dest='sw_axle_type',
     help="Select the type of axle for the first gearwheel. Possible values: 'none', 'circle' and 'rectangle'. Default: 'none'")
@@ -142,10 +144,10 @@ def gearwheel(ai_constraints):
   gw_c = gwdi.copy()
   gw_c.update(ai_constraints)
   #print("dbg155: gw_c:", gw_c)
-  if(len(gw_c.viewkeys() & gwdi.viewkeys()) != len(gw_c.viewkeys() | gwdi.viewkeys())): # check if the dictionary gw_c has exactly all the keys compare to split_gearwheel_dictionary_init()
+  if(len(gw_c.viewkeys() & gwdi.viewkeys()) != len(gw_c.viewkeys() | gwdi.viewkeys())): # check if the dictionary gw_c has exactly all the keys compare to gearwheel_dictionary_init()
     print("ERR157: Error, gw_c has too much entries as {:s} or missing entries as {:s}".format(gw_c.viewkeys() - gwdi.viewkeys(), gwdi.viewkeys() - gw_c.viewkeys()))
     sys.exit(2)
-  #print("dbg164: new split_gearwheel constraints:")
+  #print("dbg164: new gearwheel constraints:")
   #for k in gw_c.viewkeys():
   #  if(gw_c[k] != gwdi[k]):
   #    print("dbg166: for k {:s}, gw_c[k] {:s} != gwdi[k] {:s}".format(k, str(gw_c[k]), str(gwdi[k])))
@@ -388,7 +390,6 @@ def gearwheel_argparse_to_dictionary(ai_gw_args):
   """
   r_gwd = {}
   r_gwd.update(gear_profile.gear_profile_argparse_to_dictionary(ai_gw_args, 1))
-  ### split
   ##### from gearwheel
   ### axle
   r_gwd['axle_type']                = ai_gw_args.sw_axle_type
@@ -426,6 +427,7 @@ def gearwheel_argparse_wrapper(ai_gw_args, ai_args_in_txt=""):
   gwd = gearwheel_argparse_to_dictionary(ai_gw_args)
   gwd['args_in_txt'] = ai_args_in_txt
   gwd['tkinter_view'] = tkinter_view
+  gwd['return_type'] = 'int_status'
   r_gw = gearwheel(gwd)
   return(r_gw)
 
@@ -451,7 +453,6 @@ def gearwheel_self_test():
     ["last test"                      , "--gear_tooth_nb 30 --gear_module 10.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')
-  gearwheel_parser = gear_profile.gear_profile_add_argument(gearwheel_parser, 1)
   gearwheel_parser = gearwheel_add_argument(gearwheel_parser)
   gearwheel_parser = cnc25d_api.generate_output_file_add_argument(gearwheel_parser)
   for i in range(len(test_case_switch)):
@@ -472,7 +473,6 @@ def gearwheel_cli(ai_args=None):
   """
   # gearwheel parser
   gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')
-  gearwheel_parser = gear_profile.gear_profile_add_argument(gearwheel_parser, 1)
   gearwheel_parser = gearwheel_add_argument(gearwheel_parser)
   gearwheel_parser = cnc25d_api.generate_output_file_add_argument(gearwheel_parser)
   # switch for self_test

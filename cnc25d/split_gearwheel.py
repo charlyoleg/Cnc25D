@@ -541,6 +541,7 @@ def split_gearwheel_argparse_to_dictionary(ai_sgw_args):
   r_sgwd['output_file_basename'] = ai_sgw_args.sw_output_file_basename
   ### optional
   #r_sgwd['args_in_txt'] = ai_args_in_txt
+  #r_sgwd['return_type'] = 'int_status'
   #### return
   return(r_sgwd)
   
@@ -557,7 +558,7 @@ def split_gearwheel_argparse_wrapper(ai_sgw_args, ai_args_in_txt=""):
   sgwd = split_gearwheel_argparse_to_dictionary(ai_sgw_args)
   sgwd['args_in_txt'] = ai_args_in_txt
   sgwd['tkinter_view'] = tkinter_view
-
+  sgwd['return_type'] = 'int_status'
   r_sgw = split_gearwheel(sgwd)
   return(r_sgw)
 
