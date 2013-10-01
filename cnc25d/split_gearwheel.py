@@ -89,7 +89,7 @@ def split_gearwheel_dictionary_init():
   r_sgwd['output_file_basename'] = ''
   ### optional
   r_sgwd['args_in_txt'] = ""
-  r_sgwd['return_type'] = 'int_status' # possible values: 'int_status', 'assembly_A_figure', 'freecad_object'
+  r_sgwd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
   #### return
   return(r_sgwd)
 
@@ -500,10 +500,13 @@ cnc_router_bit_radius:    \t{:0.3f}
   #### return
   if(sg_c['return_type']=='int_status'):
     r_sgw = 1
-  elif(sg_c['return_type']=='assembly_A_figure'):
+  elif(sg_c['return_type']=='cnc25d_figure'):
     r_sgw = sgw_assembly_A_figure
   elif(sg_c['return_type']=='freecad_object'):
     r_sgw = cnc25d_api.figure_to_freecad_25d_part(part_figure_list[0], sg_c['gear_profile_height'])
+  else:
+    print("ERR508: Error the return_type {:s} is unknown".format(sg_c['return_type']))
+    sys.exit(2)
   return(r_sgw)
 
 ################################################################
