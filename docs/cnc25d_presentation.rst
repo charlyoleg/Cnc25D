@@ -261,8 +261,8 @@ Released on 2013-11-01
 * epicyclic
 * gearlever
 * split_gearwheel
-* bone-axle
-* gear_art  
+* hexa_bone
+* gear_train  
 
 Release 0.1.6
 -------------
