@@ -30,6 +30,7 @@ Contents:
    gearwheel_design
    gearring_design
    gearbar_design
+   split_gearwheel_design
 
 Indices and tables
 ==================
