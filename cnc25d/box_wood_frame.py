@@ -152,6 +152,8 @@ def box_wood_frame_add_argument(ai_parser):
     help="If not zero (the default value), it generates the slabs with this thickness.")
   r_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
     help="If not set to the empty string (the default value), it generates a bunch of design files starting with this basename.")
+  r_parser.add_argument('--return_type','--rt', action='store', default='int_status', dest='sw_return_type',
+    help="Define the what the box_wood_frame() function should returns. Possible values: int_status, freecad_object. Set it to freecad_object to use it with FreeCAD. Default: int_status")
   return(r_parser)
 
 ################################################################
@@ -167,7 +169,7 @@ def box_wood_frame(ai_constraints):
   bwfdi = box_wood_frame_dictionary_init()
   bwf_c = bwfdi.copy()
   bwf_c.update(ai_constraints)
-  #print("dbg155: bwf_c:", bwf_c)
+  print("dbg155: bwf_c:", bwf_c)
   if(len(bwf_c.viewkeys() & bwfdi.viewkeys()) != len(bwf_c.viewkeys() | bwfdi.viewkeys())): # check if the dictionary bwf_c has exactly all the keys compare to box_wood_frame_dictionary_init()
     print("ERR157: Error, bwf_c has too much entries as {:s} or missing entries as {:s}".format(bwf_c.viewkeys() - bwfdi.viewkeys(), bwfdi.viewkeys() - bwf_c.viewkeys()))
     sys.exit(2)
@@ -1781,7 +1783,7 @@ def box_wood_frame_argparse_to_dictionary(ai_bwf_args):
   r_bwfd['output_file_basename'] = ai_bwf_args.sw_output_file_basename
   #### optional
   #r_bwfd['args_in_txt'] = ''
-  #r_bwfd['return_type'] = ''
+  r_bwfd['return_type'] = ai_bwf_args.sw_return_type
   ### return
   return(r_bwfd)
 
@@ -1794,7 +1796,7 @@ def box_wood_frame_argparse_wrapper(ai_bwf_args, ai_args_in_txt=''):
   bwfd = {}
   bwfd.update(box_wood_frame_argparse_to_dictionary(ai_bwf_args))
   bwfd['args_in_txt'] = ai_args_in_txt
-  bwfd['return_type'] = 'int_status'
+  #bwfd['return_type'] = 'int_status'
   r_bwf = box_wood_frame(bwfd)
   return(r_bwf)
 
@@ -1856,8 +1858,11 @@ def box_wood_frame_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("box_wood_frame says hello!\n")
   #my_bwf = box_wood_frame_cli()
-  my_bwf = box_wood_frame_cli("--box_height 600.0".split())
-  #Part.show(my_bwf)
+  my_bwf = box_wood_frame_cli("--box_height 600.0 --return_type freecad_object".split())
+  try: # depending on bwf_c['return_type'] it might be or not a freecad_object
+    Part.show(my_bwf)
+  except:
+    print("box_wood_frame returns a non-freecad-object")
 
 
 
