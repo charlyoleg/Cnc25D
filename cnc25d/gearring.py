@@ -198,6 +198,9 @@ def gearring(ai_constraints):
   radian_epsilon = math.pi/1000
   ### check parameter coherence (part 1)
   holder_radius = float(gr_c['holder_diameter'])/2
+  if(holder_radius<radian_epsilon):
+    print("ERR202: Error, holder_radius {:0.3f} must be set with a larger value".format(holder_radius))
+    sys.exit(2)
   holder_hole_position_radius = gr_c['holder_hole_position_radius']
   if(holder_hole_position_radius==0):
     holder_hole_position_radius = holder_radius
@@ -206,6 +209,9 @@ def gearring(ai_constraints):
   holder_maximal_height = holder_maximal_radius - holder_radius
   holder_crenel_half_width = float(gr_c['holder_crenel_width'])/2
   holder_crenel_with_wall_half_width = holder_crenel_half_width + gr_c['holder_crenel_skin_width']
+  if(holder_radius<holder_crenel_with_wall_half_width):
+    print("ERR213: Error, holder_radius {:0.3f} must be bigger than holder_crenel_with_wall_half_width {:0.3f}".format(holder_radius, holder_crenel_with_wall_half_width))
+    sys.exit(2)
   holder_crenel_half_angle = math.asin(float(holder_crenel_with_wall_half_width)/holder_radius)
   holder_crenel_x_position = math.sqrt((holder_radius)**2 - (holder_crenel_with_wall_half_width)**2)
   additional_holder_maximal_height = holder_radius - holder_crenel_x_position

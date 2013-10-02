@@ -452,6 +452,7 @@ def calc_low_level_gear_parameters(ai_param):
     bottom_land = pi_module*(1-g_adp)-(positive_dedendum+negative_dedendum)
     if(top_land<radian_epsilon):
       print("ERR858: Error, the linear gear top-land {:0.3f} is negative or too small!".format(top_land))
+      print("dbg455: g_sp {:0.3f}  g_sn {:0.3f}".format(g_sp, g_sn))
       sys.exit(2)
     if(bottom_land<2*g_rbr+radian_epsilon):
       print("ERR859: Error, the linear gear bottom-land {:0.3f} is too small compare to the gear_router_bit_radius {:0.3f}".format(bottom_land, g_rbr))

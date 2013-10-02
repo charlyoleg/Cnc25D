@@ -31,7 +31,7 @@
 this piece of code is an example of how to use the parametric design gearwheel
 You can also use this file as a FreeCAD macro from the GUI
 You can also copy-paste this code in your own design files
-If you don't know which value to set to a constraint-parameter, just comment it. box_wood_frame will use a default value
+If you don't know which value to set to a constraint-parameter, just comment it. Default value is used, if you don't set a constraint explicitly.
 """
 
 ################################################################
@@ -148,7 +148,6 @@ gw_constraint['second_gear_additional_axis_length']   = 0.0
 ### output
 gw_constraint['gear_profile_height']  = 20.0
 gw_constraint['simulation_enable']    = False
-#gw_constraint['output_file_basename'] = "test_output/bla"
 ##### from gearwheel
 ### axle
 gw_constraint['axle_type']                = 'rectangle'

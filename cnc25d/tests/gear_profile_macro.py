@@ -30,7 +30,8 @@
 """
 this piece of code is an example of how to use the parametric design gear_profile
 You can also use this file as a FreeCAD macro from the GUI
-Look at the code. It's very simple to hack
+You can also copy-paste this code in your own design files
+If you don't know which value to set to a constraint-parameter, just comment it. Default value is used, if you don't set a constraint explicitly.
 """
 
 ################################################################
