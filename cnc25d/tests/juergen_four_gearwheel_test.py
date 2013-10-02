@@ -62,8 +62,9 @@ gw_constraint['gear_module']                    = 10.0 #5 #10.0
 #gw_constraint['second_gear_type']                     = 'e'
 gw_constraint['second_gear_tooth_nb']                 = 30
 ## second gear position
+additional_axis_length = 1.0
 #gw_constraint['second_gear_position_angle']           = 0.0
-#gw_constraint['second_gear_additional_axis_length']   = 0.0
+#gw_constraint['second_gear_additional_axis_length']   = additional_axis_length
 ###### from gearwheel
 #### axle
 gw_constraint['axle_type']                = 'circle'
@@ -138,62 +139,68 @@ pd2 = n2 * m
 pd3 = n3 * m
 pd4 = n4 * m
 
-l12 = (pd1+pd2)/2.0
-l23 = (pd2+pd3)/2.0
-l34 = (pd3+pd4)/2.0
-l41 = (pd4+pd1)/2.0
+def center_position(ai_center_diameter, ai_pd1, ai_pd2, ai_pd3, ai_pd4, ai_optional_additional_axis_length):
+  """ compute the four axis center
+  """
+  # inter-axis length
+  l12 = (ai_pd1+ai_pd2)/2.0 + ai_optional_additional_axis_length
+  l23 = (ai_pd2+ai_pd3)/2.0 + ai_optional_additional_axis_length
+  l34 = (ai_pd3+ai_pd4)/2.0 + ai_optional_additional_axis_length
+  l41 = (ai_pd4+ai_pd1)/2.0 + ai_optional_additional_axis_length
+  # l13 arbitrary
+  l13_min = max(l12, l23, l34, l41)
+  l13_max = min(l12+l23, l34+l41)
+  l13 = (l13_min+l13_max)/2.0
+  print("l13: min {:0.3f}  max {:0.3f} l13 {:0.3f}".format(l13_min, l13_max, l13))
+  # c1
+  c1x = 0.0
+  c1y = 0.0
+  # c3
+  c3x = c1x + 0.0
+  c3y = c1y + l13
+  # c2
+  # law of cosines: BAC = math.acos((b**2+c**2-a**2)/(2*b*c))
+  a213 = math.acos((l12**2+l13**2-l23**2)/(2*l12*l13))
+  c2a = math.pi/2-a213
+  c2x = c1x + l12*math.cos(c2a)
+  c2y = c1y + l12*math.sin(c2a)
+  # c4
+  a314 = math.acos((l41**2+l13**2-l34**2)/(2*l41*l13))
+  c4a = math.pi/2+a314
+  c4x = c1x + l41*math.cos(c4a)
+  c4y = c1y + l41*math.sin(c4a)
+  # info_txt
+  info_txt = """
+  center coordiantes:
+  c1: x {:0.3f}  y {:0.3f}
+  c2: x {:0.3f}  y {:0.3f}
+  c3: x {:0.3f}  y {:0.3f}
+  c4: x {:0.3f}  y {:0.3f}
+  """.format(c1x, c1y, c2x, c2y, c3x, c3y, c4x, c4y)
+  print("{:s}".format(info_txt))
+  ### dxf
+  import importing_cnc25d # give access to the cnc25d package
+  from cnc25d import cnc25d_api
+  # plank outline 
+  smooth_radius = 40
+  center_plank_A = [
+    (c1x,               c1y-smooth_radius,  smooth_radius),
+    (c2x+smooth_radius, c2y,                smooth_radius),
+    (c3x,               c3y+smooth_radius,  smooth_radius),
+    (c4x-smooth_radius, c4y,                smooth_radius),
+    (c1x,               c1y-smooth_radius,  0)]
+  center_plank_B = cnc25d_api.cnc_cut_outline(center_plank_A, "center_plank_A")
+  # figure
+  center_figure = [
+    center_plank_B,
+    (c1x, c1y, ai_center_diameter/2.0),
+    (c2x, c2y, ai_center_diameter/2.0),
+    (c3x, c3y, ai_center_diameter/2.0),
+    (c4x, c4y, ai_center_diameter/2.0)]
+  if(not sim):
+    cnc25d_api.generate_output_file(center_figure, "test_output/jh01_zahnrad_center_{:0.2f}.dxf".format(ai_optional_additional_axis_length), 10.0, "hello")
 
-l13_min = max(l12, l23, l34, l41)
-l13_max = min(l12+l23, l34+l41)
-l13 = (l13_min+l13_max)/2.0
-print("l13: min {:0.3f}  max {:0.3f} l13 {:0.3f}".format(l13_min, l13_max, l13))
+center_position(center_diameter, pd1, pd2, pd3, pd4, 0)
+center_position(center_diameter, pd1, pd2, pd3, pd4, additional_axis_length)
 
-c1x = 0.0
-c1y = 0.0
-c3x = c1x + 0.0
-c3y = c1y + l13
-
-# law of cosines: BAC = math.acos((b**2+c**2-a**2)/(2*b*c))
-a213 = math.acos((l12**2+l13**2-l23**2)/(2*l12*l13))
-c2a = math.pi/2-a213
-c2x = c1x + l12*math.cos(c2a)
-c2y = c1y + l12*math.sin(c2a)
-
-a314 = math.acos((l41**2+l13**2-l34**2)/(2*l41*l13))
-c4a = math.pi/2+a314
-c4x = c1x + l41*math.cos(c4a)
-c4y = c1y + l41*math.sin(c4a)
-
-info_txt = """
-center coordiantes:
-c1: x {:0.3f}  y {:0.3f}
-c2: x {:0.3f}  y {:0.3f}
-c3: x {:0.3f}  y {:0.3f}
-c4: x {:0.3f}  y {:0.3f}
-""".format(c1x, c1y, c2x, c2y, c3x, c3y, c4x, c4y)
-
-print("{:s}".format(info_txt))
-
-### dxf
-import importing_cnc25d # give access to the cnc25d package
-from cnc25d import cnc25d_api
-
-smooth_radius = 40
-center_plank_A = [
-  (c1x,               c1y-smooth_radius,  smooth_radius),
-  (c2x+smooth_radius, c2y,                smooth_radius),
-  (c3x,               c3y+smooth_radius,  smooth_radius),
-  (c4x-smooth_radius, c4y,                smooth_radius),
-  (c1x,               c1y-smooth_radius,  0)]
-center_plank_B = cnc25d_api.cnc_cut_outline(center_plank_A, "center_plank_A")
-
-center_figure = [
-  center_plank_B,
-  (c1x, c1y, center_diameter/2.0),
-  (c2x, c2y, center_diameter/2.0),
-  (c3x, c3y, center_diameter/2.0),
-  (c4x, c4y, center_diameter/2.0)]
-
-if(not sim):
-  cnc25d_api.generate_output_file(center_figure, "test_output/jh01_zahnrad_center.dxf", 10.0, "hello")
 
