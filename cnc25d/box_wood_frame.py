@@ -1734,7 +1734,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
     r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,0)
     #r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,200)
     #r_bwf = frame_assembly(ai_module_width,ai_cutting_extra,0)
-    Part.show(r_bwf)
+    #Part.show(r_bwf)
   else:
     print("ERR736: Error, return_type {:s} is unknown".format(bwf_c['return_type']))
     sys.exit(2)

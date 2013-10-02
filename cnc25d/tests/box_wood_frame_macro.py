@@ -30,7 +30,8 @@
 """
 this piece of code is an example of how to use the parametric design box_wood_frame
 You can also use this file as a FreeCAD macro from the GUI
-Don't be afraid, look at the code. It's very simple to hack
+You can also copy-paste this code in your own design files
+If you don't know which value to set to a constraint-parameter, just comment it. box_wood_frame will use a default value
 """
 
 ################################################################
@@ -59,6 +60,7 @@ Don't be afraid, look at the code. It's very simple to hack
 # header for Python / FreeCAD compatibility
 ################################################################
 
+import importing_cnc25d # give access to the cnc25d package
 from cnc25d import cnc25d_api
 cnc25d_api.importing_freecad()
 
@@ -69,7 +71,7 @@ cnc25d_api.importing_freecad()
 ################################################################
 
 #
-from cnc25d import box_wood_frame
+from cnc25d import cnc25d_design
 #
 import Part
 
@@ -81,41 +83,35 @@ import Part
 # choose the values of the parameters by editing this file
 # feature request : create a GUI with PyQt4 to edit those parameter values
 
-bwf_box_width = 400.0
-bwf_box_depth = 400.0
-bwf_box_height = 400.0
-bwf_fitting_height = 30.0
-bwf_h_plank_width = 50.0
-bwf_v_plank_width = 30.0
-bwf_plank_height = 20.0
-bwf_d_plank_width = 30.0
-bwf_d_plank_height = 10.0
-bwf_crenel_depth = 5.0
-bwf_wall_diagonal_size = 50.0
-bwf_tobo_diagonal_size = 100.0
-bwf_diagonal_lining_top_height = 20.0
-bwf_diagonal_lining_bottom_height = 20.0
-bwf_module_width = 1
-bwf_router_bit_radius = 2.0
-bwf_cutting_extra = 2.0 # doesn't affect the cnc cutting plan
-bwf_slab_thickness = 5.0
-bwf_output_file_basename = "" # set a not-empty string if you want to generate the output files
-#bwf_output_file_basename = "my_output_dir/" 
-#bwf_output_file_basename = "my_output_dir/my_output_basename" 
-#bwf_output_file_basename = "my_output_basename" 
-
-
+bwf_constraint = {} # This python-dictionary contains all the constraint-parameters to build the box_wood_frame
+bwf_constraint['box_width'] = 400.0
+bwf_constraint['box_depth'] = 400.0
+bwf_constraint['box_height'] = 400.0
+bwf_constraint['fitting_height'] = 30.0
+bwf_constraint['h_plank_width'] = 50.0
+bwf_constraint['v_plank_width'] = 30.0
+bwf_constraint['plank_height'] = 20.0
+bwf_constraint['d_plank_width'] = 30.0
+bwf_constraint['d_plank_height'] = 10.0
+bwf_constraint['crenel_depth'] = 5.0
+bwf_constraint['wall_diagonal_size'] = 50.0
+bwf_constraint['tobo_diagonal_size'] = 100.0
+bwf_constraint['diagonal_lining_top_height'] = 20.0
+bwf_constraint['diagonal_lining_bottom_height'] = 20.0
+bwf_constraint['module_width'] = 1
+bwf_constraint['router_bit_radius'] = 2.0
+bwf_constraint['cutting_extra'] = 2.0 # doesn't affect the cnc cutting plan
+bwf_constraint['slab_thickness'] = 5.0
+bwf_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
+#bwf_constraint['output_file_basename'] = "my_output_dir/" 
+#bwf_constraint['output_file_basename'] = "my_output_dir/my_output_basename" 
+#bwf_constraint['output_file_basename'] = "my_output_basename" 
+bwf_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
-bwf_assembly = box_wood_frame.box_wood_frame(bwf_box_width, bwf_box_depth, bwf_box_height,
-                                              bwf_fitting_height, bwf_h_plank_width, bwf_v_plank_width, bwf_plank_height,
-                                              bwf_d_plank_width, bwf_d_plank_height, bwf_crenel_depth,
-                                              bwf_wall_diagonal_size, bwf_tobo_diagonal_size,
-                                              bwf_diagonal_lining_top_height, bwf_diagonal_lining_bottom_height,
-                                              bwf_module_width, bwf_router_bit_radius, bwf_cutting_extra,
-                                              bwf_slab_thickness, bwf_output_file_basename)
+bwf_assembly = cnc25d_design.box_wood_frame(bwf_constraint)
 Part.show(bwf_assembly)
 

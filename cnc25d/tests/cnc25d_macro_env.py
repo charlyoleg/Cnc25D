@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# cnc25d_test_env.py
-# Run a test-macro python script after importing the cnc25d package
+# cnc25d_macro_env.py
+# Run a macro python script after importing the cnc25d package
 # created by charlyoleg on 2013/09/28
 #
 # (C) Copyright 2013 charlyoleg
@@ -24,16 +24,16 @@
 # 
 
 """
-cnc25d_test_env.py lets run a test-macro python script with the appropriate sys.path
+cnc25d_macro_env.py lets run a macro python script with the appropriate sys.path
 Usage:
-> python cnc25d_test_env.py my_test_macro_script.py
+> python cnc25d_macro_env.py my_script_macro.py
 """
 
-### get the test-macro script path
+### get the macro script path
 import sys, os.path
 
 if(len(sys.argv)!=2):
-  print("ERR036: Error, cnc25d_test_env.py requires one argument. Given {:d}".format(len(sys.argv)-1))
+  print("ERR036: Error, cnc25d_macro_env.py requires one argument. Given {:d}".format(len(sys.argv)-1))
   sys.exit(2)
 macro_path = sys.argv[1]
 if(not os.path.isfile(macro_path)):
@@ -49,10 +49,10 @@ file_dir= os.path.dirname(__file__)
 #argv_dir= os.path.dirname(sys.argv[0])
 #print("dbg193: argv_dir:", argv_dir)
 
-test_script_dir=file_dir
-if(test_script_dir==''):
-  test_script_dir='.'
-sys.path.append(test_script_dir+'/../..')
+macro_script_dir=file_dir
+if(macro_script_dir==''):
+  macro_script_dir='.'
+sys.path.append(macro_script_dir+'/../..')
 #sys.path.append('./../..') # this work only if you launch the script from its own directory
 
 ### run the macro
