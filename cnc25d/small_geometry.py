@@ -1045,6 +1045,8 @@ def sub_smooth_outline_c_curve(ai_polyline, ai_precision, ai_router_bit_request,
         sys.exit(2)
       r_outline.append((BX, BY, CX, CY)) # create the first arc-segment
       r_outline.append((DX, DY, EX, EY)) # create the second arc-segment
+      #print("dbg048: BX {:0.3f}  BY {:0.3f}  CX {:0.3f}  CY {:0.3f}  DX {:0.3f}  DY {:0.3f}  EX {:0.3f}  EY {:0.3f}".format(BX, BY, CX, CY, DX, DY, EX, EY))
+      #print("fbg049: r_outline:", r_outline)
   # return
   return(r_outline)
 

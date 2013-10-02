@@ -66,7 +66,8 @@ import design_help # just for get_effective_args() and mkdir_p
 
 unit_circle_resolution = 6
 #default_dxf_layer_name = 'CNC25D'
-global_epsilon = math.pi/1000
+global_epsilon_length = math.pi/100
+global_epsilon_angle = math.pi/10000
 
 ################################################################
 # ******** sub-functions for the API ***********
@@ -104,8 +105,9 @@ def arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end):
   #print("dbg503: ptc: {:6.01f}  {:6.01f}".format(ptcx, ptcy))
   # epsilon definiton to be tolerant to calculation imprecision
   #epsilon = math.pi/1000 # can be used to compare radian and sine
-  epsilon = global_epsilon # to speed up run time
-  #print("dbg747: epsilon:", epsilon)
+  length_epsilon = global_epsilon_length # to speed up run time
+  angle_epsilon = global_epsilon_angle # to speed up run time
+  #print("dbg747: length_epsilon:", length_epsilon)
   # check
   if((ptax==ptbx)and(ptay==ptby)):
     print("ERR807: Error, point_A and point_B are identical!")
@@ -120,11 +122,11 @@ def arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end):
   # length of [AB] and [BC]
   lab = math.sqrt((ptbx-ptax)**2+(ptby-ptay)**2)
   lbc = math.sqrt((ptcx-ptbx)**2+(ptcy-ptby)**2)
-  if(lab<epsilon):
+  if(lab<length_epsilon):
     print("ERR811: Error, A and B are almost identical")
     print("dbg559: pta={:0.2f} {:0.2f}  ptb={:0.2f} {:0.2f}  ptc={:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
     sys.exit(2)
-  if(lbc<epsilon):
+  if(lbc<length_epsilon):
     print("ERR812: Error, B and C are almost identical")
     sys.exit(2)
   # calculation of cos(e), cos(f), sin(e) and sin(f)
@@ -138,15 +140,15 @@ def arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end):
   #print("dbg307: sin_f: ", sin_f)
   is_colinear = (math.copysign(1, sin_e)*cos_e)-(math.copysign(1,sin_f)*cos_f)
   #print("dbg556: is_colinear:", is_colinear)
-  if(abs(is_colinear)<epsilon):
+  if(abs(is_colinear)<angle_epsilon):
     #print("ERR810: Error, A, B, C are colinear. Arc can not be created!")
     #sys.exit(2)
-    if(lab>100*epsilon):
+    if(lab>100*length_epsilon):
       pass # to let comment the following warning
-      #print("WARN810: Arc ABC is replaced by the line AC, because A,B,C are colinear!")
-      #print("dbg559: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
-      #print("dbg558: is_colinear:", is_colinear)
-      #print("dbg557: lab:", lab)
+      print("WARN810: Arc ABC is replaced by the line AC, because A,B,C are colinear!")
+      print("dbg559: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
+      print("dbg558: is_colinear:", is_colinear)
+      print("dbg557: lab:", lab)
     r_a3ptrca = (0, 0, 0, 0, 0, 0, 0, 0, 0)
     return(r_a3ptrca)
   # Calculation of M and N
@@ -163,10 +165,10 @@ def arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end):
   kix = sin_f*(cos_e*ptmx+sin_e*ptmy)-sin_e*(cos_f*ptnx+sin_f*ptny)
   liy = sin_e*cos_f-sin_f*cos_e
   kiy = cos_f*(cos_e*ptmx+sin_e*ptmy)-cos_e*(cos_f*ptnx+sin_f*ptny)
-  if(abs(lix)<epsilon):
+  if(abs(lix)<angle_epsilon):
     print("ERR813: Error, A, B and C are almost colinear. Arc can not be created!")
     sys.exit(2)
-  if(abs(liy)<epsilon):
+  if(abs(liy)<angle_epsilon):
     print("ERR814: Error, A, B and C are almost colinear. Arc can not be created!")
     sys.exit(2)
   #print("dbg124: lix:", lix)
@@ -180,12 +182,12 @@ def arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end):
   lia = math.sqrt((ptax-ptix)**2+(ptay-ptiy)**2)
   lib = math.sqrt((ptbx-ptix)**2+(ptby-ptiy)**2)
   lic = math.sqrt((ptcx-ptix)**2+(ptcy-ptiy)**2)
-  if(abs(lib-lia)>epsilon):
+  if(abs(lib-lia)>length_epsilon):
     #print("dbg404: lia:", lia)
     #print("dbg405: lib:", lib)
     print("ERR815: I is not equidistant from A and B!")
     sys.exit(2)
-  if(abs(lic-lib)>epsilon):
+  if(abs(lic-lib)>length_epsilon):
     #print("dbg402: lib:", lib)
     #print("dbg403: lic:", lic)
     print("ERR816: I is not equidistant from B and C!")
@@ -218,7 +220,8 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   """
   ### precision
   #epsilon = math.pi/1000 # can be used to compare radian and sine
-  epsilon = global_epsilon # to speed up run time
+  #length_epsilon = global_epsilon_length # to speed up run time
+  #angle_epsilon = global_epsilon_angle # to speed up run time
   ### get radius, center and angles
   (lia, ptix, ptiy, u, v, w, uv, vw, uw) = arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end)
   ### colinear case
@@ -256,14 +259,15 @@ def outline_arc_line_with_freecad(ai_segments, ai_outline_closed):
   """ Generates the arcs and lines outline with the FreeCAD Part API
   """
   # precision
-  radian_epsilon = global_epsilon
+  length_epsilon = global_epsilon_length
+  #angle_epsilon = global_epsilon_angle
   #
   constant_z = 0 # FreeCAD.Part works in 3D. So we fix z=0 and just use the XY surface
   fc_vectors = [Base.Vector(ai_segments[0][0], ai_segments[0][1], constant_z)]
   segment_nb = len(ai_segments)-1
   fc_outline = []
   for i in range(segment_nb-1):
-    if((abs(ai_segments[i][-2]-ai_segments[i+1][-2])<radian_epsilon)and(abs(ai_segments[i][-1]-ai_segments[i+1][-1])<radian_epsilon)):
+    if((abs(ai_segments[i][-2]-ai_segments[i+1][-2])<length_epsilon)and(abs(ai_segments[i][-1]-ai_segments[i+1][-1])<length_epsilon)):
       print("ERR264: Error, point of index {:d} and {:d} are identical. x {:0.5f}  y {:0.5f}".format(i,i+1, ai_segments[i][-2], ai_segments[i][-1]))
       #for j in range(segment_nb):
       #  print("dbg269: pt {:d}  x {:0.3f}  y {:0.3f}".format(j, ai_segments[j][-2], ai_segments[j][-1]))
@@ -331,7 +335,10 @@ def outline_arc_line_with_svgwrite(ai_segments, ai_outline_closed):
         sweep_flag = 0
       target_x = point_end[0] - point_start[0]
       target_y = point_end[1] - point_start[1]
-      svg_arc_path = svgwrite.path.Path(d="M{:0.2f},{:0.2f} a{:0.2f},{:0.2f} 0 {:d},{:d} {:0.2f},{:0.2f}".format(point_start[0], point_start[1], lia, lia, large_arc_flag, sweep_flag, target_x, target_y))
+      if(lia==0):
+        svg_arc_path = svgwrite.shapes.Line(start=point_start, end=point_end)
+      else:
+        svg_arc_path = svgwrite.path.Path(d="M{:0.2f},{:0.2f} a{:0.2f},{:0.2f} 0 {:d},{:d} {:0.2f},{:0.2f}".format(point_start[0], point_start[1], lia, lia, large_arc_flag, sweep_flag, target_x, target_y))
       svg_arc_path.fill('green', opacity=0.1).stroke('black', width=1)
       svg_outline.append(svg_arc_path)
       #arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
@@ -381,7 +388,11 @@ def outline_arc_line_with_dxfwrite(ai_segments, ai_outline_closed):
         #w2 = u + uw + 2*math.pi
         u2 = w
         w2 = u
-      dxf_arc = DXFEngine.arc(lia, (ptix, ptiy), u2*180/math.pi, w2*180/math.pi)
+      #print("dbg384: lia {:0.3f}  ptix {:0.3f}  ptiy {:0.3f}  u2 {:0.3f}  w2 {:0.3f}".format(lia, ptix, ptiy, u2*180/math.pi, w2*180/math.pi))
+      if(lia==0): # when arc_3_points_to_radius_center_angles found that the 3 points are too colinear
+        dxf_arc = DXFEngine.line(start=point_start, end=point_end)
+      else:
+        dxf_arc = DXFEngine.arc(lia, (ptix, ptiy), u2*180/math.pi, w2*180/math.pi)
       dxf_outline.append(dxf_arc)
       #arc_polyline = arc_of_circle(point_start, point_mid, point_end, unit_circle_resolution)
       #arc_polyline_dxf = []
