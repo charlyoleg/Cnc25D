@@ -82,7 +82,7 @@ def gearring_dictionary_init():
   r_grd['holder_crenel_router_bit_radius']   = 1.0
   r_grd['holder_smoothing_radius']       = 0.0
   ### cnc router_bit constraint
-  r_grd['cnc_router_bit_radius']          = '1.0'
+  r_grd['cnc_router_bit_radius']          = 1.0
   ### view the gearring with tkinter
   r_grd['tkinter_view'] = False
   r_grd['output_file_basename'] = ''

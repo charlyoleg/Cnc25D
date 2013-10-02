@@ -67,22 +67,22 @@ def gearwheel_dictionary_init():
   r_gwd.update(gear_profile.gear_profile_dictionary_init())
   #### gearwheel dictionary entries
   ### axle
-  r_gwd['axle_type']                = 'circle',
-  r_gwd['axle_x_width']             = 10.0,
-  r_gwd['axle_y_width']             = 10.0,
-  r_gwd['axle_router_bit_radius']   = 1.0,
+  r_gwd['axle_type']                = 'circle'
+  r_gwd['axle_x_width']             = 10.0
+  r_gwd['axle_y_width']             = 10.0
+  r_gwd['axle_router_bit_radius']   = 1.0
   ### wheel-hollow = legs
-  r_gwd['wheel_hollow_leg_number']        = 0,
-  r_gwd['wheel_hollow_leg_width']         = 10.0,
-  r_gwd['wheel_hollow_leg_angle']         = 0.0,
-  r_gwd['wheel_hollow_internal_diameter'] = 0.0,
-  r_gwd['wheel_hollow_external_diameter'] = 0.0,
-  r_gwd['wheel_hollow_router_bit_radius'] = 0.0,
+  r_gwd['wheel_hollow_leg_number']        = 0
+  r_gwd['wheel_hollow_leg_width']         = 10.0
+  r_gwd['wheel_hollow_leg_angle']         = 0.0
+  r_gwd['wheel_hollow_internal_diameter'] = 0.0
+  r_gwd['wheel_hollow_external_diameter'] = 0.0
+  r_gwd['wheel_hollow_router_bit_radius'] = 0.0
   ### cnc router_bit constraint
-  r_gwd['cnc_router_bit_radius']          = '1.0',
+  r_gwd['cnc_router_bit_radius']          = 1.0
   ### view the gearwheel with tkinter
-  r_gwd['tkinter_view'] = False,
-  r_gwd['output_file_basename'] = '',
+  r_gwd['tkinter_view'] = False
+  r_gwd['output_file_basename'] = ''
   ### optional
   r_gwd['args_in_txt'] = ''
   r_gwd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
