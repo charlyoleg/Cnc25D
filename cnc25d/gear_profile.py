@@ -88,7 +88,7 @@ def gear_profile_dictionary_init():
   # positive involute
   r_gpd['gear_base_diameter'] = 0.0
   r_gpd['gear_force_angle'] = 0.0
-  r_gpd['gear_tooth_resolution'] = 3
+  r_gpd['gear_tooth_resolution'] = 2
   r_gpd['gear_skin_thickness'] = 0.0
   # negative involute (if zero, negative involute'] = positive involute)
   r_gpd['gear_base_diameter_n'] = 0.0
