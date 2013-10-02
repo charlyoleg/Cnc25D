@@ -893,7 +893,7 @@ def box_wood_frame(ai_constraints):
     elif(nai_plank_name=="slab58_front"):
       r_plank = slab_front(nai_cutting_extra)
     else:
-      print("ERR115: Error, the plank_name %s doesn't exist" % nai_plank_name)
+      print("ERR115: Error, the plank_name {:s} doesn't exist".format(nai_plank_name))
       sys.exit(2)
     return(r_plank)
   def place_plank_generic(nai_plank_name, nai_module_width, nai_cutting_extra, ai_flip, ai_orientation, ai_position_x, ai_position_y, ai_position_z):
@@ -1161,7 +1161,7 @@ def box_wood_frame(ai_constraints):
       elif(l_orientation=='yx'):
         l_inc_x = 1
       else:
-        print("ERR564: the l_orientation %s doesn't exist!" % l_orientation)
+        print("ERR564: the l_orientation {:s} doesn't exist!".format(l_orientation))
         sys.exit(2)
       for li in range(l_plank_desc[lp][3]):
         r_batch.append(place_plank_generic(lp, nai_module_width, nai_cutting_extra, 'i', l_orientation, l_pos_x, l_pos_y, ai_ini_z))
@@ -1284,53 +1284,55 @@ def box_wood_frame(ai_constraints):
   #def box_wood_frame_construction_step_01():
   #def box_wood_frame_construction_step_02():
 
-  def box_wood_frame_text_report(nai_module_width):
+  def box_wood_frame_text_report(nai_module_width, nai_args_in_txt):
     """ Generates the text report to provide all additional information to the STL and DXF files
     """
     r_text_report = ""
     r_text_report += """
 box_wood_frame design
 piece of furniture for building pile-up shell or straw house
-created by Cnc25D on %s
+created by Cnc25D on {:s}
 license: CC BY SA 3.0
-"""  % (datetime.now().isoformat())
+""".format(datetime.now().isoformat())
+    if(nai_args_in_txt!=''):
+      r_text_report += "{:s}".format(nai_args_in_txt)
     r_text_report += """
 1. parameter values:
 ====================
-box_width             : %0.2f
-box_depth             : %0.2f
-box_height            : %0.2f
-module_width          : %d (in number of box)
-fitting_height        : %0.2f
-h_plank_width         : %0.2f
-v_plank_width         : %0.2f
-plank_height          : %0.2f
-d_plank_width         : %0.2f
-d_plank_height        : %0.2f
-crenel_depth          : %0.2f
-wall_diagonal_size    : %0.2f
-tobo_diagonal_size    : %0.2f
-diagonal_lining_top_height    : %0.2f
-diagonal_lining_bottom_height : %0.2f
-router_bit_radius         : %0.2f
-cutting_extra         : %0.2f
-slab_thickness        : %0.2f
-output_file_basename  : %s
-""" % (ai_box_width, ai_box_depth, ai_box_height, nai_module_width,
+box_width             : {:0.2f}
+box_depth             : {:0.2f}
+box_height            : {:0.2f}
+module_width          : {:d} (in number of box)
+fitting_height        : {:0.2f}
+h_plank_width         : {:0.2f}
+v_plank_width         : {:0.2f}
+plank_height          : {:0.2f}
+d_plank_width         : {:0.2f}
+d_plank_height        : {:0.2f}
+crenel_depth          : {:0.2f}
+wall_diagonal_size    : {:0.2f}
+tobo_diagonal_size    : {:0.2f}
+diagonal_lining_top_height    : {:0.2f}
+diagonal_lining_bottom_height : {:0.2f}
+router_bit_radius         : {:0.2f}
+cutting_extra         : {:0.2f}
+slab_thickness        : {:0.2f}
+output_file_basename  : {:s}
+""".format(ai_box_width, ai_box_depth, ai_box_height, nai_module_width,
         ai_fitting_height, ai_h_plank_width, ai_v_plank_width, ai_plank_height,
         ai_d_plank_width, ai_d_plank_height, ai_crenel_depth,
         ai_wall_diagonal_size, ai_tobo_diagonal_size,
         ai_diagonal_lining_top_height, ai_diagonal_lining_bottom_height,
         ai_router_bit_radius, ai_cutting_extra,
-        ai_slab_thickness, ai_output_file_basename)
+        ai_slab_thickness, bwf_c['output_file_basename'])
     wood_density_fir_tree = 450 #kg/m3
     wood_density_oak_tree = 980 #kg/m3
     r_text_report += """
 2. wood density:
 ================
-fir tree density  :   %0.2f (kg/m3)
-oak tree density  :   %0.2f (kg/m3)
-""" % (wood_density_fir_tree, wood_density_oak_tree)
+fir tree density  :   {:0.2f} (kg/m3)
+oak tree density  :   {:0.2f} (kg/m3)
+""".format(wood_density_fir_tree, wood_density_oak_tree)
     r_text_report += """
 3. plank height and section list:
 =================================
@@ -1342,10 +1344,10 @@ oak tree density  :   %0.2f (kg/m3)
     possible_plank_height = list(reversed(sorted(l_plank_per_height.keys()))) 
     #print("dbg873: possible_plank_height:", possible_plank_height)
     possible_plank_height_str = [ "{: 3.02f}".format(lh) for lh in  possible_plank_height]
-    r_text_report += "plank height list: %s\n" % (" ".join(possible_plank_height_str))
+    r_text_report += "plank height list: {:s}\n".format(" ".join(possible_plank_height_str))
     l_plank_per_height_and_width = plank_per_height_and_width(nai_module_width)
     possible_plank_height_and_width = list(reversed(sorted(l_plank_per_height_and_width.keys())))
-    r_text_report += "plank width and height list: %s\n" % ("   ".join(possible_plank_height_and_width))
+    r_text_report += "plank width and height list: {:s}\n".format("   ".join(possible_plank_height_and_width))
     r_text_report += """
 4.1. plank list:
 ================
@@ -1355,7 +1357,7 @@ oak tree density  :   %0.2f (kg/m3)
     l_plank_idx = 0
     #print("dbg874: possible_plank_height:", possible_plank_height)
     for lpph in possible_plank_height:
-      r_text_report += "list of planks of height : %0.02f\n" % (lpph)
+      r_text_report += "list of planks of height : {:0.02f}\n".format(lpph)
       per_height_q[lpph] = 0
       per_height_volume[lpph] = 0.0
       for lp in l_plank_per_height[lpph]:
@@ -1431,7 +1433,7 @@ oak tree density  :   %0.2f (kg/m3)
     per_wxh_q = {}
     per_wxh_length = {}
     for lppwh in possible_plank_height_and_width:
-      r_text_report += "plank section width_x_height: %s\n"%lppwh
+      r_text_report += "plank section width_x_height: {:s}\n".format(lppwh)
       per_wxh_q[lppwh] = 0
       per_wxh_length[lppwh] = 0.0
       for lp in l_plank_per_height_and_width[lppwh]:
@@ -1469,7 +1471,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
 ====================
 """
     return(r_text_report)
-  #print("box_wood_frame text report:\n%s"%(box_wood_frame_text_report(1)))
+  #print("box_wood_frame text report:\n{:s}".format(box_wood_frame_text_report(1, '')))
 
   def fg_file_path(ai_output_dir, ai_file_name):
     r_file_path = "{:s}/{:s}".format(ai_output_dir, ai_file_name)
@@ -1584,11 +1586,11 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
     r_fg = (l_file_idx, l_text_report)
     return(r_fg)
 
-  def box_wood_frame_file_generator(nai_output_file_basename):
+  def box_wood_frame_file_generator(nai_output_file_basename, nai_args_in_txt):
     """ this function generates the DXF and STL files if the parameter output_file_basename is not empty.
         It returns a string that contains the file name list and their description.
     """
-    bwf_log = box_wood_frame_text_report(ai_module_width)
+    bwf_log = box_wood_frame_text_report(ai_module_width, nai_args_in_txt)
     print("{:s}".format(bwf_log))
     l_text_report = bwf_log
     #print("dbg747: nai_output_file_basename:", nai_output_file_basename)
@@ -1717,19 +1719,25 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
 
     r_generator = 1
     return(r_generator)
-  #print("dbg553: box_wood_frame_file_generator: %d" % box_wood_frame_file_generator('aaa'))
-  #print("dbg554: box_wood_frame_file_generator: %d" % box_wood_frame_file_generator(''))
+  #print("dbg553: box_wood_frame_file_generator: {:d}".format(box_wood_frame_file_generator('aaa', '')))
+  #print("dbg554: box_wood_frame_file_generator: {:d}".format(box_wood_frame_file_generator('', '')))
   
   # action = sub main
-  box_wood_frame_file_generator(ai_output_file_basename)
-  #box_wood_frame_file_generator('ttt/')
+  box_wood_frame_file_generator(bwf_c['output_file_basename'], bwf_c['args_in_txt'])
+  #box_wood_frame_file_generator('ttt/', '')
   #Part.show(box_wood_frame_assembly(1,2,0))
 
-  ## select what you want to return
-  #r_bwf = 1
-  r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,0)
-  #r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,200)
-  #r_bwf = frame_assembly(ai_module_width,ai_cutting_extra,0)
+  ## return
+  if(bwf_c['return_type']=='int_status'):
+    r_bwf = 1
+  elif(bwf_c['return_type']=='freecad_object'):
+    r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,0)
+    #r_bwf = box_wood_frame_assembly(ai_module_width,ai_cutting_extra,200)
+    #r_bwf = frame_assembly(ai_module_width,ai_cutting_extra,0)
+    Part.show(r_bwf)
+  else:
+    print("ERR736: Error, return_type {:s} is unknown".format(bwf_c['return_type']))
+    sys.exit(2)
   #r_bwf.exportStl("bwf_assembly.stl")
   #r_bwf = plank_tobo_diagonal(0)
   #r_bwf.exportBrep("plank_tobo_diagonal.brep")
@@ -1805,7 +1813,7 @@ def box_wood_frame_self_test():
 
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   bwf_parser = argparse.ArgumentParser(description='Command line interface for the function box_wood_frame().')
-  bwf_parser = box_wood_frame_add_argument(bwf_parser, 0)
+  bwf_parser = box_wood_frame_add_argument(bwf_parser)
   for i in range(len(test_case_switch)):
     l_test_switch = test_case_switch[i][1]
     print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
@@ -1848,8 +1856,8 @@ def box_wood_frame_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("box_wood_frame says hello!\n")
   #my_bwf = box_wood_frame_cli()
-  my_bwf = box_wood_frame_cli("--box_height 600.0")
-  Part.show(my_bwf)
+  my_bwf = box_wood_frame_cli("--box_height 600.0".split())
+  #Part.show(my_bwf)
 
 
 
