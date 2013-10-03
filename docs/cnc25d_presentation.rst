@@ -250,19 +250,24 @@ For any other feedback, send me a message to "charlyoleg at fabfolk dot com".
 Releases
 ========
 
-Release 0.1.7
+Release 0.1.8
 -------------
 Released on 2013-11-01
+
+* epicyclic
+* gearlever
+* hexa_bone
+* gear_train  
+
+Release 0.1.7
+-------------
+Released on 2013-10-03
 
 * unify the test-environment of the macro-scripts
 * use python-dictionary as function-argument for designs with many parameters
 * gearring (aka annulus)
 * gearbar (aka rack)
-* epicyclic
-* gearlever
 * split_gearwheel
-* hexa_bone
-* gear_train  
 
 Release 0.1.6
 -------------

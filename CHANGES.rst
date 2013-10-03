@@ -2,6 +2,15 @@
 Release History
 ###############
 
+0.1.7 (2013-10-03)
+==================
+
+* unify the test-environment of the macro-scripts
+* use python-dictionary as function-argument for designs with many parameters
+* gearring (aka annulus)
+* gearbar (aka rack)
+* split_gearwheel
+
 0.1.6 (2013-09-25)
 ==================
 

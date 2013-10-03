@@ -63,10 +63,9 @@ Here, you get short notice for the dev, todo list adn other stuff ...
 
 2) micropreprocessor.py
 This is a Python package and there should not preprocessing
-But two files must have the same contents and import is not the solution there. So I've created this small micropreprocessor.py that replace '#include path/to/whatever' to solve the issue.
+But two files must have the same contents and import is not the solution there. So I've created this small micropreprocessor.py that replaces '#include path/to/whatever' to solve the issue.
 2.1) file dependency
 bin/cnc25d_example_generator_src.py includes cnc25d/tests/box_wood_frame_macro.py to make bin/cnc25d_example_generator.py
-cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_macro.py
 
 3) todo
 + unittest
@@ -79,7 +78,7 @@ cnc25d/tests/box_wood_frame_test.py imports cnc25d/tests/box_wood_frame_macro.py
 -- gearlever
 -- split_gearwheel
 - bone-axle
--- gear art
+-- gear train
 - clock
 - fan
 - lock
