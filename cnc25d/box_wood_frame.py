@@ -1858,7 +1858,8 @@ def box_wood_frame_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("box_wood_frame says hello!\n")
   #my_bwf = box_wood_frame_cli()
-  my_bwf = box_wood_frame_cli("--box_height 600.0 --return_type freecad_object".split())
+  #my_bwf = box_wood_frame_cli("--box_height 600.0 --return_type freecad_object".split())
+  my_bwf = box_wood_frame_cli("--box_height 600.0".split())
   try: # depending on bwf_c['return_type'] it might be or not a freecad_object
     Part.show(my_bwf)
   except:

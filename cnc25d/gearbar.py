@@ -382,7 +382,8 @@ def gearbar_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearbar.py says hello!\n")
   #my_gb = gearbar_cli()
-  my_gb = gearbar_cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --return_type freecad_object".split())
+  #my_gb = gearbar_cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --return_type freecad_object".split())
+  my_gb = gearbar_cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0".split())
   try: # depending on gb_c['return_type'] it might be or not a freecad_object
     Part.show(my_gb)
   except:

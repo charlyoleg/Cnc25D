@@ -488,7 +488,8 @@ def gearring_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearring.py says hello!\n")
   #my_gr = gearring_cli()
-  my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0 --return_type freecad_object".split())
+  #my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0 --return_type freecad_object".split())
+  my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0".split())
   try: # depending on gr_c['return_type'] it might be or not a freecad_object
     Part.show(my_gr)
   except:
