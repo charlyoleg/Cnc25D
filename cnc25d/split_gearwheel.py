@@ -31,7 +31,7 @@ You can also simulate or view of the split-gearwheel and get a DXF, SVG or BRep 
 ################################################################
 
 import cnc25d_api
-#cnc25d_api.importing_freecad()
+cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 #FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
@@ -505,7 +505,12 @@ cnc_router_bit_radius:    \t{:0.3f}
   elif(sg_c['return_type']=='cnc25d_figure'):
     r_sgw = sgw_assembly_A_figure
   elif(sg_c['return_type']=='freecad_object'):
-    r_sgw = cnc25d_api.figure_to_freecad_25d_part(part_figure_list[0], sg_c['gear_profile_height'])
+    fc_obj = []
+    for i in range(len(part_figure_list)):
+      fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(part_figure_list[i], sg_c['gear_profile_height']))
+      if((i%2)==1):
+        fc_obj[i].translate(Base.Vector(0,0,sg_c['gear_profile_height']))
+    r_sgw = Part.makeCompound(fc_obj)
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(sg_c['return_type']))
     sys.exit(2)
@@ -541,9 +546,9 @@ def split_gearwheel_argparse_to_dictionary(ai_sgw_args):
   ### view the split_gearwheel with tkinter
   #r_sgwd['tkinter_view'] = tkinter_view
   r_sgwd['output_file_basename'] = ai_sgw_args.sw_output_file_basename
+  r_sgwd['return_type'] = ai_sgw_args.sw_return_type
   ### optional
   #r_sgwd['args_in_txt'] = ai_args_in_txt
-  #r_sgwd['return_type'] = 'int_status'
   #### return
   return(r_sgwd)
   
@@ -560,7 +565,7 @@ def split_gearwheel_argparse_wrapper(ai_sgw_args, ai_args_in_txt=""):
   sgwd = split_gearwheel_argparse_to_dictionary(ai_sgw_args)
   sgwd['args_in_txt'] = ai_args_in_txt
   sgwd['tkinter_view'] = tkinter_view
-  sgwd['return_type'] = 'int_status'
+  #sgwd['return_type'] = 'int_status'
   r_sgw = split_gearwheel(sgwd)
   return(r_sgw)
 
@@ -615,7 +620,7 @@ def split_gearwheel_cli(ai_args=None):
   # split_gearwheel parser
   split_gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function split_gearwheel().')
   split_gearwheel_parser = split_gearwheel_add_argument(split_gearwheel_parser)
-  split_gearwheel_parser = cnc25d_api.generate_output_file_add_argument(split_gearwheel_parser)
+  split_gearwheel_parser = cnc25d_api.generate_output_file_add_argument(split_gearwheel_parser, 1)
   # switch for self_test
   split_gearwheel_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
   help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
@@ -638,7 +643,11 @@ def split_gearwheel_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("split_gearwheel.py says hello!\n")
   #my_sgw = split_gearwheel_cli()
-  my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2".split())
+  my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --return_type freecad_object".split())
   #my_sgw = split_gearwheel_cli("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0".split())
   #Part.show(my_sgw)
+  try: # depending on sgw_c['return_type'] it might be or not a freecad_object
+    Part.show(my_sgw)
+  except:
+    print("return_type is not a freecad-object")
 

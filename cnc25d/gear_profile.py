@@ -31,7 +31,7 @@ The function gear_profile() returns an format B outline that can be easily inclu
 ################################################################
 
 import cnc25d_api
-#cnc25d_api.importing_freecad()
+cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 #FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
@@ -49,7 +49,7 @@ import sys, argparse
 import Tkinter # to display the outline in a small GUI
 import time # for time.sleep to help Tkinter to finish properly
 # FreeCAD
-#import Part
+import Part
 #from FreeCAD import Base
 # 3rd parties
 #import svgwrite
@@ -131,7 +131,7 @@ def gear_profile_dictionary_init():
   r_gpd['portion_first_end'] = 0
   r_gpd['portion_last_end'] = 0
   ### output
-  r_gpd['gear_profile_height'] = 1.0
+  r_gpd['gear_profile_height'] = 10.0
   r_gpd['simulation_enable'] = False
   r_gpd['output_file_basename'] = ''
   #### optional
@@ -257,14 +257,17 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
       help="(N, first_end, last_end) If N>1, cut a portion of N tooth ofthe gear_profile. first_end and last_end defines in details where the profile stop (0: slope-top, 1: top-middle, 2: slope-bottom, 3: hollow-middle). Default: (0,0,0)")
   ### output
   # gear_profile extrusion (currently only linear extrusion is possible)
-  r_parser.add_argument('--gear_profile_height','--gwh', action='store', type=float, default=1.0, dest='sw_gear_profile_height',
-    help="Set the height of the linear extrusion of the first gear_profile. Default: 1.0")
+  r_parser.add_argument('--gear_profile_height','--gwh', action='store', type=float, default=10.0, dest='sw_gear_profile_height',
+    help="Set the height of the linear extrusion of the first gear_profile. Default: 10.0")
   # simulation
   r_parser.add_argument('--simulation_enable','--se', action='store_true', default=False, dest='sw_simulation_enable',
     help='It display a Tk window where you can observe the gear running. Check with your eyes if the geometry is working.')
   # output file : added later
   #r_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
   #  help="If not  the empty_string (the default value), it outputs the (first) gear in file(s) depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, no-extension uses FreeCAD and you get .brep and .dxf")
+  # return_type
+  #r_parser.add_argument('--return_type','--rt', action='store', default='int_status', dest='sw_return_type',
+  #  help="Define the what the gear_profile() function should returns. Possible values: int_status, cnc25d_figure, freecad_object. Set it to freecad_object to use it with FreeCAD. Default: int_status")
   # return
   return(r_parser)
     
@@ -1078,6 +1081,7 @@ def gear_profile_argparse_to_dictionary(ai_gp_args, ai_variant=0):
   r_gpd['gear_profile_height'] = ai_gp_args.sw_gear_profile_height
   r_gpd['simulation_enable'] = ai_gp_args.sw_simulation_enable
   r_gpd['output_file_basename'] = ai_gp_args.sw_output_file_basename
+  r_gpd['return_type'] = ai_gp_args.sw_return_type
   ###### return
   return(r_gpd)
 
@@ -1097,7 +1101,7 @@ def gear_profile_argparse_wrapper(ai_gp_args, ai_args_in_txt=''):
   gpd.update(gear_profile_argparse_to_dictionary(ai_gp_args))
   gpd['args_in_txt'] = ai_args_in_txt
   gpd['simulation_enable'] = run_simulation
-  gpd['return_type'] = 'int_status'
+  #gpd['return_type'] = 'int_status'
   r_gp = gear_profile(gpd)
   return(r_gp)
 
@@ -1189,7 +1193,7 @@ def gear_profile_cli(ai_args=None):
   # gear_profile parser
   gear_profile_parser = argparse.ArgumentParser(description='Command line interface for the function gear_profile().')
   gear_profile_parser = gear_profile_add_argument(gear_profile_parser, 0)
-  gear_profile_parser = cnc25d_api.generate_output_file_add_argument(gear_profile_parser)
+  gear_profile_parser = cnc25d_api.generate_output_file_add_argument(gear_profile_parser, 1)
   # add switch for self_test
   gear_profile_parser.add_argument('--run_self_test','--rst', action='store_true', default=False, dest='sw_run_self_test',
     help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
@@ -1215,10 +1219,14 @@ if __name__ == "__main__":
   #my_gp = gear_profile_cli()
   #my_gp = gear_profile_cli("--gear_tooth_nb 17".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0".split())
-  my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20".split())
+  my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20 --return_type freecad_object".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename gear_profile_example_1.svg".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 17 --cut_portion 7 3 3 --output_file_basename gear_profile_example_2.svg".split())
   #my_gp = gear_profile_cli("--gear_tooth_nb 20 --gear_force_angle {:0.3f} --gear_force_angle_n {:0.3f} --output_file_basename gear_profile_example_3.svg".format(25*math.pi/180, 35*math.pi/180,).split())
+  try: # depending on gp_c['return_type'] it might be or not a freecad_object
+    Part.show(my_gp)
+  except:
+    print("return_type is not a freecad-object")
 
 

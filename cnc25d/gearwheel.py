@@ -409,9 +409,9 @@ def gearwheel_argparse_to_dictionary(ai_gw_args):
   ### design output : view the gearwheel with tkinter or write files
   #tkinter_view'] = tkinter_view
   r_gwd['output_file_basename'] = ai_gw_args.sw_output_file_basename
+  r_gwd['return_type'] = ai_gw_args.sw_return_type
   ### optional
   #r_gwd['args_in_txt'] = ''
-  #r_gwd['return_type'] = 'int_status'
   #### return
   return(r_gwd)
 
@@ -428,7 +428,7 @@ def gearwheel_argparse_wrapper(ai_gw_args, ai_args_in_txt=""):
   gwd = gearwheel_argparse_to_dictionary(ai_gw_args)
   gwd['args_in_txt'] = ai_args_in_txt
   gwd['tkinter_view'] = tkinter_view
-  gwd['return_type'] = 'int_status'
+  #gwd['return_type'] = 'int_status'
   r_gw = gearwheel(gwd)
   return(r_gw)
 
@@ -475,7 +475,7 @@ def gearwheel_cli(ai_args=None):
   # gearwheel parser
   gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')
   gearwheel_parser = gearwheel_add_argument(gearwheel_parser)
-  gearwheel_parser = cnc25d_api.generate_output_file_add_argument(gearwheel_parser)
+  gearwheel_parser = cnc25d_api.generate_output_file_add_argument(gearwheel_parser, 1)
   # switch for self_test
   gearwheel_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
   help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
@@ -500,7 +500,7 @@ if __name__ == "__main__":
   #my_gw = gearwheel_cli()
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto2".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --axle_type rectangle --axle_x_width 20 --axle_y_width 30 --axle_router_bit_radius 5".split())
-  my_gw = gearwheel_cli("--gear_tooth_nb 25 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 15 --axle_router_bit_radius 2.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 10.0".split())
+  my_gw = gearwheel_cli("--gear_tooth_nb 25 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 15 --axle_router_bit_radius 2.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 10.0 --return_type freecad_object".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0 --output_file_basename test_output/gearwheel_hat".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 1 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0".split())
@@ -509,5 +509,8 @@ if __name__ == "__main__":
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0 --output_file_basename gw1.svg".split())
   #my_gw = gearwheel_cli("--gear_primitive_diameter 140.0 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 3 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0 --output_file_basename gw2.svg".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 23 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type circle --axle_x_width 20 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 1 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 180.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0 --output_file_basename gw3.svg".split())
-
+  try: # depending on gw_c['return_type'] it might be or not a freecad_object
+    Part.show(my_gw)
+  except:
+    print("return_type is not a freecad-object")
 

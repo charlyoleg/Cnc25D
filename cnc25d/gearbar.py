@@ -31,7 +31,7 @@ You can also simulate or view of the gearbar and get a DXF, SVG or BRep file.
 ################################################################
 
 import cnc25d_api
-#cnc25d_api.importing_freecad()
+cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
 #FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
@@ -48,7 +48,7 @@ import sys, argparse
 #import Tkinter # to display the outline in a small GUI
 #
 import Part
-from FreeCAD import Base
+#from FreeCAD import Base
 # 3rd parties
 #import svgwrite
 #from dxfwrite import DXFEngine
@@ -294,9 +294,9 @@ def gearbar_argparse_to_dictionary(ai_gb_args):
   ### design output : view the gearbar with tkinter or write files
   #r_gbd['tkinter_view'] = tkinter_view
   r_gbd['output_file_basename'] = ai_gb_args.sw_output_file_basename
+  r_gbd['return_type'] = ai_gb_args.sw_return_type
   ### optional
   #r_gbd['args_in_txt'] = ''
-  #r_gbd['return_type'] = 'int_status'
   #### return
   return(r_gbd)
 
@@ -313,7 +313,7 @@ def gearbar_argparse_wrapper(ai_gb_args, ai_args_in_txt=""):
   gbd = gearbar_argparse_to_dictionary(ai_gb_args)
   gbd['args_in_txt'] = ai_args_in_txt
   gbd['tkinter_view'] = tkinter_view
-  gbd['return_type'] = 'int_status'
+  #gbd['return_type'] = 'int_status'
   r_gb = gearbar(gbd)
   return(r_gb)
 
@@ -359,7 +359,7 @@ def gearbar_cli(ai_args=None):
   # gearbar parser
   gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
   gearbar_parser = gearbar_add_argument(gearbar_parser)
-  gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser)
+  gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser, 1)
   # switch for self_test
   gearbar_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
   help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
@@ -382,5 +382,9 @@ def gearbar_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearbar.py says hello!\n")
   #my_gb = gearbar_cli()
-  my_gb = gearbar_cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0".split())
+  my_gb = gearbar_cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --return_type freecad_object".split())
+  try: # depending on gb_c['return_type'] it might be or not a freecad_object
+    Part.show(my_gb)
+  except:
+    print("return_type is not a freecad-object")
 

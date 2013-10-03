@@ -67,12 +67,15 @@ import design_help
 # functions to be reused
 ################################################################
 
-def generate_output_file_add_argument(ai_parser):
+def generate_output_file_add_argument(ai_parser, ai_variant=0):
   """ Add the argparse switch --output_file_basename
   """
   r_parser = ai_parser
   r_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
     help="If not  the empty_string (the default value), it outputs the (first) gear in file(s) depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, no-extension uses FreeCAD and you get .brep and .dxf")
+  if(ai_variant==1):
+    r_parser.add_argument('--return_type','--rt', action='store', default='int_status', dest='sw_return_type',
+      help="Define the what the main function should returns. Possible values: int_status, cnc25d_figure, freecad_object. Set it to freecad_object to use it with FreeCAD. Default: int_status")
   # return
   return(r_parser)
   

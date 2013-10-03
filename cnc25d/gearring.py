@@ -282,10 +282,9 @@ def gearring(ai_constraints):
     print("ERR303: Error, holder-hole are too closed from the gear_hollow_circle: maximal_gear_profile_radius {:0.3f}  holder_hole_position_radius {:0.3f}  holder_hole_radius {:0.3f}".format(maximal_gear_profile_radius, holder_hole_position_radius, holder_hole_radius))
     sys.exit(2)
   ### holder outline
-  holder_figure = []
   holder_figure_overlay = []
   if(gr_c['holder_crenel_number']==0):
-    holder_figure.append([g1_ix, g1_iy, holder_radius])
+    holder_outline = (g1_ix, g1_iy, holder_radius)
   elif(gr_c['holder_crenel_number']>0):
     angle_incr = 2*math.pi/gr_c['holder_crenel_number']
     if((angle_incr-2*holder_crenel_half_angle)<math.pi/10):
@@ -303,7 +302,7 @@ def gearring(ai_constraints):
       holder_A.append([g1_ix+holder_radius*math.cos(middle_angle), g1_iy+holder_radius*math.sin(middle_angle),
                         g1_ix+holder_radius*math.cos(end_angle), g1_iy+holder_radius*math.sin(end_angle), holder_smoothing_radius])
     holder_A[-1] = [holder_A[-1][0], holder_A[-1][1], holder_A[0][0], holder_A[0][1], 0]
-    holder_figure.append(cnc25d_api.cnc_cut_outline(holder_A, "holder_A"))
+    holder_outline = cnc25d_api.cnc_cut_outline(holder_A, "holder_A")
     holder_figure_overlay.append(cnc25d_api.ideal_outline(holder_A, "holder_A"))
   ### holder-hole outline
   holder_hole_figure = []
@@ -313,8 +312,9 @@ def gearring(ai_constraints):
       holder_hole_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
 
   ### design output
-  gr_figure = [gear_profile_B]
-  gr_figure.extend(holder_figure)
+  gr_figure = []
+  gr_figure.append(holder_outline) # largest outline first for freecad
+  gr_figure.append(gear_profile_B)
   gr_figure.extend(holder_hole_figure)
   # ideal_outline in overlay
   gr_figure_overlay = []
@@ -394,9 +394,9 @@ def gearring_argparse_to_dictionary(ai_gr_args):
   ### design output : view the gearring with tkinter or write files
   #r_grd['tkinter_view'] = tkinter_view
   r_grd['output_file_basename'] = ai_gr_args.sw_output_file_basename
+  r_grd['return_type'] = ai_gr_args.sw_return_type
   ### optional
   #r_grd['args_in_txt'] = ''
-  #r_grd['return_type'] = 'int_status'
   #### return
   return(r_grd)
 
@@ -420,7 +420,7 @@ def gearring_argparse_wrapper(ai_gr_args, ai_args_in_txt=""):
   #grd['portion_last_end'] = 0
   grd['args_in_txt'] = ai_args_in_txt
   grd['tkinter_view'] = tkinter_view
-  grd['return_type'] = 'int_status'
+  #grd['return_type'] = 'int_status'
   r_gr = gearring(grd)
   return(r_gr)
 
@@ -465,7 +465,7 @@ def gearring_cli(ai_args=None):
   # gearring parser
   gearring_parser = argparse.ArgumentParser(description='Command line interface for the function gearring().')
   gearring_parser = gearring_add_argument(gearring_parser)
-  gearring_parser = cnc25d_api.generate_output_file_add_argument(gearring_parser)
+  gearring_parser = cnc25d_api.generate_output_file_add_argument(gearring_parser, 1)
   # switch for self_test
   gearring_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
   help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
@@ -488,5 +488,9 @@ def gearring_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearring.py says hello!\n")
   #my_gr = gearring_cli()
-  my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0".split())
+  my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0 --return_type freecad_object".split())
+  try: # depending on gr_c['return_type'] it might be or not a freecad_object
+    Part.show(my_gr)
+  except:
+    print("return_type is not a freecad-object")
 
