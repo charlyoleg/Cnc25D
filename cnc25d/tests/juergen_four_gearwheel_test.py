@@ -64,6 +64,9 @@ gw_constraint['gear_tooth_nb']                  = 19
 gw_constraint['gear_module']                    = 10.0 #5 #10.0
 #gw_constraint['second_gear_type']                     = 'e'
 gw_constraint['second_gear_tooth_nb']                 = 30
+# first gear position
+gw_constraint['center_position_x']                    = 200.0
+gw_constraint['center_position_y']                    = 200.0
 ## second gear position
 additional_axis_length = 1.0
 #gw_constraint['second_gear_position_angle']           = 0.0
