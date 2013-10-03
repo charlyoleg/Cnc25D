@@ -112,9 +112,7 @@ You can rename, move, copy and edit the script {:s}
 """
 
 ### box_wood_frame script example
-
 bwf_script_name="eg01_box_wood_frame_example.py"
-
 # copy from ../cnc25d/tests/box_wood_frame_macro.py without the import stuff
 bwf_script_content='''#!/usr/bin/env python
 #
@@ -124,9 +122,7 @@ bwf_script_content='''#!/usr/bin/env python
 '''
 
 ### cnc25d_api_example script
-
 cgf_script_name="eg03_cnc25d_api_example.py"
-
 # copy from ../cnc25d/tests/cnc25d_api_macro.py
 cgf_script_content='''#!/usr/bin/env python
 #
@@ -136,9 +132,7 @@ cgf_script_content='''#!/usr/bin/env python
 '''
 
 ### simple_cnc25d_api_example script
-
 sca_script_name="eg02_simple_cnc25d_api_example.py"
-
 # copy from ../cnc25d/tests/simple_cnc25d_api_macro.py
 sca_script_content='''#!/usr/bin/env python
 #
@@ -148,9 +142,7 @@ sca_script_content='''#!/usr/bin/env python
 '''
 
 ### gear_profile script example
-
 gp_script_name="eg04_gear_profile_example.py"
-
 # copy from ../cnc25d/tests/gear_profile_macro.py
 gp_script_content='''#!/usr/bin/env python
 #
@@ -160,9 +152,7 @@ gp_script_content='''#!/usr/bin/env python
 '''
 
 ### gearwheel script example
-
 gw_script_name="eg05_gearwheel_example.py"
-
 # copy from ../cnc25d/tests/gearwheel_macro.py
 gw_script_content='''#!/usr/bin/env python
 #
@@ -171,14 +161,47 @@ gw_script_content='''#!/usr/bin/env python
 #include "../cnc25d/tests/gearwheel_macro.py"
 '''
 
+### gearring script example
+gr_script_name="eg06_gearring_example.py"
+# copy from ../cnc25d/tests/gearring_macro.py
+gr_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/gearring_macro.py
+#
+#include "../cnc25d/tests/gearring_macro.py"
+'''
+
+### gearbar script example
+gb_script_name="eg07_gearbar_example.py"
+# copy from ../cnc25d/tests/gearbar_macro.py
+gb_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/gearbar_macro.py
+#
+#include "../cnc25d/tests/gearbar_macro.py"
+'''
+
+### split_gearwheel script example
+sgw_script_name="eg08_split_gearwheel_example.py"
+# copy from ../cnc25d/tests/split_gearwheel_macro.py
+sgw_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/split_gearwheel_macro.py
+#
+#include "../cnc25d/tests/split_gearwheel_macro.py"
+'''
+
 ### Generating the script examples
 
 ceg_example_list={
   bwf_script_name : bwf_script_content,
+  cgf_script_name : cgf_script_content,
+  sca_script_name : sca_script_content,
   gp_script_name : gp_script_content,
   gw_script_name : gw_script_content,
-  cgf_script_name : cgf_script_content,
-  sca_script_name : sca_script_content}
+  gr_script_name : gr_script_content,
+  gb_script_name : gb_script_content,
+  sgw_script_name : sgw_script_content}
 
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")
