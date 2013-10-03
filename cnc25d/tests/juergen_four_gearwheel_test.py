@@ -29,8 +29,11 @@ Gear test-system with Juergen
 # import
 ################################################################
 
-import importing_cnc25d # give access to the cnc25d package
-from cnc25d import cnc25d_api
+try:    # when working on the source files
+  from cnc25d import cnc25d_api
+except: # when working with an installed Cnc25D package
+  import importing_cnc25d # give access to the cnc25d package
+  from cnc25d import cnc25d_api
 #cnc25d_api.importing_freecad()
 #print("FreeCAD.Version:", FreeCAD.Version())
 
@@ -179,8 +182,6 @@ def center_position(ai_center_diameter, ai_pd1, ai_pd2, ai_pd3, ai_pd4, ai_optio
   """.format(c1x, c1y, c2x, c2y, c3x, c3y, c4x, c4y)
   print("{:s}".format(info_txt))
   ### dxf
-  import importing_cnc25d # give access to the cnc25d package
-  from cnc25d import cnc25d_api
   # plank outline 
   smooth_radius = 40
   center_plank_A = [

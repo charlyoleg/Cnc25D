@@ -59,10 +59,11 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 # import
 ################################################################
 
-# give access to the cnc25d package
-import importing_cnc25d
-# import the Cnc25D API modules
-from cnc25d import cnc25d_api
+try:    # when working on the source files
+  from cnc25d import cnc25d_api # import the Cnc25D API modules
+except: # when working with an installed Cnc25D package
+  import importing_cnc25d # give access to the cnc25d package
+  from cnc25d import cnc25d_api # import the Cnc25D API modules
 # add the FreeCAD library path to the search path
 cnc25d_api.importing_freecad()
 # import the FreeCAD library

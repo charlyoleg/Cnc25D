@@ -60,8 +60,11 @@ If you don't know which value to set to a constraint-parameter, just comment it.
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import importing_cnc25d # give access to the cnc25d package
-from cnc25d import cnc25d_api
+try:    # when working on the source files
+  from cnc25d import cnc25d_api
+except: # when working with an installed Cnc25D package
+  import importing_cnc25d # give access to the cnc25d package
+  from cnc25d import cnc25d_api
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
