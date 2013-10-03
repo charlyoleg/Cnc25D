@@ -231,7 +231,8 @@ def gearwheel(ai_constraints):
         wheel_hollow_external_radius = 0
         wheel_hollow_leg_number = 0
     if(wheel_hollow_internal_radius==0): # set the default value
-      wheel_hollow_internal_radius = 2.0*axle_radius
+      #wheel_hollow_internal_radius = 2.0*axle_radius
+      wheel_hollow_internal_radius = axle_radius + gw_c['wheel_hollow_leg_width']
       if(wheel_hollow_internal_radius>wheel_hollow_external_radius-2.1*wheel_hollow_router_bit_radius): # remove the default value
         print("WARN228: Warning, the wheel_hollow_internal_radius default value {:0.3f} can not be set!".format(wheel_hollow_internal_radius))
         wheel_hollow_internal_radius = 0
@@ -501,7 +502,8 @@ if __name__ == "__main__":
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto2".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --axle_type rectangle --axle_x_width 20 --axle_y_width 30 --axle_router_bit_radius 5".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 25 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 15 --axle_router_bit_radius 2.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 10.0 --return_type freecad_object".split())
-  my_gw = gearwheel_cli("--gear_tooth_nb 25 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 15 --axle_router_bit_radius 2.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 10.0".split())
+  #my_gw = gearwheel_cli("--gear_tooth_nb 25 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 15 --axle_router_bit_radius 2.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 10.0".split())
+  my_gw = gearwheel_cli("--gear_tooth_nb 25 --gear_module 10 --axle_type circle --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 10.0 --axle_x_width 50".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 5 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0 --output_file_basename test_output/gearwheel_hat".split())
   #my_gw = gearwheel_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 1 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0".split())
