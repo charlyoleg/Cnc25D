@@ -512,6 +512,8 @@ if __name__ == "__main__":
   #my_gw = gearwheel_cli("--gear_tooth_nb 23 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type circle --axle_x_width 20 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 1 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 180.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0 --output_file_basename gw3.svg".split())
   try: # depending on gw_c['return_type'] it might be or not a freecad_object
     Part.show(my_gw)
+    print("freecad_object returned")
   except:
-    print("return_type is not a freecad-object")
+    pass
+    #print("return_type is not a freecad-object")
 

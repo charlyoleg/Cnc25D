@@ -649,6 +649,8 @@ if __name__ == "__main__":
   #Part.show(my_sgw)
   try: # depending on sgw_c['return_type'] it might be or not a freecad_object
     Part.show(my_sgw)
+    print("freecad_object returned")
   except:
-    print("return_type is not a freecad-object")
+    pass
+    #print("return_type is not a freecad-object")
 

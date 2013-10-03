@@ -1862,8 +1862,10 @@ if __name__ == "__main__":
   my_bwf = box_wood_frame_cli("--box_height 600.0".split())
   try: # depending on bwf_c['return_type'] it might be or not a freecad_object
     Part.show(my_bwf)
+    print("freecad_object returned")
   except:
-    print("box_wood_frame returns a non-freecad-object")
+    pass
+    #print("box_wood_frame returns a non-freecad-object")
 
 
 

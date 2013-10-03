@@ -492,6 +492,8 @@ if __name__ == "__main__":
   my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0".split())
   try: # depending on gr_c['return_type'] it might be or not a freecad_object
     Part.show(my_gr)
+    print("freecad_object returned")
   except:
-    print("return_type is not a freecad-object")
+    pass
+    #print("return_type is not a freecad-object")
 

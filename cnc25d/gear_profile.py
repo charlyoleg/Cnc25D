@@ -1227,7 +1227,9 @@ if __name__ == "__main__":
   #my_gp = gear_profile_cli("--gear_tooth_nb 20 --gear_force_angle {:0.3f} --gear_force_angle_n {:0.3f} --output_file_basename gear_profile_example_3.svg".format(25*math.pi/180, 35*math.pi/180,).split())
   try: # depending on gp_c['return_type'] it might be or not a freecad_object
     Part.show(my_gp)
+    print("freecad_object returned")
   except:
-    print("return_type is not a freecad-object")
+    pass
+    #print("return_type is not a freecad-object")
 
 
