@@ -232,7 +232,7 @@ def gearwheel(ai_constraints):
         wheel_hollow_leg_number = 0
     if(wheel_hollow_internal_radius==0): # set the default value
       #wheel_hollow_internal_radius = 2.0*axle_radius
-      wheel_hollow_internal_radius = axle_radius + gw_c['wheel_hollow_leg_width']
+      wheel_hollow_internal_radius = axle_radius + 1.0*gw_c['wheel_hollow_leg_width']
       if(wheel_hollow_internal_radius>wheel_hollow_external_radius-2.1*wheel_hollow_router_bit_radius): # remove the default value
         print("WARN228: Warning, the wheel_hollow_internal_radius default value {:0.3f} can not be set!".format(wheel_hollow_internal_radius))
         wheel_hollow_internal_radius = 0

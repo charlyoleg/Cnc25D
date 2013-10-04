@@ -197,27 +197,6 @@ def gearring(ai_constraints):
   ### precision
   radian_epsilon = math.pi/1000
   ### check parameter coherence (part 1)
-  holder_radius = float(gr_c['holder_diameter'])/2
-  if(holder_radius<radian_epsilon):
-    print("ERR202: Error, holder_radius {:0.3f} must be set with a larger value".format(holder_radius))
-    sys.exit(2)
-  holder_hole_position_radius = gr_c['holder_hole_position_radius']
-  if(holder_hole_position_radius==0):
-    holder_hole_position_radius = holder_radius
-  holder_hole_radius = float(gr_c['holder_hole_diameter'])/2
-  holder_maximal_radius = holder_hole_position_radius + gr_c['holder_crenel_position'] + gr_c['holder_crenel_height']
-  holder_maximal_height = holder_maximal_radius - holder_radius
-  holder_crenel_half_width = float(gr_c['holder_crenel_width'])/2
-  holder_crenel_with_wall_half_width = holder_crenel_half_width + gr_c['holder_crenel_skin_width']
-  if(holder_radius<holder_crenel_with_wall_half_width):
-    print("ERR213: Error, holder_radius {:0.3f} must be bigger than holder_crenel_with_wall_half_width {:0.3f}".format(holder_radius, holder_crenel_with_wall_half_width))
-    sys.exit(2)
-  holder_crenel_half_angle = math.asin(float(holder_crenel_with_wall_half_width)/holder_radius)
-  holder_crenel_x_position = math.sqrt((holder_radius)**2 - (holder_crenel_with_wall_half_width)**2)
-  additional_holder_maximal_height = holder_radius - holder_crenel_x_position
-  holder_maximal_height_plus = holder_maximal_height + additional_holder_maximal_height
-  holder_side_outer_smoothing_radius = min(0.8*gr_c['holder_crenel_skin_width'], float(holder_maximal_height_plus)/4)
-  holder_side_straigth_length = holder_maximal_height_plus - holder_side_outer_smoothing_radius
   # get the router_bit_radius
   gear_router_bit_radius = gr_c['gear_router_bit_radius']
   if(gr_c['cnc_router_bit_radius']>gear_router_bit_radius):
@@ -226,23 +205,8 @@ def gearring(ai_constraints):
   if(gr_c['cnc_router_bit_radius']>holder_crenel_router_bit_radius):
     holder_crenel_router_bit_radius = gr_c['cnc_router_bit_radius']
   holder_smoothing_radius = gr_c['holder_smoothing_radius']
-  if(holder_smoothing_radius==0):
-    holder_smoothing_radius = 0.9*holder_side_straigth_length
   if(gr_c['cnc_router_bit_radius']>holder_smoothing_radius):
     holder_smoothing_radius = gr_c['cnc_router_bit_radius']
-  # gr_c['holder_crenel_height
-  if(gr_c['holder_crenel_number']>0):
-    if((0.9*holder_side_straigth_length)<holder_smoothing_radius):
-      print("ERR218: Error, the holder-crenel-wall-side height is too small: holder_side_straigth_length {:0.3f}  holder_smoothing_radius {:0.3f}".format(holder_side_straigth_length, holder_smoothing_radius))
-      sys.exit(2)
-  # gr_c['holder_crenel_position']
-  if(gr_c['holder_crenel_position']<holder_hole_radius):
-    print("ERR211: Error, holder_crenel_position {:0.3f} is too small compare to holder_hole_radius {:03f}".format(gr_c['holder_crenel_position'], holder_hole_radius))
-    sys.exit(2)
-  # gr_c['holder_crenel_width']
-  if(gr_c['holder_crenel_width']<2.1*holder_crenel_router_bit_radius):
-    print("ERR215: Error, holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(gr_c['holder_crenel_width'], holder_crenel_router_bit_radius))
-    sys.exit(2)
   # gr_c['gear_tooth_nb']
   if(gr_c['gear_tooth_nb']>0): # create a gear_profile
     ### get the gear_profile
@@ -277,6 +241,43 @@ def gearring(ai_constraints):
     gear_profile_info += "gear center (x, y):   \t{:0.3f}  \t{:0.3f}\n".format(g1_ix, g1_iy)
     maximal_gear_profile_radius = float(gr_c['gear_primitive_diameter'])/2
   ### check parameter coherence (part 2)
+  holder_radius = float(gr_c['holder_diameter'])/2
+  if(holder_radius==0): # dynamic default value
+    holder_radius = maximal_gear_profile_radius + 2.0*gear_profile_parameters['module'] + gr_c['holder_hole_diameter']/2.0
+  holder_hole_position_radius = gr_c['holder_hole_position_radius']
+  if(holder_hole_position_radius==0):
+    holder_hole_position_radius = holder_radius
+  holder_hole_radius = float(gr_c['holder_hole_diameter'])/2
+  holder_maximal_radius = holder_hole_position_radius + gr_c['holder_crenel_position'] + gr_c['holder_crenel_height']
+  holder_maximal_height = holder_maximal_radius - holder_radius
+  holder_crenel_half_width = float(gr_c['holder_crenel_width'])/2
+  holder_crenel_with_wall_half_width = holder_crenel_half_width + gr_c['holder_crenel_skin_width']
+  if(holder_radius<holder_crenel_with_wall_half_width):
+    print("ERR213: Error, holder_radius {:0.3f} must be bigger than holder_crenel_with_wall_half_width {:0.3f}".format(holder_radius, holder_crenel_with_wall_half_width))
+    sys.exit(2)
+  holder_crenel_half_angle = math.asin(float(holder_crenel_with_wall_half_width)/holder_radius)
+  holder_crenel_x_position = math.sqrt((holder_radius)**2 - (holder_crenel_with_wall_half_width)**2)
+  additional_holder_maximal_height = holder_radius - holder_crenel_x_position
+  holder_maximal_height_plus = holder_maximal_height + additional_holder_maximal_height
+  holder_side_outer_smoothing_radius = min(0.8*gr_c['holder_crenel_skin_width'], float(holder_maximal_height_plus)/4)
+  holder_side_straigth_length = holder_maximal_height_plus - holder_side_outer_smoothing_radius
+  if(gr_c['holder_smoothing_radius']==0):
+    holder_smoothing_radius = 0.9*holder_side_straigth_length
+  if(gr_c['cnc_router_bit_radius']>holder_smoothing_radius):
+    holder_smoothing_radius = gr_c['cnc_router_bit_radius']
+  # gr_c['holder_crenel_height
+  if(gr_c['holder_crenel_number']>0):
+    if((0.9*holder_side_straigth_length)<holder_smoothing_radius):
+      print("ERR218: Error, the holder-crenel-wall-side height is too small: holder_side_straigth_length {:0.3f}  holder_smoothing_radius {:0.3f}".format(holder_side_straigth_length, holder_smoothing_radius))
+      sys.exit(2)
+  # gr_c['holder_crenel_position']
+  if(gr_c['holder_crenel_position']<holder_hole_radius):
+    print("ERR211: Error, holder_crenel_position {:0.3f} is too small compare to holder_hole_radius {:03f}".format(gr_c['holder_crenel_position'], holder_hole_radius))
+    sys.exit(2)
+  # gr_c['holder_crenel_width']
+  if(gr_c['holder_crenel_width']<2.1*holder_crenel_router_bit_radius):
+    print("ERR215: Error, holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(gr_c['holder_crenel_width'], holder_crenel_router_bit_radius))
+    sys.exit(2)
   # hollow_circle and holder-hole
   if(maximal_gear_profile_radius>(holder_hole_position_radius-holder_hole_radius)):
     print("ERR303: Error, holder-hole are too closed from the gear_hollow_circle: maximal_gear_profile_radius {:0.3f}  holder_hole_position_radius {:0.3f}  holder_hole_radius {:0.3f}".format(maximal_gear_profile_radius, holder_hole_position_radius, holder_hole_radius))
@@ -324,10 +325,10 @@ def gearring(ai_constraints):
   gearring_parameter_info += "\n" + gr_c['args_in_txt'] + "\n\n"
   gearring_parameter_info += gear_profile_info
   gearring_parameter_info += """
-holder_diameter: \t{:0.3f}
+holder_radius: \t{:0.3f}  diameter: \t{:0.3f}
 holder_crenel_number: \t{:d}
 holder_position_angle: \t{:0.3f}
-""".format(gr_c['holder_diameter'], gr_c['holder_crenel_number'], gr_c['holder_position_angle'])
+""".format(holder_radius, 2*holder_radius, gr_c['holder_crenel_number'], gr_c['holder_position_angle'])
   gearring_parameter_info += """
 holder_hole_position_radius: \t{:0.3f}
 holder_hole_diameter: \t{:0.3f}
@@ -489,7 +490,7 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearring.py says hello!\n")
   #my_gr = gearring_cli()
   #my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0 --return_type freecad_object".split())
-  my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0".split())
+  my_gr = gearring_cli("--gear_tooth_nb 25 --gear_module 10 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0".split())
   try: # depending on gr_c['return_type'] it might be or not a freecad_object
     Part.show(my_gr)
     print("freecad_object returned")

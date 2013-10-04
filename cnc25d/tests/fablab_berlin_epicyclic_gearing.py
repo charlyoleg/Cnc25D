@@ -95,8 +95,8 @@ gw_sun['gear_tooth_nb'] = 20
 gw_sun['second_gear_tooth_nb'] = 20
 gw_sun['wheel_hollow_leg_number'] = 4
 gw_sun['axle_type']                = 'rectangle'
-gw_sun['axle_x_width']             = 10.0
-gw_constraint['axle_y_width']             = 10.0
+gw_sun['axle_x_width']             = 6.0
+gw_sun['axle_y_width']             = gw_sun['axle_x_width']
 # --axle_type circle --axle_x_width 6.0 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 40.0 --cnc_router_bit_radius 2.0 --gear_module 10 --gear_tooth_nb 19 --second_gear_tooth_nb 30 --wheel_hollow_leg_number 3 --output_file_basename test_output/luke1.dxf
 
 gw_planet = gw_constraint.copy()
@@ -137,7 +137,7 @@ gr_constraint['gear_module']                    = gw_constraint['gear_module']
 gr_constraint['second_gear_tooth_nb']                 = 19
 ##### from gearring
 ### holder
-gr_constraint['holder_diameter']            = 360.0
+#gr_constraint['holder_diameter']            = 360.0
 gr_constraint['holder_crenel_number']       = 6
 gr_constraint['holder_position_angle']      = 0.0
 ### holder-hole
@@ -157,7 +157,7 @@ gr_constraint['cnc_router_bit_radius']          = 0.2
 gr_annulus = gr_constraint.copy()
 gr_annulus['gear_tooth_nb'] = 60
 gr_annulus['second_gear_tooth_nb'] = 20
-gr_annulus['holder_diameter']            = (gr_annulus['gear_tooth_nb']+4) * gr_constraint['gear_module'] + gr_constraint['holder_hole_diameter']
+#gr_annulus['holder_diameter']            = (gr_annulus['gear_tooth_nb']+4) * gr_constraint['gear_module'] + gr_constraint['holder_hole_diameter']
 # --gear_tooth_nb 60 --second_gear_tooth_nb 20 --holder_diameter 220 --cnc_router_bit_radius 0.5 --gear_module 3.0
 
 gr_array = [gr_annulus]
@@ -180,7 +180,7 @@ for i in range(len(gr_array)):
 l_sun_planetary = (gw_sun['gear_tooth_nb'] + gw_planet['gear_tooth_nb'])*gw_constraint['gear_module']/2.0
 
 smooth_triangle = 10.0
-l_triangle = l_sun_planetary + 2*smooth_triangle
+l_triangle = l_sun_planetary + 2.0*smooth_triangle
 triangle_outline_A = (
   (l_triangle*math.cos(0*2*math.pi/3), l_triangle*math.sin(0*2*math.pi/3), smooth_triangle),
   (l_triangle*math.cos(1*2*math.pi/3), l_triangle*math.sin(1*2*math.pi/3), smooth_triangle),
