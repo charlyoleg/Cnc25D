@@ -60,7 +60,7 @@ gw_constraint = {}
 ##### from gear_profile
 #gw_constraint['gear_type']                      = 'e'
 gw_constraint['gear_tooth_nb']                  = 19
-gw_constraint['gear_module']                    = 3.0 #5 #10.0
+gw_constraint['gear_module']                    = 1.0 #5 #10.0
 #gw_constraint['second_gear_type']                     = 'e'
 gw_constraint['second_gear_tooth_nb']                 = 30
 # first gear position
@@ -78,13 +78,13 @@ gw_constraint['axle_x_width']             = 6.0
 #gw_constraint['axle_router_bit_radius']   = 3.0
 #### wheel-hollow = legs
 gw_constraint['wheel_hollow_leg_number']        = 3
-gw_constraint['wheel_hollow_leg_width']         = 10.0
+gw_constraint['wheel_hollow_leg_width']         = 5.0
 #gw_constraint['wheel_hollow_leg_angle']         = 0.0
 #gw_constraint['wheel_hollow_internal_diameter'] = 40.0
 #gw_constraint['wheel_hollow_external_diameter'] = 125.0
 #gw_constraint['wheel_hollow_router_bit_radius'] = 5.0
 ### cnc router_bit constraint
-gw_constraint['cnc_router_bit_radius']          = 0.5 #1.6 #2.0
+gw_constraint['cnc_router_bit_radius']          = 0.3 #1.6 #2.0
 ### design output : view the gearwheel with tkinter or write files
 gw_constraint['tkinter_view'] = False
 gw_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
@@ -104,7 +104,7 @@ gw_planet['gear_tooth_nb'] = 20
 gw_planet['second_gear_tooth_nb'] = 20
 gw_planet['wheel_hollow_leg_number'] = 3
 gw_planet['axle_type']                = 'circle'
-gw_planet['axle_x_width']             = 10.0
+gw_planet['axle_x_width']             = 6.0
 # --axle_type circle --axle_x_width 6.0 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 40.0 --cnc_router_bit_radius 2.0 --gear_module 10 --gear_tooth_nb 30 --second_gear_tooth_nb 19 --wheel_hollow_leg_number 4 --output_file_basename test_output/luke2.dxf
 
 
@@ -142,22 +142,22 @@ gr_constraint['holder_crenel_number']       = 6
 gr_constraint['holder_position_angle']      = 0.0
 ### holder-hole
 gr_constraint['holder_hole_position_radius']   = 0.0
-gr_constraint['holder_hole_diameter']          = 10.0
+gr_constraint['holder_hole_diameter']          = 2.0
 ### holder-crenel
-gr_constraint['holder_crenel_position']        = 10.0
-gr_constraint['holder_crenel_height']          = 10.0
-gr_constraint['holder_crenel_width']           = 10.0
-gr_constraint['holder_crenel_skin_width']      = 10.0
+gr_constraint['holder_crenel_position']        = 3.0
+gr_constraint['holder_crenel_height']          = 2.0
+gr_constraint['holder_crenel_width']           = 5.0
+gr_constraint['holder_crenel_skin_width']      = 5.0
 gr_constraint['holder_crenel_router_bit_radius']   = 1.0
 gr_constraint['holder_smoothing_radius']       = 0.0
 ### cnc router_bit constraint
-gr_constraint['cnc_router_bit_radius']          = 0.5
+gr_constraint['cnc_router_bit_radius']          = 0.2
 
 
 gr_annulus = gr_constraint.copy()
 gr_annulus['gear_tooth_nb'] = 60
 gr_annulus['second_gear_tooth_nb'] = 20
-gr_annulus['holder_diameter']            = 210.0
+gr_annulus['holder_diameter']            = (gr_annulus['gear_tooth_nb']+4) * gr_constraint['gear_module'] + gr_constraint['holder_hole_diameter']
 # --gear_tooth_nb 60 --second_gear_tooth_nb 20 --holder_diameter 220 --cnc_router_bit_radius 0.5 --gear_module 3.0
 
 gr_array = [gr_annulus]
@@ -173,5 +173,36 @@ for i in range(len(gr_array)):
   #Part.show(my_gr)
 #Part.show(my_gr)
 
+################################################################
+# triangle
+################################################################
+
+l_sun_planetary = (gw_sun['gear_tooth_nb'] + gw_planet['gear_tooth_nb'])*gw_constraint['gear_module']/2.0
+
+smooth_triangle = 10.0
+l_triangle = l_sun_planetary + 2*smooth_triangle
+triangle_outline_A = (
+  (l_triangle*math.cos(0*2*math.pi/3), l_triangle*math.sin(0*2*math.pi/3), smooth_triangle),
+  (l_triangle*math.cos(1*2*math.pi/3), l_triangle*math.sin(1*2*math.pi/3), smooth_triangle),
+  (l_triangle*math.cos(2*2*math.pi/3), l_triangle*math.sin(2*2*math.pi/3), smooth_triangle),
+  (l_triangle*math.cos(0*2*math.pi/3), l_triangle*math.sin(0*2*math.pi/3), 0))
+triangle_outline_B = cnc25d_api.cnc_cut_outline(triangle_outline_A, "triangle_outline_B")
+
+s = gw_sun['axle_x_width']/2.0
+c = -1*gw_constraint['cnc_router_bit_radius']
+rectangle_axle_A = (
+  (s, s, c),
+  (-s, s, c),
+  (-s, -s, c),
+  (s, -s, c),
+  (s, s, 0))
+rectangle_axle_B = cnc25d_api.cnc_cut_outline(rectangle_axle_A, "rectangle_axle_A")
+
+circle_axle_1 = (l_sun_planetary*math.cos(0*2*math.pi/3), l_sun_planetary*math.sin(0*2*math.pi/3), gw_planet['axle_x_width']/2.0)
+circle_axle_2 = (l_sun_planetary*math.cos(1*2*math.pi/3), l_sun_planetary*math.sin(1*2*math.pi/3), gw_planet['axle_x_width']/2.0)
+circle_axle_3 = (l_sun_planetary*math.cos(2*2*math.pi/3), l_sun_planetary*math.sin(2*2*math.pi/3), gw_planet['axle_x_width']/2.0)
+
+triangle_figure = (triangle_outline_B, rectangle_axle_B, circle_axle_1, circle_axle_2, circle_axle_3)
+cnc25d_api.generate_output_file(triangle_figure, "test_output/flb01_triangle.dxf", 10.0, "hello")
 
 
