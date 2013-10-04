@@ -600,7 +600,7 @@ def split_gearwheel_self_test():
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   split_gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function split_gearwheel().')
   split_gearwheel_parser = split_gearwheel_add_argument(split_gearwheel_parser)
-  split_gearwheel_parser = cnc25d_api.generate_output_file_add_argument(split_gearwheel_parser)
+  split_gearwheel_parser = cnc25d_api.generate_output_file_add_argument(split_gearwheel_parser, 1)
   for i in range(len(test_case_switch)):
     l_test_switch = test_case_switch[i][1]
     print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))

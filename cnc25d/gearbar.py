@@ -339,7 +339,7 @@ def gearbar_self_test():
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
   gearbar_parser = gearbar_add_argument(gearbar_parser)
-  gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser)
+  gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser, 1)
   for i in range(len(test_case_switch)):
     l_test_switch = test_case_switch[i][1]
     print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
