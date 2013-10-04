@@ -21,6 +21,7 @@ Contents:
    cnc25d_api_working_with_freecad
    place_plank_details
    cnc25d_internals
+   cnc25d_designs
    box_wood_frame_design
    box_wood_frame_conception_details
    gear_profile_function
