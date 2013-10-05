@@ -22,6 +22,7 @@ Contents:
    place_plank_details
    cnc25d_internals
    cnc25d_designs
+   cnc25d_design_details
    box_wood_frame_design
    box_wood_frame_conception_details
    gear_profile_function
