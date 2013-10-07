@@ -41,10 +41,7 @@ An other advantage of Designing with Python_ is that parametric design is natura
 
 Designing with Python_ let you work in a similar way as software development. You write code, check the 3D result with the FreeCAD_ GUI, modify and expand the code and so on. This iterative work-flow is very efficient to capitalize work, reduce repetitive tasks, keep modification history, track bugs and co-work with people.
 
-Currently, you can use those following design examples:
-
-- The piece of furniture **box_wood_frame** to pile-up.
-- Parametric **gearwheel**, **gearring** and **gearbar**
+The complete list of *Cnc25D Design* is available in the section :doc:`cnc25d_designs`.
 
 .. _cnc25d_installation :
 
@@ -261,7 +258,7 @@ Released on 2013-11-01
 
 Release 0.1.7
 -------------
-Released on 2013-10-03
+Released on 2013-10-07
 
 * unify the test-environment of the macro-scripts
 * use python-dictionary as function-argument for designs with many parameters

@@ -2,7 +2,7 @@
 Release History
 ###############
 
-0.1.7 (2013-10-03)
+0.1.7 (2013-10-07)
 ==================
 
 * unify the test-environment of the macro-scripts

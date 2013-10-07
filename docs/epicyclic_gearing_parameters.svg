@@ -10,7 +10,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="601"
-   height="2537.5"
+   height="3706.0625"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="324.7324"
-     inkscape:cy="616.65059"
+     inkscape:zoom="1.979899"
+     inkscape:cx="298.15984"
+     inkscape:cy="1316.1263"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -34,14 +34,14 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1408"
-     inkscape:window-height="972"
-     inkscape:window-x="426"
-     inkscape:window-y="79"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
      inkscape:snap-center="false"
-     inkscape:snap-object-midpoints="true"
-     inkscape:object-paths="false"
+     inkscape:snap-object-midpoints="false"
+     inkscape:object-paths="true"
      inkscape:object-nodes="true"
      inkscape:snap-global="false"
      inkscape:snap-midpoints="false"
@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -63,6 +63,12 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-38.90625,-64.9375)">
+    <path
+       style="color:#000000;fill:none;stroke:#ddff55;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 147.30149,2351.1707 34.09763,64.3947 -50.92385,-19.9875 z"
+       id="path3344-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
     <path
        style="color:#000000;fill:none;stroke:#ffcc00;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 127.25398,644.09354 74.72065,-2.94599 -36.23881,65.92904 -38.48184,-62.98305"
@@ -78,7 +84,7 @@
        style="fill:none;stroke:#999999;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect2985"
        width="600"
-       height="2536.4924"
+       height="3705.064"
        x="39.39595"
        y="65.443146" />
     <flowRoot
@@ -100,7 +106,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.54273615,0,0,0.54116922,114.77079,125.80017)" />
     <path
        sodipodi:type="arc"
@@ -110,7 +116,7 @@
        sodipodi:cy="162.5"
        sodipodi:rx="28.571428"
        sodipodi:ry="28.571428"
-       d="m 97.142855,162.5 c 0,15.77956 -12.791864,28.57143 -28.571429,28.57143 -15.779564,0 -28.571428,-12.79187 -28.571428,-28.57143 0,-15.77956 12.791864,-28.57143 28.571428,-28.57143 15.779565,0 28.571429,12.79187 28.571429,28.57143 z"
+       d="m 97.142855,162.5 a 28.571428,28.571428 0 1 1 -57.142857,0 28.571428,28.571428 0 1 1 57.142857,0 z"
        transform="matrix(0.49686433,0,0,0.49542983,121.02585,161.04065)" />
     <path
        sodipodi:type="arc"
@@ -120,7 +126,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(1.9115646,0,0,1.9115646,633.34626,-75.858165)" />
     <rect
        style="fill:none;stroke:#999999;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
@@ -144,7 +150,7 @@
        sodipodi:cy="162.5"
        sodipodi:rx="28.571428"
        sodipodi:ry="28.571428"
-       d="m 97.142855,162.5 c 0,15.77956 -12.791864,28.57143 -28.571429,28.57143 -15.779564,0 -28.571428,-12.79187 -28.571428,-28.57143 0,-15.77956 12.791864,-28.57143 28.571428,-28.57143 15.779565,0 28.571429,12.79187 28.571429,28.57143 z"
+       d="m 97.142855,162.5 a 28.571428,28.571428 0 1 1 -57.142857,0 28.571428,28.571428 0 1 1 57.142857,0 z"
        transform="matrix(1.75,0,0,1.75,620.15626,46.09822)" />
     <path
        sodipodi:type="arc"
@@ -154,7 +160,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.54273615,0,0,0.54116922,40.050154,128.74616)" />
     <path
        sodipodi:type="arc"
@@ -164,7 +170,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.54273615,0,0,0.54116922,78.531984,191.72921)" />
     <path
        sodipodi:type="arc"
@@ -174,7 +180,7 @@
        sodipodi:cy="96.071426"
        sodipodi:rx="165.71428"
        sodipodi:ry="165.71428"
-       d="m 262.85714,96.071426 c 0,91.521474 -74.19281,165.714284 -165.71428,165.714284 -91.5214688,0 -165.714279,-74.19281 -165.714279,-165.714284 0,-91.5214688 74.1928102,-165.714279 165.714279,-165.714279 91.52147,0 165.71428,74.1928102 165.71428,165.714279 z"
+       d="m 262.85714,96.071426 a 165.71428,165.71428 0 1 1 -331.428559,0 165.71428,165.71428 0 1 1 331.428559,0 z"
        transform="matrix(0.43103446,0,0,0.43103446,113.22463,200.1379)" />
     <path
        sodipodi:type="arc"
@@ -184,7 +190,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.54273615,0,0,0.54116922,125.41006,548.76224)" />
     <path
        sodipodi:type="arc"
@@ -194,7 +200,7 @@
        sodipodi:cy="162.5"
        sodipodi:rx="28.571428"
        sodipodi:ry="28.571428"
-       d="m 97.142855,162.5 c 0,15.77956 -12.791864,28.57143 -28.571429,28.57143 -15.779564,0 -28.571428,-12.79187 -28.571428,-28.57143 0,-15.77956 12.791864,-28.57143 28.571428,-28.57143 15.779565,0 28.571429,12.79187 28.571429,28.57143 z"
+       d="m 97.142855,162.5 a 28.571428,28.571428 0 1 1 -57.142857,0 28.571428,28.571428 0 1 1 57.142857,0 z"
        transform="matrix(0.49686433,0,0,0.49542983,131.66512,584.00272)" />
     <path
        sodipodi:type="arc"
@@ -204,7 +210,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.54273615,0,0,0.54116922,50.68942,551.70823)" />
     <path
        sodipodi:type="arc"
@@ -214,7 +220,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.54273615,0,0,0.54116922,89.17125,614.69128)" />
     <path
        sodipodi:type="arc"
@@ -224,7 +230,7 @@
        sodipodi:cy="96.071426"
        sodipodi:rx="165.71428"
        sodipodi:ry="165.71428"
-       d="m 262.85714,96.071426 c 0,91.521474 -74.19281,165.714284 -165.71428,165.714284 -91.5214688,0 -165.714279,-74.19281 -165.714279,-165.714284 0,-91.5214688 74.1928102,-165.714279 165.714279,-165.714279 91.52147,0 165.71428,74.1928102 165.71428,165.714279 z"
+       d="m 262.85714,96.071426 a 165.71428,165.71428 0 1 1 -331.428559,0 165.71428,165.71428 0 1 1 331.428559,0 z"
        transform="matrix(0.35344825,0,0,0.35344825,131.40085,630.55379)" />
     <path
        sodipodi:type="arc"
@@ -234,7 +240,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.29714136,0,0,0.29627126,85.33583,593.51581)" />
     <path
        sodipodi:type="arc"
@@ -244,7 +250,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.29714136,0,0,0.29627126,160.05647,590.56982)" />
     <path
        sodipodi:type="arc"
@@ -254,7 +260,7 @@
        sodipodi:cy="170.71428"
        sodipodi:rx="52.5"
        sodipodi:ry="52.5"
-       d="m 193.57143,170.71428 c 0,28.99495 -23.50505,52.5 -52.5,52.5 -28.99495,0 -52.500004,-23.50505 -52.500004,-52.5 0,-28.99495 23.505054,-52.5 52.500004,-52.5 28.99495,0 52.5,23.50505 52.5,52.5 z"
+       d="m 193.57143,170.71428 a 52.5,52.5 0 1 1 -105.000004,0 52.5,52.5 0 1 1 105.000004,0 z"
        transform="matrix(0.29714136,0,0,0.29627126,123.81766,656.49886)" />
     <path
        style="color:#000000;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -277,7 +283,7 @@
        id="path3173"
        inkscape:connector-curvature="0" />
     <path
-       style="color:#000000;fill:none;stroke:#999999;stroke-width:0.99999994000000003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:#999999;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 329.88333,244.7029 13.46273,0"
        id="path3175"
        inkscape:connector-curvature="0" />
@@ -392,7 +398,7 @@
        id="path3173-3"
        inkscape:connector-curvature="0" />
     <path
-       style="color:#000000;fill:none;stroke:#999999;stroke-width:0.99999994000000003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:#999999;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 426.23461,245.24986 13.46273,0"
        id="path3175-2"
        inkscape:connector-curvature="0" />
@@ -447,7 +453,7 @@
        id="path3173-3-4"
        inkscape:connector-curvature="0" />
     <path
-       style="color:#000000;fill:none;stroke:#999999;stroke-width:0.99999994000000003px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:#999999;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 503.14437,245.24986 13.46273,0"
        id="path3175-2-3"
        inkscape:connector-curvature="0" />
@@ -1380,8 +1386,8 @@
        transform="translate(6.0491071,57.794643)"><flowRegion
          id="flowRegion4168"><rect
            id="rect4170"
-           width="585.71411"
-           height="937.8573"
+           width="587.14264"
+           height="984.28601"
            x="43.57143"
            y="1222.5" /></flowRegion><flowPara
          id="flowPara4172">speed relations:</flowPara><flowPara
@@ -1426,21 +1432,24 @@
          id="flowPara3371" /><flowPara
          id="flowPara3373">If w1/5=0, R4/2 = (w4/5)/(w2/5) = (JA*IO)/(IA*OA+JA*OA) = (Z32*Z2)/((Z31+Z32)*(Z2+Z31))</flowPara><flowPara
          id="flowPara3375">If w1/5=0 and Z32=Z31, then R4/2 = Z2/(2*Z2+2*Z3) = Z2/(Z2+Z1) = 0.5/(1+Z3/Z2)</flowPara><flowPara
-         id="flowPara3383">So, to get R4/2 = 1/R, Z3 = Z2*(R/2-1)</flowPara><flowPara
+         id="flowPara3336" /><flowPara
+         id="flowPara3342">Example case with w1/5=0 and Z32=Z31</flowPara><flowPara
+         id="flowPara3340">to get R4/2 = 1/R, Z3 = Z2*(R/2-1)</flowPara><flowPara
          id="flowPara3379">For R4/2=1/4, Z3=Z2 and Z1=Z2*3</flowPara><flowPara
          id="flowPara3381">For R4/2=1/5, Z3=1.5*Z2 and Z1=Z2*4</flowPara><flowPara
          id="flowPara3387">For R4/2=1/6, Z3=2*Z2 and Z1=Z2*5</flowPara><flowPara
          id="flowPara3389">For R4/2=1/8, Z3=3*Z2 and Z1=Z2*7</flowPara><flowPara
          id="flowPara3391">For R4/2=1/10, Z3=4*Z2 and Z1=Z2*9</flowPara><flowPara
          id="flowPara3393" /><flowPara
-         id="flowPara3395">Case w1/5=0 and Z32=0.5*Z31. Notation: Z3=Z31 and R4/2=1/R</flowPara><flowPara
+         id="flowPara3395">Example case with w1/5=0 and Z32=0.5*Z31</flowPara><flowPara
+         id="flowPara3344">Notation: Z3=Z31 and R4/2=1/R</flowPara><flowPara
          id="flowPara3397">1/R=(0.5*Z3*Z2)/(1.5*Z3*(Z2+Z3))=1/(3*(1+Z3/Z2))</flowPara><flowPara
          id="flowPara3399">Z3=Z2*(1/3*R-1)</flowPara><flowPara
          id="flowPara3403">and Z1=Z2+Z31+Z32=Z2+Z3*1.5</flowPara><flowPara
          id="flowPara3401">For R4/2=1/4, Z3 = Z2*(4/3-1) = Z2*1.333 and Z1=Z2*3.5</flowPara><flowPara
          id="flowPara3405">For Z3=Z2, R4/2=1/6 and Z1=Z2*2.5</flowPara><flowPara
          id="flowPara3409">For Z3=2*Z2, R4/2=1/9 and Z1=Z2*4</flowPara><flowPara
-         id="flowPara3411"></flowPara><flowPara
+         id="flowPara3411" /><flowPara
          id="flowPara3413">For a given bulk size (Z1), double-gear-planet provides a better ratio than single-gear-planet.</flowPara><flowPara
          id="flowPara3415">For example, with Z1=4*Z2,  we have 1/9 versus 1/5</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
@@ -1490,5 +1499,143 @@
            x="-78.571426"
            y="1225.3572"
            style="fill:#008000" /></flowRegion><flowPara
-         id="flowPara3331">Z1</flowPara></flowRoot>  </g>
+         id="flowPara3331">Z1</flowPara></flowRoot>    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3339"
+       sodipodi:cx="254.55844"
+       sodipodi:cy="2435.2905"
+       sodipodi:rx="47.477169"
+       sodipodi:ry="47.477169"
+       d="m 302.03561,2435.2905 a 47.477169,47.477169 0 1 1 -94.95434,0 47.477169,47.477169 0 1 1 94.95434,0 z"
+       transform="translate(-107.00748,-83.99437)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#0000ff;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3342"
+       sodipodi:cx="236.12315"
+       sodipodi:cy="2427.967"
+       sodipodi:rx="25.001276"
+       sodipodi:ry="25.001276"
+       d="m 261.12443,2427.967 a 25.001276,25.001276 0 1 1 -50.00255,0 25.001276,25.001276 0 1 1 50.00255,0 z"
+       transform="translate(-54.479547,-12.273539)" />
+    <path
+       style="color:#000000;fill:none;stroke:#88aa00;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 147.55096,2351.2962 34.09265,64.3973 12.09311,-53.3526 z"
+       id="path3344"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <path
+       style="color:#000000;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 189.21975,2361.1452 -1.01015,4.0407 3.78807,0.7576"
+       id="path3346"
+       inkscape:connector-curvature="0" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3348"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-79.228284,41.769622)"><flowRegion
+         id="flowRegion3350"><rect
+           id="rect3352"
+           width="23.486046"
+           height="23.738585"
+           x="256.8313"
+           y="2373.9238" /></flowRegion><flowPara
+         id="flowPara3354">O</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3356"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-122.66484,8.1820504)"><flowRegion
+         id="flowRegion3358"><rect
+           id="rect3360"
+           width="28.789347"
+           height="29.546963"
+           x="259.10413"
+           y="2332.2551" /></flowRegion><flowPara
+         id="flowPara3362">A</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3364"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-69.631835,60.457444)"><flowRegion
+         id="flowRegion3366"><rect
+           id="rect3368"
+           width="42.426407"
+           height="31.31473"
+           x="264.91251"
+           y="2293.6167" /></flowRegion><flowPara
+         id="flowPara3370">M</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3372"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-123.92753,37.223935)"><flowRegion
+         id="flowRegion3374"><rect
+           id="rect3376"
+           width="37.123108"
+           height="34.092648"
+           x="292.94424"
+           y="2340.8413" /></flowRegion><flowPara
+         id="flowPara3378">I</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3380"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(38.90625,64.9375)"><flowRegion
+         id="flowRegion3382"><rect
+           id="rect3384"
+           width="254.28572"
+           height="40"
+           x="27.857143"
+           y="2199.634" /></flowRegion><flowPara
+         id="flowPara3386">gear-planet per epicyclic gearing?</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3406"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(42.120536,63.151786)"><flowRegion
+         id="flowRegion3408"><rect
+           id="rect3410"
+           width="19.285715"
+           height="26.071428"
+           x="77.5"
+           y="2331.4197" /></flowRegion><flowPara
+         id="flowPara3412">N</flowPara></flowRoot>    <path
+       style="color:#000000;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 92.857143,2325.7054 5,2.1428 -1.785714,5"
+       id="path3414"
+       inkscape:connector-curvature="0"
+       transform="translate(38.90625,64.9375)" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3416"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(38.90625,64.9375)"><flowRegion
+         id="flowRegion3418"><rect
+           id="rect3420"
+           width="350.55582"
+           height="297.80118"
+           x="239.64285"
+           y="2241.4197" /></flowRegion><flowPara
+         id="flowPara3430">OI = m/2*Z2</flowPara><flowPara
+         id="flowPara3424">AI = AM = AN = m/2*Z3</flowPara><flowPara
+         id="flowPara3432">AO = OI + IA = m/2*(Z2+Z3)</flowPara><flowPara
+         id="flowPara3428">NOM = 2*AOM = 2*asin(AM/AO) = 2*asin(Z3/(Z2+Z3))</flowPara><flowPara
+         id="flowPara3436">NOM = 2*asin(1/(1+(Z2/Z3)))</flowPara><flowPara
+         id="flowPara3438" /><flowPara
+         id="flowPara3440">For Z3=Z2, NOM = 2*asin(1/2) = pi/3</flowPara><flowPara
+         id="flowPara3442">For Z3=1.5*Z2, NOM = 2*asin(3/5) = 0.41*pi</flowPara><flowPara
+         id="flowPara3444" /><flowPara
+         id="flowPara3446">Z3 depending on Z2 and a=MON</flowPara><flowPara
+         id="flowPara3450">sin(a/2) = 1/(1+Z2/Z3)</flowPara><flowPara
+         id="flowPara3452">Z2/Z3 = 1/sin(a/2) - 1 = (1 - sin(a/2))/sin(a/2)</flowPara><flowPara
+         id="flowPara3448">Z3 = Z2*sin(a/2)/(1 - sin(a/2)) = Z2/(1/sin(a/2)-1)</flowPara><flowPara
+         id="flowPara3454" /><flowPara
+         id="flowPara3456">For MON&lt;2*pi/6, Z3&lt;Z2</flowPara><flowPara
+         id="flowPara3458">For MON&lt;2*pi/5, Z3&lt;1.42*Z2</flowPara><flowPara
+         id="flowPara3460">For MON&lt;2*pi/4, Z3&lt;2.41*Z2</flowPara><flowPara
+         id="flowPara3462">For MON&lt;2*pi/3, Z3&lt;6.46*Z2</flowPara></flowRoot>    <path
+       style="color:#000000;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 137.85714,2341.0625 c 0,0 2.08609,-1.9527 3.39286,-1.9643 1.22562,-0.011 3.21428,1.7857 3.21428,1.7857"
+       id="path3426"
+       inkscape:connector-curvature="0"
+       transform="translate(38.90625,64.9375)"
+       sodipodi:nodetypes="cac" />
+  </g>
 </svg>
