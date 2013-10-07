@@ -30,9 +30,9 @@ On 2013/10/02, the bug is fixed
 # import
 ################################################################
 
-try:    # when working on the source files
+try: # when working with an installed Cnc25D package
   from cnc25d import cnc25d_api
-except: # when working with an installed Cnc25D package
+except:    # when working on the source files
   import importing_cnc25d # give access to the cnc25d package
   from cnc25d import cnc25d_api
 #cnc25d_api.importing_freecad()
