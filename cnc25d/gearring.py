@@ -60,12 +60,13 @@ import gear_profile
 # gearring dictionary-constraint-arguments default values
 ################################################################
 
-def gearring_dictionary_init():
+def gearring_dictionary_init(ai_variant=0):
   """ create and initiate a gearring_dictionary with the default value
   """
   r_grd = {}
   #### inherit dictionary entries from gear_profile
-  r_grd.update(gear_profile.gear_profile_dictionary_init())
+  if(ai_variant!=1):
+    r_grd.update(gear_profile.gear_profile_dictionary_init())
   #### gearring dictionary entries
   ### holder
   r_grd['holder_diameter']            = 0.0
@@ -81,14 +82,15 @@ def gearring_dictionary_init():
   r_grd['holder_crenel_skin_width']      = 10.0
   r_grd['holder_crenel_router_bit_radius']   = 1.0
   r_grd['holder_smoothing_radius']       = 0.0
-  ### cnc router_bit constraint
-  r_grd['cnc_router_bit_radius']          = 1.0
-  ### view the gearring with tkinter
-  r_grd['tkinter_view'] = False
-  r_grd['output_file_basename'] = ''
-  ### optional
-  r_grd['args_in_txt'] = ''
-  r_grd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+  if(ai_variant!=1):
+    ### cnc router_bit constraint
+    r_grd['cnc_router_bit_radius']          = 1.0
+    ### view the gearring with tkinter
+    r_grd['tkinter_view'] = False
+    r_grd['output_file_basename'] = ''
+    ### optional
+    r_grd['args_in_txt'] = ''
+    r_grd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
   #### return
   return(r_grd)
 
@@ -96,14 +98,15 @@ def gearring_dictionary_init():
 # gearring argparse
 ################################################################
 
-def gearring_add_argument(ai_parser):
+def gearring_add_argument(ai_parser, ai_variant=0):
   """
   Add arguments relative to the gearring in addition to the argument of gear_profile_add_argument()
   This function intends to be used by the gearring_cli and gearring_self_test
   """
   r_parser = ai_parser
   ### inherit arguments from gear_profile
-  r_parser = gear_profile.gear_profile_add_argument(r_parser, 2)
+  if(ai_variant!=1):
+    r_parser = gear_profile.gear_profile_add_argument(r_parser, 2)
   ### holder
   r_parser.add_argument('--holder_diameter','--hd', action='store', type=float, default=0.0, dest='sw_holder_diameter',
     help="Set the holder diameter of the gearring. This is a mandatory input.")
@@ -130,8 +133,9 @@ def gearring_add_argument(ai_parser):
   r_parser.add_argument('--holder_smoothing_radius','--hsr', action='store', type=float, default=0.0, dest='sw_holder_smoothing_radius',
     help="Set the router_bit radius to smooth the inner corner between the holder cylinder and the holder-crenel side-wall. If equal to 0.0, the value of holder_crenel_position is used. Default: 0.0")
   ### cnc router_bit constraint
-  r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=1.0, dest='sw_cnc_router_bit_radius',
-    help="Set the minimum router_bit radius of the gearring. It increases gear_router_bit_radius, holder_crenel_router_bit_radius and holder_smoothing_radius if needed. Default: 1.0")
+  if(ai_variant!=1):
+    r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=1.0, dest='sw_cnc_router_bit_radius',
+      help="Set the minimum router_bit radius of the gearring. It increases gear_router_bit_radius, holder_crenel_router_bit_radius and holder_smoothing_radius if needed. Default: 1.0")
   # return
   return(r_parser)
 
@@ -370,11 +374,12 @@ cnc_router_bit_radius:            \t{:0.3f}
 # gearring wrapper dance
 ################################################################
 
-def gearring_argparse_to_dictionary(ai_gr_args):
+def gearring_argparse_to_dictionary(ai_gr_args, ai_variant=0):
   """ convert a gearring_argparse into a gearring_dictionary
   """
   r_grd = {}
-  r_grd.update(gear_profile.gear_profile_argparse_to_dictionary(ai_gr_args, 2))
+  if(ai_variant!=1):
+    r_grd.update(gear_profile.gear_profile_argparse_to_dictionary(ai_gr_args, 2))
   ##### from gearring
   ### holder
   r_grd['holder_diameter']            = ai_gr_args.sw_holder_diameter
@@ -390,12 +395,13 @@ def gearring_argparse_to_dictionary(ai_gr_args):
   r_grd['holder_crenel_skin_width']      = ai_gr_args.sw_holder_crenel_skin_width
   r_grd['holder_crenel_router_bit_radius']   = ai_gr_args.sw_holder_crenel_router_bit_radius
   r_grd['holder_smoothing_radius']       = ai_gr_args.sw_holder_smoothing_radius
-  ### cnc router_bit constraint
-  r_grd['cnc_router_bit_radius']          = ai_gr_args.sw_cnc_router_bit_radius
-  ### design output : view the gearring with tkinter or write files
-  #r_grd['tkinter_view'] = tkinter_view
-  r_grd['output_file_basename'] = ai_gr_args.sw_output_file_basename
-  r_grd['return_type'] = ai_gr_args.sw_return_type
+  if(ai_variant!=1):
+    ### cnc router_bit constraint
+    r_grd['cnc_router_bit_radius']          = ai_gr_args.sw_cnc_router_bit_radius
+    ### design output : view the gearring with tkinter or write files
+    #r_grd['tkinter_view'] = tkinter_view
+    r_grd['output_file_basename'] = ai_gr_args.sw_output_file_basename
+    r_grd['return_type'] = ai_gr_args.sw_return_type
   ### optional
   #r_grd['args_in_txt'] = ''
   #### return
