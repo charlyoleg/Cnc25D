@@ -16,6 +16,7 @@ Gearwheel Parameter List
 The parameter relative to the gear-profile are directly inherit from the :doc:`gear_profile_function`.
 
 .. image:: images/gearwheel_parameters.png
+.. image:: images/gearwheel_crenel_parameters.png
 
 Gearwheel Parameter Dependency
 ==============================

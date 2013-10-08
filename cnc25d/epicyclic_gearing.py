@@ -73,20 +73,37 @@ def epicyclic_gearing_dictionary_init():
   r_egwd['gear_router_bit_radius']  = 0.1
   r_egwd['gear_tooth_resolution']   = 2
   r_egwd['gear_skin_thickness']     = 0.0
+  r_egwd['gear_addendum_dedendum_parity_slack'] = 0.0
   ### sun-gear
   r_egwd['sun_axle_diameter']       = 3.0
   r_egwd['sun_crenel_diameter']     = 0.0
   r_egwd['sun_crenel_nb']           = 8
   r_egwd['sun_crenel_width']        = 4.0
   r_egwd['sun_crenel_height']       = 2.0
-  r_egwd['sun_router_bit_radius']   = 1.0
+  r_egwd['sun_crenel_router_bit_radius']   = 1.0
   ### planet-gear
   r_egwd['planet_axle_diameter']      = 3.0
   r_egwd['planet_crenel_diameter']    = 0.0
   r_egwd['planet_crenel_nb']          = 8
   r_egwd['planet_crenel_width']       = 4.0
   r_egwd['planet_crenel_height']      = 2.0
-  r_egwd['planet_router_bit_radius']  = 1.0
+  r_egwd['planet_crenel_router_bit_radius']  = 1.0
+  ### planet gear carrier
+  r_egwd['carrier_central_internal_diameter']   = 3.0
+  r_egwd['carrier_central_external_diameter']   = 3.0
+  r_egwd['carrier_leg_internal_diameter']       = 3.0
+  r_egwd['carrier_leg_external_diameter']       = 3.0
+  r_egwd['carrier_router_bit_radius']           = 1.0
+  ## carrier central crenel: inherit from sun-gear
+  #r_egwd['carrier_central_crenel_diameter']     = r_egwd['sun_crenel_diameter']     
+  #r_egwd['carrier_central_crenel_nb']           = r_egwd['sun_crenel_nb']           
+  #r_egwd['carrier_central_crenel_width']        = r_egwd['sun_crenel_width']        
+  #r_egwd['carrier_central_crenel_height']       = r_egwd['sun_crenel_height']       
+  #r_egwd['carrier_central_router_bit_radius']   = r_egwd['sun_crenel_router_bit_radius']   
+  ## carrier leg crenel
+  r_egwd['carrier_crenel_width']                = 1.0
+  r_egwd['carrier_crenel_height']               = 1.0
+  r_egwd['carrier_crenel_router_bit_radius']    = 1.0
   ### annulus: inherit dictionary entries from gearring
   r_egwd.update(gearring.gearring_dictionary_init())
   ### general
