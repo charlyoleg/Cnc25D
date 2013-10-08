@@ -75,8 +75,8 @@ def gearwheel_dictionary_init():
   r_gwd['crenel_diameter']     = 0.0
   r_gwd['crenel_number']       = 0
   r_gwd['crenel_angle']        = 0.0
-  r_gwd['crenel_width']        = 4.0
-  r_gwd['crenel_height']       = 2.0
+  r_gwd['crenel_width']        = 10.0
+  r_gwd['crenel_height']       = 5.0
   r_gwd['crenel_router_bit_radius']      = 2.0
   ### wheel-hollow = legs
   r_gwd['wheel_hollow_leg_number']        = 0
@@ -300,7 +300,7 @@ def gearwheel(ai_constraints):
     if(crenel_radius<radian_epsilon):
       print("ERR301: Error, the crenel_radius {:0.3f} is too small".format(crenel_radius))
       sys.exit(2)
-    crenel_half_width_angle = math.atan(gw_c['crenel_width']/(2*crenel_radius))
+    crenel_half_width_angle = math.asin(gw_c['crenel_width']/(2*crenel_radius))
     if(crenel_half_width_angle*2.2>2*math.pi/gw_c['crenel_number']):
       print("ERR305: Error, the crenel_number {:d} or crenel_width {:0.3f} are too big!".format(gw_c['crenel_number'], gw_c['crenel_width']))
       sys.exit(2)
@@ -310,7 +310,7 @@ def gearwheel(ai_constraints):
 
   ### crenel preparation
   crenel_axle_merge = False
-  if((gw_c['crenel_number']>0)and(gw_c['axle_type']=='circle')and(crenel_diameter==axle_diameter)): # crenel and axle are merged in one outline
+  if((gw_c['crenel_number']>0)and(gw_c['axle_type']=='circle')and(crenel_radius==axle_radius)): # crenel and axle are merged in one outline
     crenel_axle_merge = True
   crenel_type = 1
   if(gw_c['crenel_height']<3.0*gw_c['crenel_router_bit_radius']):
@@ -345,6 +345,7 @@ def gearwheel(ai_constraints):
       crenel_A.append((g1_ix+axle_radius*math.cos(arc_middle_a), g1_iy+axle_radius*math.sin(arc_middle_a), g1_ix+axle_radius*math.cos(arc_end_a), g1_iy+axle_radius*math.sin(arc_end_a), 0))
       for i in range(gw_c['crenel_number']):
         axle_A.extend(cnc25d_api.outline_rotate(crenel_A, g1_ix, g1_iy, i*crenel_portion_angle))
+      axle_A[-1] = (axle_A[-1][0], axle_A[-1][1], axle_A[0][0], axle_A[0][1], 0)
       axle_A_rotated = cnc25d_api.outline_rotate(axle_A, g1_ix, g1_iy, gw_c['crenel_angle'])
       axle_figure.append(cnc25d_api.cnc_cut_outline(axle_A_rotated, "axle_and_crenel"))
       axle_figure_overlay.append(cnc25d_api.ideal_outline(axle_A_rotated, "axle_and_crenel"))
