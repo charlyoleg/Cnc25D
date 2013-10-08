@@ -1111,10 +1111,17 @@ gw_constraint['gear_profile_height']  = 20.0
 gw_constraint['simulation_enable']    = False
 ##### from gearwheel
 ### axle
-gw_constraint['axle_type']                = 'rectangle'
+gw_constraint['axle_type']                = 'circle'
 gw_constraint['axle_x_width']             = 20.0
-gw_constraint['axle_y_width']             = 15.0
-gw_constraint['axle_router_bit_radius']   = 3.0
+gw_constraint['axle_y_width']             = 0.0
+gw_constraint['axle_router_bit_radius']   = 2.0
+### crenel
+gw_constraint['crenel_diameter']     = 0.0
+gw_constraint['crenel_number']       = 2
+gw_constraint['crenel_angle']        = 0.0
+gw_constraint['crenel_width']        = 10.0
+gw_constraint['crenel_height']       = 5.0
+gw_constraint['crenel_router_bit_radius']      = 1.0
 ### wheel-hollow = legs
 gw_constraint['wheel_hollow_leg_number']        = 7
 gw_constraint['wheel_hollow_leg_width']         = 10.0
@@ -1140,7 +1147,11 @@ gw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status',
 
 my_gw = cnc25d_design.gearwheel(gw_constraint)
 
-Part.show(my_gw)
+try: # works if gw_constraint['return_type'] = 'freecad_object'
+  Part.show(my_gw)
+except:
+  pass
+
 
 
 '''
