@@ -1140,6 +1140,7 @@ def gear_profile_self_test():
     ["ratio > 1 and small tooth height"        , "--gear_tooth_nb 17 --second_gear_tooth_nb 29 --gear_tooth_half_height 0.7 --second_gear_tooth_half_height 0.8"],
     ["ratio > 1 and big tooth height"          , "--gear_tooth_nb 17 --second_gear_tooth_nb 29 --gear_tooth_half_height 1.15 --second_gear_tooth_half_height 1.17"],
     ["ratio > 1 and addendum-dedendum parity"  , "--gear_tooth_nb 30 --second_gear_tooth_nb 37 --gear_addendum_dedendum_parity 60.0 --second_gear_addendum_dedendum_parity 40.0"],
+    ["slack because of addendum-dedendum parity", "--gear_tooth_nb 18 --second_gear_tooth_nb 23 --gear_addendum_dedendum_parity 48.0 --second_gear_addendum_dedendum_parity 40.0"],
     ["file generation"                         , "--gear_tooth_nb 17 --center_position_x 100 --center_position_y 50 --output_file_basename test_output/gear_profile_run_self_test.dxf"],
     ["interior gear"                           , "--gear_tooth_nb 17 --second_gear_tooth_nb 14 --gear_type i"],
     ["interior gear"                           , "--gear_tooth_nb 25 --second_gear_tooth_nb 17 --gear_type i --second_gear_position_angle {:0.3f}".format(30.0*math.pi/180)],
