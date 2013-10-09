@@ -24,7 +24,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.70000001"
      inkscape:cx="322.67619"
-     inkscape:cy="682.46419"
+     inkscape:cy="1539.607"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1582,10 +1582,10 @@
          id="flowRegion3382"><rect
            y="2199.634"
            x="27.857143"
-           height="40"
-           width="254.28572"
+           height="31.428572"
+           width="384.28571"
            id="rect3384" /></flowRegion><flowPara
-         id="flowPara3386">gear-planet per epicyclic gearing?</flowPara></flowRoot>    <flowRoot
+         id="flowPara3386">number of gear-planet per epicyclic gearing?</flowPara></flowRoot>    <flowRoot
        transform="translate(42.120536,63.151786)"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="flowRoot3406"
@@ -1785,7 +1785,7 @@
        sodipodi:cy="3028.5625"
        sodipodi:rx="82.5"
        sodipodi:ry="82.5"
-       d="m 375,3028.5625 a 82.5,82.5 0 1 1 -165,0 82.5,82.5 0 1 1 165,0 z"
+       d="m 375,3028.5625 c 0,45.5635 -36.93651,82.5 -82.5,82.5 -45.56349,0 -82.5,-36.9365 -82.5,-82.5 0,-45.5635 36.93651,-82.5 82.5,-82.5 45.56349,0 82.5,36.9365 82.5,82.5 z"
        transform="matrix(0.65367966,0,0,0.65367966,110.7606,1097.2726)" />
     <path
        sodipodi:type="arc"
@@ -1795,7 +1795,7 @@
        sodipodi:cy="3028.5625"
        sodipodi:rx="82.5"
        sodipodi:ry="82.5"
-       d="m 375,3028.5625 a 82.5,82.5 0 1 1 -165,0 82.5,82.5 0 1 1 165,0 z"
+       d="m 375,3028.5625 c 0,45.5635 -36.93651,82.5 -82.5,82.5 -45.56349,0 -82.5,-36.9365 -82.5,-82.5 0,-45.5635 36.93651,-82.5 82.5,-82.5 45.56349,0 82.5,36.9365 82.5,82.5 z"
        transform="matrix(0.93895736,0,0,0.93895736,27.316873,233.29126)" />
     <rect
        style="fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"

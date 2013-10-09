@@ -54,6 +54,7 @@ from FreeCAD import Base
 # cnc25d
 import gearring
 import gearwheel
+import gear_profile # for simulation
 
 ################################################################
 # epicyclic_gearing dictionary-arguments default values
@@ -93,7 +94,7 @@ def epicyclic_gearing_dictionary_init():
   r_egd['carrier_leg_diameter']                  = 20.0
   r_egd['carrier_peripheral_external_diameter']  = 0.0
   r_egd['carrier_peripheral_internal_diameter']  = 0.0
-  r_egd['carrier_router_bit_radius']             = 10.0
+  r_egd['carrier_smoothing_radius']             = 10.0
   r_egd['carrier_central_hole_diameter']   = 10.0
   r_egd['carrier_leg_hole_diameter']       = 10.0
   ## carrier central crenel: inherit from sun-gear
@@ -114,7 +115,7 @@ def epicyclic_gearing_dictionary_init():
   ### output
   r_egd['tkinter_view']                    = False
   r_egd['simulation_sun_planet_gear']      = False
-  r_egd['simulation_planet_annulus_gear']  = False
+  r_egd['simulation_annulus_planet_gear']  = False
   r_egd['output_file_basename']            = ''
   ### optional
   r_egd['args_in_txt'] = ""
@@ -185,7 +186,7 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Set the diameter of the outline of the additional circle around the planet-carrier. If equal to 0, no additional circle is generated. Default: 0.0")
   r_parser.add_argument('--carrier_peripheral_internal_diameter','--cpid', action='store', type=float, default=0.0, dest='sw_carrier_peripheral_internal_diameter',
     help="Set the internal diameter of the additional circle around the planet-carrier. If equal to 0, the planet-carrier is filled (no hollow). Default: 0.0")
-  r_parser.add_argument('--carrier_router_bit_radius','--crbr', action='store', type=float, default=10, dest='sw_carrier_router_bit_radius',
+  r_parser.add_argument('--carrier_smoothing_radius','--csr', action='store', type=float, default=10, dest='sw_carrier_smoothing_radius',
     help="Set the router_bit radius for the planet-carrier. Default: 10")
   r_parser.add_argument('--carrier_central_hole_diameter','--cchd', action='store', type=float, default=10.0, dest='sw_carrier_central_hole_diameter',
     help="Set the diameter of the central hole of the planet-carrier. Default: 10.0")
@@ -208,7 +209,7 @@ def epicyclic_gearing_add_argument(ai_parser):
   ### output
   r_parser.add_argument('--simulation_sun_planet_gear','--sspg', action='store_true', default=False, dest='sw_simulation_sun_planet_gear',
     help='Simulate the sun-planet gear with gear_profile.py')
-  r_parser.add_argument('--simulation_planet_annulus_gear','--spag', action='store_true', default=False, dest='sw_simulation_planet_annulus_gear',
+  r_parser.add_argument('--simulation_annulus_planet_gear','--spag', action='store_true', default=False, dest='sw_simulation_annulus_planet_gear',
     help='Simulate the planet-annulus gear with gear_profile.py')
   # return
   return(r_parser)
@@ -237,308 +238,197 @@ def epicyclic_gearing(ai_constraints):
   #    print("dbg166: for k {:s}, eg_c[k] {:s} != egdi[k] {:s}".format(k, str(eg_c[k]), str(egdi[k])))
   ### precision
   radian_epsilon = math.pi/1000
-#  ### check parameter coherence (part 1)
-#  # get the router_bit_radius
-#  gear_router_bit_radius = sg_c['gear_router_bit_radius']
-#  if(sg_c['cnc_router_bit_radius']>gear_router_bit_radius):
-#    gear_router_bit_radius = sg_c['cnc_router_bit_radius']
-#  split_router_bit_radius = sg_c['split_router_bit_radius']
-#  if(sg_c['cnc_router_bit_radius']>split_router_bit_radius):
-#    split_router_bit_radius = sg_c['cnc_router_bit_radius']
-#  # sg_c['low_split_type']
-#  if(not sg_c['low_split_type'] in ('circle', 'line')):
-#    print("ERR216: Error, sg_c['low_split_type'] {:s} is not valid!".format(sg_c['low_split_type']))
-#    sys.exit(2)
-#  # sg_c['high_split_type']
-#  if(not sg_c['high_split_type'] in ('h', 'a')):
-#    print("ERR220: Error, sg_c['high_split_type'] {:s} is not valid!".format(sg_c['high_split_type']))
-#    sys.exit(2)
-#  # sg_c['split_nb']
-#  split_nb = sg_c['split_nb']
-#  if(split_nb<2):
-#    print("ERR188: Error, split_nb {:d} must be equal or bigger than 2".format(split_nb))
-#    sys.exit(2)
-#  #portion_angle = 2*math.pi/split_nb
-#  portion_angle = math.pi/split_nb
-#  #print("dbg190: sg_c['gear_tooth_nb']:", sg_c['gear_tooth_nb'])
-#  if(sg_c['gear_tooth_nb']>0): # create a gear_profile
-#    ### get the gear_profile
-#    gp_ci = gear_profile.gear_profile_dictionary_init()
-#    gp_c = dict([ (k, sg_c[k]) for k in gp_ci.keys() ]) # extract only the entries of the gear_profile
-#    gp_c['gear_type'] = 'e'
-#    gp_c['gear_router_bit_radius'] = gear_router_bit_radius
-#    gp_c['portion_tooth_nb'] = 0
-#    gp_c['portion_first_end'] = 0
-#    gp_c['portion_last_end'] = 0
-#    gp_c['output_file_basename'] = ''
-#    gp_c['args_in_txt'] = ''
-#    gp_c['return_type'] = 'figure_param_info'
-#    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(gp_c)
-#    # extract some gear_profile high-level parameter
-#    #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
-#    minimal_gear_profile_radius = gear_profile_parameters['hollow_radius']
-#    g1_ix = gear_profile_parameters['center_ox']
-#    g1_iy = gear_profile_parameters['center_oy']
-#    # high_split_radius
-#    g1_m = gear_profile_parameters['module']
-#    high_split_radius = sg_c['high_split_diameter']/2.0
-#    if(high_split_radius==0):
-#      high_split_radius = minimal_gear_profile_radius - g1_m
-#    ## gear_portion
-#    g1_pma = gear_profile_parameters['pi_module_angle']
-#    g1_hma = gear_profile_parameters['hollow_middle_angle']
-#    g1_ia = gear_profile_parameters['initial_angle']
-#    g1_tl = gear_profile_parameters['top_land']
-#    if(portion_angle<(1.1*g1_pma)):
-#      print("ERR219: Error, portion_angle {:0.3f} is too small compare to the pi_module_angle {:0.3f}".format(portion_angle, g1_pma))
-#      sys.exit(2)
-#    # pre common calculation
-#    absolute_angle = []
-#    relative_angle = []
-#    raw_tooth_nb = []
-#    a_start = g1_ia + g1_hma
-#    overhead = 2 # must be equal or bigger than 2 because of raw_tooth_nb[i-overhead+2]
-#    for i in range(2*split_nb+overhead):
-#      portion_start_angle = sg_c['split_initial_angle'] + (i+0.0) * portion_angle
-#      tooth_nb = 0
-#      while(abs(math.fmod(a_start-portion_start_angle+5*math.pi, 2*math.pi)-math.pi)>g1_pma/2.0):
-#        a_start += g1_pma
-#        tooth_nb += 1
-#      absolute_angle.append(a_start)
-#      relative_angle.append(math.fmod(a_start-portion_start_angle+5*math.pi, 2*math.pi)-math.pi)
-#      raw_tooth_nb.append(tooth_nb)
-#      #print("dbg238: i {:d} raw_tooth_nb {:0.3f}".format(i, raw_tooth_nb[i]))
-#    absolute_angle = absolute_angle[overhead:]
-#    relative_angle = relative_angle[overhead:]
-#    raw_tooth_nb = raw_tooth_nb[overhead:]
-#    # final low-parameters
-#    portion_gear_tooth_angle = []
-#    portion_gear_first_end = []
-#    portion_gear_last_end = []
-#    portion_gear_tooth_nb = []
-#    for i in range(2*split_nb):
-#      ii = i-overhead
-#      if(sg_c['high_split_type']=='h'):
-#        portion_gear_tooth_angle.append(absolute_angle[ii]-g1_hma+g1_pma)
-#        portion_gear_first_end.append(3)
-#        portion_gear_last_end.append(3)
-#        portion_gear_tooth_nb.append(raw_tooth_nb[ii+2]+raw_tooth_nb[ii+1]-1)
-#      elif(sg_c['high_split_type']=='a'):
-#        tooth_transfer = 0
-#        if(abs(relative_angle[ii])<=(g1_pma-g1_tl)/2.0):
-#          portion_gear_first_end.append(3)
-#          portion_gear_tooth_angle.append(absolute_angle[ii]-g1_hma+g1_pma)
-#        elif(relative_angle[ii]>=(g1_pma-g1_tl)/2.0):
-#          portion_gear_first_end.append(1)
-#          portion_gear_tooth_angle.append(absolute_angle[ii]-g1_hma)
-#          tooth_transfer = 1
-#        elif(relative_angle[ii]<=-1*(g1_pma-g1_tl)/2.0):
-#          portion_gear_first_end.append(1)
-#          portion_gear_tooth_angle.append(absolute_angle[ii]-g1_hma+g1_pma)
-#        if(abs(relative_angle[ii+2])<=(g1_pma-g1_tl)/2.0):
-#          portion_gear_tooth_nb.append(raw_tooth_nb[ii+2]+raw_tooth_nb[ii+1]-1+tooth_transfer)
-#          portion_gear_last_end.append(3)
-#        elif(relative_angle[ii+2]>=(g1_pma-g1_tl)/2.0):
-#          portion_gear_tooth_nb.append(raw_tooth_nb[ii+2]+raw_tooth_nb[ii+1]-1+tooth_transfer)
-#          portion_gear_last_end.append(1)
-#        elif(relative_angle[ii+2]<=-1*(g1_pma-g1_tl)/2.0):
-#          portion_gear_tooth_nb.append(raw_tooth_nb[ii+2]+raw_tooth_nb[ii+1]-0+tooth_transfer)
-#          portion_gear_last_end.append(1)
-#    #print("dbg276: len(portion_gear_first_end) {:d}  len(portion_gear_last_end) {:d}".format(len(portion_gear_first_end), len(portion_gear_last_end)))
-#  else: # no gear_profile, just a circle
-#    if(sg_c['gear_primitive_diameter']<radian_epsilon):
-#      print("ERR885: Error, the no-gear-profile circle outline diameter sg_c['gear_primitive_diameter'] {:0.2f} is too small!".format(sg_c['gear_primitive_diameter']))
-#      sys.exit(2)
-#    #gear_profile_B = (g1_ix, g1_iy, float(sg_c['gear_primitive_diameter'])/2)
-#    minimal_gear_profile_radius = float(sg_c['gear_primitive_diameter'])/2
-#    g1_ix = sg_c['center_position_x']
-#    g1_iy = sg_c['center_position_y']
-#    gear_profile_info = "\nSimple circle (no-gear-profile):\n"
-#    gear_profile_info += "outline circle radius: \t{:0.3f}  \tdiameter: {:0.3f}\n".format(sg_c['gear_primitive_diameter']/2.0, sg_c['gear_primitive_diameter'])
-#    gear_profile_info += "gear center (x, y):   \t{:0.3f}  \t{:0.3f}\n".format(g1_ix, g1_iy)
-#    if(sg_c['high_split_diameter']!=0):
-#      print("WARN221: Warning, the setting high_split_diameter {:0.3f} should not be used when gear_tooth_nb=0".format(sg_c['high_split_diameter']))
-#    high_split_radius = minimal_gear_profile_radius
-#  # set default value (if set to zero) for high_split_diameter, low_hole_circle_diameter, high_hole_circle_diameter
-#  low_split_radius = sg_c['low_split_diameter']/2.0
-#  low_hole_radius = sg_c['low_hole_diameter']/2.0
-#  low_hole_circle_radius = sg_c['low_hole_circle_diameter']/2.0
-#  high_hole_circle_radius = sg_c['high_hole_circle_diameter']/2.0
-#  high_hole_radius = sg_c['high_hole_diameter']/2.0
-#  if(low_hole_circle_radius==0):
-#    low_hole_circle_radius = low_split_radius + 2*low_hole_radius
-#  if(high_hole_circle_radius==0):
-#    high_hole_circle_radius = high_split_radius - 1.2*high_hole_radius
-#  #print("dbg292: high_hole_circle_radius {:0.3f}  high_split_radius {:0.3f}".format(high_hole_circle_radius, high_split_radius))
-#  ### check parameter coherence (part 2)
-#  # low_hole_nb and high_hole_nb
-#  if(sg_c['low_hole_nb']==0):
-#    low_hole_radius = 0
-#    sg_c['low_hole_nb']=1
-#  if(sg_c['high_hole_nb']==0):
-#    high_hole_radius = 0
-#    sg_c['high_hole_nb']=1
-#  # radial parameters
-#  if(low_hole_circle_radius<(low_split_radius + low_hole_radius)):
-#    print("ERR230: Error, low_hole_circle_radius {:0.3f} is too small compare to low_split_radius {:0.3f} and low_hole_radius {:0.3f}".format(low_hole_circle_radius, low_split_radius, low_hole_radius))
-#    sys.exit(2)
-#  if(high_hole_circle_radius<(low_hole_circle_radius + low_hole_radius + high_hole_radius)):
-#    print("ERR232: Error, high_hole_circle_radius {:0.3f} is too small compare to low_hole_circle_radius {:0.3f}, low_hole_radius {:0.3f} and high_hole_radius {:0.3f}".format(high_hole_circle_radius, low_hole_circle_radius, low_hole_radius, high_hole_radius))
-#    sys.exit(2)
-#  if(high_split_radius<(high_hole_circle_radius + high_hole_radius)):
-#    print("ERR236: Error, high_split_radius {:0.3f} is too small compare to high_hole_circle_radius {:0.3f} and high_hole_radius {:0.3f}".format(high_split_radius, high_hole_circle_radius, high_hole_radius))
-#    sys.exit(2)
-#  if(minimal_gear_profile_radius<high_split_radius):
-#    print("ERR239: Error, minimal_gear_profile_radius {:0.3f} is smaller than high_split_radius {:0.3f}".format(minimal_gear_profile_radius, high_split_radius))
-#    sys.exit(2)
-#  # angular (or circumference) parameters
-#  low_hole_diameter_angle = math.asin(float(low_hole_radius)/low_hole_circle_radius)
-#  low_hole_space_angle = portion_angle/float(sg_c['low_hole_nb'])
-#  high_hole_diameter_angle = math.asin(float(high_hole_radius)/high_hole_circle_radius)
-#  high_hole_space_angle = portion_angle/float(sg_c['high_hole_nb'])
-#  if(low_hole_space_angle<(2*low_hole_diameter_angle+radian_epsilon)):
-#    print("ERR253: Error, low_hole_nb {:d} or low_hole_diameter {:0.3f} are too big!".format(sg_c['low_hole_nb'], sg_c['low_hole_diameter']))
-#    sys.exit(2)
-#  if(high_hole_space_angle<(2*high_hole_diameter_angle+radian_epsilon)):
-#    print("ERR255: Error, high_hole_nb {:d} or high_hole_diameter {:0.3f} are too big!".format(sg_c['high_hole_nb'], sg_c['high_hole_diameter']))
-#    sys.exit(2)
-#  ### generate the portion outlines
-#  part_figure_list = []
-#  if(sg_c['gear_tooth_nb']>0): # create a gear_profile
-#    for i in range(2*split_nb):
-#      #print("dbg333:  portion_gear_tooth_nb[i]: {:0.3f}".format(portion_gear_tooth_nb[i]))
-#      #print("dbg334:  portion_gear_first_end[i]: {:0.3f}".format(portion_gear_first_end[i]))
-#      #print("dbg335:  portion_gear_last_end[i]: {:0.3f}".format(portion_gear_last_end[i]))
-#      #print("dbg336:  portion_gear_tooth_angle[i]: {:0.3f}".format(portion_gear_tooth_angle[i]))
-#      if(portion_gear_tooth_nb[i]<1):
-#        print("ERR338: Error, for i {:d} portion_gear_tooth_nb {:d} smaller than 1".format(i, portion_gear_tooth_nb[i]))
-#        sys.exit(2)
-#      gp_c['portion_tooth_nb']    = portion_gear_tooth_nb[i]
-#      gp_c['portion_first_end']   = portion_gear_first_end[i]
-#      gp_c['portion_last_end']    = portion_gear_last_end[i]
-#      gp_c['gear_initial_angle']  = portion_gear_tooth_angle[i]
-#      gp_c['simulation_enable'] = False
-#      gp_c['return_type'] = 'figure_param_info'
-#      #print("dbg342: gp_c:", gp_c)
-#      #print("dbg341: gp_c['portion_tooth_nb']: {:d}".format(gp_c['portion_tooth_nb']))
-#      (gear_profile_B, trash_gear_profile_parameters, trash_gear_profile_info) = gear_profile.gear_profile(gp_c)
-#      #print("dbg345: trash_gear_profile_parameters:", trash_gear_profile_parameters)
-#      #print("dbg346: trash_gear_profile_parameters['portion_tooth_nb']: {:d}".format(trash_gear_profile_parameters['portion_tooth_nb']))
-#      tmp_a = sg_c['split_initial_angle'] + (i+2.0)*portion_angle
-#      tmp_b = sg_c['split_initial_angle'] + (i+1.0)*portion_angle
-#      tmp_c = sg_c['split_initial_angle'] + (i+0.0)*portion_angle
-#      low_portion_A = []
-#      low_portion_A.append((gear_profile_B[-1][0], gear_profile_B[-1][1], 0))
-#      low_portion_A.append((g1_ix+high_split_radius*math.cos(tmp_a), g1_iy+high_split_radius*math.sin(tmp_a), split_router_bit_radius))
-#      low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_a), g1_iy+low_split_radius*math.sin(tmp_a), 0))
-#      if(sg_c['low_split_type']=='circle'):
-#        low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
-#      elif(sg_c['low_split_type']=='line'):
-#        low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), 0))
-#        low_portion_A.append((g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
-#      low_portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), split_router_bit_radius))
-#      low_portion_A.append((gear_profile_B[0][0], gear_profile_B[0][1], 0))
-#      low_portion_B = cnc25d_api.cnc_cut_outline(low_portion_A, "portion_A")
-#      portion_B = gear_profile_B[:]
-#      portion_B.extend(low_portion_B[1:])
-#      #part_figure_list.append([portion_B])
-#      part_figure_list.append([portion_B[:]])
-#  else:
-#    for i in range(2*split_nb):
-#      tmp_a = sg_c['split_initial_angle'] + (i+2.0)*portion_angle
-#      tmp_b = sg_c['split_initial_angle'] + (i+1.0)*portion_angle
-#      tmp_c = sg_c['split_initial_angle'] + (i+0.0)*portion_angle
-#      portion_A = []
-#      portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), 0))
-#      portion_A.append((g1_ix+high_split_radius*math.cos(tmp_b), g1_iy+high_split_radius*math.sin(tmp_b), g1_ix+high_split_radius*math.cos(tmp_a), g1_iy+high_split_radius*math.sin(tmp_a), 0))
-#      portion_A.append((g1_ix+low_split_radius*math.cos(tmp_a), g1_iy+low_split_radius*math.sin(tmp_a), 0))
-#      if(sg_c['low_split_type']=='circle'):
-#        portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
-#      elif(sg_c['low_split_type']=='line'):
-#        portion_A.append((g1_ix+low_split_radius*math.cos(tmp_b), g1_iy+low_split_radius*math.sin(tmp_b), 0))
-#        portion_A.append((g1_ix+low_split_radius*math.cos(tmp_c), g1_iy+low_split_radius*math.sin(tmp_c), 0))
-#      portion_A.append((g1_ix+high_split_radius*math.cos(tmp_c), g1_iy+high_split_radius*math.sin(tmp_c), 0))
-#      portion_B = cnc25d_api.cnc_cut_outline(portion_A, "circle_portion_A")
-#      #part_figure_list.append([portion_B])
-#      part_figure_list.append([portion_B[:]])
-#  ### generate the hole outlines
-#  for i in range(len(part_figure_list)):
-#    hole_figure = []
-#    if(low_hole_radius>0):
-#      for j in range(2*sg_c['low_hole_nb']):
-#        tmp_a = sg_c['split_initial_angle'] + i*portion_angle + (j+0.5)*low_hole_space_angle
-#        hole_figure.append((g1_ix+low_hole_circle_radius*math.cos(tmp_a), g1_iy+low_hole_circle_radius*math.sin(tmp_a), low_hole_radius))
-#    if(high_hole_radius>0):
-#      for j in range(2*sg_c['high_hole_nb']):
-#        tmp_a = sg_c['split_initial_angle'] + i*portion_angle + (j+0.5)*high_hole_space_angle
-#        hole_figure.append((g1_ix+high_hole_circle_radius*math.cos(tmp_a), g1_iy+high_hole_circle_radius*math.sin(tmp_a), high_hole_radius))
-#    #part_figure_list[i].extend(hole_figure)
-#    part_figure_list[i].extend(hole_figure[:])
-#
-#  ### design output
-#  sgw_assembly_figure = []
-#  sgw_assembly_A_figure = []
-#  sgw_assembly_B_figure = []
-#  aligned_part_figure_list = []
-#  sgw_list_of_parts = []
-#  for i in range(len(part_figure_list)):
-#    sgw_assembly_figure.extend(part_figure_list[i])
-#    if((i%2)==0):
-#      sgw_assembly_A_figure.extend(part_figure_list[i])
-#    else:
-#      sgw_assembly_B_figure.extend(part_figure_list[i])
-#    aligned_part_figure_list.append([])
-#    shift_x = 2.2 * (i%2) * minimal_gear_profile_radius
-#    shift_y = 2.2 * int(i/2) * minimal_gear_profile_radius
-#    for j in range(len(part_figure_list[i])):
-#      rotated_outline = cnc25d_api.outline_rotate(part_figure_list[i][j], g1_ix, g1_iy, -1*(sg_c['split_initial_angle'] + i*portion_angle))
-#      aligned_part_figure_list[i].append(rotated_outline)
-#      sgw_list_of_parts.append(cnc25d_api.outline_shift_xy(rotated_outline, shift_x, 1, shift_y, 1))
-#  # ideal_outline in overlay
-#  sgw_assembly_figure_overlay = part_figure_list[0]
-#  # sgw_parameter_info
-#  sgw_parameter_info = "\nSplit-Gearwheel parameter info:\n"
-#  sgw_parameter_info += "\n" + sg_c['args_in_txt'] + "\n\n"
-#  sgw_parameter_info += gear_profile_info
-#  sgw_parameter_info += """
+  ### check parameter coherence (part 1)
+  ## get the router_bit_radius
+  gear_router_bit_radius = eg_c['gear_router_bit_radius']
+  if(eg_c['cnc_router_bit_radius']>gear_router_bit_radius):
+    gear_router_bit_radius = eg_c['cnc_router_bit_radius']
+  sun_crenel_router_bit_radius = eg_c['sun_crenel_router_bit_radius']
+  if(eg_c['cnc_router_bit_radius']>sun_crenel_router_bit_radius):
+    sun_crenel_router_bit_radius = eg_c['cnc_router_bit_radius']
+  planet_crenel_router_bit_radius = eg_c['sun_crenel_router_bit_radius']
+  if(eg_c['cnc_router_bit_radius']>planet_crenel_router_bit_radius):
+    planet_crenel_router_bit_radius = eg_c['cnc_router_bit_radius']
+  carrier_smoothing_radius = eg_c['carrier_smoothing_radius']
+  if(eg_c['cnc_router_bit_radius']>carrier_smoothing_radius):
+    carrier_smoothing_radius = eg_c['cnc_router_bit_radius']
+  carrier_crenel_router_bit_radius = eg_c['carrier_crenel_router_bit_radius']
+  if(eg_c['cnc_router_bit_radius']>carrier_crenel_router_bit_radius):
+    carrier_crenel_router_bit_radius = eg_c['cnc_router_bit_radius']
+  ## tooth number
+  sun_gear_tooth_nb = eg_c['sun_gear_tooth_nb']
+  planet_gear_tooth_nb = eg_c['planet_gear_tooth_nb']
+  annulus_gear_tooth_nb = sun_gear_tooth_nb + 2 * planet_gear_tooth_nb
+  smallest_gear_tooth_nb = min(sun_gear_tooth_nb, planet_gear_tooth_nb)
+  ## maximal planet number
+  # angle NOM
+  NOM = 2*math.asin(1/(1+(float(sun_gear_tooth_nb)/planet_gear_tooth_nb)))
+  security_coef = 1.1
+  planet_number_max = int(2*math.pi/(NOM*security_coef))
+  planet_nb = eg_c['planet_nb']
+  if(planet_nb==0):
+    planet_nb = planet_number_max
+  if(planet_nb>planet_number_max):
+    print("ERR270: Error, planet_nb {:d} is bigger than planet_number_max {:d}".format(planet_nb, planet_number_max))
+  epicyclic_gearing_ratio = float(sun_gear_tooth_nb)/(sun_gear_tooth_nb+annulus_gear_tooth_nb)
+  ## gear_addendum_dedendum_parity_slack
+  if((eg_c['gear_addendum_dedendum_parity_slack']<0)or(eg_c['gear_addendum_dedendum_parity_slack']>30)):
+    print("ERR274: Error, gear_addendum_dedendum_parity_slack {:0.3f} is out of the range 0..30".format(eg_c['gear_addendum_dedendum_parity_slack']))
+    sys.exit(2)
+  addendum_dedendum_parity = 50.0-eg_c['gear_addendum_dedendum_parity_slack']/2.0
+  ##### gears
+  ### gearring
+  gr_c = {}
+  gr_c['gear_tooth_nb']               = annulus_gear_tooth_nb
+  gr_c['second_gear_tooth_nb']        = smallest_gear_tooth_nb
+  gr_c['gear_module']                 = eg_c['gear_module']
+  gr_c['gear_router_bit_radius']      = gear_router_bit_radius
+  gr_c['gear_tooth_resolution']       = eg_c['gear_tooth_resolution']
+  gr_c['gear_skin_thickness']         = eg_c['gear_skin_thickness']
+  gr_c['gear_addendum_dedendum_parity']    = addendum_dedendum_parity
+  gr_c['holder_diameter']             = eg_c['holder_diameter']
+  gr_c['holder_crenel_number']        = eg_c['holder_crenel_number']
+  gr_c['holder_position_angle']       = eg_c['holder_position_angle']
+  gr_c['holder_hole_position_radius'] = eg_c['holder_hole_position_radius']
+  gr_c['holder_hole_diameter']        = eg_c['holder_hole_diameter']
+  gr_c['holder_crenel_position']      = eg_c['holder_crenel_position']
+  gr_c['holder_crenel_height']        = eg_c['holder_crenel_height']
+  gr_c['holder_crenel_width']         = eg_c['holder_crenel_width']
+  gr_c['holder_crenel_skin_width']    = eg_c['holder_crenel_skin_width']
+  gr_c['holder_crenel_router_bit_radius'] = eg_c['holder_crenel_router_bit_radius']
+  gr_c['holder_smoothing_radius']     = eg_c['holder_smoothing_radius']
+  gr_c['cnc_router_bit_radius']       = eg_c['cnc_router_bit_radius']
+  gr_c['gear_profile_height']         = eg_c['gear_profile_height']
+  gr_c['tkinter_view']                = False
+  gr_c['simulation_enable']           = False
+  gr_c['output_file_basename']        = ""
+  gr_c['args_in_txt']                 = ""
+  gr_c['return_type']                 = 'cnc25d_figure'
+  annulus_figure = gearring.gearring(gr_c)
+  ### planet
+  pg_c = {}
+  pg_c['gear_tooth_nb']             = planet_gear_tooth_nb # gear-profile
+  pg_c['second_gear_tooth_nb']        = smallest_gear_tooth_nb
+  pg_c['gear_module']               = eg_c['gear_module']
+  pg_c['gear_router_bit_radius']    = eg_c['gear_router_bit_radius']
+  pg_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
+  pg_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
+  pg_c['gear_addendum_dedendum_parity']  = addendum_dedendum_parity
+  pg_c['axle_type']                 = 'none' # axle
+  if(eg_c['sun_axle_diameter']>0):
+    pg_c['axle_type']               = 'circle'
+  pg_c['axle_x_width']              = eg_c['planet_axle_diameter']
+  pg_c['axle_router_bit_radius']    = eg_c['planet_crenel_router_bit_radius']
+  pg_c['crenel_diameter']           = eg_c['planet_crenel_diameter'] # crenel
+  pg_c['crenel_number']             = eg_c['planet_crenel_nb']
+  pg_c['crenel_angle']              = 0
+  pg_c['crenel_width']              = eg_c['planet_crenel_width']
+  pg_c['crenel_height']             = eg_c['planet_crenel_height']
+  pg_c['crenel_router_bit_radius']  = eg_c['planet_crenel_router_bit_radius']
+  pg_c['wheel_hollow_leg_number']   = 0 # wheel-hollow
+  pg_c['cnc_router_bit_radius']     = eg_c['cnc_router_bit_radius'] # general
+  pg_c['gear_profile_height']       = eg_c['gear_profile_height']
+  pg_c['tkinter_view']              = False
+  pg_c['output_file_basename']      = ""
+  pg_c['args_in_txt']               = ""
+  pg_c['return_type']               = 'cnc25d_figure'
+  planet_figures = []
+  sun_planet_length = eg_c['gear_module']*(sun_gear_tooth_nb+planet_gear_tooth_nb)/2.0
+  planet_angle = 2*math.pi/planet_nb
+  for i in range(planet_nb):
+    pg_c['center_position_x'] = 0.0 + sun_planet_length * math.cos(i*planet_angle)
+    pg_c['center_position_y'] = 0.0 + sun_planet_length * math.sin(i*planet_angle)
+    pg_c['gear_initial_angle'] = 0.0
+    planet_figures.append(gearwheel.gearwheel(pg_c))
+  ### sun
+  sg_c = {}
+  sg_c['gear_tooth_nb']             = sun_gear_tooth_nb # gear-profile
+  sg_c['second_gear_tooth_nb']        = smallest_gear_tooth_nb
+  sg_c['gear_module']               = eg_c['gear_module']
+  sg_c['gear_router_bit_radius']    = eg_c['gear_router_bit_radius']
+  sg_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
+  sg_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
+  sg_c['gear_addendum_dedendum_parity']  = addendum_dedendum_parity
+  sg_c['axle_type']                 = 'none' # axle
+  if(eg_c['sun_axle_diameter']>0):
+    sg_c['axle_type']               = 'circle'
+  sg_c['axle_x_width']              = eg_c['sun_axle_diameter']
+  sg_c['axle_router_bit_radius']    = eg_c['sun_crenel_router_bit_radius']
+  sg_c['crenel_diameter']           = eg_c['sun_crenel_diameter'] # crenel
+  sg_c['crenel_number']             = eg_c['sun_crenel_nb']
+  sg_c['crenel_angle']              = 0
+  sg_c['crenel_width']              = eg_c['sun_crenel_width']
+  sg_c['crenel_height']             = eg_c['sun_crenel_height']
+  sg_c['crenel_router_bit_radius']  = eg_c['sun_crenel_router_bit_radius']
+  sg_c['wheel_hollow_leg_number']   = 0 # wheel-hollow
+  sg_c['cnc_router_bit_radius']     = eg_c['cnc_router_bit_radius'] # general
+  sg_c['gear_profile_height']       = eg_c['gear_profile_height']
+  sg_c['tkinter_view']              = False
+  sg_c['output_file_basename']      = ""
+  sg_c['args_in_txt']               = ""
+  sg_c['return_type']               = 'cnc25d_figure'
+  sg_c['center_position_x']   = 0.0
+  sg_c['center_position_y']   = 0.0
+  sg_c['gear_initial_angle']  = 0.0
+  sun_figure = gearwheel.gearwheel(sg_c)
+
+  ### simulation
+  gp_c = {}
+  gp_c['gear_module']               = eg_c['gear_module']
+  gp_c['gear_router_bit_radius']    = eg_c['gear_router_bit_radius']
+  gp_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
+  gp_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
+  gp_c['gear_addendum_dedendum_parity']         = addendum_dedendum_parity
+  gp_c['second_gear_addendum_dedendum_parity']  = addendum_dedendum_parity
+  gp_c['output_file_basename']      = ""
+  gp_c['args_in_txt']               = "simulation for epicyclic_gearing"
+  gp_c['return_type']               = 'int_status'
+  gp_c['center_position_x']   = 0.0
+  gp_c['center_position_y']   = 0.0
+  gp_c['gear_initial_angle']  = 0.0
+  gp_c['second_gear_position_angle']          = 0.0
+  gp_c['second_gear_additional_axis_length']  = 0.0
+  gp_c['simulation_enable'] = True
+  #print("dbg392: gp_c:", gp_c)
+  if(eg_c['simulation_sun_planet_gear']):
+    gp_c['gear_tooth_nb']             = sun_gear_tooth_nb
+    gp_c['second_gear_tooth_nb']      = planet_gear_tooth_nb
+    gear_profile.gear_profile(gp_c)
+  if(eg_c['simulation_annulus_planet_gear']):
+    gp_c['gear_tooth_nb']             = annulus_gear_tooth_nb
+    gp_c['gear_type']                 = 'i'
+    gp_c['second_gear_tooth_nb']      = planet_gear_tooth_nb
+    gear_profile.gear_profile(gp_c)
+
+  ### design output
+  part_figure_list = []
+  part_figure_list.append(annulus_figure)
+  part_figure_list.append(sun_figure)
+  part_figure_list.extend(planet_figures)
+  #part_figure_list.append(front_planet_carrier_figure)
+  #part_figure_list.append(rear_planet_carrier_figure)
+  eg_assembly_figure = []
+  for i in range(len(part_figure_list)):
+    eg_assembly_figure.extend(part_figure_list[i])
+  # ideal_outline in overlay
+  eg_assembly_figure_overlay = []
+
+  # eg_parameter_info
+  eg_parameter_info = "\nepicyclic_gearing parameter info:\n"
+  eg_parameter_info += "\n" + eg_c['args_in_txt'] + "\n\n"
+#  eg_parameter_info += """
 #split_nb:             \t{:d}
 #split_initial_angle:  \t{:0.3f} (radian)  \t{:0.3f} (degree)
 #high_split_radius:    \t{:0.3f} diameter: \t{:0.3f}
 #high_split_type:      \t{:s}
 #""".format(split_nb, sg_c['split_initial_angle'], sg_c['split_initial_angle']*180/math.pi, high_split_radius, 2*high_split_radius, sg_c['high_split_type'])
-#  sgw_parameter_info += """
-#low_split_radius:     \t{:0.3f} diameter: \t{:0.3f}
-#low_split_type:       \t{:s}
-#""".format(low_split_radius, 2*low_split_radius, sg_c['low_split_type'])
-#  sgw_parameter_info += """
-#low_hole_circle_radius:   \t{:0.3f} diameter: \t{:0.3f}
-#low_hole_radius:          \t{:0.3f} diameter: \t{:0.3f}
-#low_hole_nb:              \t{:d}
-#""".format(low_hole_circle_radius, 2*low_hole_circle_radius, low_hole_radius, 2*low_hole_radius, sg_c['low_hole_nb'])
-#  sgw_parameter_info += """
-#high_hole_circle_radius:  \t{:0.3f} diameter: \t{:0.3f}
-#high_hole_radius:         \t{:0.3f} diameter: \t{:0.3f}
-#high_hole_nb:             \t{:d}
-#""".format(high_hole_circle_radius, 2*high_hole_circle_radius, high_hole_radius, 2*high_hole_radius, sg_c['high_hole_nb'])
-#  sgw_parameter_info += """
-#gear_router_bit_radius:   \t{:0.3f}
-#split_router_bit_radius:  \t{:0.3f}
-#cnc_router_bit_radius:    \t{:0.3f}
-#""".format(gear_router_bit_radius, split_router_bit_radius, sg_c['cnc_router_bit_radius'])
-#  #print(sgw_parameter_info)
-#
-#  ### display with Tkinter
-#  if(sg_c['tkinter_view']):
-#    print(sgw_parameter_info)
-#    #cnc25d_api.figure_simple_display(part_figure_list[0], sgw_assembly_figure_overlay, sgw_parameter_info) # for debug
-#    #cnc25d_api.figure_simple_display(sgw_assembly_A_figure, part_figure_list[0], sgw_parameter_info) # for debug
-#    cnc25d_api.figure_simple_display(sgw_assembly_figure, sgw_assembly_figure_overlay, sgw_parameter_info)
-#    cnc25d_api.figure_simple_display(sgw_assembly_A_figure, sgw_assembly_B_figure, sgw_parameter_info)
-#    #for i in range(len(part_figure_list)):
-#    #  #cnc25d_api.figure_simple_display(aligned_part_figure_list[i], part_figure_list[i], sgw_parameter_info)
-#    #  cnc25d_api.figure_simple_display(part_figure_list[i], part_figure_list[i-1], sgw_parameter_info)
-#    cnc25d_api.figure_simple_display(sgw_list_of_parts, [], sgw_parameter_info)
-#      
+  #print(eg_parameter_info)
+
+  ### display with Tkinter
+  if(eg_c['tkinter_view']):
+    print(eg_parameter_info)
+    cnc25d_api.figure_simple_display(eg_assembly_figure, [], eg_parameter_info)
+      
 #  ### generate output file
 #  output_file_suffix = ''
 #  if(sg_c['output_file_basename']!=''):
@@ -567,23 +457,24 @@ def epicyclic_gearing(ai_constraints):
 #      cnc25d_api.generate_output_file(part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_placed".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
 #      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i],    output_file_basename + "_part_A{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
 #      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
-#
-#  #### return
-#  if(sg_c['return_type']=='int_status'):
-#    r_sgw = 1
-#  elif(sg_c['return_type']=='cnc25d_figure'):
-#    r_sgw = sgw_assembly_A_figure
-#  elif(sg_c['return_type']=='freecad_object'):
-#    fc_obj = []
-#    for i in range(len(part_figure_list)):
-#      fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(part_figure_list[i], sg_c['gear_profile_height']))
-#      if((i%2)==1):
-#        fc_obj[i].translate(Base.Vector(0,0,sg_c['gear_profile_height']))
-#    r_sgw = Part.makeCompound(fc_obj)
-#  else:
-#    print("ERR508: Error the return_type {:s} is unknown".format(sg_c['return_type']))
-#    sys.exit(2)
-  r_eg = 1
+
+  #### return
+  if(eg_c['return_type']=='int_status'):
+    r_eg = 1
+  elif(eg_c['return_type']=='cnc25d_figure'):
+    r_eg = eg_assembly_A_figure
+  elif(eg_c['return_type']=='freecad_object'):
+    fc_obj = []
+    for i in range(len(part_figure_list)):
+      fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(part_figure_list[i], eg_c['gear_profile_height']))
+      if(i==planet_crenel_nb+2): # front planet-carrier
+        fc_obj[i].translate(Base.Vector(0,0,2*sg_c['gear_profile_height']))
+      if(i==planet_crenel_nb+3): # rear planet-carrier
+        fc_obj[i].translate(Base.Vector(0,0,-2*sg_c['gear_profile_height']))
+    r_eg = Part.makeCompound(fc_obj)
+  else:
+    print("ERR508: Error the return_type {:s} is unknown".format(eg_c['return_type']))
+    sys.exit(2)
   return(r_eg)
 
 ################################################################
@@ -620,11 +511,11 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['planet_crenel_height']      = ai_eg_args.sw_planet_crenel_height
   r_egd['planet_crenel_router_bit_radius']  = ai_eg_args.sw_planet_crenel_router_bit_radius
   ### planet gear carrier
-  r_egd['carrier_central_diameter']              = ai_eg_args.sw_carrier_central_diameter
-  r_egd['carrier_leg_diameter']                  = ai_eg_args.sw_carrier_leg_diameter
-  r_egd['carrier_peripheral_external_diameter']  = ai_eg_args.sw_carrier_peripheral_external_diameter
-  r_egd['carrier_peripheral_internal_diameter']  = ai_eg_args.sw_carrier_peripheral_internal_diameter
-  r_egd['carrier_router_bit_radius']             = ai_eg_args.sw_carrier_router_bit_radius
+  r_egd['carrier_central_diameter']               = ai_eg_args.sw_carrier_central_diameter
+  r_egd['carrier_leg_diameter']                   = ai_eg_args.sw_carrier_leg_diameter
+  r_egd['carrier_peripheral_external_diameter']   = ai_eg_args.sw_carrier_peripheral_external_diameter
+  r_egd['carrier_peripheral_internal_diameter']   = ai_eg_args.sw_carrier_peripheral_internal_diameter
+  r_egd['carrier_smoothing_radius']               = ai_eg_args.sw_carrier_smoothing_radius
   r_egd['carrier_central_hole_diameter']   = ai_eg_args.sw_carrier_central_hole_diameter
   r_egd['carrier_leg_hole_diameter']       = ai_eg_args.sw_carrier_leg_hole_diameter
   ## carrier peripheral crenel
@@ -639,7 +530,7 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   ### output
   #r_egd['tkinter_view']                    = False
   r_egd['simulation_sun_planet_gear']      = ai_eg_args.sw_simulation_sun_planet_gear
-  r_egd['simulation_planet_annulus_gear']  = ai_eg_args.sw_simulation_planet_annulus_gear
+  r_egd['simulation_annulus_planet_gear']  = ai_eg_args.sw_simulation_annulus_planet_gear
   r_egd['output_file_basename']            = ai_eg_args.sw_output_file_basename
   ### optional
   #r_egd['args_in_txt'] = ""
@@ -654,7 +545,7 @@ def epicyclic_gearing_argparse_wrapper(ai_eg_args, ai_args_in_txt=""):
   """
   # view the epicyclic_gearing with Tkinter as default action
   tkinter_view = True
-  if(ai_eg_args.sw_simulation_sun_planet_gear or ai_eg_args.sw_simulation_planet_annulus_gear or (ai_eg_args.sw_output_file_basename!='')):
+  if(ai_eg_args.sw_simulation_sun_planet_gear or ai_eg_args.sw_simulation_annulus_planet_gear or (ai_eg_args.sw_output_file_basename!='')):
     tkinter_view = False
   # wrapper
   egd = epicyclic_gearing_argparse_to_dictionary(ai_eg_args)
@@ -725,7 +616,7 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("epicyclic_gearing.py says hello!\n")
   #my_eg = epicyclic_gearing_cli()
   #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --return_type freecad_object".split())
-  my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31".split())
+  my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0".split())
   #Part.show(my_eg)
   try: # depending on eg_c['return_type'] it might be or not a freecad_object
     Part.show(my_eg)

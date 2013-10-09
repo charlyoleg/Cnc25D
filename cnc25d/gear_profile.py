@@ -317,6 +317,7 @@ def gear_profile(ai_constraints):
   gp_c = gpdi.copy()
   gp_c.update(ai_constraints)
   #print("dbg155: gp_c:", gp_c)
+  #print("dbg320: ai_constraints:", ai_constraints)
   if(len(gp_c.viewkeys() & gpdi.viewkeys()) != len(gp_c.viewkeys() | gpdi.viewkeys())): # check if the dictionary gp_c has exactly all the keys compare to gear_profile_dictionary_init()
     print("ERR157: Error, gp_c has too much entries as {:s} or missing entries as {:s}".format(gp_c.viewkeys() - gpdi.viewkeys(), gpdi.viewkeys() - gp_c.viewkeys()))
     sys.exit(2)
@@ -725,6 +726,8 @@ def gear_profile(ai_constraints):
       g2_rbr = gp_c['second_gear_router_bit_radius']
   g1_param['gear_router_bit_radius'] = g1_rbr
   g2_param['gear_router_bit_radius'] = g2_rbr
+  #print("dbg728: g1_rbr {:0.3f}  g2_rbr {:0.3f}".format(g1_rbr, g2_rbr))
+  #print("dbg729: gp_c['gear_router_bit_radius'] {:0.3f}".format(gp_c['gear_router_bit_radius']))
   # hollow
   g1_h_delta = g1_thh*float(gp_c['gear_hollow_height_pourcentage'])/100
   if(g1_h_delta<1.05*g1_rbr):
