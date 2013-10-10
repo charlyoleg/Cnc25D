@@ -447,7 +447,7 @@ def gear_profile(ai_constraints):
       print("ERR119: Error, set second_gear_tooth_nb to use second_gear_addendum_dedendum_parity")
       sys.exit(2)
     else:
-      print("WARN211: Warning, second_gear_addendum_dedendum_parity is used for irregular cases.")
+      #print("WARN211: Warning, second_gear_addendum_dedendum_parity is used for irregular cases.")
       g2_adp = float(gp_c['second_gear_addendum_dedendum_parity'])/100
   if((g2_adp<=0)or(g2_adp>=1)):
     print("ERR119: Error, the second_gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(gp_c['second_gear_addendum_dedendum_parity']))
@@ -844,6 +844,7 @@ def gear_profile(ai_constraints):
       g2_ia_modulo = g2_pi_module_angle
     elif(g2_type=='l'):
       g2_ia_modulo = g2_pi_module
+    #print("dbg847: g2_iap {:0.8f}".format(g2_iap))
     g2_iap_ox = math.fmod(g2_iap+2*math.pi+0.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
     g2_ian_ox = math.fmod(g2_ian+2*math.pi+0.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
     slack_sign = 1
@@ -869,6 +870,9 @@ def gear_profile(ai_constraints):
       initial_position_info_txt += "g2_ia_slack: {:0.5f} (mm)\n".format(g2_ia_slack)
       initial_speed_info_txt += "g2_initial_speed: positive:  {:0.3f} (mm/s)  negative: {:0.3f} (mm/s)\n".format(g2_rotation_speed_p, g2_rotation_speed_n)
     g2_param['initial_angle'] = g2_iap
+    g1_param['second_positive_initial_angle'] = g2_iap_ox     # hack for epicyclic_gearing
+    g1_param['second_negative_initial_angle'] = g2_ian_ox     # hack for epicyclic_gearing
+    g1_param['second_pi_module_angle'] = g2_ia_modulo #g2_pi_module_angle   # hack for epicyclic_gearing
     # output info
     sys_info_txt = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(g1_n)/g2_n, g1g2_a, aal)
     sys_info_txt += real_force_info

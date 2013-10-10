@@ -54,7 +54,7 @@ from FreeCAD import Base
 # cnc25d
 import gearring
 import gearwheel
-import gear_profile # for simulation
+import gear_profile # to get the high-level parameter to find the angle position
 
 ################################################################
 # epicyclic_gearing dictionary-arguments default values
@@ -224,6 +224,8 @@ def epicyclic_gearing(ai_constraints):
   The main function of the script.
   It generates a epicyclic-gearing according to the constraint-arguments
   """
+  ### default constant
+  first_planet_position_angle = 0.1
   ### check the dictionary-arguments ai_constraints
   egdi = epicyclic_gearing_dictionary_init()
   eg_c = egdi.copy()
@@ -270,22 +272,28 @@ def epicyclic_gearing(ai_constraints):
     planet_nb = planet_number_max
   if(planet_nb>planet_number_max):
     print("ERR270: Error, planet_nb {:d} is bigger than planet_number_max {:d}".format(planet_nb, planet_number_max))
+    sys.exit(2)
   epicyclic_gearing_ratio = float(sun_gear_tooth_nb)/(sun_gear_tooth_nb+annulus_gear_tooth_nb)
   ## gear_addendum_dedendum_parity_slack
   if((eg_c['gear_addendum_dedendum_parity_slack']<0)or(eg_c['gear_addendum_dedendum_parity_slack']>30)):
     print("ERR274: Error, gear_addendum_dedendum_parity_slack {:0.3f} is out of the range 0..30".format(eg_c['gear_addendum_dedendum_parity_slack']))
     sys.exit(2)
   addendum_dedendum_parity = 50.0-eg_c['gear_addendum_dedendum_parity_slack']/2.0
+  
   ##### gears
+  
+  #### gear parameter preparation
   ### gearring
   gr_c = {}
   gr_c['gear_tooth_nb']               = annulus_gear_tooth_nb
-  gr_c['second_gear_tooth_nb']        = smallest_gear_tooth_nb
+  gr_c['second_gear_tooth_nb']        = planet_gear_tooth_nb
+  gr_c['gear_base_diameter']          = float((smallest_gear_tooth_nb-2)*eg_c['gear_module']*annulus_gear_tooth_nb)/smallest_gear_tooth_nb
   gr_c['gear_module']                 = eg_c['gear_module']
   gr_c['gear_router_bit_radius']      = gear_router_bit_radius
   gr_c['gear_tooth_resolution']       = eg_c['gear_tooth_resolution']
   gr_c['gear_skin_thickness']         = eg_c['gear_skin_thickness']
-  gr_c['gear_addendum_dedendum_parity']    = addendum_dedendum_parity
+  gr_c['gear_addendum_dedendum_parity']         = addendum_dedendum_parity
+  gr_c['second_gear_addendum_dedendum_parity']  = addendum_dedendum_parity
   gr_c['holder_diameter']             = eg_c['holder_diameter']
   gr_c['holder_crenel_number']        = eg_c['holder_crenel_number']
   gr_c['holder_position_angle']       = eg_c['holder_position_angle']
@@ -299,21 +307,27 @@ def epicyclic_gearing(ai_constraints):
   gr_c['holder_smoothing_radius']     = eg_c['holder_smoothing_radius']
   gr_c['cnc_router_bit_radius']       = eg_c['cnc_router_bit_radius']
   gr_c['gear_profile_height']         = eg_c['gear_profile_height']
+  gr_c['center_position_x']                   = 0.0
+  gr_c['center_position_y']                   = 0.0
+  gr_c['gear_initial_angle']                  = 0.0
+  gr_c['second_gear_position_angle']          = 0.0
+  gr_c['second_gear_additional_axis_length']  = 0.0
   gr_c['tkinter_view']                = False
   gr_c['simulation_enable']           = False
   gr_c['output_file_basename']        = ""
-  gr_c['args_in_txt']                 = ""
+  gr_c['args_in_txt']                 = "gearring for epicyclic_gearing"
   gr_c['return_type']                 = 'cnc25d_figure'
-  annulus_figure = gearring.gearring(gr_c)
   ### planet
   pg_c = {}
   pg_c['gear_tooth_nb']             = planet_gear_tooth_nb # gear-profile
-  pg_c['second_gear_tooth_nb']        = smallest_gear_tooth_nb
+  pg_c['second_gear_tooth_nb']      = sun_gear_tooth_nb
+  pg_c['gear_base_diameter']          = float((smallest_gear_tooth_nb-2)*eg_c['gear_module']*planet_gear_tooth_nb)/smallest_gear_tooth_nb
   pg_c['gear_module']               = eg_c['gear_module']
-  pg_c['gear_router_bit_radius']    = eg_c['gear_router_bit_radius']
+  pg_c['gear_router_bit_radius']    = gear_router_bit_radius
   pg_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
   pg_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
-  pg_c['gear_addendum_dedendum_parity']  = addendum_dedendum_parity
+  pg_c['gear_addendum_dedendum_parity']         = addendum_dedendum_parity
+  pg_c['second_gear_addendum_dedendum_parity']  = addendum_dedendum_parity
   pg_c['axle_type']                 = 'none' # axle
   if(eg_c['sun_axle_diameter']>0):
     pg_c['axle_type']               = 'circle'
@@ -332,23 +346,27 @@ def epicyclic_gearing(ai_constraints):
   pg_c['output_file_basename']      = ""
   pg_c['args_in_txt']               = ""
   pg_c['return_type']               = 'cnc25d_figure'
-  planet_figures = []
   sun_planet_length = eg_c['gear_module']*(sun_gear_tooth_nb+planet_gear_tooth_nb)/2.0
   planet_angle = 2*math.pi/planet_nb
+  pg_c_list = []
   for i in range(planet_nb):
-    pg_c['center_position_x'] = 0.0 + sun_planet_length * math.cos(i*planet_angle)
-    pg_c['center_position_y'] = 0.0 + sun_planet_length * math.sin(i*planet_angle)
-    pg_c['gear_initial_angle'] = 0.0
-    planet_figures.append(gearwheel.gearwheel(pg_c))
+    pg_c['center_position_x']                   = 0.0 + sun_planet_length * math.cos(i*planet_angle + first_planet_position_angle)
+    pg_c['center_position_y']                   = 0.0 + sun_planet_length * math.sin(i*planet_angle + first_planet_position_angle)
+    pg_c['gear_initial_angle']                  = 0.0
+    pg_c['second_gear_position_angle']          = i*planet_angle + first_planet_position_angle + math.pi
+    pg_c['second_gear_additional_axis_length']  = 0.0
+    pg_c_list.append(pg_c.copy())
   ### sun
   sg_c = {}
   sg_c['gear_tooth_nb']             = sun_gear_tooth_nb # gear-profile
-  sg_c['second_gear_tooth_nb']        = smallest_gear_tooth_nb
+  sg_c['second_gear_tooth_nb']      = planet_gear_tooth_nb
+  sg_c['gear_base_diameter']          = float((smallest_gear_tooth_nb-2)*eg_c['gear_module']*sun_gear_tooth_nb)/smallest_gear_tooth_nb
   sg_c['gear_module']               = eg_c['gear_module']
-  sg_c['gear_router_bit_radius']    = eg_c['gear_router_bit_radius']
+  sg_c['gear_router_bit_radius']    = gear_router_bit_radius
   sg_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
   sg_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
-  sg_c['gear_addendum_dedendum_parity']  = addendum_dedendum_parity
+  sg_c['gear_addendum_dedendum_parity']         = addendum_dedendum_parity
+  sg_c['second_gear_addendum_dedendum_parity']  = addendum_dedendum_parity
   sg_c['axle_type']                 = 'none' # axle
   if(eg_c['sun_axle_diameter']>0):
     sg_c['axle_type']               = 'circle'
@@ -363,42 +381,69 @@ def epicyclic_gearing(ai_constraints):
   sg_c['wheel_hollow_leg_number']   = 0 # wheel-hollow
   sg_c['cnc_router_bit_radius']     = eg_c['cnc_router_bit_radius'] # general
   sg_c['gear_profile_height']       = eg_c['gear_profile_height']
+  sg_c['center_position_x']                   = 0.0
+  sg_c['center_position_y']                   = 0.0
+  sg_c['gear_initial_angle']                  = 0.0
+  sg_c['second_gear_position_angle']          = 0.0
+  sg_c['second_gear_additional_axis_length']  = 0.0
   sg_c['tkinter_view']              = False
   sg_c['output_file_basename']      = ""
   sg_c['args_in_txt']               = ""
   sg_c['return_type']               = 'cnc25d_figure'
-  sg_c['center_position_x']   = 0.0
-  sg_c['center_position_y']   = 0.0
-  sg_c['gear_initial_angle']  = 0.0
-  sun_figure = gearwheel.gearwheel(sg_c)
 
-  ### simulation
-  gp_c = {}
-  gp_c['gear_module']               = eg_c['gear_module']
-  gp_c['gear_router_bit_radius']    = eg_c['gear_router_bit_radius']
-  gp_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
-  gp_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
-  gp_c['gear_addendum_dedendum_parity']         = addendum_dedendum_parity
-  gp_c['second_gear_addendum_dedendum_parity']  = addendum_dedendum_parity
-  gp_c['output_file_basename']      = ""
-  gp_c['args_in_txt']               = "simulation for epicyclic_gearing"
-  gp_c['return_type']               = 'int_status'
-  gp_c['center_position_x']   = 0.0
-  gp_c['center_position_y']   = 0.0
-  gp_c['gear_initial_angle']  = 0.0
-  gp_c['second_gear_position_angle']          = 0.0
-  gp_c['second_gear_additional_axis_length']  = 0.0
-  gp_c['simulation_enable'] = True
-  #print("dbg392: gp_c:", gp_c)
+  #### angle position calculation
+  gp_ci = gear_profile.gear_profile_dictionary_init()
+  gp_c = dict([ (k, gr_c[k]) for k in (gp_ci.viewkeys() & gr_c.viewkeys()) ]) # extract only the entries of the gear_profile
+  gp_c['gear_type'] = 'i'
+  gp_c['second_gear_type'] = 'e'
+  gp_c['return_type'] = 'figure_param_info'
+  for i in range(planet_nb):
+    gp_c['second_gear_position_angle'] = i*planet_angle + first_planet_position_angle
+    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(gp_c) # get the planet angle positions
+    pg_c_list[i]['gear_initial_angle'] = gear_profile_parameters['second_positive_initial_angle']
+  # get the sun angle position
+  gp_c['gear_type'] = 'e'
+  gp_c['second_gear_type'] = 'e'
+  sun_angle_position = []
+  for i in range(planet_nb):
+    pg_c = pg_c_list[i] 
+    gp_c = dict([ (k, pg_c[k]) for k in (gp_ci.viewkeys() & pg_c.viewkeys()) ])
+    gp_c['return_type'] = 'figure_param_info'
+    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(gp_c) # get the sun angle positions
+    sun_angle_position.append(gear_profile_parameters['second_positive_initial_angle'])
+  g2_pi_module_angle = gear_profile_parameters['second_pi_module_angle']
+  # check the sun angle position
+  #tooth_check = (sun_gear_tooth_nb + annulus_gear_tooth_nb)%planet_nb
+  tooth_check = (2*(sun_gear_tooth_nb + planet_gear_tooth_nb)) % planet_nb
+  if(tooth_check!=0):
+    print("WARN418: Warning, tooth_check {:d} is different from 0.".format(tooth_check))
+    #print("tooth_check = (sun_nb {:d} + annulus_nb {:d}) % planet_nb {:d}".format(sun_gear_tooth_nb, annulus_gear_tooth_nb, planet_nb))
+    print("tooth_check = (2*(sun_nb {:d} + planet_nb {:d})) % planet_nb {:d}".format(sun_gear_tooth_nb, planet_gear_tooth_nb, planet_nb))
+  for i in range(planet_nb):
+    a0_ai_diff = math.fmod(sun_angle_position[i]-sun_angle_position[0]+0.5*g2_pi_module_angle, g2_pi_module_angle) - 0.5*g2_pi_module_angle
+    if(abs(a0_ai_diff)>radian_epsilon):
+      print("ERR414: Error, the i {:d} sun_angle_position {:0.5f} differ from the 0 sun_angle_position {:0.5f} with g2_pi_module_angle {:0.8f}".format(i, sun_angle_position[i], sun_angle_position[0], g2_pi_module_angle))
+      print("dbg417: a0_ai_diff {:0.8f}".format(a0_ai_diff))
+      #sys.exit(2)
+  sg_c['gear_initial_angle'] = sun_angle_position[0]
+
+  #### gear simulation
   if(eg_c['simulation_sun_planet_gear']):
-    gp_c['gear_tooth_nb']             = sun_gear_tooth_nb
-    gp_c['second_gear_tooth_nb']      = planet_gear_tooth_nb
-    gear_profile.gear_profile(gp_c)
+    pg_c_sim = pg_c_list[0].copy()
+    pg_c_sim['simulation_enable'] = True
+    gearwheel.gearwheel(pg_c_sim)
   if(eg_c['simulation_annulus_planet_gear']):
-    gp_c['gear_tooth_nb']             = annulus_gear_tooth_nb
-    gp_c['gear_type']                 = 'i'
-    gp_c['second_gear_tooth_nb']      = planet_gear_tooth_nb
-    gear_profile.gear_profile(gp_c)
+    gr_c_sim = gr_c.copy()
+    gr_c_sim['simulation_enable'] = True
+    gearring.gearring(gr_c_sim)
+
+  #### epicyclic_gearing construction
+  #print("dbg435: gr_c:", gr_c)
+  annulus_figure = gearring.gearring(gr_c)
+  planet_figures = []
+  for i in range(planet_nb):
+    planet_figures.append(gearwheel.gearwheel(pg_c_list[i]))
+  sun_figure = gearwheel.gearwheel(sg_c)
 
   ### design output
   part_figure_list = []
@@ -407,21 +452,42 @@ def epicyclic_gearing(ai_constraints):
   part_figure_list.extend(planet_figures)
   #part_figure_list.append(front_planet_carrier_figure)
   #part_figure_list.append(rear_planet_carrier_figure)
+  # eg_assembly_figure: assembly flatted in one figure
   eg_assembly_figure = []
   for i in range(len(part_figure_list)):
     eg_assembly_figure.extend(part_figure_list[i])
   # ideal_outline in overlay
   eg_assembly_figure_overlay = []
+  # eg_gear_assembly_figure: assembly of the gear only flatted in one figure
+  eg_gear_assembly_figure = []
+  for i in range(2+planet_nb):
+      eg_gear_assembly_figure.extend(part_figure_list[i])
+  # eg_list_of_parts: all parts aligned flatted in one figure
+  x_space = 2.5*annulus_gear_tooth_nb*eg_c['gear_module']
+  eg_list_of_parts = []
+  for i in range(len(part_figure_list)):
+    for j in range(len(part_figure_list[i])):
+      eg_list_of_parts.append(cnc25d_api.outline_shift_x(part_figure_list[i][j], i*x_space, 1))
 
   # eg_parameter_info
   eg_parameter_info = "\nepicyclic_gearing parameter info:\n"
   eg_parameter_info += "\n" + eg_c['args_in_txt'] + "\n\n"
-#  eg_parameter_info += """
-#split_nb:             \t{:d}
-#split_initial_angle:  \t{:0.3f} (radian)  \t{:0.3f} (degree)
-#high_split_radius:    \t{:0.3f} diameter: \t{:0.3f}
-#high_split_type:      \t{:s}
-#""".format(split_nb, sg_c['split_initial_angle'], sg_c['split_initial_angle']*180/math.pi, high_split_radius, 2*high_split_radius, sg_c['high_split_type'])
+  eg_parameter_info += """
+sun_gear_tooth_nb:        \t{:d}
+planet_gear_tooth_nb:     \t{:d}
+annulus_gear_tooth_nb:    \t{:d}
+smallest_gear_tooth_nb:   \t{:d}
+planet_nb:                \t{:d}
+planet_number_max:        \t{:d}
+epicyclic_gearing_ratio:  \t{:0.3f}  1/R: {:0.3f}
+""".format(sun_gear_tooth_nb, planet_gear_tooth_nb, annulus_gear_tooth_nb, smallest_gear_tooth_nb, planet_nb, planet_number_max, epicyclic_gearing_ratio, 1.0/epicyclic_gearing_ratio)
+  eg_parameter_info += """
+gear_module:              \t{:0.3f}
+gear_router_bit_radius:   \t{:0.3f}
+gear_tooth_resolution:    \t{:d}
+gear_skin_thickness:      \t{:0.3f}
+gear_addendum_dedendum_parity_slack: {:0.3f}
+""".format(eg_c['gear_module'], gear_router_bit_radius, eg_c['gear_tooth_resolution'], eg_c['gear_skin_thickness'], eg_c['gear_addendum_dedendum_parity_slack'])
   #print(eg_parameter_info)
 
   ### display with Tkinter
@@ -429,34 +495,50 @@ def epicyclic_gearing(ai_constraints):
     print(eg_parameter_info)
     cnc25d_api.figure_simple_display(eg_assembly_figure, [], eg_parameter_info)
       
-#  ### generate output file
-#  output_file_suffix = ''
-#  if(sg_c['output_file_basename']!=''):
-#    output_file_suffix = 'brep'
-#    output_file_basename = sg_c['output_file_basename']
-#    if(re.search('\.dxf$', sg_c['output_file_basename'])):
-#      output_file_suffix = 'dxf'
-#      output_file_basename = re.sub('\.dxf$', '', sg_c['output_file_basename'])
-#    elif(re.search('\.svg$', sg_c['output_file_basename'])):
-#      output_file_suffix = 'svg'
-#      output_file_basename = re.sub('\.svg$', '', sg_c['output_file_basename'])
-#  if((output_file_suffix=='svg')or(output_file_suffix=='dxf')):
-#    cnc25d_api.generate_output_file(sgw_assembly_figure, output_file_basename + "_assembly." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-#    cnc25d_api.generate_output_file(sgw_assembly_A_figure, output_file_basename + "_assembly_A." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-#    cnc25d_api.generate_output_file(sgw_assembly_B_figure, output_file_basename + "_assembly_B." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-#    cnc25d_api.generate_output_file(sgw_list_of_parts, output_file_basename + "_part_list." + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-#    for i in range(split_nb):
-#      cnc25d_api.generate_output_file(part_figure_list[2*i],    output_file_basename + "_part_A{:d}_placed.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-#      cnc25d_api.generate_output_file(part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_placed.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-#      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i],    output_file_basename + "_part_A{:d}_aligned.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-#      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_aligned.".format(i+1) + output_file_suffix, sg_c['gear_profile_height'], sgw_parameter_info)
-#  elif(output_file_suffix=='brep'):
-#    #cnc25d_api.generate_output_file(sgw_assembly_figure, output_file_basename + "_assembly", sg_c['gear_profile_height'], sgw_parameter_info)
-#    for i in range(split_nb):
-#      cnc25d_api.generate_output_file(part_figure_list[2*i],    output_file_basename + "_part_A{:d}_placed".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
-#      cnc25d_api.generate_output_file(part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_placed".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
-#      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i],    output_file_basename + "_part_A{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
-#      cnc25d_api.generate_output_file(aligned_part_figure_list[2*i+1],  output_file_basename + "_part_B{:d}_aligned".format(i+1), sg_c['gear_profile_height'], sgw_parameter_info)
+  ### sub-function to create the freecad-object
+  def freecad_epicyclic_gearing(nai_part_figure_list):
+    fc_obj = []
+    for i in range(len(nai_part_figure_list)):
+      fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(nai_part_figure_list[i], eg_c['gear_profile_height']))
+      if(i==planet_nb+2): # front planet-carrier
+        fc_obj[i].translate(Base.Vector(0,0,2*eg_c['gear_profile_height']))
+      if(i==planet_nb+3): # rear planet-carrier
+        fc_obj[i].translate(Base.Vector(0,0,-2*eg_c['gear_profile_height']))
+    r_feg = Part.makeCompound(fc_obj)
+    return(r_feg)
+
+  ### generate output file
+  output_file_suffix = ''
+  if(eg_c['output_file_basename']!=''):
+    output_file_suffix = '' # .brep
+    output_file_basename = eg_c['output_file_basename']
+    if(re.search('\.dxf$', eg_c['output_file_basename'])):
+      output_file_suffix = '.dxf'
+      output_file_basename = re.sub('\.dxf$', '', eg_c['output_file_basename'])
+    elif(re.search('\.svg$', eg_c['output_file_basename'])):
+      output_file_suffix = '.svg'
+      output_file_basename = re.sub('\.svg$', '', eg_c['output_file_basename'])
+  if(eg_c['output_file_basename']!=''):
+    # parts
+    gr_c_outfile = gr_c.copy()
+    gr_c_outfile['output_file_basename'] = output_file_basename + "_annulus" + output_file_suffix
+    gearring.gearring(gr_c_outfile)
+    sg_c_outfile = sg_c.copy()
+    sg_c_outfile['output_file_basename'] = output_file_basename + "_sun" + output_file_suffix
+    gearwheel.gearwheel(sg_c_outfile)
+    for i in range(planet_nb):
+      pg_c_outfile = pg_c_list[i].copy()
+      pg_c_outfile['output_file_basename'] = output_file_basename + "_planet{:02d}".format(i+1) + output_file_suffix
+      gearwheel.gearwheel(pg_c_outfile)
+    # assembly
+    if((output_file_suffix=='.svg')or(output_file_suffix=='.dxf')):
+      cnc25d_api.generate_output_file(eg_assembly_figure, output_file_basename + "_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(eg_gear_assembly_figure, output_file_basename + "_gear_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(eg_list_of_parts, output_file_basename + "_part_list" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+    else:
+      cnc25d_api.generate_output_file(annulus_figure, output_file_basename + "_epicyclic_gearing_holder", eg_c['gear_profile_height'], eg_parameter_info) # to get the parameter info as test file
+      fc_assembly = freecad_epicyclic_gearing(part_figure_list)
+      fc_assembly.exportBrep("{:s}_assembly.brep".format(output_file_basename))
 
   #### return
   if(eg_c['return_type']=='int_status'):
@@ -464,14 +546,7 @@ def epicyclic_gearing(ai_constraints):
   elif(eg_c['return_type']=='cnc25d_figure'):
     r_eg = eg_assembly_A_figure
   elif(eg_c['return_type']=='freecad_object'):
-    fc_obj = []
-    for i in range(len(part_figure_list)):
-      fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(part_figure_list[i], eg_c['gear_profile_height']))
-      if(i==planet_crenel_nb+2): # front planet-carrier
-        fc_obj[i].translate(Base.Vector(0,0,2*sg_c['gear_profile_height']))
-      if(i==planet_crenel_nb+3): # rear planet-carrier
-        fc_obj[i].translate(Base.Vector(0,0,-2*sg_c['gear_profile_height']))
-    r_eg = Part.makeCompound(fc_obj)
+    r_eg = freecad_epicyclic_gearing(part_figure_list)
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(eg_c['return_type']))
     sys.exit(2)
