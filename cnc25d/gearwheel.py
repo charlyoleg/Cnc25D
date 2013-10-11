@@ -307,8 +307,8 @@ def gearwheel(ai_constraints):
     if(crenel_half_width_angle*2.2>2*math.pi/gw_c['crenel_number']):
       print("ERR305: Error, the crenel_number {:d} or crenel_width {:0.3f} are too big!".format(gw_c['crenel_number'], gw_c['crenel_width']))
       sys.exit(2)
-    if(gw_c['crenel_width']<3.2*gw_c['crenel_router_bit_radius']):
-      print("ERR308: Error, crenel_width {:0.3f} is too small compare to crenel_router_bit_radius {:0.3f}".format(gw_c['crenel_width'], gw_c['crenel_router_bit_radius']))
+    if(gw_c['crenel_width']<3.2*crenel_router_bit_radius):
+      print("ERR308: Error, crenel_width {:0.3f} is too small compare to crenel_router_bit_radius {:0.3f}".format(gw_c['crenel_width'], crenel_router_bit_radius))
       sys.exit(2)
 
   ### crenel preparation
@@ -316,7 +316,7 @@ def gearwheel(ai_constraints):
   if((gw_c['crenel_number']>0)and(gw_c['axle_type']=='circle')and(crenel_radius==axle_radius)): # crenel and axle are merged in one outline
     crenel_axle_merge = True
   crenel_type = 1
-  if(gw_c['crenel_height']<3.0*gw_c['crenel_router_bit_radius']):
+  if(gw_c['crenel_height']<3.0*crenel_router_bit_radius):
     crenel_type = 2
   if(gw_c['crenel_number']>0):
     crenel_portion_angle = 2*math.pi/gw_c['crenel_number']
@@ -331,16 +331,16 @@ def gearwheel(ai_constraints):
       axle_A = [(g1_ix+axle_radius*math.cos(-1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(-1*crenel_half_width_angle), 0)]
       if(crenel_type==1):
         crenel_A = [
-          (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy-gw_c['crenel_width']/2.0, -1*gw_c['crenel_router_bit_radius']),
-          (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy+gw_c['crenel_width']/2.0, -1*gw_c['crenel_router_bit_radius']),
+          (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy-gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
+          (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy+gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
           (g1_ix+axle_radius*math.cos(1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(1*crenel_half_width_angle), 0)]
       elif(crenel_type==2):
-        tmp_l = gw_c['crenel_router_bit_radius'] * (1+math.sqrt(2))
+        tmp_l = crenel_router_bit_radius * (1+math.sqrt(2))
         crenel_A = [
-          (g1_ix+axle_radius+gw_c['crenel_height']+1*tmp_l, g1_iy-gw_c['crenel_width']/2.0+0*tmp_l, 1*gw_c['crenel_router_bit_radius']),
-          (g1_ix+axle_radius+gw_c['crenel_height']+0*tmp_l, g1_iy-gw_c['crenel_width']/2.0+1*tmp_l, 0*gw_c['crenel_router_bit_radius']),
-          (g1_ix+axle_radius+gw_c['crenel_height']+0*tmp_l, g1_iy+gw_c['crenel_width']/2.0-1*tmp_l, 0*gw_c['crenel_router_bit_radius']),
-          (g1_ix+axle_radius+gw_c['crenel_height']+1*tmp_l, g1_iy+gw_c['crenel_width']/2.0-0*tmp_l, 1*gw_c['crenel_router_bit_radius']),
+          (g1_ix+axle_radius+gw_c['crenel_height']+1*tmp_l, g1_iy-gw_c['crenel_width']/2.0+0*tmp_l, 1*crenel_router_bit_radius),
+          (g1_ix+axle_radius+gw_c['crenel_height']+0*tmp_l, g1_iy-gw_c['crenel_width']/2.0+1*tmp_l, 0*crenel_router_bit_radius),
+          (g1_ix+axle_radius+gw_c['crenel_height']+0*tmp_l, g1_iy+gw_c['crenel_width']/2.0-1*tmp_l, 0*crenel_router_bit_radius),
+          (g1_ix+axle_radius+gw_c['crenel_height']+1*tmp_l, g1_iy+gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
           (g1_ix+axle_radius*math.cos(1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(1*crenel_half_width_angle), 0)]
       arc_half_angle = (crenel_portion_angle - 2*crenel_half_width_angle)/2.0
       arc_middle_a = crenel_half_width_angle + arc_half_angle
@@ -367,21 +367,21 @@ def gearwheel(ai_constraints):
   if((gw_c['crenel_number']>0)and(not crenel_axle_merge)):
     if(crenel_type==1):
       template_crenel = [
-        (g1_ix+crenel_radius+0*gw_c['crenel_height'], g1_iy-1*gw_c['crenel_width']/2.0, -1*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height'], g1_iy-1*gw_c['crenel_width']/2.0, -1*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height'], g1_iy+1*gw_c['crenel_width']/2.0, -1*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+0*gw_c['crenel_height'], g1_iy+1*gw_c['crenel_width']/2.0, -1*gw_c['crenel_router_bit_radius'])]
+        (g1_ix+crenel_radius+0*gw_c['crenel_height'], g1_iy-1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+1*gw_c['crenel_height'], g1_iy-1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+1*gw_c['crenel_height'], g1_iy+1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+0*gw_c['crenel_height'], g1_iy+1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius)]
     elif(crenel_type==2):
-      tmp_l = gw_c['crenel_router_bit_radius'] * (1+math.sqrt(2))
+      tmp_l = crenel_router_bit_radius * (1+math.sqrt(2))
       template_crenel = [
-        (g1_ix+crenel_radius+0*gw_c['crenel_height']-1*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+0*tmp_l, 1*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height']+1*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+0*tmp_l, 1*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height']+0*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+1*tmp_l, 0*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height']+0*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-1*tmp_l, 0*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height']+1*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-0*tmp_l, 1*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+0*gw_c['crenel_height']-1*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-0*tmp_l, 1*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+0*gw_c['crenel_height']-0*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-1*tmp_l, 0*gw_c['crenel_router_bit_radius']),
-        (g1_ix+crenel_radius+0*gw_c['crenel_height']-0*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+1*tmp_l, 0*gw_c['crenel_router_bit_radius'])]
+        (g1_ix+crenel_radius+0*gw_c['crenel_height']-1*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+0*tmp_l, 1*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+1*gw_c['crenel_height']+1*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+0*tmp_l, 1*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+1*gw_c['crenel_height']+0*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+1*tmp_l, 0*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+1*gw_c['crenel_height']+0*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-1*tmp_l, 0*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+1*gw_c['crenel_height']+1*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+0*gw_c['crenel_height']-1*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+0*gw_c['crenel_height']-0*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-1*tmp_l, 0*crenel_router_bit_radius),
+        (g1_ix+crenel_radius+0*gw_c['crenel_height']-0*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+1*tmp_l, 0*crenel_router_bit_radius)]
     template_crenel = cnc25d_api.outline_close(template_crenel)
     for i in range(gw_c['crenel_number']):
       crenel_A = cnc25d_api.outline_rotate(template_crenel, g1_ix, g1_iy, gw_c['crenel_angle']+i*crenel_portion_angle)

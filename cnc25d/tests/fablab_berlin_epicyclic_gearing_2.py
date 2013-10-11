@@ -78,7 +78,7 @@ eg_constraint['sun_crenel_diameter']     = 0.0
 eg_constraint['sun_crenel_nb']           = 4
 eg_constraint['sun_crenel_width']        = 4.0
 eg_constraint['sun_crenel_height']       = 1.0
-eg_constraint['sun_crenel_router_bit_radius']   = 0.1
+eg_constraint['sun_crenel_router_bit_radius']   = 0.3
 ### planet-gear
 eg_constraint['planet_axle_diameter']      = 8.0
 eg_constraint['planet_crenel_diameter']    = 0.0
@@ -99,7 +99,7 @@ eg_constraint['carrier_leg_hole_diameter']              = 10.0
 ## carrier peripheral crenel
 eg_constraint['carrier_crenel_width']                = 4.0
 eg_constraint['carrier_crenel_height']               = 2.0
-eg_constraint['carrier_crenel_router_bit_radius']    = 0.1
+eg_constraint['carrier_crenel_router_bit_radius']    = 0.3
 ### annulus: inherit dictionary entries from gearring
 ### holder
 eg_constraint['holder_diameter']            = 0.0
@@ -122,10 +122,11 @@ eg_constraint['gear_profile_height']     = 10.0
 eg_constraint['tkinter_view']                    = True
 eg_constraint['simulation_sun_planet_gear']      = False
 eg_constraint['simulation_annulus_planet_gear']  = False
-eg_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
+#eg_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
 #eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro.svg"  # to generate the SVG file with mozman svgwrite
 #eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro.dxf"  # to generate the DXF file with mozman svgwrite
 #eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro"      # to generate the Brep and DXF file with FreeCAD
+eg_constraint['output_file_basename'] = "test_output/flb2.dxf"
 eg_constraint['return_type'] = 'int_status' #'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################

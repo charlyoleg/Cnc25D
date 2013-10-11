@@ -257,7 +257,7 @@ def epicyclic_gearing(ai_constraints):
   sun_crenel_router_bit_radius = eg_c['sun_crenel_router_bit_radius']
   if(eg_c['cnc_router_bit_radius']>sun_crenel_router_bit_radius):
     sun_crenel_router_bit_radius = eg_c['cnc_router_bit_radius']
-  planet_crenel_router_bit_radius = eg_c['sun_crenel_router_bit_radius']
+  planet_crenel_router_bit_radius = eg_c['planet_crenel_router_bit_radius']
   if(eg_c['cnc_router_bit_radius']>planet_crenel_router_bit_radius):
     planet_crenel_router_bit_radius = eg_c['cnc_router_bit_radius']
   carrier_smoothing_radius = eg_c['carrier_smoothing_radius']
@@ -341,13 +341,13 @@ def epicyclic_gearing(ai_constraints):
   if(eg_c['planet_axle_diameter']>0):
     pg_c['axle_type']               = 'circle'
   pg_c['axle_x_width']              = eg_c['planet_axle_diameter']
-  pg_c['axle_router_bit_radius']    = eg_c['planet_crenel_router_bit_radius']
+  pg_c['axle_router_bit_radius']    = planet_crenel_router_bit_radius
   pg_c['crenel_diameter']           = eg_c['planet_crenel_diameter'] # crenel
   pg_c['crenel_number']             = eg_c['planet_crenel_nb']
   pg_c['crenel_angle']              = 0
   pg_c['crenel_width']              = eg_c['planet_crenel_width']
   pg_c['crenel_height']             = eg_c['planet_crenel_height']
-  pg_c['crenel_router_bit_radius']  = eg_c['planet_crenel_router_bit_radius']
+  pg_c['crenel_router_bit_radius']  = planet_crenel_router_bit_radius
   pg_c['wheel_hollow_leg_number']   = 0 # wheel-hollow
   pg_c['cnc_router_bit_radius']     = eg_c['cnc_router_bit_radius'] # general
   pg_c['gear_profile_height']       = eg_c['gear_profile_height']
@@ -380,13 +380,13 @@ def epicyclic_gearing(ai_constraints):
   if(eg_c['sun_axle_diameter']>0):
     sg_c['axle_type']               = 'circle'
   sg_c['axle_x_width']              = eg_c['sun_axle_diameter']
-  sg_c['axle_router_bit_radius']    = eg_c['sun_crenel_router_bit_radius']
+  sg_c['axle_router_bit_radius']    = sun_crenel_router_bit_radius
   sg_c['crenel_diameter']           = eg_c['sun_crenel_diameter'] # crenel
   sg_c['crenel_number']             = eg_c['sun_crenel_nb']
   sg_c['crenel_angle']              = 0
   sg_c['crenel_width']              = eg_c['sun_crenel_width']
   sg_c['crenel_height']             = eg_c['sun_crenel_height']
-  sg_c['crenel_router_bit_radius']  = eg_c['sun_crenel_router_bit_radius']
+  sg_c['crenel_router_bit_radius']  = sun_crenel_router_bit_radius
   sg_c['wheel_hollow_leg_number']   = 0 # wheel-hollow
   sg_c['cnc_router_bit_radius']     = eg_c['cnc_router_bit_radius'] # general
   sg_c['gear_profile_height']       = eg_c['gear_profile_height']
@@ -499,13 +499,14 @@ def epicyclic_gearing(ai_constraints):
   if(eg_c['carrier_crenel_height']==0):
     carrier_crenel = False
   if(carrier_crenel):
-    if(eg_c['carrier_crenel_width']<7.0*eg_c['carrier_crenel_router_bit_radius']):
-      print("ERR468: Error, carrier_crenel_width {:0.3f} is too small compare to carrier_crenel_router_bit_radius {:0.3f}".format(eg_c['carrier_crenel_width'], eg_c['carrier_crenel_router_bit_radius']))
+    if(eg_c['carrier_crenel_width']<7.0*carrier_crenel_router_bit_radius):
+      print("ERR468: Error, carrier_crenel_width {:0.3f} is too small compare to carrier_crenel_router_bit_radius {:0.3f}".format(eg_c['carrier_crenel_width'], carrier_crenel_router_bit_radius))
       sys.exit(2)
-    if(eg_c['carrier_crenel_height']<3*eg_c['carrier_crenel_router_bit_radius']):
+    if(eg_c['carrier_crenel_height']<3*carrier_crenel_router_bit_radius):
       carrier_crenel_type = 2
     else:
       carrier_crenel_type = 1
+  #print("dbg509: carrier_crenel_router_bit_radius {:0.3f}  carrier_crenel_type {:d}".format(carrier_crenel_router_bit_radius, carrier_crenel_type))
   
   ## carrier_crenel_outline function
   def carrier_crenel_outline(nai_radius):
@@ -514,16 +515,16 @@ def epicyclic_gearing(ai_constraints):
     crenel_width_half_angle = math.asin(eg_c['carrier_crenel_width']/(2*nai_radius))
     if(carrier_crenel_type==1):
       crenel_A = [
-        (0.0+nai_radius-eg_c['carrier_crenel_height'], 0.0-eg_c['carrier_crenel_width']/2.0, -1*eg_c['carrier_crenel_router_bit_radius']),
-        (0.0+nai_radius-eg_c['carrier_crenel_height'], 0.0+eg_c['carrier_crenel_width']/2.0, -1*eg_c['carrier_crenel_router_bit_radius']),
+        (0.0+nai_radius-eg_c['carrier_crenel_height'], 0.0-eg_c['carrier_crenel_width']/2.0, -1*carrier_crenel_router_bit_radius),
+        (0.0+nai_radius-eg_c['carrier_crenel_height'], 0.0+eg_c['carrier_crenel_width']/2.0, -1*carrier_crenel_router_bit_radius),
         (0.0+nai_radius*math.cos(1*crenel_width_half_angle), 0.0+nai_radius*math.sin(1*crenel_width_half_angle), 0)]
     elif(carrier_crenel_type==2):
-      tmp_l = gw_c['carrier_crenel_router_bit_radius'] * (1+math.sqrt(2))
+      tmp_l = carrier_crenel_router_bit_radius * (1+math.sqrt(2))
       crenel_A = [
-        (0.0+nai_radius-eg_c['carrier_crenel_height']-1*tmp_l, 0.0-eg_c['carrier_crenel_width']/2.0+0*tmp_l, 1*eg_c['carrier_crenel_router_bit_radius']),
-        (0.0+nai_radius-eg_c['carrier_crenel_height']-0*tmp_l, 0.0-eg_c['carrier_crenel_width']/2.0+1*tmp_l, 0*eg_c['carrier_crenel_router_bit_radius']),
-        (0.0+nai_radius-eg_c['carrier_crenel_height']-0*tmp_l, 0.0+eg_c['carrier_crenel_width']/2.0-1*tmp_l, 0*eg_c['carrier_crenel_router_bit_radius']),
-        (0.0+nai_radius-eg_c['carrier_crenel_height']-1*tmp_l, 0.0+eg_c['carrier_crenel_width']/2.0-0*tmp_l, 1*eg_c['carrier_crenel_router_bit_radius']),
+        (0.0+nai_radius-eg_c['carrier_crenel_height']-1*tmp_l, 0.0-eg_c['carrier_crenel_width']/2.0+0*tmp_l, 1*carrier_crenel_router_bit_radius),
+        (0.0+nai_radius-eg_c['carrier_crenel_height']-0*tmp_l, 0.0-eg_c['carrier_crenel_width']/2.0+1*tmp_l, 0*carrier_crenel_router_bit_radius),
+        (0.0+nai_radius-eg_c['carrier_crenel_height']-0*tmp_l, 0.0+eg_c['carrier_crenel_width']/2.0-1*tmp_l, 0*carrier_crenel_router_bit_radius),
+        (0.0+nai_radius-eg_c['carrier_crenel_height']-1*tmp_l, 0.0+eg_c['carrier_crenel_width']/2.0-0*tmp_l, 1*carrier_crenel_router_bit_radius),
         (0.0+nai_radius*math.cos(1*crenel_width_half_angle), 0.0+nai_radius*math.sin(1*crenel_width_half_angle), 0)]
     return(crenel_A, crenel_width_half_angle)
 
@@ -547,6 +548,8 @@ def epicyclic_gearing(ai_constraints):
         cp_A.extend(cnc25d_api.outline_rotate(crenel_A, 0.0, 0.0, i*carrier_peripheral_portion_angle))
       cp_A[-1] = (cp_A[-1][0], cp_A[-1][1], cp_A[0][0], cp_A[0][1], 0)
       cp_A_rotated = cnc25d_api.outline_rotate(cp_A, 0.0, 0.0, first_planet_position_angle)
+      #print("dbg551: cp_A_rotated:", cp_A_rotated)
+      #print("dbg552: len(cp_A_rotated) {:d}".format(len(cp_A_rotated)))
       front_planet_carrier_figure.append(cnc25d_api.cnc_cut_outline(cp_A_rotated, "planet_carrier_external_outline"))
       front_planet_carrier_figure_overlay.append(cnc25d_api.ideal_outline(cp_A_rotated, "planet_carrier_external_outline"))
     else: # not carrier_crenel
@@ -567,6 +570,7 @@ def epicyclic_gearing(ai_constraints):
       front_planet_carrier_figure.append((0.0+sun_planet_length*math.cos(tmp_a), 0.0+sun_planet_length*math.sin(tmp_a), carrier_leg_hole_radius))
   # copy for the rear_planet_carrier_figure
   front_planet_carrier_figure_copy = front_planet_carrier_figure[:]
+  #print("dbg573: len(front_planet_carrier_figure_copy[0]) {:d}".format(len(front_planet_carrier_figure_copy[0])))
   # sun axle and crenel
   front_planet_carrier_figure.extend(sun_figure[1:])
   # carrier_hollow
@@ -590,15 +594,15 @@ def epicyclic_gearing(ai_constraints):
       if(arc_half<radian_epsilon):
         print("ERR551: Error, rear planet-carrier arc_half {:0.3f} is negative or too small".format(arc_half))
         sys.exit(2)
-      cpi_A = [(0.0+cpi_radius*math.cos(-1*cia_half), 0.0+cpi_radius*math.sin(-1*cia_half), eg_c['carrier_smoothing_radius'])]
+      cpi_A = [(0.0+cpi_radius*math.cos(-1*cia_half), 0.0+cpi_radius*math.sin(-1*cia_half), carrier_smoothing_radius)]
       short_radius = sun_planet_length - cl_radius
       for i in range(planet_nb):
         a1_mid = i*leg_hole_portion
         a1_end = a1_mid + cia_half
         a2_mid = a1_end + arc_half
         a2_end = a2_mid + arc_half
-        cpi_A.append((0.0+short_radius*math.cos(a1_mid), 0.0+short_radius*math.sin(a1_mid), 0.0+cpi_radius*math.cos(a1_end), 0.0+cpi_radius*math.sin(a1_end), eg_c['carrier_smoothing_radius']))
-        cpi_A.append((0.0+cpi_radius*math.cos(a2_mid), 0.0+cpi_radius*math.sin(a2_mid), 0.0+cpi_radius*math.cos(a2_end), 0.0+cpi_radius*math.sin(a2_end), eg_c['carrier_smoothing_radius']))
+        cpi_A.append((0.0+short_radius*math.cos(a1_mid), 0.0+short_radius*math.sin(a1_mid), 0.0+cpi_radius*math.cos(a1_end), 0.0+cpi_radius*math.sin(a1_end), carrier_smoothing_radius))
+        cpi_A.append((0.0+cpi_radius*math.cos(a2_mid), 0.0+cpi_radius*math.sin(a2_mid), 0.0+cpi_radius*math.cos(a2_end), 0.0+cpi_radius*math.sin(a2_end), carrier_smoothing_radius))
       cpi_A[-1] = (cpi_A[-1][0], cpi_A[-1][1], cpi_A[0][0], cpi_A[0][1], 0)
       cpi_A_rotated = cnc25d_api.outline_rotate(cpi_A, 0.0, 0.0, first_planet_position_angle)
       rear_planet_carrier_figure.append(cnc25d_api.cnc_cut_outline(cpi_A_rotated, "rear_planet_carrier_internal_peripheral"))
@@ -634,7 +638,7 @@ def epicyclic_gearing(ai_constraints):
     if(carrier_peripheral_arc_half_angle<radian_epsilon):
       print("ERR635: Error, middle carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle))
       sys.exit(2)
-    mrbr = eg_c['carrier_crenel_router_bit_radius']
+    mrbr = carrier_crenel_router_bit_radius
     mcp_A = [(0.0+cpe_radius*math.cos(-1*crenel_width_half_angle), 0.0+cpe_radius*math.sin(-1*crenel_width_half_angle), mrbr)]
     arc_middle_a = crenel_width_half_angle + carrier_peripheral_arc_half_angle
     arc_end_a = arc_middle_a + carrier_peripheral_arc_half_angle
