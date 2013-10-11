@@ -324,7 +324,7 @@ def calc_low_level_gear_parameters(ai_param):
       i1u_ini = inau
       i1u_inc = float(indu-inau)/i1u_nb # <0
       i1_dtri = math.fmod(indti-inda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
-      i1_dsl = max(0, g_brn-g_dr) + g_stn*math.tan(i1_dtri) # dedendum_slope_length
+      i1_dsl = max(0, g_brn-g_dr) + g_stn*math.tan(-1*i1_dtri) # dedendum_slope_length
       i1_hsl = float(g_hh)/math.cos(i1_dtri)  # hollow slope length
       i1_thickness = g_stn
       i2_base = g_brp
@@ -363,6 +363,7 @@ def calc_low_level_gear_parameters(ai_param):
       ha1 = top_land/2 + full_positive_involute
       #print("dbg663: ipaa {:0.3f}".format(ipaa))
     #print("dbg553: i1_hsl {:0.3f}  i2_hsl {:0.3f}  g_rbr {:0.3f} g_hh  {:0.3f}".format(i1_hsl, i2_hsl, g_rbr, g_hh))
+    #print("dbg366: i1_dsl {:0.3f}".format(i1_dsl))
     ### optimization of i1_hsl and i2_hsl
     #bottom_land_length = bottom_land * g_dr
     bottom_land_length = 2 * g_dr * math.sin(bottom_land/2)
@@ -375,6 +376,10 @@ def calc_low_level_gear_parameters(ai_param):
       print("ERR632: Error, i1_dtri {:0.3f} or i2_dtri {:0.3f} are too closed to pi/2 or even bigger!".format(i1_dtri, i2_dtri))
       sys.exit(2)
     ABh = bottom_land_length-i1_thickness/cos_i1_dtri-i2_thickness/cos_i2_dtri # see documentation graphic of hollow optimization
+    ## check bottom_land with g_stp and g_stn
+    if(ABh<radian_epsilon):
+      print("ERR381: Error, the bottom {:0.3f} is too small because of g_stp {:0.3f} and g_stn {:0.3f}".format(ABh, g_stp, g_stn))
+      sys.exit(2)
     a = math.pi/2-abs(i1_dtri) - g_ks * bottom_land/2
     b = math.pi/2-abs(i2_dtri) - g_ks * bottom_land/2
     AIB = math.pi - (a + b)
@@ -565,6 +570,8 @@ def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, 
   else:
     print("ERR563: Error, the hollow end {:d} can only be 1 or -1".format(ai_he))
     sys.exit(2)
+  #if(ai_dbg==0):
+  #  print("dbg569: ai_dsl {:0.3f}  ai_hsl {:0.3f}  + {:0.3f}".format(ai_dsl, ai_hsl, ai_dsl + ai_hsl))
   return(r_involute_B, r_hollow_slope_A, r_ti)
 
 def half_hollow_outline(ai_tooth_angle, ai_sx, ai_sy, ai_si, ai_hrbr, ai_ham, ai_first_nlast, ai_ox, ai_oy):
@@ -681,6 +688,11 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
       hollow_A.append(second_hollow_slope_A[1])
     else:
       hollow_A.extend(second_hollow_slope_A)
+    #if(tooth==0):
+    #  print("dbg692: hollow_A:", hollow_A)
+    #  print("dbg686: ho:", ho)
+    #  print("dbg687: first_hollow_slope_A:", first_hollow_slope_A)
+    #  print("dbg688: second_hollow_slope_A:", second_hollow_slope_A)
     # check the optimization
     if(ho):
       if((abs(first_hollow_slope_A[1][0]-second_hollow_slope_A[0][0])>radian_epsilon)or(abs(first_hollow_slope_A[1][1]-second_hollow_slope_A[0][1])>radian_epsilon)):
