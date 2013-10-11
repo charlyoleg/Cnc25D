@@ -300,6 +300,9 @@ def gearwheel(ai_constraints):
     if(crenel_radius<radian_epsilon):
       print("ERR301: Error, the crenel_radius {:0.3f} is too small".format(crenel_radius))
       sys.exit(2)
+    if(abs(gw_c['crenel_width'])>2*crenel_radius-radian_epsilon):
+      print("ERR304: Error, crenel_width {:0.3f} is too big compare to crenel_radius {:0.3f}".format(gw_c['crenel_width'], crenel_radius))
+      sys.exit(2)
     crenel_half_width_angle = math.asin(gw_c['crenel_width']/(2*crenel_radius))
     if(crenel_half_width_angle*2.2>2*math.pi/gw_c['crenel_number']):
       print("ERR305: Error, the crenel_number {:d} or crenel_width {:0.3f} are too big!".format(gw_c['crenel_number'], gw_c['crenel_width']))

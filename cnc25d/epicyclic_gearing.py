@@ -81,14 +81,14 @@ def epicyclic_gearing_dictionary_init():
   r_egd['sun_crenel_nb']           = 8
   r_egd['sun_crenel_width']        = 4.0
   r_egd['sun_crenel_height']       = 2.0
-  r_egd['sun_crenel_router_bit_radius']   = 1.0
+  r_egd['sun_crenel_router_bit_radius']   = 0.1
   ### planet-gear
   r_egd['planet_axle_diameter']      = 3.0
   r_egd['planet_crenel_diameter']    = 0.0
   r_egd['planet_crenel_nb']          = 8
   r_egd['planet_crenel_width']       = 4.0
   r_egd['planet_crenel_height']      = 2.0
-  r_egd['planet_crenel_router_bit_radius']  = 1.0
+  r_egd['planet_crenel_router_bit_radius']  = 0.1
   ### planet gear carrier
   r_egd['carrier_central_diameter']               = 0.0
   r_egd['carrier_leg_diameter']                   = 0.0
@@ -113,7 +113,7 @@ def epicyclic_gearing_dictionary_init():
   ### annulus: inherit dictionary entries from gearring
   r_egd.update(gearring.gearring_dictionary_init(1))
   ### general
-  r_egd['cnc_router_bit_radius']   = 1.0
+  r_egd['cnc_router_bit_radius']   = 0.1
   r_egd['gear_profile_height']     = 10.0
   ### output
   r_egd['tkinter_view']                    = False
@@ -433,7 +433,7 @@ def epicyclic_gearing(ai_constraints):
     if(abs(a0_ai_diff)>radian_epsilon):
       print("ERR414: Error, the i {:d} sun_angle_position {:0.5f} differ from the 0 sun_angle_position {:0.5f} with g2_pi_module_angle {:0.8f}".format(i, sun_angle_position[i], sun_angle_position[0], g2_pi_module_angle))
       print("dbg417: a0_ai_diff {:0.8f}".format(a0_ai_diff))
-      #sys.exit(2)
+      sys.exit(2)
   sg_c['gear_initial_angle'] = sun_angle_position[0]
 
   #### gear simulation

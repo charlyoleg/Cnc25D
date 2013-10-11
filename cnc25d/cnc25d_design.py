@@ -35,6 +35,7 @@ import gearwheel
 import gearring
 import gearbar
 import split_gearwheel
+import epicyclic_gearing
 
 ################################################################
 # Cnc25d Designs
@@ -55,7 +56,7 @@ gearbar = gearbar.gearbar
 split_gearwheel = split_gearwheel.split_gearwheel
 #gearlever = gearlever.gearlever
 # gear system
-#epicyclic = epicyclic.epicyclic
+epicyclic_gearing = epicyclic_gearing.epicyclic_gearing
 #gear_train = gear_train.gear_train
 
 
