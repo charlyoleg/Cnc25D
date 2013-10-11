@@ -630,7 +630,7 @@ def epicyclic_gearing(ai_constraints):
     # intersection carrier_leg_middle_radius and carrier_peripheral_external_radius from sun
     imefsa = math.acos((sun_planet_length**2+carrier_peripheral_external_radius**2-carrier_leg_middle_radius**2)/(2*sun_planet_length*carrier_peripheral_external_radius))
     (crenel_A, crenel_width_half_angle) = carrier_crenel_outline(cpe_radius)
-    carrier_peripheral_arc_half_angle = (leg_hole_portion - 2 * imefsa - 2 * crenel_width_half_angle)/2.0
+    carrier_peripheral_arc_half_angle = (leg_hole_portion - 2 * imefsa - 2 * crenel_width_half_angle)/4.0
     if(carrier_peripheral_arc_half_angle<radian_epsilon):
       print("ERR635: Error, middle carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle))
       sys.exit(2)
@@ -652,7 +652,11 @@ def epicyclic_gearing(ai_constraints):
       print("dbg652: middle_radius_intersection True")
       mcp_A.append((carrier_peripheral_internal_radius, 0, p2x+pl_radius*math.cos(p2a_first), p2y+pl_radius*math.sin(p2a_first), mrbr))
     mcp_A.append((p2x+pl_radius*math.cos(p2a_first-pla), p2y+pl_radius*math.sin(p2a_first-pla), p2x+pl_radius*math.cos(p2a_first-2*pla), p2y+pl_radius*math.sin(p2a_first-2*pla), mrbr))
-    mcp_A.append((0.0+cpe_radius*math.cos(-1*arc_middle_a+0.1), 0.0+cpe_radius*math.sin(-1*arc_middle_a+0.1),  mcp_A[0][0], mcp_A[0][1], 0))
+    mcp_A.append((0.0+cpe_radius*math.cos(-1*arc_middle_a), 0.0+cpe_radius*math.sin(-1*arc_middle_a),  mcp_A[0][0], mcp_A[0][1], 0))
+    #mcp_A.append((p2x+pl_radius*math.cos(p2a_first-pla), p2y+pl_radius*math.sin(p2a_first-pla), 0))
+    #mcp_A.append((p2x+pl_radius*math.cos(p2a_first-2*pla), p2y+pl_radius*math.sin(p2a_first-2*pla), 0))
+    #mcp_A.append((0.0+cpe_radius*math.cos(-1*arc_middle_a), 0.0+cpe_radius*math.sin(-1*arc_middle_a), 0))
+    #mcp_A.append((mcp_A[0][0], mcp_A[0][1], 0))
     #mcp_A[-1] = (mcp_A[-1][0], mcp_A[-1][1], mcp_A[0][0], mcp_A[0][1], 0)
     mcp_A_rotated = cnc25d_api.outline_rotate(mcp_A, 0.0, 0.0, first_planet_position_angle)
     middle_planet_carrier_outline = cnc25d_api.cnc_cut_outline(mcp_A_rotated, "planet_carrier_middle_outline")
@@ -714,8 +718,8 @@ gear_addendum_dedendum_parity_slack: {:0.3f}
   ### display with Tkinter
   if(eg_c['tkinter_view']):
     print(eg_parameter_info)
-    #cnc25d_api.figure_simple_display(eg_assembly_figure, [], eg_parameter_info)
-    cnc25d_api.figure_simple_display(middle_planet_carrier_figure, middle_planet_carrier_figure_overlay, eg_parameter_info)
+    cnc25d_api.figure_simple_display(eg_assembly_figure, [], eg_parameter_info)
+    #cnc25d_api.figure_simple_display(middle_planet_carrier_figure, middle_planet_carrier_figure_overlay, eg_parameter_info)
       
   ### sub-function to create the freecad-object
   def freecad_epicyclic_gearing(nai_part_figure_list):
