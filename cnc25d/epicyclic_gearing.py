@@ -90,13 +90,16 @@ def epicyclic_gearing_dictionary_init():
   r_egd['planet_crenel_height']      = 2.0
   r_egd['planet_crenel_router_bit_radius']  = 1.0
   ### planet gear carrier
-  r_egd['carrier_central_diameter']              = 20.0
-  r_egd['carrier_leg_diameter']                  = 20.0
-  r_egd['carrier_peripheral_external_diameter']  = 0.0
-  r_egd['carrier_peripheral_internal_diameter']  = 0.0
-  r_egd['carrier_smoothing_radius']             = 10.0
-  r_egd['carrier_central_hole_diameter']   = 10.0
-  r_egd['carrier_leg_hole_diameter']       = 10.0
+  r_egd['carrier_central_diameter']               = 0.0
+  r_egd['carrier_leg_diameter']                   = 0.0
+  r_egd['carrier_peripheral_disable']             = False
+  r_egd['carrier_hollow_disable']                 = False
+  r_egd['carrier_peripheral_external_diameter']   = 0.0
+  r_egd['carrier_peripheral_internal_diameter']   = 0.0
+  r_egd['carrier_leg_middle_diameter']            = 0.0
+  r_egd['carrier_smoothing_radius']               = 0.0
+  #r_egd['carrier_central_hole_diameter']          = 10.0
+  r_egd['carrier_leg_hole_diameter']              = 10.0
   ## carrier central crenel: inherit from sun-gear
   #r_egd['carrier_central_crenel_diameter']     = r_egd['sun_crenel_diameter']     
   #r_egd['carrier_central_crenel_nb']           = r_egd['sun_crenel_nb']           
@@ -178,18 +181,24 @@ def epicyclic_gearing_add_argument(ai_parser):
   r_parser.add_argument('--planet_crenel_router_bit_radius','--pcrbr', action='store', type=float, default=0.1, dest='sw_planet_crenel_router_bit_radius',
     help="Set the router_bit radius for the planet-crenel. Default: 0.1")
   ### planet gear carrier
-  r_parser.add_argument('--carrier_central_diameter','--ccd', action='store', type=float, default=20.0, dest='sw_carrier_central_diameter',
-    help="Set the diameter of the outline of the central part of the planet-carrier. Default: 20.0")
-  r_parser.add_argument('--carrier_leg_diameter','--cld', action='store', type=float, default=20.0, dest='sw_carrier_leg_diameter',
-    help="Set the diameter of the outline of the leg part of the planet-carrier. Default: 20.0")
+  r_parser.add_argument('--carrier_central_diameter','--ccd', action='store', type=float, default=0.0, dest='sw_carrier_central_diameter',
+    help="Set the diameter of the outline of the central part of the planet-carrier. If equal to 0.0, set 1.1*sun_diameter. Default: 0.0")
+  r_parser.add_argument('--carrier_leg_diameter','--cld', action='store', type=float, default=0.0, dest='sw_carrier_leg_diameter',
+    help="Set the diameter of the outline of the leg part of the planet-carrier. If equal to 0.0, set 0.7*planet_diameter. Default: 0.0")
+  r_parser.add_argument('--carrier_peripheral_disable','--crd', action='store_true', default=False, dest='sw_carrier_peripheral_disable',
+    help='Disable the planet-carrier paripheral ring and rear_planet_carrier. Default: False')
+  r_parser.add_argument('--carrier_hollow_disable','--chd', action='store_true', default=False, dest='sw_carrier_hollow_disable',
+    help='Disable the carrier-hollow of the front_planet_carrier. Default: False')
   r_parser.add_argument('--carrier_peripheral_external_diameter','--cped', action='store', type=float, default=0.0, dest='sw_carrier_peripheral_external_diameter',
-    help="Set the diameter of the outline of the additional circle around the planet-carrier. If equal to 0, no additional circle is generated. Default: 0.0")
+    help="Set the diameter of the outline of the additional circle around the planet-carrier. If equal to 0, set sun_planet_length+0.5*carrier_leg_diameter. Default: 0.0")
   r_parser.add_argument('--carrier_peripheral_internal_diameter','--cpid', action='store', type=float, default=0.0, dest='sw_carrier_peripheral_internal_diameter',
-    help="Set the internal diameter of the additional circle around the planet-carrier. If equal to 0, the planet-carrier is filled (no hollow). Default: 0.0")
-  r_parser.add_argument('--carrier_smoothing_radius','--csr', action='store', type=float, default=10, dest='sw_carrier_smoothing_radius',
-    help="Set the router_bit radius for the planet-carrier. Default: 10")
-  r_parser.add_argument('--carrier_central_hole_diameter','--cchd', action='store', type=float, default=10.0, dest='sw_carrier_central_hole_diameter',
-    help="Set the diameter of the central hole of the planet-carrier. Default: 10.0")
+    help="Set the internal diameter of the additional circle around the planet-carrier. If equal to 0, set sun_planet_length-0.25*carrier_leg_diameter. Default: 0.0")
+  r_parser.add_argument('--carrier_leg_middle_diameter','--clmd', action='store', type=float, default=0.0, dest='sw_carrier_leg_middle_diameter',
+    help="Set the diameter of the outline of the leg part of the planet-carrier. If equal to 0.0, set 1.2*planet_diameter. Default: 0.0")
+  r_parser.add_argument('--carrier_smoothing_radius','--csr', action='store', type=float, default=0.0, dest='sw_carrier_smoothing_radius',
+    help="Set the router_bit radius for the planet-carrier. If equal to 0, set 0.2*carrier_leg_diameter. Default: 0.0")
+  #r_parser.add_argument('--carrier_central_hole_diameter','--cchd', action='store', type=float, default=10.0, dest='sw_carrier_central_hole_diameter',
+  #  help="Set the diameter of the central hole of the planet-carrier. Default: 10.0")
   r_parser.add_argument('--carrier_leg_hole_diameter','--clhd', action='store', type=float, default=10.0, dest='sw_carrier_leg_hole_diameter',
     help="Set the diameter of the leg hole of the planet-carrier. Default: 10.0")
   ## carrier peripheral crenel
@@ -329,7 +338,7 @@ def epicyclic_gearing(ai_constraints):
   pg_c['gear_addendum_dedendum_parity']         = addendum_dedendum_parity
   pg_c['second_gear_addendum_dedendum_parity']  = addendum_dedendum_parity
   pg_c['axle_type']                 = 'none' # axle
-  if(eg_c['sun_axle_diameter']>0):
+  if(eg_c['planet_axle_diameter']>0):
     pg_c['axle_type']               = 'circle'
   pg_c['axle_x_width']              = eg_c['planet_axle_diameter']
   pg_c['axle_router_bit_radius']    = eg_c['planet_crenel_router_bit_radius']
@@ -436,7 +445,7 @@ def epicyclic_gearing(ai_constraints):
     gr_c_sim = gr_c.copy()
     gr_c_sim['simulation_enable'] = True
     gearring.gearring(gr_c_sim)
-
+  
   #### epicyclic_gearing construction
   #print("dbg435: gr_c:", gr_c)
   annulus_figure = gearring.gearring(gr_c)
@@ -445,13 +454,162 @@ def epicyclic_gearing(ai_constraints):
     planet_figures.append(gearwheel.gearwheel(pg_c_list[i]))
   sun_figure = gearwheel.gearwheel(sg_c)
 
+  ##### planet-carrier
+  ## set the default value
+  carrier_central_radius = eg_c['carrier_central_diameter']/2.0
+  if(carrier_central_radius==0):
+    carrier_central_radius = 1.1*(sun_gear_tooth_nb+2)*eg_c['gear_module']/2.0
+  carrier_leg_radius =  eg_c['carrier_leg_diameter']/2.0
+  if(carrier_leg_radius==0):
+    carrier_leg_radius = 0.7*(planet_gear_tooth_nb-2)*eg_c['gear_module']/2.0
+  carrier_peripheral_external_radius = eg_c['carrier_peripheral_external_diameter']/2.0
+  if(carrier_peripheral_external_radius==0):
+    carrier_peripheral_external_radius = sun_planet_length + carrier_leg_radius
+  carrier_peripheral_internal_radius = eg_c['carrier_peripheral_internal_diameter']/2.0
+  if(carrier_peripheral_internal_radius==0):
+    carrier_peripheral_internal_radius = sun_planet_length - 0.3 * carrier_leg_radius
+  carrier_leg_middle_radius = eg_c['carrier_leg_middle_diameter']/2.0
+  if(carrier_leg_middle_radius==0):
+    carrier_leg_middle_radius = 1.2*(planet_gear_tooth_nb+2)*eg_c['gear_module']/2.0
+  carrier_smoothing_radius = eg_c['carrier_smoothing_radius'] # overwrite the previous check, so must be check again
+  if(carrier_smoothing_radius==0):
+    carrier_smoothing_radius = 0.2*(planet_gear_tooth_nb+2)*eg_c['gear_module']/2.0
+  carrier_peripheral_disable = eg_c['carrier_peripheral_disable']
+  carrier_hollow_disable = eg_c['carrier_hollow_disable']
+  carrier_leg_hole_radius = eg_c['carrier_leg_hole_diameter']/2.0
+  ## parameter check
+  if(eg_c['cnc_router_bit_radius']>carrier_smoothing_radius):
+    carrier_smoothing_radius = eg_c['cnc_router_bit_radius']
+  #if(eg_c['carrier_central_hole_diameter']>eg_c['carrier_central_diameter']):
+  #  print("ERR443: Error, carrier_central_hole_diameter {:0.3f} is bigger than carrier_central_diameter {:0.3f}".format(eg_c['carrier_central_hole_diameter'], eg_c['carrier_central_diameter']))
+  #  sys.exit(2)
+  if(carrier_leg_hole_radius>carrier_leg_radius):
+    print("ERR446: Error, carrier_leg_hole_radius {:0.3f} is bigger than carrier_leg_radius {:0.3f}".format(carrier_leg_hole_radius, carrier_leg_radius))
+    sys.exit(2)
+  if(carrier_peripheral_internal_radius>sun_planet_length):
+    print("ERR448: Error, carrier_peripheral_internal_radius {:0.3f} is bigger than sun_planet_length {:0.3f}".format(carrier_peripheral_internal_radius, sun_planet_length))
+    sys.exit(2)
+  if(carrier_peripheral_internal_radius<(carrier_central_radius+3*carrier_smoothing_radius)):
+    print("WARN455: Warning, carrier_peripheral_internal_radius {:0.3f} is too small compare to  carrier_central_radius {:0.3f} and carrier_smoothing_radius {:0.3f}".format(carrier_peripheral_internal_radius, carrier_central_radius, carrier_smoothing_radius))
+    carrier_hollow_disable = True
+  if(carrier_peripheral_external_radius<(sun_planet_length+carrier_leg_radius)):
+    print("WARN461: Warning, carrier_peripheral_external_radius {:0.3f} is too small compare to sun_planet_length {:0.3f} and carrier_leg_radius {:0.3f}".format(carrier_peripheral_external_radius, sun_planet_length, carrier_leg_radius))
+    sys.exit(2)
+  carrier_crenel = True
+  if(eg_c['carrier_crenel_height']==0):
+    carrier_crenel = False
+  if(carrier_crenel):
+    if(eg_c['carrier_crenel_width']<7.0*eg_c['carrier_crenel_router_bit_radius']):
+      print("ERR468: Error, carrier_crenel_width {:0.3f} is too small compare to carrier_crenel_router_bit_radius {:0.3f}".format(eg_c['carrier_crenel_width'], eg_c['carrier_crenel_router_bit_radius']))
+      sys.exit(2)
+    if(eg_c['carrier_crenel_height']<3*eg_c['carrier_crenel_router_bit_radius']):
+      carrier_crenel_type = 2
+    else:
+      carrier_crenel_type = 1
+
+  ## planet-carrier external outline
+  front_planet_carrier_figure = []
+  front_planet_carrier_figure_overlay = []
+  if(not carrier_peripheral_disable):
+    cpe_radius = carrier_peripheral_external_radius
+    if(carrier_crenel):
+      crenel_width_half_angle = math.asin(eg_c['carrier_crenel_width']/(2*cpe_radius))
+      carrier_peripheral_portion_angle = 2*math.pi/(2*planet_nb)
+      carrier_peripheral_arc_half_angle = (carrier_peripheral_portion_angle - 2 * crenel_width_half_angle)/2.0
+      if(carrier_peripheral_arc_half_angle<radian_epsilon):
+        print("ERR493: Error, carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle))
+        sys.exit(2)
+      cp_A = [(0.0+cpe_radius*math.cos(-1*crenel_width_half_angle), 0.0+cpe_radius*math.sin(-1*crenel_width_half_angle), 0)]
+      if(carrier_crenel_type==1):
+        crenel_A = [
+          (0.0+cpe_radius-eg_c['carrier_crenel_height'], 0.0-eg_c['carrier_crenel_width']/2.0, -1*eg_c['carrier_crenel_router_bit_radius']),
+          (0.0+cpe_radius-eg_c['carrier_crenel_height'], 0.0+eg_c['carrier_crenel_width']/2.0, -1*eg_c['carrier_crenel_router_bit_radius']),
+          (0.0+cpe_radius*math.cos(1*crenel_width_half_angle), 0.0+cpe_radius*math.sin(1*crenel_width_half_angle), 0)]
+      elif(carrier_crenel_type==2):
+        tmp_l = gw_c['carrier_crenel_router_bit_radius'] * (1+math.sqrt(2))
+        crenel_A = [
+          (0.0+cpe_radius-eg_c['carrier_crenel_height']-1*tmp_l, 0.0-eg_c['carrier_crenel_width']/2.0+0*tmp_l, 1*eg_c['carrier_crenel_router_bit_radius']),
+          (0.0+cpe_radius-eg_c['carrier_crenel_height']-0*tmp_l, 0.0-eg_c['carrier_crenel_width']/2.0+1*tmp_l, 0*eg_c['carrier_crenel_router_bit_radius']),
+          (0.0+cpe_radius-eg_c['carrier_crenel_height']-0*tmp_l, 0.0+eg_c['carrier_crenel_width']/2.0-1*tmp_l, 0*eg_c['carrier_crenel_router_bit_radius']),
+          (0.0+cpe_radius-eg_c['carrier_crenel_height']-1*tmp_l, 0.0+eg_c['carrier_crenel_width']/2.0-0*tmp_l, 1*eg_c['carrier_crenel_router_bit_radius']),
+          (0.0+cpe_radius*math.cos(1*crenel_width_half_angle), 0.0+cpe_radius*math.sin(1*crenel_width_half_angle), 0)]
+      arc_middle_a = crenel_width_half_angle + carrier_peripheral_arc_half_angle
+      arc_end_a = arc_middle_a + carrier_peripheral_arc_half_angle
+      crenel_A.append((0.0+cpe_radius*math.cos(arc_middle_a), 0.0+cpe_radius*math.sin(arc_middle_a), 0.0+cpe_radius*math.cos(arc_end_a), 0.0+cpe_radius*math.sin(arc_end_a), 0))
+      for i in range(2*planet_nb):
+        cp_A.extend(cnc25d_api.outline_rotate(crenel_A, 0.0, 0.0, i*carrier_peripheral_portion_angle))
+      cp_A[-1] = (cp_A[-1][0], cp_A[-1][1], cp_A[0][0], cp_A[0][1], 0)
+      cp_A_rotated = cnc25d_api.outline_rotate(cp_A, 0.0, 0.0, first_planet_position_angle)
+      front_planet_carrier_figure.append(cnc25d_api.cnc_cut_outline(cp_A_rotated, "planet_carrier_external_outline"))
+      front_planet_carrier_figure_overlay.append(cnc25d_api.ideal_outline(cp_A_rotated, "planet_carrier_external_outline"))
+    else: # not carrier_crenel
+      cpe_circle = (0.0, 0.0, cpe_radius)
+      front_planet_carrier_figure.append(cpe_circle)
+      front_planet_carrier_figure_overlay.append(cpe_circle)
+  else: # carrier_peripheral_disable
+    cpe_circle = (0.0, 0.0, cpe_radius) # todo
+    front_planet_carrier_figure.append(cpe_circle)
+    front_planet_carrier_figure_overlay.append(cpe_circle)
+
+  ## front planet-carrier
+  # carrier_leg_hole
+  leg_hole_portion = 2*math.pi/planet_nb
+  if(carrier_leg_hole_radius>radian_epsilon):
+    for i in range(planet_nb):
+      tmp_a = first_planet_position_angle + i * leg_hole_portion
+      front_planet_carrier_figure.append((0.0+sun_planet_length*math.cos(tmp_a), 0.0+sun_planet_length*math.sin(tmp_a), carrier_leg_hole_radius))
+  # copy for the rear_planet_carrier_figure
+  front_planet_carrier_figure_copy = front_planet_carrier_figure[:]
+  # sun axle and crenel
+  front_planet_carrier_figure.extend(sun_figure[1:])
+  # carrier_hollow
+  #if(carrier_peripheral and carrier_hollow): #todo
+
+  ## rear planet-carrier
+  rear_planet_carrier_figure = []
+  rear_planet_carrier_figure_overlay = []
+  if(not carrier_peripheral_disable):
+    rear_planet_carrier_figure.extend(front_planet_carrier_figure_copy)
+    # carrier_peripheral_internal
+    cl_radius = carrier_leg_radius
+    cpi_radius = carrier_peripheral_internal_radius
+    if(cpi_radius<sun_planet_length-cl_radius+radian_epsilon): # simple circle case
+      rear_planet_carrier_figure.append((0.0, 0.0, cpi_radius))
+    else: # complex case
+      # circle_intersection_angle with cosines law
+      cia = math.acos((sun_planet_length**2+cpi_radius**2-cl_radius**2)/(2*sun_planet_length*cpi_radius))
+      cia_half = cia
+      arc_half = (leg_hole_portion - 2*cia_half)/2.0
+      if(arc_half<radian_epsilon):
+        print("ERR551: Error, rear planet-carrier arc_half {:0.3f} is negative or too small".format(arc_half))
+        sys.exit(2)
+      cpi_A = [(0.0+cpi_radius*math.cos(-1*cia_half), 0.0+cpi_radius*math.sin(-1*cia_half), eg_c['carrier_smoothing_radius'])]
+      short_radius = sun_planet_length - cl_radius
+      for i in range(planet_nb):
+        a1_mid = i*leg_hole_portion
+        a1_end = a1_mid + cia_half
+        a2_mid = a1_end + arc_half
+        a2_end = a2_mid + arc_half
+        cpi_A.append((0.0+short_radius*math.cos(a1_mid), 0.0+short_radius*math.sin(a1_mid), 0.0+cpi_radius*math.cos(a1_end), 0.0+cpi_radius*math.sin(a1_end), eg_c['carrier_smoothing_radius']))
+        cpi_A.append((0.0+cpi_radius*math.cos(a2_mid), 0.0+cpi_radius*math.sin(a2_mid), 0.0+cpi_radius*math.cos(a2_end), 0.0+cpi_radius*math.sin(a2_end), eg_c['carrier_smoothing_radius']))
+      cpi_A[-1] = (cpi_A[-1][0], cpi_A[-1][1], cpi_A[0][0], cpi_A[0][1], 0)
+      cpi_A_rotated = cnc25d_api.outline_rotate(cpi_A, 0.0, 0.0, first_planet_position_angle)
+      rear_planet_carrier_figure.append(cnc25d_api.cnc_cut_outline(cpi_A_rotated, "rear_planet_carrier_internal_peripheral"))
+      rear_planet_carrier_figure_overlay.append(cnc25d_api.ideal_outline(cpi_A_rotated, "rear_planet_carrier_internal_peripheral"))
+
+  ## middle planet-carrier
+  middle_planet_carrier_figures = []
+  if(not carrier_peripheral_disable):
+    middle_planet_carrier_figures.append(rear_planet_carrier_figure) # todo
+
   ### design output
   part_figure_list = []
   part_figure_list.append(annulus_figure)
   part_figure_list.append(sun_figure)
   part_figure_list.extend(planet_figures)
-  #part_figure_list.append(front_planet_carrier_figure)
-  #part_figure_list.append(rear_planet_carrier_figure)
+  part_figure_list.append(front_planet_carrier_figure)
+  part_figure_list.append(rear_planet_carrier_figure)
+  part_figure_list.extend(middle_planet_carrier_figures)
   # eg_assembly_figure: assembly flatted in one figure
   eg_assembly_figure = []
   for i in range(len(part_figure_list)):
@@ -501,9 +659,11 @@ gear_addendum_dedendum_parity_slack: {:0.3f}
     for i in range(len(nai_part_figure_list)):
       fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(nai_part_figure_list[i], eg_c['gear_profile_height']))
       if(i==planet_nb+2): # front planet-carrier
-        fc_obj[i].translate(Base.Vector(0,0,2*eg_c['gear_profile_height']))
+        fc_obj[i].translate(Base.Vector(0,0,7.0*eg_c['gear_profile_height']))
       if(i==planet_nb+3): # rear planet-carrier
-        fc_obj[i].translate(Base.Vector(0,0,-2*eg_c['gear_profile_height']))
+        fc_obj[i].translate(Base.Vector(0,0,-5.0*eg_c['gear_profile_height']))
+      if(i>planet_nb+3): # middle planet-carrier
+        fc_obj[i].translate(Base.Vector(0,0, 5.0*eg_c['gear_profile_height']))
     r_feg = Part.makeCompound(fc_obj)
     return(r_feg)
 
@@ -534,11 +694,17 @@ gear_addendum_dedendum_parity_slack: {:0.3f}
     if((output_file_suffix=='.svg')or(output_file_suffix=='.dxf')):
       cnc25d_api.generate_output_file(eg_assembly_figure, output_file_basename + "_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       cnc25d_api.generate_output_file(eg_gear_assembly_figure, output_file_basename + "_gear_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(front_planet_carrier_figure, output_file_basename + "_front_carrier" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(rear_planet_carrier_figure, output_file_basename + "_rear_carrier" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      for i in range(len(middle_planet_carrier_figures)):
+        cnc25d_api.generate_output_file(middle_planet_carrier_figures[i], output_file_basename + "_middle_carrier{:02d}".format(i+1) + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       cnc25d_api.generate_output_file(eg_list_of_parts, output_file_basename + "_part_list" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
     else:
       cnc25d_api.generate_output_file(annulus_figure, output_file_basename + "_epicyclic_gearing_holder", eg_c['gear_profile_height'], eg_parameter_info) # to get the parameter info as test file
+      fc_assembly_filename = "{:s}_assembly.brep".format(output_file_basename)
+      print("Generate with FreeCAD the BRep file {:s}".format(fc_assembly_filename))
       fc_assembly = freecad_epicyclic_gearing(part_figure_list)
-      fc_assembly.exportBrep("{:s}_assembly.brep".format(output_file_basename))
+      fc_assembly.exportBrep(fc_assembly_filename)
 
   #### return
   if(eg_c['return_type']=='int_status'):
@@ -588,10 +754,13 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   ### planet gear carrier
   r_egd['carrier_central_diameter']               = ai_eg_args.sw_carrier_central_diameter
   r_egd['carrier_leg_diameter']                   = ai_eg_args.sw_carrier_leg_diameter
+  r_egd['carrier_peripheral_disable']             = ai_eg_args.sw_carrier_peripheral_disable
+  r_egd['carrier_hollow_disable']                 = ai_eg_args.sw_carrier_hollow_disable
   r_egd['carrier_peripheral_external_diameter']   = ai_eg_args.sw_carrier_peripheral_external_diameter
   r_egd['carrier_peripheral_internal_diameter']   = ai_eg_args.sw_carrier_peripheral_internal_diameter
+  r_egd['carrier_leg_middle_diameter']            = ai_eg_args.sw_carrier_leg_middle_diameter
   r_egd['carrier_smoothing_radius']               = ai_eg_args.sw_carrier_smoothing_radius
-  r_egd['carrier_central_hole_diameter']   = ai_eg_args.sw_carrier_central_hole_diameter
+  #r_egd['carrier_central_hole_diameter']   = ai_eg_args.sw_carrier_central_hole_diameter
   r_egd['carrier_leg_hole_diameter']       = ai_eg_args.sw_carrier_leg_hole_diameter
   ## carrier peripheral crenel
   r_egd['carrier_crenel_width']                = ai_eg_args.sw_carrier_crenel_width
@@ -640,10 +809,13 @@ def epicyclic_gearing_self_test():
   Look at the Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"        , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2"],
-    ["gear simulation"      , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --simulation_enable --second_gear_tooth_nb 19"],
-    ["output file"          , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --output_file_basename test_output/split_gearwheel_self_test.dxf"],
-    ["last test"            , "--gear_tooth_nb 24 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0"]]
+    ["simplest test"        , "--sun_gear_tooth_nb 20 --planet_gear_tooth_nb 31 --gear_module 1.0 --planet_nb 3"],
+    ["sun crenel"           , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_diameter 6 --sun_crenel_nb 2"],
+    ["planet crenel"        , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --planet_axle_diameter 8 --planet_crenel_nb 5"],
+    ["gearring crenel"      , "--sun_gear_tooth_nb 23 --planet_gear_tooth_nb 31 --gear_module 1.0 --holder_crenel_number 4"],
+    ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
+    ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --output_file_basename test_output/epicyclic_self_test.dxf"],
+    ["last test"            , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   epicyclic_gearing_parser = argparse.ArgumentParser(description='Command line interface for the function epicyclic_gearing().')
   epicyclic_gearing_parser = epicyclic_gearing_add_argument(epicyclic_gearing_parser)
@@ -691,7 +863,8 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("epicyclic_gearing.py says hello!\n")
   #my_eg = epicyclic_gearing_cli()
   #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --return_type freecad_object".split())
-  my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0".split())
+  #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0".split())
+  my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_diameter 10 --sun_crenel_nb 4 --sun_crenel_height 1.0 --sun_crenel_width 3.0".split())
   #Part.show(my_eg)
   try: # depending on eg_c['return_type'] it might be or not a freecad_object
     Part.show(my_eg)

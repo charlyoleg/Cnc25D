@@ -22,9 +22,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70000001"
+     inkscape:zoom="0.98994951"
      inkscape:cx="322.67619"
-     inkscape:cy="1539.607"
+     inkscape:cy="396.74987"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1987,5 +1987,19 @@
        id="path4544"
        inkscape:connector-curvature="0"
        transform="translate(38.90625,64.9375)" />
-  </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3465"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(38.90625,64.9375)"><flowRegion
+         id="flowRegion3467"><rect
+           id="rect3469"
+           width="510.33432"
+           height="210.83687"
+           x="38.571426"
+           y="3317.491" /></flowRegion><flowPara
+         id="flowPara3471">In order to get the correct tooth corresponding annulus-planet versus planet-sun, the following relation must be satisfied:</flowPara><flowPara
+         id="flowPara3473">(sun_tooth_nb + annulus_tooth_nb) % planet_nb = 0</flowPara><flowPara
+         id="flowPara3475">equivalent to</flowPara><flowPara
+         id="flowPara3477">(2*(sun_tooth_nb + planet_tooth_nb)) % planet_nb = 0</flowPara></flowRoot>  </g>
 </svg>

@@ -458,7 +458,7 @@ def outline_circle(ai_center, ai_radius, ai_backend):
   #r_outline = ''
   # check the radius
   if(ai_radius<=0):
-    print("ERR409: Error, the radius is negative or null!")
+    print("ERR409: Error, the radius {:0.3f} is negative or null!".format(ai_radius))
     sys.exit(2)
   # select backend
   if(ai_backend=='freecad'):
