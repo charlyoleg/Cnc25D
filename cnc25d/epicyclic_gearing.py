@@ -74,7 +74,9 @@ def epicyclic_gearing_dictionary_init():
   r_egd['gear_router_bit_radius']  = 0.1
   r_egd['gear_tooth_resolution']   = 2
   r_egd['gear_skin_thickness']     = 0.0
-  r_egd['gear_addendum_dedendum_parity_slack'] = 0.0
+  r_egd['gear_addendum_dedendum_parity_slack']      = 0.0
+  r_egd['gearring_dedendum_to_hollow_pourcentage']  = 0.0
+  r_egd['gear_addendum_height_pourcentage']         = 100.0
   ### sun-gear
   r_egd['sun_axle_diameter']       = 3.0
   r_egd['sun_crenel_diameter']     = 0.0
@@ -154,6 +156,10 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Add or remove radial thickness on the gear involute to compensate the fabrication process. Default: 0.0")
   r_parser.add_argument('--gear_addendum_dedendum_parity_slack','--gadps', action='store', type=float, default=0.0, dest='sw_gear_addendum_dedendum_parity_slack',
     help="Decrease the gear_addendum_dedendum_parity to add some slack. Default: 0.0")
+  r_parser.add_argument('--gearring_dedendum_to_hollow_pourcentage','--gdthp', action='store', type=float, default=0.0, dest='sw_gearring_dedendum_to_hollow_pourcentage',
+    help="Decrease the dedendum height pourcentage and increase the gear-hollow height pourcentage of the gearring. Use it with large gear_skin_thickness or gear_router_bit_radius. Default: 0.0")
+  r_parser.add_argument('--gear_addendum_height_pourcentage','--gadhp', action='store', type=float, default=100.0, dest='sw_gear_addendum_height_pourcentage',
+    help="Set the gear_addendum_height_pourcentage of the sun-gear, planet-gear and annulus-gear. Use it to compensate gear_skin_thickness. Default: 100.0")
   ### sun-gear
   r_parser.add_argument('--sun_axle_diameter','--sad', action='store', type=float, default=0.0, dest='sw_sun_axle_diameter',
     help="Set the diameter of the sun-gear cylindrical axle. Default: 0.0")
@@ -266,6 +272,10 @@ def epicyclic_gearing(ai_constraints):
   carrier_crenel_router_bit_radius = eg_c['carrier_crenel_router_bit_radius']
   if(eg_c['cnc_router_bit_radius']>carrier_crenel_router_bit_radius):
     carrier_crenel_router_bit_radius = eg_c['cnc_router_bit_radius']
+  ## gearring_dedendum_to_hollow_pourcentage
+  if((eg_c['gearring_dedendum_to_hollow_pourcentage']>=100.0)or(eg_c['gearring_dedendum_to_hollow_pourcentage']<0)):
+    print("ERR277: Error, gearring_dedendum_to_hollow_pourcentage {:0.3f} must be set between 0.0% and 100.0%".format(eg_c['gearring_dedendum_to_hollow_pourcentage']))
+    sys.exit(2)
   ## tooth number
   sun_gear_tooth_nb = eg_c['sun_gear_tooth_nb']
   planet_gear_tooth_nb = eg_c['planet_gear_tooth_nb']
@@ -298,6 +308,9 @@ def epicyclic_gearing(ai_constraints):
   gr_c['second_gear_tooth_nb']        = planet_gear_tooth_nb
   gr_c['gear_base_diameter']          = float((smallest_gear_tooth_nb-2)*eg_c['gear_module']*annulus_gear_tooth_nb)/smallest_gear_tooth_nb
   gr_c['gear_module']                 = eg_c['gear_module']
+  gr_c['gear_addendum_height_pourcentage']  = eg_c['gear_addendum_height_pourcentage']
+  gr_c['gear_dedendum_height_pourcentage']  = 100.0 - eg_c['gearring_dedendum_to_hollow_pourcentage']
+  gr_c['gear_hollow_height_pourcentage']    = 25.0 + eg_c['gearring_dedendum_to_hollow_pourcentage']
   gr_c['gear_router_bit_radius']      = gear_router_bit_radius
   gr_c['gear_tooth_resolution']       = eg_c['gear_tooth_resolution']
   gr_c['gear_skin_thickness']         = eg_c['gear_skin_thickness']
@@ -331,6 +344,7 @@ def epicyclic_gearing(ai_constraints):
   pg_c['gear_tooth_nb']             = planet_gear_tooth_nb # gear-profile
   pg_c['second_gear_tooth_nb']      = sun_gear_tooth_nb
   pg_c['gear_base_diameter']          = float((smallest_gear_tooth_nb-2)*eg_c['gear_module']*planet_gear_tooth_nb)/smallest_gear_tooth_nb
+  pg_c['gear_addendum_height_pourcentage']  = eg_c['gear_addendum_height_pourcentage']
   pg_c['gear_module']               = eg_c['gear_module']
   pg_c['gear_router_bit_radius']    = gear_router_bit_radius
   pg_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
@@ -371,6 +385,7 @@ def epicyclic_gearing(ai_constraints):
   sg_c['second_gear_tooth_nb']      = planet_gear_tooth_nb
   sg_c['gear_base_diameter']          = float((smallest_gear_tooth_nb-2)*eg_c['gear_module']*sun_gear_tooth_nb)/smallest_gear_tooth_nb
   sg_c['gear_module']               = eg_c['gear_module']
+  sg_c['gear_addendum_height_pourcentage']  = eg_c['gear_addendum_height_pourcentage']
   sg_c['gear_router_bit_radius']    = gear_router_bit_radius
   sg_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
   sg_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
@@ -708,8 +723,8 @@ annulus_gear_tooth_nb:    \t{:d}
 smallest_gear_tooth_nb:   \t{:d}
 planet_nb:                \t{:d}
 planet_number_max:        \t{:d}
-epicyclic_gearing_ratio:  \t{:0.3f}  1/R: {:0.3f}
-""".format(sun_gear_tooth_nb, planet_gear_tooth_nb, annulus_gear_tooth_nb, smallest_gear_tooth_nb, planet_nb, planet_number_max, epicyclic_gearing_ratio, 1.0/epicyclic_gearing_ratio)
+epicyclic_gearing_ratio:  \t{:0.3f}  1/R: {:0.3f}  1/R2: {:0.3f}  1/R3: {:0.3f}  1/R4: {:0.3f}  1/R5: {:0.3f}
+""".format(sun_gear_tooth_nb, planet_gear_tooth_nb, annulus_gear_tooth_nb, smallest_gear_tooth_nb, planet_nb, planet_number_max, epicyclic_gearing_ratio, 1.0/epicyclic_gearing_ratio, 1.0/epicyclic_gearing_ratio**2, 1.0/epicyclic_gearing_ratio**3, 1.0/epicyclic_gearing_ratio**4, 1.0/epicyclic_gearing_ratio**5)
   eg_parameter_info += """
 gear_module:              \t{:0.3f}
 gear_router_bit_radius:   \t{:0.3f}
@@ -808,7 +823,9 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['gear_router_bit_radius']  = ai_eg_args.sw_gear_router_bit_radius
   r_egd['gear_tooth_resolution']   = ai_eg_args.sw_gear_tooth_resolution
   r_egd['gear_skin_thickness']     = ai_eg_args.sw_gear_skin_thickness
-  r_egd['gear_addendum_dedendum_parity_slack'] = ai_eg_args.sw_gear_addendum_dedendum_parity_slack
+  r_egd['gear_addendum_dedendum_parity_slack']      = ai_eg_args.sw_gear_addendum_dedendum_parity_slack
+  r_egd['gearring_dedendum_to_hollow_pourcentage']  =  ai_eg_args.sw_gearring_dedendum_to_hollow_pourcentage
+  r_egd['gear_addendum_height_pourcentage']         =  ai_eg_args.sw_gear_addendum_height_pourcentage
   ### sun-gear
   r_egd['sun_axle_diameter']       = ai_eg_args.sw_sun_axle_diameter
   r_egd['sun_crenel_diameter']     = ai_eg_args.sw_sun_crenel_diameter

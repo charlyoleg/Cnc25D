@@ -357,13 +357,13 @@ def calc_low_level_gear_parameters(ai_param):
       i2u_ini = indu
       i2u_inc = float(inau-indu)/i2u_nb # >0
       i2_dtri = math.fmod(indti-inda+5*math.pi, 2*math.pi) - math.pi # dedendum tangent relative inclination
-      i2_dsl = g_stn*math.tan(i2_dtri)
+      i2_dsl = g_stn*math.tan(-1*i2_dtri)
       i2_hsl = float(g_hh)/math.cos(i2_dtri)  # hollow slope length
       i2_thickness = g_stn
       ha1 = top_land/2 + full_positive_involute
       #print("dbg663: ipaa {:0.3f}".format(ipaa))
     #print("dbg553: i1_hsl {:0.3f}  i2_hsl {:0.3f}  g_rbr {:0.3f} g_hh  {:0.3f}".format(i1_hsl, i2_hsl, g_rbr, g_hh))
-    #print("dbg366: i1_dsl {:0.3f}".format(i1_dsl))
+    #print("dbg366: i1_dsl {:0.3f}  i2_dsl {:0.3f}  i1_hsl {:0.3f}  i2_hsl {:0.3f}".format(i1_dsl, i2_dsl, i1_hsl, i2_hsl))
     ### optimization of i1_hsl and i2_hsl
     #bottom_land_length = bottom_land * g_dr
     bottom_land_length = 2 * g_dr * math.sin(bottom_land/2)
@@ -421,6 +421,7 @@ def calc_low_level_gear_parameters(ai_param):
         ho = True
         i1_hsl = AI
         i2_hsl = BI
+    #print("dbg424: ho:", ho)
     ### portion
     #hlm = g_hr*math.cos(bottom_land/2) # this is to ensure nice junction of split gearwheel
     ham = ha1 + float(bottom_land)/2
@@ -543,7 +544,7 @@ def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, 
     #print("dbg443: u:", u)
     if(abs(u)<radian_epsilon): # for rounding error
       u=0
-    (qx, qy, ti) = sample_of_gear_tooth_profile((ai_ox,ai_oy), ai_base_radius, ai_tooth_angle+ai_offset, ai_sign, ai_thickness, u)
+    (qx, qy, ti) = sample_of_gear_tooth_profile((ai_ox,ai_oy), ai_base_radius, ai_tooth_angle+ai_offset, ai_sign, ai_g_type*ai_thickness, u)
     involute_C.append((qx, qy, ti-(ai_sign-1)/2*math.pi))
     u += ai_u_inc
   #print("dbg444: involute_C:", involute_C)
@@ -746,6 +747,10 @@ def ideal_involute_tooth_outline(ai_low_parameters, ai_angle_position, ai_thickn
   ideal = 8 # additional_sampling_for_ideal_curve. it's a multiplicator
   # initialization
   tooth_angle = ai_angle_position
+  if(gear_type == 'e'):
+    gear_type_sign = 1
+  elif(gear_type == 'i'):
+    gear_type_sign = -1
   # construct the ideal_tooth_outline over the first tooth
   # first_involute
   first_involute = []
@@ -754,7 +759,7 @@ def ideal_involute_tooth_outline(ai_low_parameters, ai_angle_position, ai_thickn
   for sampling in range(ideal*i2u_nb+1):
     if(abs(u)<radian_epsilon): # for rounding error
       u=0
-    (qx, qy, ti) = sample_of_gear_tooth_profile((ox,oy), i2_base, tooth_angle-pi_module_angle+i2_offset, i2_sign, ai_thickness_coeff*i2_thickness, u)
+    (qx, qy, ti) = sample_of_gear_tooth_profile((ox,oy), i2_base, tooth_angle-pi_module_angle+i2_offset, i2_sign, ai_thickness_coeff*gear_type_sign*i2_thickness, u)
     first_involute.append((qx, qy))
     u += ideal_i2u_inc
   # second_involute
@@ -764,7 +769,7 @@ def ideal_involute_tooth_outline(ai_low_parameters, ai_angle_position, ai_thickn
   for sampling in range(ideal*i1u_nb+1):
     if(abs(u)<radian_epsilon): # for rounding error
       u=0
-    (qx, qy, ti) = sample_of_gear_tooth_profile((ox,oy), i1_base, tooth_angle+i1_offset, i1_sign, ai_thickness_coeff*i1_thickness, u)
+    (qx, qy, ti) = sample_of_gear_tooth_profile((ox,oy), i1_base, tooth_angle+i1_offset, i1_sign, ai_thickness_coeff*gear_type_sign*i1_thickness, u)
     second_involute.append((qx, qy))
     u += ideal_i1u_inc
   # assembly

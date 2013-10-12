@@ -48,13 +48,13 @@ import Part
 # script switch
 ################################################################
 
-sim = False
-view = False
-if(len(sys.argv)>1):
-  if(sys.argv[1]=='sim'):
-    sim = True
-  elif(sys.argv[1]=='view'):
-    view = True
+#sim = False
+#view = False
+#if(len(sys.argv)>1):
+#  if(sys.argv[1]=='sim'):
+#    sim = True
+#  elif(sys.argv[1]=='view'):
+#    view = True
 
 ################################################################
 # epicyclic design
@@ -70,8 +70,10 @@ eg_constraint['planet_nb']               = 4
 eg_constraint['gear_module']             = 1.0
 eg_constraint['gear_router_bit_radius']  = 0.1
 eg_constraint['gear_tooth_resolution']   = 2
-eg_constraint['gear_skin_thickness']     = 0.0
+eg_constraint['gear_skin_thickness']     = 0.25 #0.25
 eg_constraint['gear_addendum_dedendum_parity_slack'] = 0.0
+eg_constraint['gearring_dedendum_to_hollow_pourcentage']  = 10.0
+eg_constraint['gear_addendum_height_pourcentage']         = 100.0
 ### sun-gear
 eg_constraint['sun_axle_diameter']       = 10.0
 eg_constraint['sun_crenel_diameter']     = 0.0
@@ -126,7 +128,7 @@ eg_constraint['output_file_basename'] = "" # set a not-empty string if you want 
 #eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro.svg"  # to generate the SVG file with mozman svgwrite
 #eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro.dxf"  # to generate the DXF file with mozman svgwrite
 #eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro"      # to generate the Brep and DXF file with FreeCAD
-eg_constraint['output_file_basename'] = "test_output/flb2.dxf"
+#eg_constraint['output_file_basename'] = "test_output/flb2.dxf"
 eg_constraint['return_type'] = 'int_status' #'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################

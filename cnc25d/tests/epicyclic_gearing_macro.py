@@ -96,7 +96,9 @@ eg_constraint['gear_module']             = 1.0
 eg_constraint['gear_router_bit_radius']  = 0.1
 eg_constraint['gear_tooth_resolution']   = 2
 eg_constraint['gear_skin_thickness']     = 0.0
-eg_constraint['gear_addendum_dedendum_parity_slack'] = 0.0
+eg_constraint['gear_addendum_dedendum_parity_slack']      = 0.0
+eg_constraint['gearring_dedendum_to_hollow_pourcentage']  = 0.0
+eg_constraint['gear_addendum_height_pourcentage']         = 100.0
 ### sun-gear
 eg_constraint['sun_axle_diameter']       = 12.0
 eg_constraint['sun_crenel_diameter']     = 0.0
