@@ -572,10 +572,42 @@ def epicyclic_gearing(ai_constraints):
       front_planet_carrier_figure.append(cpe_circle)
       front_planet_carrier_figure_overlay.append(cpe_circle)
   else: # carrier_peripheral_disable
-    cpe_circle = (0.0, 0.0, cpe_radius) # todo
-    front_planet_carrier_figure.append(cpe_circle)
-    front_planet_carrier_figure_overlay.append(cpe_circle)
-
+    # get the length ONl and the angel (JAI) = LAOa
+    OKl = carrier_central_radius
+    AIl = carrier_leg_radius
+    OAl = sun_planet_length
+    OLl = OKl - AIl
+    LAOa = math.asin(OLl/OAl)
+    MONa = 0.5*math.pi/planet_nb
+    KONa = MONa - LAOa
+    ONl = OKl/math.cos(KONa)
+    # half-leg angle
+    hla = math.pi/planet_nb
+    # one leg
+    leg_A = [(ONl*math.cos(-1*hla), ONl*math.sin(-1*hla), carrier_smoothing_radius)]
+    ta1 = -1*math.pi/2+LAOa
+    leg_A.append((OAl+AIl*math.cos(ta1), AIl*math.sin(ta1), 0))
+    if(carrier_crenel):
+      (crenel_A, crenel_width_half_angle) = carrier_crenel_outline(AIl)
+      arc_half_angle = (math.pi/2 - LAOa - crenel_width_half_angle)/2.0
+      if(arc_half_angle<radian_epsilon):
+        print("ERR596: Error, arc_half_angle {:0.3f} is negative or too small".format(arc_half_angle))
+        sys.exit(2)
+      leg_A.append((OAl+AIl*math.cos(ta1+1*arc_half_angle), AIl*math.sin(ta1+1*arc_half_angle), OAl+AIl*math.cos(ta1+2*arc_half_angle), AIl*math.sin(ta1+2*arc_half_angle), 0))
+      leg_A.extend(cnc25d_api.outline_shift_x(crenel_A, OAl, 1))
+      leg_A.append((OAl+AIl*math.cos(-1*ta1-1*arc_half_angle), AIl*math.sin(-1*ta1-1*arc_half_angle), OAl+AIl*math.cos(-1*ta1), AIl*math.sin(-1*ta1), 0))
+    else:
+      arc_half_angle = (math.pi - 2*LAOa)/2.0
+      leg_A.append((OAl+AIl*math.cos(ta1+1*arc_half_angle), AIl*math.sin(ta1+1*arc_half_angle), OAl+AIl*math.cos(ta1+2*arc_half_angle), AIl*math.sin(ta1+2*arc_half_angle), 0))
+    # carrier without peripheral
+    cwop_A = []
+    for i in range(planet_nb):
+      cwop_A.extend(cnc25d_api.outline_rotate(leg_A, 0.0, 0.0, i*2*hla))
+    cwop_A.append((cwop_A[0][0], cwop_A[0][1], 0))
+    cwop_A_rotated = cnc25d_api.outline_rotate(cwop_A, 0.0, 0.0, first_planet_position_angle)
+    front_planet_carrier_figure.append(cnc25d_api.cnc_cut_outline(cwop_A_rotated, "carrier without peripheral external outline"))
+    front_planet_carrier_figure_overlay.append(cnc25d_api.ideal_outline(cwop_A_rotated, "carrier without peripheral external outline"))
+      
   ## front planet-carrier
   # carrier_leg_hole
   leg_hole_portion = 2*math.pi/planet_nb
@@ -589,7 +621,9 @@ def epicyclic_gearing(ai_constraints):
   # sun axle and crenel
   front_planet_carrier_figure.extend(sun_figure[1:])
   # carrier_hollow
-  #if(carrier_peripheral and carrier_hollow): #todo
+  if((not carrier_peripheral_disable) and (not carrier_hollow_disable)): #todo
+    pass
+    #print("WARN625: planet-carrier hollow is not implemented yet!")
 
   ## rear planet-carrier
   rear_planet_carrier_figure = []
@@ -648,17 +682,6 @@ def epicyclic_gearing(ai_constraints):
       sys.exit(2)
     # intersection carrier_leg_middle_radius and carrier_peripheral_external_radius from sun
     imefsa = math.acos((sun_planet_length**2+carrier_peripheral_external_radius**2-carrier_leg_middle_radius**2)/(2*sun_planet_length*carrier_peripheral_external_radius))
-    (crenel_A, crenel_width_half_angle) = carrier_crenel_outline(cpe_radius)
-    carrier_peripheral_arc_half_angle = (leg_hole_portion - 2 * imefsa - 2 * crenel_width_half_angle)/4.0
-    if(carrier_peripheral_arc_half_angle<radian_epsilon):
-      print("ERR635: Error, middle carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle))
-      sys.exit(2)
-    mrbr = carrier_crenel_router_bit_radius
-    mcp_A = [(0.0+cpe_radius*math.cos(-1*crenel_width_half_angle), 0.0+cpe_radius*math.sin(-1*crenel_width_half_angle), mrbr)]
-    arc_middle_a = crenel_width_half_angle + carrier_peripheral_arc_half_angle
-    arc_end_a = arc_middle_a + carrier_peripheral_arc_half_angle
-    mcp_A.extend(crenel_A)
-    mcp_A.append((0.0+cpe_radius*math.cos(arc_middle_a), 0.0+cpe_radius*math.sin(arc_middle_a), 0.0+cpe_radius*math.cos(arc_end_a), 0.0+cpe_radius*math.sin(arc_end_a), mrbr))
     p1x = sun_planet_length * math.cos(leg_hole_portion/2.0)
     p1y = sun_planet_length * math.sin(leg_hole_portion/2.0)
     p2x = p1x
@@ -666,12 +689,27 @@ def epicyclic_gearing(ai_constraints):
     p1a_end = leg_hole_portion/2.0 + math.pi + imia
     p2a_first = -1*p1a_end #-1*leg_hole_portion/2.0 + math.pi - imia
     pl_radius = carrier_leg_middle_radius
+    mrbr = carrier_crenel_router_bit_radius
+    mcp_A = [ (p2x+pl_radius*math.cos(p2a_first-2*pla), p2y+pl_radius*math.sin(p2a_first-2*pla), mrbr) ]
+    if(carrier_crenel):
+      (crenel_A, crenel_width_half_angle) = carrier_crenel_outline(cpe_radius)
+      carrier_peripheral_arc_half_angle = (leg_hole_portion - 2 * imefsa - 2 * crenel_width_half_angle)/4.0
+      if(carrier_peripheral_arc_half_angle<radian_epsilon):
+        print("ERR635: Error, middle carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle))
+        sys.exit(2)
+      arc_middle_a = crenel_width_half_angle + carrier_peripheral_arc_half_angle
+      arc_end_a = arc_middle_a + carrier_peripheral_arc_half_angle
+      mcp_A.append((0.0+cpe_radius*math.cos(-1*arc_middle_a), 0.0+cpe_radius*math.sin(-1*arc_middle_a), 0.0+cpe_radius*math.cos(-1*crenel_width_half_angle), 0.0+cpe_radius*math.sin(-1*crenel_width_half_angle), 0))
+      mcp_A.extend(crenel_A)
+      mcp_A.append((0.0+cpe_radius*math.cos(arc_middle_a), 0.0+cpe_radius*math.sin(arc_middle_a), 0.0+cpe_radius*math.cos(arc_end_a), 0.0+cpe_radius*math.sin(arc_end_a), mrbr))
+    else:
+      cp_arc_half_angle = (leg_hole_portion - 2 * imefsa)/2.0
+      mcp_A.append((0.0+cpe_radius*math.cos(0*cp_arc_half_angle), 0.0+cpe_radius*math.sin(0*cp_arc_half_angle), 0.0+cpe_radius*math.cos(1*cp_arc_half_angle), 0.0+cpe_radius*math.sin(1*cp_arc_half_angle), mrbr))
     mcp_A.append((p1x+pl_radius*math.cos(p1a_end+pla), p1y+pl_radius*math.sin(p1a_end+pla), p1x+pl_radius*math.cos(p1a_end), p1y+pl_radius*math.sin(p1a_end), mrbr))
     if(not middle_radius_intersection): # additional arc when not middle_radius_intersection
-      print("dbg652: middle_radius_intersection True")
+      #print("dbg652: middle_radius_intersection True")
       mcp_A.append((carrier_peripheral_internal_radius, 0, p2x+pl_radius*math.cos(p2a_first), p2y+pl_radius*math.sin(p2a_first), mrbr))
-    mcp_A.append((p2x+pl_radius*math.cos(p2a_first-pla), p2y+pl_radius*math.sin(p2a_first-pla), p2x+pl_radius*math.cos(p2a_first-2*pla), p2y+pl_radius*math.sin(p2a_first-2*pla), mrbr))
-    mcp_A.append((0.0+cpe_radius*math.cos(-1*arc_middle_a), 0.0+cpe_radius*math.sin(-1*arc_middle_a),  mcp_A[0][0], mcp_A[0][1], 0))
+    mcp_A.append((p2x+pl_radius*math.cos(p2a_first-pla), p2y+pl_radius*math.sin(p2a_first-pla), mcp_A[0][0], mcp_A[0][1], 0))
     #mcp_A.append((p2x+pl_radius*math.cos(p2a_first-pla), p2y+pl_radius*math.sin(p2a_first-pla), 0))
     #mcp_A.append((p2x+pl_radius*math.cos(p2a_first-2*pla), p2y+pl_radius*math.sin(p2a_first-2*pla), 0))
     #mcp_A.append((0.0+cpe_radius*math.cos(-1*arc_middle_a), 0.0+cpe_radius*math.sin(-1*arc_middle_a), 0))
@@ -710,7 +748,7 @@ def epicyclic_gearing(ai_constraints):
       eg_list_of_parts.append(cnc25d_api.outline_shift_x(part_figure_list[i][j], i*x_space, 1))
   # middle_planet_carrier_figure
   middle_planet_carrier_figure = []
-  for i in range(planet_nb):
+  for i in range(len(middle_planet_carrier_figures)):
     middle_planet_carrier_figure.extend(middle_planet_carrier_figures[i])
 
   # eg_parameter_info
@@ -902,6 +940,11 @@ def epicyclic_gearing_self_test():
     ["sun crenel"           , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_diameter 6 --sun_crenel_nb 2"],
     ["planet crenel"        , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --planet_axle_diameter 8 --planet_crenel_nb 5"],
     ["gearring crenel"      , "--sun_gear_tooth_nb 23 --planet_gear_tooth_nb 31 --gear_module 1.0 --holder_crenel_number 4"],
+    ["carrier with peripheral and crenel", "--sun_gear_tooth_nb 20 --planet_gear_tooth_nb 31 --gear_module 1.0 --planet_nb 3"],
+    ["carrier with peripheral and without crenel", "--sun_gear_tooth_nb 20 --planet_gear_tooth_nb 31 --gear_module 1.0 --planet_nb 3 --carrier_crenel_height 0"],
+    ["carrier without peripheral and with crenel", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_central_diameter 30.0"],
+    ["carrier without peripheral and crenel", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_crenel_height 0 --carrier_central_diameter 30.0"],
+    ["carrier without peripheral and small central circle", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_central_diameter 20.0"],
     ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
     ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --output_file_basename test_output/epicyclic_self_test.dxf"],
     ["last test"            , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0"]]
