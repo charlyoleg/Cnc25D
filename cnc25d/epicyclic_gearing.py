@@ -835,7 +835,7 @@ gear_addendum_dedendum_parity_slack: {:0.3f}
   if(eg_c['return_type']=='int_status'):
     r_eg = 1
   elif(eg_c['return_type']=='cnc25d_figure'):
-    r_eg = eg_assembly_A_figure
+    r_eg = part_figure_list
   elif(eg_c['return_type']=='freecad_object'):
     r_eg = freecad_epicyclic_gearing(part_figure_list)
   else:
