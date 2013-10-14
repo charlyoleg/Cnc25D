@@ -33,6 +33,8 @@ Contents:
    gearring_design
    gearbar_design
    split_gearwheel_design
+   epicyclic_gearing_design
+   epicyclic_gearing_details
 
 Indices and tables
 ==================
