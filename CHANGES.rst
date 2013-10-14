@@ -2,6 +2,16 @@
 Release History
 ###############
 
+
+0.1.8 (2013-11-01)
+==================
+
+* add crenels to the gearwheel
+* epicyclic
+* gearlever
+* gear_train  
+* hexa_bone
+
 0.1.7 (2013-10-07)
 ==================
 
