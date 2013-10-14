@@ -651,7 +651,7 @@ def figure_to_freecad_25d_part(ai_figure, ai_extrude_height):
   if(face_nwire): # generate a real solid part
     outer_face = Part.Face(Part.Wire(outline_arc_line(ai_figure[0], 'freecad').Edges))
     outer_solid = outer_face.extrude(Base.Vector(0,0,ai_extrude_height)) # straight linear extrusion
-    if(outline_nb>2): # holes need to be cut from outer_solid
+    if(outline_nb>1): # holes need to be cut from outer_solid
       inner_solid = []
       for i in range(outline_nb-1):
         inner_face = Part.Face(Part.Wire(outline_arc_line(ai_figure[i+1], 'freecad').Edges))
