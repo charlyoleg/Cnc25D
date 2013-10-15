@@ -136,7 +136,8 @@ def axle_lid(ai_constraints):
   cnc_router_bit_radius = al_c['cnc_router_bit_radius']
   axle_hole_radius = al_c['axle_hole_diameter']/2.0
   central_radius = al_c['central_diameter']/2.0
-  clearance_radius = al_c['clearance_diameter']
+  clearance_radius = al_c['clearance_diameter']/2.0
+  holder_radius = al_c['holder_diameter']/2.0
   if(cnc_router_bit_radius>axle_hole_radius):
     print("ERR141: Error, cnc_router_bit_radius {:0.3f} is bigger than axle_hole_radius {:0.3f}".format(cnc_router_bit_radius, axle_hole_radius))
     sys.exit(2)
@@ -144,14 +145,27 @@ def axle_lid(ai_constraints):
     print("ERR144: Error, axle_hole_radius {:0.3f} is bigger than central_radius {:0.3f}".format(axle_hole_radius, central_radius))
     sys.exit(2)
   if(central_radius>clearance_radius):
-    print("ERR147: Error, central_radius {:0.3f} is bigger than clearance_radius".format(central_radius, clearance_radius))
+    print("ERR147: Error, central_radius {:0.3f} is bigger than clearance_radius {:0.3f}".format(central_radius, clearance_radius))
     sys.exit(2)
+  if(clearance_radius>holder_radius):
+    print("ERR151: Error, clearance_radius {:0.3f} is bigger than the holder_radius {:0.3f}".format(clearance_radius, holder_radius))
+    sys.exit(2)
+  holder_crenel_number = al_c['holder_crenel_number']
+  if(holder_crenel_number<4):
+    print("ERR154: Error, holder_crenel_number {:d} is smaller than 4".format(holder_crenel_number))
+    sys.exit(2)
+  middle_crenel_1 = 0
+  middle_crenel_2 = int(holder_crenel_number/2)
+  middle_crenel_index = [middle_crenel_1, middle_crenel_2]
+  crenel_portion_angle = 2*math.pi/holder_crenel_number
+  ### axle_lid_overlay_figure: add stuff on it when you want
+  axle_lid_overlay_figure = []
   ### gearring-holder
   gr_c = {}
   gr_c['gear_tooth_nb']               = 0
   gr_c['gear_primitive_diameter']     = 2.0*axle_hole_radius
-  gr_c['holder_diameter']             = al_c['holder_diameter']
-  gr_c['holder_crenel_number']        = al_c['holder_crenel_number']
+  gr_c['holder_diameter']             = 2.0*holder_radius
+  gr_c['holder_crenel_number']        = holder_crenel_number
   gr_c['holder_position_angle']       = al_c['holder_position_angle']
   gr_c['holder_hole_position_radius'] = al_c['holder_hole_position_radius']
   gr_c['holder_hole_diameter']        = al_c['holder_hole_diameter']
@@ -161,7 +175,7 @@ def axle_lid(ai_constraints):
   gr_c['holder_crenel_skin_width']    = al_c['holder_crenel_skin_width']
   gr_c['holder_crenel_router_bit_radius'] = al_c['holder_crenel_router_bit_radius']
   gr_c['holder_smoothing_radius']     = al_c['holder_smoothing_radius']
-  gr_c['cnc_router_bit_radius']       = al_c['cnc_router_bit_radius']
+  gr_c['cnc_router_bit_radius']       = cnc_router_bit_radius
   gr_c['gear_profile_height']         = al_c['extrusion_height']
   gr_c['center_position_x']           = 0.0
   gr_c['center_position_y']           = 0.0
@@ -170,29 +184,86 @@ def axle_lid(ai_constraints):
   gr_c['simulation_enable']           = False
   gr_c['output_file_basename']        = ""
   gr_c['args_in_txt']                 = "gearring for axle_lid"
-  gr_c['return_type']                 = 'cnc25d_figure'
-  annulus_holder_figure = gearring.gearring(gr_c)
-  holder_radius = 5.0
-  ### middle_lid
-  middle_lid_figure = []
-  middle_lid2_figure = []
+  gr_c['return_type']                 = 'cnc25d_figure_and_parameters'
+  (annulus_holder_figure, holder_parameters) = gearring.gearring(gr_c)
+  ### middle_axle_lid
+  middle_lid_outlines = []
+  #
+  ( holder_crenel_half_width, holder_crenel_half_angle, holder_smoothing_radius, holder_crenel_x_position, holder_maximal_height_plus,
+    holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
+    holder_hole_position_radius, holder_hole_radius) = holder_parameters
+  g1_ix = 0.0
+  g1_iy = 0.0
+  angle_incr = crenel_portion_angle
+  lid_router_bit_radius = holder_crenel_router_bit_radius
+  for i in range(2):
+    idx = middle_crenel_index[i]
+    holder_A = []
+    # first point
+    first_angle = gr_c['holder_position_angle'] - holder_crenel_half_angle + idx*angle_incr
+    holder_A.append([g1_ix+clearance_radius*math.cos(first_angle), g1_iy+clearance_radius*math.sin(first_angle), lid_router_bit_radius])
+    # first line
+    holder_A.append([g1_ix+holder_radius*math.cos(first_angle), g1_iy+holder_radius*math.sin(first_angle), lid_router_bit_radius])
+    # first crenel
+    holder_A .extend(gearring.make_holder_crenel(holder_maximal_height_plus, gr_c['holder_crenel_height'], gr_c['holder_crenel_skin_width'], holder_crenel_half_width, 
+                                        holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius, holder_smoothing_radius,
+                                        holder_crenel_x_position, gr_c['holder_position_angle']+idx*angle_incr, g1_ix, g1_iy))
+    # external arc
+    middle_angle = gr_c['holder_position_angle'] + (idx+0.5)*angle_incr
+    end_angle = gr_c['holder_position_angle'] + (idx+1)*angle_incr - holder_crenel_half_angle
+    holder_A.append([g1_ix+holder_radius*math.cos(middle_angle), g1_iy+holder_radius*math.sin(middle_angle),
+                      g1_ix+holder_radius*math.cos(end_angle), g1_iy+holder_radius*math.sin(end_angle), holder_smoothing_radius])
+    # second crenel
+    holder_A .extend(gearring.make_holder_crenel(holder_maximal_height_plus, gr_c['holder_crenel_height'], gr_c['holder_crenel_skin_width'], holder_crenel_half_width, 
+                                        holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius, holder_smoothing_radius,
+                                        holder_crenel_x_position, gr_c['holder_position_angle']+(idx+1)*angle_incr, g1_ix, g1_iy))
+    holder_A[-1] = (holder_A[-1][0], holder_A[-1][1], lid_router_bit_radius) # change the router_bit of the last point
+    # second to last line
+    last_angle = gr_c['holder_position_angle'] + holder_crenel_half_angle + (idx+1)*angle_incr
+    holder_A.append([g1_ix+clearance_radius*math.cos(last_angle), g1_iy+clearance_radius*math.sin(last_angle), lid_router_bit_radius])
+    # last arc
+    holder_A.append([g1_ix+clearance_radius*math.cos(middle_angle), g1_iy+clearance_radius*math.sin(middle_angle),
+                      g1_ix+clearance_radius*math.cos(first_angle), g1_iy+clearance_radius*math.sin(first_angle), 0])
+    # save the portion of outline
+    middle_lid_outlines.append(holder_A[:])
+  ## overlay for check
+  axle_lid_overlay_figure.append(cnc25d_api.ideal_outline(middle_lid_outlines[0], "middle_lid_outlines"))
+  ## middle_axle_lid
+  middle_lid_figures = []
+  for i in range(2):
+    one_middle_figure = []
+    one_middle_figure.append(cnc25d_api.cnc_cut_outline(middle_lid_outlines[i], "middle_lid_outlines"))
+    if(holder_hole_radius>0):
+      for j in range(2):
+        hole_angle = gr_c['holder_position_angle']+((middle_crenel_index[i]+j)*angle_incr)
+        one_middle_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
+    middle_lid_figures.append(one_middle_figure[:])
 
   ### top_lid
+  # top_lid_outline
+  middle_angle_1 = (middle_crenel_2 + (middle_crenel_1+1))/2.0*crenel_portion_angle + gr_c['holder_position_angle']
+  middle_angle_2 = middle_angle_1 + math.pi
+  top_lid_outline = []
+  top_lid_outline.extend(middle_lid_outlines[0][:-1])
+  top_lid_outline.append((g1_ix+central_radius*math.cos(middle_angle_1), g1_iy+central_radius*math.sin(middle_angle_1), holder_smoothing_radius))
+  top_lid_outline.extend(middle_lid_outlines[1][:-1])
+  top_lid_outline.append((g1_ix+central_radius*math.cos(middle_angle_2), g1_iy+central_radius*math.sin(middle_angle_2), holder_smoothing_radius))
+  top_lid_outline.append((top_lid_outline[0][0], top_lid_outline[0][1], 0))
+  # top_lid_figure
   top_lid_figure = []
-
-
-#  ## get the router_bit_radius
-#  gear_router_bit_radius = gear_router_bit_radius
-#  if(cnc_router_bit_radius>gear_router_bit_radius):
-#    gear_router_bit_radius = cnc_router_bit_radius
-  
-  
+  top_lid_figure.append(cnc25d_api.cnc_cut_outline(top_lid_outline, "top_lid_outline"))
+  axle_lid_overlay_figure.append(cnc25d_api.ideal_outline(top_lid_outline, "top_lid_outline"))
+  if(holder_hole_radius>0):
+    for i in range(2):
+      for j in range(2):
+        hole_angle = gr_c['holder_position_angle']+((middle_crenel_index[i]+j)*angle_incr)
+        top_lid_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
   
   ### design output
   part_figure_list = []
   part_figure_list.append(annulus_holder_figure)
-  part_figure_list.append(middle_lid_figure)
-  part_figure_list.append(middle_lid2_figure)
+  part_figure_list.append(middle_lid_figures[0])
+  part_figure_list.append(middle_lid_figures[1])
   part_figure_list.append(top_lid_figure)
   # al_assembly_figure: assembly flatted in one figure
   al_assembly_figure = []
@@ -201,7 +272,7 @@ def axle_lid(ai_constraints):
   # ideal_outline in overlay
   al_assembly_figure_overlay = []
   # al_list_of_parts: all parts aligned flatted in one figure
-  x_space = 1.2*al_c['holder_diameter']
+  x_space = 3.1*holder_radius
   al_list_of_parts = []
   for i in range(len(part_figure_list)):
     for j in range(len(part_figure_list[i])):
@@ -218,13 +289,13 @@ clearance radius:         \t{:0.3f} diameter: \t{:0.3f}
 central radius:           \t{:0.3f} diameter: \t{:0.3f}
 axle-hole radius:         \t{:0.3f} diameter: \t{:0.3f}
 cnc_router_bit_radius:    \t{:0.3f} diameter: \t{:0.3f}
-""".format(al_c['holder_crenel_number'], al_c['holder_hole_diameter']/2.0, al_c['holder_hole_diameter'], holder_radius, 2*holder_radius, clearance_radius, 2*clearance_radius, central_radius, 2*central_radius, axle_hole_radius, 2*axle_hole_radius, cnc_router_bit_radius, 2*cnc_router_bit_radius)
+""".format(holder_crenel_number, al_c['holder_hole_diameter']/2.0, al_c['holder_hole_diameter'], holder_radius, 2*holder_radius, clearance_radius, 2*clearance_radius, central_radius, 2*central_radius, axle_hole_radius, 2*axle_hole_radius, cnc_router_bit_radius, 2*cnc_router_bit_radius)
   #print(al_parameter_info)
 
   ### display with Tkinter
   if(al_c['tkinter_view']):
     print(al_parameter_info)
-    cnc25d_api.figure_simple_display(al_assembly_figure, [], al_parameter_info)
+    cnc25d_api.figure_simple_display(al_assembly_figure, axle_lid_overlay_figure, al_parameter_info)
       
   ### sub-function to create the freecad-object
   def freecad_axle_lid(nai_part_figure_list):
@@ -251,9 +322,9 @@ cnc_router_bit_radius:    \t{:0.3f} diameter: \t{:0.3f}
       output_file_basename = re.sub('\.svg$', '', al_c['output_file_basename'])
   if(al_c['output_file_basename']!=''):
     # parts
-    cnc25d_api.generate_output_file(annulus_figure, output_file_basename + "_annulus_holder" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
-    cnc25d_api.generate_output_file(middle_lid_figure, output_file_basename + "_middle_lid" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
-    cnc25d_api.generate_output_file(middle_lid2_figure, output_file_basename + "_middle_lid2" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(annulus_holder_figure, output_file_basename + "_annulus_holder" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(middle_lid_figures[0], output_file_basename + "_middle_lid1" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(middle_lid_figures[1], output_file_basename + "_middle_lid2" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
     cnc25d_api.generate_output_file(top_lid_figure, output_file_basename + "_top_lid" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
     # assembly
     if((output_file_suffix=='.svg')or(output_file_suffix=='.dxf')):
@@ -330,10 +401,11 @@ def axle_lid_self_test():
   Look at the Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"        , "--holder_diameter 60.0 --clearance_diameter 50.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6"],
-    ["odd number of crenel" , "--holder_diameter 60.0 --clearance_diameter 50.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5"],
-    ["output file"          , "--holder_diameter 60.0 --clearance_diameter 50.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --output_file_basename test_output/axle_lid_self_test.dxf"],
-    ["last test"            , "--holder_diameter 60.0 --clearance_diameter 50.0 --central_diameter 30.0 --axle_hole_diameter 22.0"]]
+    ["simplest test"        , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 80.0 --axle_hole_diameter 22.0 --holder_crenel_number 6"],
+    ["odd number of crenel" , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 5"],
+    ["four crenels"         , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 4"],
+    ["output file"          , "--holder_diameter 130.0 --clearance_diameter 115.0 --central_diameter 100.0 --axle_hole_diameter 22.0 --output_file_basename test_output/axle_lid_self_test.dxf"],
+    ["last test"            , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   axle_lid_parser = argparse.ArgumentParser(description='Command line interface for the function axle_lid().')
   axle_lid_parser = axle_lid_add_argument(axle_lid_parser)
@@ -381,7 +453,7 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("axle_lid.py says hello!\n")
   #my_al = axle_lid_cli()
   #my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 50.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object".split())
-  my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 50.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6".split())
+  my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6".split())
   #Part.show(my_al)
   try: # depending on al_c['return_type'] it might be or not a freecad_object
     Part.show(my_al)

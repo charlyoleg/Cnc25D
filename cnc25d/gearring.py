@@ -365,6 +365,11 @@ cnc_router_bit_radius:            \t{:0.3f}
     r_gr = gr_figure
   elif(gr_c['return_type']=='freecad_object'):
     r_gr = cnc25d_api.figure_to_freecad_25d_part(gr_figure, gr_c['gear_profile_height'])
+  elif(gr_c['return_type']=='cnc25d_figure_and_parameters'):
+    holder_parameters = ( holder_crenel_half_width, holder_crenel_half_angle, holder_smoothing_radius, holder_crenel_x_position, holder_maximal_height_plus,
+      holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
+      holder_hole_position_radius, holder_hole_radius)
+    r_gr = (gr_figure, holder_parameters)
   else:
     print("ERR346: Error the return_type {:s} is unknown".format(gr_c['return_type']))
     sys.exit(2)
