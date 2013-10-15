@@ -401,7 +401,7 @@ def axle_lid_self_test():
   Look at the Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"        , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 80.0 --axle_hole_diameter 22.0 --holder_crenel_number 6"],
+    ["simplest test"        , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 79.0 --axle_hole_diameter 22.0 --holder_crenel_number 6"],
     ["odd number of crenel" , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 5"],
     ["four crenels"         , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 4"],
     ["output file"          , "--holder_diameter 130.0 --clearance_diameter 115.0 --central_diameter 100.0 --axle_hole_diameter 22.0 --output_file_basename test_output/axle_lid_self_test.dxf"],
