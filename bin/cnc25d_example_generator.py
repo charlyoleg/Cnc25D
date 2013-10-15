@@ -2068,7 +2068,8 @@ ceg_example_list={
   gr_script_name : gr_script_content,
   gb_script_name : gb_script_content,
   sgw_script_name : sgw_script_content,
-  eg_script_name : eg_script_content}
+  eg_script_name : eg_script_content,
+  al_script_name : al_script_content}
 
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")
