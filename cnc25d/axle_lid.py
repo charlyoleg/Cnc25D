@@ -249,10 +249,12 @@ def axle_lid(ai_constraints):
   top_lid_outline.extend(middle_lid_outlines[1][:-1])
   top_lid_outline.append((g1_ix+central_radius*math.cos(middle_angle_2), g1_iy+central_radius*math.sin(middle_angle_2), holder_smoothing_radius))
   top_lid_outline.append((top_lid_outline[0][0], top_lid_outline[0][1], 0))
+  # overlay debug
+  axle_lid_overlay_figure.append(cnc25d_api.ideal_outline(top_lid_outline, "top_lid_outline"))
   # top_lid_figure
   top_lid_figure = []
   top_lid_figure.append(cnc25d_api.cnc_cut_outline(top_lid_outline, "top_lid_outline"))
-  axle_lid_overlay_figure.append(cnc25d_api.ideal_outline(top_lid_outline, "top_lid_outline"))
+  top_lid_figure.append((g1_ix, g1_iy, axle_hole_radius))
   if(holder_hole_radius>0):
     for i in range(2):
       for j in range(2):
@@ -452,8 +454,8 @@ def axle_lid_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("axle_lid.py says hello!\n")
   #my_al = axle_lid_cli()
-  #my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 50.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object".split())
-  my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6".split())
+  my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object".split())
+  #my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6".split())
   #Part.show(my_al)
   try: # depending on al_c['return_type'] it might be or not a freecad_object
     Part.show(my_al)
