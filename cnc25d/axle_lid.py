@@ -141,13 +141,13 @@ def axle_lid(ai_constraints):
   if(cnc_router_bit_radius>axle_hole_radius):
     print("ERR141: Error, cnc_router_bit_radius {:0.3f} is bigger than axle_hole_radius {:0.3f}".format(cnc_router_bit_radius, axle_hole_radius))
     sys.exit(2)
-  if(axle_hole_radius>central_radius):
+  if(axle_hole_radius>central_radius-radian_epsilon):
     print("ERR144: Error, axle_hole_radius {:0.3f} is bigger than central_radius {:0.3f}".format(axle_hole_radius, central_radius))
     sys.exit(2)
-  if(central_radius>clearance_radius):
+  if(central_radius>clearance_radius-radian_epsilon):
     print("ERR147: Error, central_radius {:0.3f} is bigger than clearance_radius {:0.3f}".format(central_radius, clearance_radius))
     sys.exit(2)
-  if(clearance_radius>holder_radius):
+  if(clearance_radius>holder_radius-radian_epsilon):
     print("ERR151: Error, clearance_radius {:0.3f} is bigger than the holder_radius {:0.3f}".format(clearance_radius, holder_radius))
     sys.exit(2)
   holder_crenel_number = al_c['holder_crenel_number']

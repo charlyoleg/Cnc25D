@@ -201,6 +201,16 @@ eg_script_content='''#!/usr/bin/env python
 #include "../cnc25d/tests/epicyclic_gearing_macro.py"
 '''
 
+### axle_lid script example
+al_script_name="eg10_axle_lid_example.py"
+# copy from ../cnc25d/tests/axle_lid_macro.py
+al_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/axle_lid_macro.py
+#
+#include "../cnc25d/tests/axle_lid_macro.py"
+'''
+
 ### Generating the script examples
 
 ceg_example_list={

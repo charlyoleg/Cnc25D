@@ -257,6 +257,9 @@ def line_equation(ai_A, ai_B, ai_error_msg_id):
   BY = ai_B[1]
   # calculation of the length AB
   lAB = math.sqrt((BX-AX)**2+(BY-AY)**2)
+  if(lAB<radian_epsilon):
+    print("ERR261: Error, lAB {:0.3f} is too small".format(lAB))
+    sys.exit(2)
   # calculation of the inclination of AB
   xAB = math.atan2(BY-AY, BX-AX)
   cos_xAB = (BX-AX)/lAB
