@@ -24,7 +24,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="456.74368"
-     inkscape:cy="552.23719"
+     inkscape:cy="633.04939"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -32,11 +32,11 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1370"
-     inkscape:window-height="1006"
-     inkscape:window-x="548"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     inkscape:window-x="0"
      inkscape:window-y="24"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      inkscape:snap-center="true"
      inkscape:snap-nodes="true"
      inkscape:snap-global="false"
@@ -80,7 +80,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -2226,7 +2226,7 @@
        style="color:#000000;fill:none;stroke:#999999;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <path
        transform="translate(50.021463,89.758789)"
-       d="m 230.71429,917.75891 a 45.357143,45.357143 0 1 1 -90.71429,0 45.357143,45.357143 0 1 1 90.71429,0 z"
+       d="m 230.71429,917.75891 c 0,25.05006 -20.30708,45.35714 -45.35714,45.35714 -25.05006,0 -45.35715,-20.30708 -45.35715,-45.35714 0,-25.05006 20.30709,-45.35714 45.35715,-45.35714 25.05006,0 45.35714,20.30708 45.35714,45.35714 z"
        sodipodi:ry="45.357143"
        sodipodi:rx="45.357143"
        sodipodi:cy="917.75891"
@@ -2338,7 +2338,7 @@
        sodipodi:cy="1136.3303"
        sodipodi:rx="56.785713"
        sodipodi:ry="56.785713"
-       d="m 217.85714,1136.3303 a 56.785713,56.785713 0 1 1 -113.57143,0 56.785713,56.785713 0 1 1 113.57143,0 z"
+       d="m 217.85714,1136.3303 c 0,31.3619 -25.42383,56.7857 -56.78571,56.7857 -31.36189,0 -56.78572,-25.4238 -56.78572,-56.7857 0,-31.3619 25.42383,-56.7857 56.78572,-56.7857 31.36188,0 56.78571,25.4238 56.78571,56.7857 z"
        transform="matrix(1.0157233,0,0,1.0157233,71.774609,-146.67948)" />
     <flowRoot
        xml:space="preserve"
@@ -2456,10 +2456,9 @@
        style="fill:none;stroke:#cccccc;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect4404"
        width="567.85712"
-       height="336.42856"
-       x="11.428572"
-       y="756.6875"
-       transform="translate(48.0625,91.875)"
+       height="403.09863"
+       x="59.491074"
+       y="848.5625"
        inkscape:export-filename="images/gearwheel_crenel_parameters.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
@@ -2478,7 +2477,7 @@
        sodipodi:cy="847.76093"
        sodipodi:rx="5.8083773"
        sodipodi:ry="5.8083773"
-       d="m 441.68921,847.76093 a 5.8083773,5.8083773 0 1 1 -11.61676,0 5.8083773,5.8083773 0 1 1 11.61676,0 z"
+       d="m 441.68921,847.76093 c 0,3.20787 -2.6005,5.80837 -5.80838,5.80837 -3.20788,0 -5.80838,-2.6005 -5.80838,-5.80837 0,-3.20788 2.6005,-5.80838 5.80838,-5.80838 3.20788,0 5.80838,2.6005 5.80838,5.80838 z"
        transform="matrix(1.6521739,0,0,1.6521739,-229.6416,-483.38582)" />
     <path
        sodipodi:type="arc"
@@ -2488,7 +2487,7 @@
        sodipodi:cy="847.76093"
        sodipodi:rx="5.8083773"
        sodipodi:ry="5.8083773"
-       d="m 441.68921,847.76093 a 5.8083773,5.8083773 0 1 1 -11.61676,0 5.8083773,5.8083773 0 1 1 11.61676,0 z"
+       d="m 441.68921,847.76093 c 0,3.20787 -2.6005,5.80837 -5.80838,5.80837 -3.20788,0 -5.80838,-2.6005 -5.80838,-5.80837 0,-3.20788 2.6005,-5.80838 5.80838,-5.80838 3.20788,0 5.80838,2.6005 5.80838,5.80838 z"
        transform="matrix(1.6521739,0,0,1.6521739,-170.80022,-482.98338)" />
     <path
        sodipodi:type="arc"
@@ -2498,7 +2497,7 @@
        sodipodi:cy="847.76093"
        sodipodi:rx="5.8083773"
        sodipodi:ry="5.8083773"
-       d="m 441.68921,847.76093 a 5.8083773,5.8083773 0 1 1 -11.61676,0 5.8083773,5.8083773 0 1 1 11.61676,0 z"
+       d="m 441.68921,847.76093 c 0,3.20787 -2.6005,5.80837 -5.80838,5.80837 -3.20788,0 -5.80838,-2.6005 -5.80838,-5.80837 0,-3.20788 2.6005,-5.80838 5.80838,-5.80838 3.20788,0 5.80838,2.6005 5.80838,5.80838 z"
        transform="matrix(1.6521739,0,0,1.6521739,-229.38907,-453.43642)" />
     <path
        sodipodi:type="arc"
@@ -2508,7 +2507,7 @@
        sodipodi:cy="847.76093"
        sodipodi:rx="5.8083773"
        sodipodi:ry="5.8083773"
-       d="m 441.68921,847.76093 a 5.8083773,5.8083773 0 1 1 -11.61676,0 5.8083773,5.8083773 0 1 1 11.61676,0 z"
+       d="m 441.68921,847.76093 c 0,3.20787 -2.6005,5.80837 -5.80838,5.80837 -3.20788,0 -5.80838,-2.6005 -5.80838,-5.80837 0,-3.20788 2.6005,-5.80838 5.80838,-5.80838 3.20788,0 5.80838,2.6005 5.80838,5.80838 z"
        transform="matrix(1.6521739,0,0,1.6521739,-170.54768,-453.43642)" />
     <rect
        style="fill:none;stroke:#cccccc;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
@@ -2564,7 +2563,7 @@
        sodipodi:cy="847.76093"
        sodipodi:rx="5.8083773"
        sodipodi:ry="5.8083773"
-       d="m 441.68921,847.76093 a 5.8083773,5.8083773 0 1 1 -11.61676,0 5.8083773,5.8083773 0 1 1 11.61676,0 z"
+       d="m 441.68921,847.76093 c 0,3.20787 -2.6005,5.80837 -5.80838,5.80837 -3.20788,0 -5.80838,-2.6005 -5.80838,-5.80837 0,-3.20788 2.6005,-5.80838 5.80838,-5.80838 3.20788,0 5.80838,2.6005 5.80838,5.80838 z"
        transform="matrix(1.6521739,0,0,1.6521739,-216.00637,-324.60486)" />
     <path
        sodipodi:type="arc"
@@ -2574,7 +2573,7 @@
        sodipodi:cy="847.76093"
        sodipodi:rx="5.8083773"
        sodipodi:ry="5.8083773"
-       d="m 441.68921,847.76093 a 5.8083773,5.8083773 0 1 1 -11.61676,0 5.8083773,5.8083773 0 1 1 11.61676,0 z"
+       d="m 441.68921,847.76093 c 0,3.20787 -2.6005,5.80837 -5.80838,5.80837 -3.20788,0 -5.80838,-2.6005 -5.80838,-5.80837 0,-3.20788 2.6005,-5.80838 5.80838,-5.80838 3.20788,0 5.80838,2.6005 5.80838,5.80838 z"
        transform="matrix(1.6521739,0,0,1.6521739,-216.00637,-304.98108)" />
     <path
        sodipodi:type="arc"
@@ -2584,7 +2583,7 @@
        sodipodi:cy="847.76093"
        sodipodi:rx="5.8083773"
        sodipodi:ry="5.8083773"
-       d="m 441.68921,847.76093 a 5.8083773,5.8083773 0 1 1 -11.61676,0 5.8083773,5.8083773 0 1 1 11.61676,0 z"
+       d="m 441.68921,847.76093 c 0,3.20787 -2.6005,5.80837 -5.80838,5.80837 -3.20788,0 -5.80838,-2.6005 -5.80838,-5.80837 0,-3.20788 2.6005,-5.80838 5.80838,-5.80838 3.20788,0 5.80838,2.6005 5.80838,5.80838 z"
        transform="matrix(1.6521739,0,0,1.6521739,-164.485,-324.60474)" />
     <path
        sodipodi:type="arc"
@@ -2594,7 +2593,7 @@
        sodipodi:cy="847.76093"
        sodipodi:rx="5.8083773"
        sodipodi:ry="5.8083773"
-       d="m 441.68921,847.76093 a 5.8083773,5.8083773 0 1 1 -11.61676,0 5.8083773,5.8083773 0 1 1 11.61676,0 z"
+       d="m 441.68921,847.76093 c 0,3.20787 -2.6005,5.80837 -5.80838,5.80837 -3.20788,0 -5.80838,-2.6005 -5.80838,-5.80837 0,-3.20788 2.6005,-5.80838 5.80838,-5.80838 3.20788,0 5.80838,2.6005 5.80838,5.80838 z"
        transform="matrix(1.6521739,0,0,1.6521739,-164.485,-304.98113)" />
     <path
        style="color:#000000;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -2626,11 +2625,11 @@
        transform="translate(38.971127,96.925763)"><flowRegion
          id="flowRegion4562"><rect
            id="rect4564"
-           width="181.32239"
-           height="46.46701"
+           width="188.39343"
+           height="46.46698"
            x="397.49503"
            y="865.94366" /></flowRegion><flowPara
-         id="flowPara4568">crenel_type 1 when</flowPara><flowPara
+         id="flowPara4568">crenel_rectangle_type 1 when</flowPara><flowPara
          id="flowPara4570">crenel_height &gt; 3*crenel_rbr</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4560-2"
@@ -2638,21 +2637,39 @@
        transform="translate(28.846145,259.41149)"><flowRegion
          id="flowRegion4562-7"><rect
            id="rect4564-6"
-           width="181.32239"
-           height="46.46701"
+           width="196.47464"
+           height="48.487286"
            x="397.49503"
            y="865.94366" /></flowRegion><flowPara
-         id="flowPara4568-6">crenel_type 1 when</flowPara><flowPara
+         id="flowPara4568-6">crenel_rectangle_type 2 when</flowPara><flowPara
          id="flowPara4570-9">crenel_height &lt; 3*crenel_rbr</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4604"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(46.042195,107.02729)"><flowRegion
+       transform="translate(43.011737,174.70751)"><flowRegion
          id="flowRegion4606"><rect
            id="rect4608"
            width="277.79196"
            height="40.406101"
            x="27.274118"
            y="1049.2864" /></flowRegion><flowPara
-         id="flowPara4610">Gearwheel crenel parameters</flowPara></flowRoot>  </g>
+         id="flowPara4610">Gearwheel crenel parameters</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3488"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(28.869602,95.91561)"><flowRegion
+         id="flowRegion3490"><rect
+           id="rect3492"
+           width="243.44676"
+           height="44.446712"
+           x="45.456863"
+           y="1042.2153" /></flowRegion><flowPara
+         id="flowPara3494">crenel_type ('rectangle' or 'circle')</flowPara><flowPara
+         id="flowPara3496">crenel_circle_diameter = crenel_width</flowPara></flowRoot>    <path
+       style="color:#000000;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 154.55334,969.48429 76.771594,1047.266"
+       id="path3498"
+       inkscape:connector-curvature="0"
+       transform="translate(48.0625,91.875)" />
+  </g>
 </svg>

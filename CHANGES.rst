@@ -8,6 +8,7 @@ Release History
 
 * add crenels to the gearwheel
 * epicyclic
+* axle_lid
 * gearlever
 * gear_train  
 * hexa_bone
