@@ -302,7 +302,7 @@ def gearwheel(ai_constraints):
       print("ERR736: Error, wheel_hollow_internal_radius {:0.2f} is too small compare to wheel_hollow_leg_width {:0.2f}!".format(wheel_hollow_internal_radius, gw_c['wheel_hollow_leg_width']))
       sys.exit(2)
   if(gw_c['crenel_number']>0):
-    print("dbg305: crenel_type {:s}".format(crenel_type))
+    #print("dbg305: crenel_type {:s}".format(crenel_type))
     if(crenel_type=='rectangle'):
       if(math.sqrt((crenel_radius+gw_c['crenel_height'])**2+(gw_c['crenel_width']/2)**2)> minimal_gear_profile_radius-radian_epsilon):
         print("ERR298: Error, crenel_radius {:0.3f}, crenel_height {:0.3f} or crenel_width {:0.3f} are too big compare to minimal_gear_profile_radius {:0.3f}".format(crenel_radius, gw_c['crenel_height'], gw_c['crenel_width'], minimal_gear_profile_radius))
