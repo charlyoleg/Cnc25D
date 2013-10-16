@@ -35,6 +35,7 @@ Contents:
    split_gearwheel_design
    epicyclic_gearing_design
    epicyclic_gearing_details
+   axle_lid_design
 
 Indices and tables
 ==================

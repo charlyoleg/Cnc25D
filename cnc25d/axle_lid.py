@@ -305,9 +305,9 @@ cnc_router_bit_radius:    \t{:0.3f} diameter: \t{:0.3f}
     for i in range(len(nai_part_figure_list)):
       fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(nai_part_figure_list[i], al_c['extrusion_height']))
       if((i==1)or(i==2)): # front planet-carrier
-        fc_obj[i].translate(Base.Vector(0,0,3.0*al_c['extrusion_height']))
+        fc_obj[i].translate(Base.Vector(0,0,5.0*al_c['extrusion_height']))
       if(i==3): # rear planet-carrier
-        fc_obj[i].translate(Base.Vector(0,0,6.0*al_c['extrusion_height']))
+        fc_obj[i].translate(Base.Vector(0,0,10.0*al_c['extrusion_height']))
     r_fal = Part.makeCompound(fc_obj)
     return(r_fal)
 
@@ -455,8 +455,8 @@ def axle_lid_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("axle_lid.py says hello!\n")
   #my_al = axle_lid_cli()
-  my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object".split())
-  #my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6".split())
+  #my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object".split())
+  my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6".split())
   #Part.show(my_al)
   try: # depending on al_c['return_type'] it might be or not a freecad_object
     Part.show(my_al)

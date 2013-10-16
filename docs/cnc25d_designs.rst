@@ -53,11 +53,19 @@ The :doc:`split_gearwheel_design` generates several 3D parts that can be assembl
 .. image:: images/split_gearwheel_3d.png
 
 
-Epicyclic Gearing
+Epicyclic_gearing
 -----------------
 
 The :doc:`epicyclic_gearing_design` is a complete epicyclic gearing system. You can use it to increase the torque (and decreasing the rotation speed).
 
 .. image:: images/epicyclic_gearing_3d.png
+
+Axle_lid
+--------
+
+The :doc:`axle_lid_design` is a axle-lid design kit. You can use it to complete the epicyclic_gearing design.
+
+.. image:: images/axle_lid_3d.png
+
 
 
