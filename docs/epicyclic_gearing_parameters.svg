@@ -24,7 +24,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994951"
      inkscape:cx="322.67619"
-     inkscape:cy="396.74987"
+     inkscape:cy="760.40478"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -2001,5 +2001,22 @@
          id="flowPara3471">In order to get the correct tooth corresponding annulus-planet versus planet-sun, the following relation must be satisfied:</flowPara><flowPara
          id="flowPara3473">(sun_tooth_nb + annulus_tooth_nb) % planet_nb = 0</flowPara><flowPara
          id="flowPara3475">equivalent to</flowPara><flowPara
-         id="flowPara3477">(2*(sun_tooth_nb + planet_tooth_nb)) % planet_nb = 0</flowPara></flowRoot>  </g>
+         id="flowPara3477">(2*(sun_tooth_nb + planet_tooth_nb)) % planet_nb = 0</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3472"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(309.62713,-247.19963)"><flowRegion
+         id="flowRegion3474"><rect
+           id="rect3476"
+           width="214.15233"
+           height="31.314728"
+           x="60.60915"
+           y="3178.7629" /></flowRegion><flowPara
+         id="flowPara3478">crenel_type ('rectangle' or 'circle')</flowPara></flowRoot>    <path
+       style="color:#000000;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 382.84781,2885.8186 -51.51778,72.731"
+       id="path3480"
+       inkscape:connector-curvature="0"
+       transform="translate(38.90625,64.9375)" />
+  </g>
 </svg>

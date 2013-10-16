@@ -101,15 +101,17 @@ eg_constraint['gearring_dedendum_to_hollow_pourcentage']  = 0.0
 eg_constraint['gear_addendum_height_pourcentage']         = 100.0
 ### sun-gear
 eg_constraint['sun_axle_diameter']       = 12.0
-eg_constraint['sun_crenel_diameter']     = 0.0
 eg_constraint['sun_crenel_nb']           = 4
+eg_constraint['sun_crenel_type']         = 'rectangle' # 'rectangle' or 'circle'
+eg_constraint['sun_crenel_diameter']     = 0.0
 eg_constraint['sun_crenel_width']        = 3.0
 eg_constraint['sun_crenel_height']       = 1.0
 eg_constraint['sun_crenel_router_bit_radius']   = 0.1
 ### planet-gear
 eg_constraint['planet_axle_diameter']      = 10.0
-eg_constraint['planet_crenel_diameter']    = 0.0
 eg_constraint['planet_crenel_nb']          = 0
+eg_constraint['planet_crenel_type']        = 'rectangle' # 'rectangle' or 'circle'
+eg_constraint['planet_crenel_diameter']    = 0.0
 eg_constraint['planet_crenel_width']       = 4.0
 eg_constraint['planet_crenel_height']      = 2.0
 eg_constraint['planet_crenel_router_bit_radius']  = 0.1
@@ -127,6 +129,8 @@ eg_constraint['carrier_leg_hole_diameter']              = 10.0
 eg_constraint['carrier_crenel_width']                = 4.0
 eg_constraint['carrier_crenel_height']               = 2.0
 eg_constraint['carrier_crenel_router_bit_radius']    = 0.1
+eg_constraint['carrier_hole_position_diameter']      = 0.0
+eg_constraint['carrier_hole_diameter']               = 0.0
 ### annulus: inherit dictionary entries from gearring
 ### holder
 eg_constraint['holder_diameter']            = 0.0
