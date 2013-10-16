@@ -70,14 +70,15 @@ def gearwheel_dictionary_init():
   r_gwd['axle_type']                = 'circle'
   r_gwd['axle_x_width']             = 10.0
   r_gwd['axle_y_width']             = 10.0
-  r_gwd['axle_router_bit_radius']   = 1.0
+  r_gwd['axle_router_bit_radius']   = 0.1
   ### crenel
-  r_gwd['crenel_diameter']     = 0.0
-  r_gwd['crenel_number']       = 0
-  r_gwd['crenel_angle']        = 0.0
-  r_gwd['crenel_width']        = 10.0
-  r_gwd['crenel_height']       = 5.0
-  r_gwd['crenel_router_bit_radius']      = 2.0
+  r_gwd['crenel_number']      = 0
+  r_gwd['crenel_type']        = 'rectangle' # 'rectangle' or 'circle'
+  r_gwd['crenel_diameter']    = 0.0
+  r_gwd['crenel_angle']       = 0.0
+  r_gwd['crenel_width']       = 10.0
+  r_gwd['crenel_height']      = 5.0
+  r_gwd['crenel_router_bit_radius'] = 0.1
   ### wheel-hollow = legs
   r_gwd['wheel_hollow_leg_number']        = 0
   r_gwd['wheel_hollow_leg_width']         = 10.0
@@ -86,7 +87,7 @@ def gearwheel_dictionary_init():
   r_gwd['wheel_hollow_external_diameter'] = 0.0
   r_gwd['wheel_hollow_router_bit_radius'] = 0.0
   ### cnc router_bit constraint
-  r_gwd['cnc_router_bit_radius']          = 1.0
+  r_gwd['cnc_router_bit_radius']          = 0.1
   ### view the gearwheel with tkinter
   r_gwd['tkinter_view'] = False
   r_gwd['output_file_basename'] = ''
@@ -115,21 +116,23 @@ def gearwheel_add_argument(ai_parser):
     help="Set the axle cylinder diameter or the axle rectangle x-width of the first gearwheel. Default: 10.0")
   r_parser.add_argument('--axle_y_width','--ayw', action='store', type=float, default=10.0, dest='sw_axle_y_width',
     help="Set the axle rectangle y-width of the first gearwheel. Default: 10.0")
-  r_parser.add_argument('--axle_router_bit_radius','--arr', action='store', type=float, default=1.0, dest='sw_axle_router_bit_radius',
-    help="Set the router_bit radius of the first gearwheel rectangle axle. Default: 1.0")
+  r_parser.add_argument('--axle_router_bit_radius','--arr', action='store', type=float, default=0.1, dest='sw_axle_router_bit_radius',
+    help="Set the router_bit radius of the first gearwheel rectangle axle. Default: 0.1")
   ### crenel
-  r_parser.add_argument('--crenel_diameter','--cd', action='store', type=float, default=0.0, dest='sw_crenel_diameter',
-    help="Set the bottom diameter of the crenels. If equal to 0.0, it is set to the axle diameter. Default: 0.0")
   r_parser.add_argument('--crenel_number','--cn', action='store', type=int, default=0, dest='sw_crenel_number',
     help="Set the number of crenels. The crenels are uniform distributed. The first crenel is centered on the crenel_angle. 0 means no crenel. Default: 0")
+  r_parser.add_argument('--crenel_type','--ct', action='store', default='rectangle', dest='sw_crenel_type',
+    help="Select the type of crenel for the first gearwheel. Possible values: 'rectangle' or 'circle'. Default: 'rectangle'")
+  r_parser.add_argument('--crenel_diameter','--cd', action='store', type=float, default=0.0, dest='sw_crenel_diameter',
+    help="Set the bottom diameter of the crenels. If equal to 0.0, it is set to the axle diameter. Default: 0.0")
   r_parser.add_argument('--crenel_angle','--ca', action='store', type=float, default=0.0, dest='sw_crenel_angle',
     help="Set the angle position of the first crenel. Default: 0.0")
   r_parser.add_argument('--crenel_width','--cw', action='store', type=float, default=10.0, dest='sw_crenel_width',
     help="Set the width (tangential size) of a crenel. Default: 10.0")
   r_parser.add_argument('--crenel_height','--ch', action='store', type=float, default=5.0, dest='sw_crenel_height',
     help="Set the height (radial size) of a crenel. Default: 5.0")
-  r_parser.add_argument('--crenel_router_bit_radius','--crbr', action='store', type=float, default=1.0, dest='sw_crenel_router_bit_radius',
-    help="Set the router_bit radius for the crenel. Default: 1.0")
+  r_parser.add_argument('--crenel_router_bit_radius','--crbr', action='store', type=float, default=0.1, dest='sw_crenel_router_bit_radius',
+    help="Set the router_bit radius for the crenel. Default: 0.1")
   ### wheel-hollow = legs
   r_parser.add_argument('--wheel_hollow_leg_number','--whln', action='store', type=int, default=0, dest='sw_wheel_hollow_leg_number',
     help="Set the number of legs for the wheel-hollow of the first gearwheel. The legs are uniform distributed. The first leg is centered on the leg_angle. 0 means no wheel-hollow. Default: 0")
@@ -144,8 +147,8 @@ def gearwheel_add_argument(ai_parser):
   r_parser.add_argument('--wheel_hollow_router_bit_radius','--whrr', action='store', type=float, default=0.0, dest='sw_wheel_hollow_router_bit_radius',
     help="Set the router_bit radius of the wheel-hollow of the first gearwheel. If equal to 0.0, it is set to a third of (wheel_hollow_external_diameter minus wheel_hollow_internal_diameter).Default: 0.0")
   ### cnc router_bit constraint
-  r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=1.0, dest='sw_cnc_router_bit_radius',
-    help="Set the minimum router_bit radius of the first gearwheel. It increases gear_router_bit_radius, axle_router_bit_radius and wheel_hollow_router_bit_radius if needed. Default: 1.0")
+  r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
+    help="Set the minimum router_bit radius of the first gearwheel. It increases gear_router_bit_radius, axle_router_bit_radius and wheel_hollow_router_bit_radius if needed. Default: 0.1")
   # return
   return(r_parser)
 
@@ -204,6 +207,11 @@ def gearwheel(ai_constraints):
         print("ERR664: Error, axle_y_width {:0.2f} is too small compare to axle_router_bit_radius {:0.2f}!".format(gw_c['axle_y_width'], axle_router_bit_radius))
         sys.exit(2)
       axle_diameter = math.sqrt(gw_c['axle_x_width']**2+gw_c['axle_y_width']**2)
+  # crenel_type
+  crenel_type = gw_c['crenel_type']
+  if((crenel_type!='rectangle')and(crenel_type!='circle')):
+    print("ERR213: Error, crenel_type {:s} is unknown".format(crenel_type))
+    sys.exit(2)
   # crenel_diameter
   crenel_diameter = gw_c['crenel_diameter']
   if(crenel_diameter==0):
@@ -294,9 +302,15 @@ def gearwheel(ai_constraints):
       print("ERR736: Error, wheel_hollow_internal_radius {:0.2f} is too small compare to wheel_hollow_leg_width {:0.2f}!".format(wheel_hollow_internal_radius, gw_c['wheel_hollow_leg_width']))
       sys.exit(2)
   if(gw_c['crenel_number']>0):
-    if(math.sqrt((crenel_radius+gw_c['crenel_height'])**2+(gw_c['crenel_width']/2)**2)> minimal_gear_profile_radius-radian_epsilon):
-      print("ERR298: Error, crenel_radius {:0.3f}, crenel_height {:0.3f} or crenel_width {:0.3f} are too big compare to minimal_gear_profile_radius {:0.3f}".format(crenel_radius, gw_c['crenel_height'], gw_c['crenel_width'], minimal_gear_profile_radius))
-      sys.exit(2)
+    print("dbg305: crenel_type {:s}".format(crenel_type))
+    if(crenel_type=='rectangle'):
+      if(math.sqrt((crenel_radius+gw_c['crenel_height'])**2+(gw_c['crenel_width']/2)**2)> minimal_gear_profile_radius-radian_epsilon):
+        print("ERR298: Error, crenel_radius {:0.3f}, crenel_height {:0.3f} or crenel_width {:0.3f} are too big compare to minimal_gear_profile_radius {:0.3f}".format(crenel_radius, gw_c['crenel_height'], gw_c['crenel_width'], minimal_gear_profile_radius))
+        sys.exit(2)
+    elif(crenel_type=='circle'):
+      if((crenel_radius+gw_c['crenel_width']/2)>minimal_gear_profile_radius-radian_epsilon):
+        print("ERR311: Error, crenel_radius {:0.3f} or crenel_width {:0.3f} are too big compare to minimal_gear_profile_radius {:0.3f}".format(crenel_radius, gw_c['crenel_width'], minimal_gear_profile_radius))
+        sys.exit(2)
     if(crenel_radius<radian_epsilon):
       print("ERR301: Error, the crenel_radius {:0.3f} is too small".format(crenel_radius))
       sys.exit(2)
@@ -313,11 +327,11 @@ def gearwheel(ai_constraints):
 
   ### crenel preparation
   crenel_axle_merge = False
-  if((gw_c['crenel_number']>0)and(gw_c['axle_type']=='circle')and(crenel_radius==axle_radius)): # crenel and axle are merged in one outline
+  if((gw_c['crenel_number']>0)and(gw_c['axle_type']=='circle')and(gw_c['crenel_type']=='rectangle')and(crenel_radius==axle_radius)): # crenel and axle are merged in one outline
     crenel_axle_merge = True
-  crenel_type = 1
+  crenel_rectangle_type = 1
   if(gw_c['crenel_height']<3.0*crenel_router_bit_radius):
-    crenel_type = 2
+    crenel_rectangle_type = 2
   if(gw_c['crenel_number']>0):
     crenel_portion_angle = 2*math.pi/gw_c['crenel_number']
 
@@ -329,12 +343,12 @@ def gearwheel(ai_constraints):
       axle_figure.append([g1_ix, g1_iy, axle_radius])
     else:
       axle_A = [(g1_ix+axle_radius*math.cos(-1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(-1*crenel_half_width_angle), 0)]
-      if(crenel_type==1):
+      if(crenel_rectangle_type==1):
         crenel_A = [
           (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy-gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
           (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy+gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
           (g1_ix+axle_radius*math.cos(1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(1*crenel_half_width_angle), 0)]
-      elif(crenel_type==2):
+      elif(crenel_rectangle_type==2):
         tmp_l = crenel_router_bit_radius * (1+math.sqrt(2))
         crenel_A = [
           (g1_ix+axle_radius+gw_c['crenel_height']+1*tmp_l, g1_iy-gw_c['crenel_width']/2.0+0*tmp_l, 1*crenel_router_bit_radius),
@@ -364,29 +378,34 @@ def gearwheel(ai_constraints):
 
   ### crenel
   #crenel_template
-  if((gw_c['crenel_number']>0)and(not crenel_axle_merge)):
-    if(crenel_type==1):
-      template_crenel = [
-        (g1_ix+crenel_radius+0*gw_c['crenel_height'], g1_iy-1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height'], g1_iy-1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height'], g1_iy+1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+0*gw_c['crenel_height'], g1_iy+1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius)]
-    elif(crenel_type==2):
-      tmp_l = crenel_router_bit_radius * (1+math.sqrt(2))
-      template_crenel = [
-        (g1_ix+crenel_radius+0*gw_c['crenel_height']-1*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+0*tmp_l, 1*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height']+1*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+0*tmp_l, 1*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height']+0*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+1*tmp_l, 0*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height']+0*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-1*tmp_l, 0*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+1*gw_c['crenel_height']+1*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+0*gw_c['crenel_height']-1*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+0*gw_c['crenel_height']-0*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-1*tmp_l, 0*crenel_router_bit_radius),
-        (g1_ix+crenel_radius+0*gw_c['crenel_height']-0*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+1*tmp_l, 0*crenel_router_bit_radius)]
-    template_crenel = cnc25d_api.outline_close(template_crenel)
-    for i in range(gw_c['crenel_number']):
-      crenel_A = cnc25d_api.outline_rotate(template_crenel, g1_ix, g1_iy, gw_c['crenel_angle']+i*crenel_portion_angle)
-      axle_figure.append(cnc25d_api.cnc_cut_outline(crenel_A, "crenel_A"))
-      axle_figure_overlay.append(cnc25d_api.ideal_outline(crenel_A, "crenel_A"))
+  if(gw_c['crenel_number']>0):
+    if((crenel_type=='rectangle')and(not crenel_axle_merge)):
+      if(crenel_rectangle_type==1):
+        template_crenel = [
+          (g1_ix+crenel_radius+0*gw_c['crenel_height'], g1_iy-1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+1*gw_c['crenel_height'], g1_iy-1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+1*gw_c['crenel_height'], g1_iy+1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+0*gw_c['crenel_height'], g1_iy+1*gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius)]
+      elif(crenel_rectangle_type==2):
+        tmp_l = crenel_router_bit_radius * (1+math.sqrt(2))
+        template_crenel = [
+          (g1_ix+crenel_radius+0*gw_c['crenel_height']-1*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+0*tmp_l, 1*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+1*gw_c['crenel_height']+1*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+0*tmp_l, 1*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+1*gw_c['crenel_height']+0*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+1*tmp_l, 0*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+1*gw_c['crenel_height']+0*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-1*tmp_l, 0*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+1*gw_c['crenel_height']+1*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+0*gw_c['crenel_height']-1*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+0*gw_c['crenel_height']-0*tmp_l, g1_iy+1*gw_c['crenel_width']/2.0-1*tmp_l, 0*crenel_router_bit_radius),
+          (g1_ix+crenel_radius+0*gw_c['crenel_height']-0*tmp_l, g1_iy-1*gw_c['crenel_width']/2.0+1*tmp_l, 0*crenel_router_bit_radius)]
+      template_crenel = cnc25d_api.outline_close(template_crenel)
+      for i in range(gw_c['crenel_number']):
+        crenel_A = cnc25d_api.outline_rotate(template_crenel, g1_ix, g1_iy, gw_c['crenel_angle']+i*crenel_portion_angle)
+        axle_figure.append(cnc25d_api.cnc_cut_outline(crenel_A, "crenel_A"))
+        axle_figure_overlay.append(cnc25d_api.ideal_outline(crenel_A, "crenel_A"))
+    if(crenel_type=='circle'):
+      for i in range(gw_c['crenel_number']):
+        ta = gw_c['crenel_angle']+i*crenel_portion_angle
+        axle_figure.append((g1_ix+crenel_radius*math.cos(ta), g1_iy++crenel_radius*math.sin(ta), gw_c['crenel_width']/2.0))
 
   ### wheel hollow (a.k.a legs)
   wheel_hollow_figure = []
@@ -508,8 +527,9 @@ def gearwheel_argparse_to_dictionary(ai_gw_args):
   r_gwd['axle_y_width']             = ai_gw_args.sw_axle_y_width
   r_gwd['axle_router_bit_radius']   = ai_gw_args.sw_axle_router_bit_radius
   ### crenel
-  r_gwd['crenel_diameter']     = ai_gw_args.sw_crenel_diameter
   r_gwd['crenel_number']       = ai_gw_args.sw_crenel_number
+  r_gwd['crenel_type']         = ai_gw_args.sw_crenel_type
+  r_gwd['crenel_diameter']     = ai_gw_args.sw_crenel_diameter
   r_gwd['crenel_angle']        = ai_gw_args.sw_crenel_angle
   r_gwd['crenel_width']        = ai_gw_args.sw_crenel_width
   r_gwd['crenel_height']       = ai_gw_args.sw_crenel_height
@@ -572,6 +592,7 @@ def gearwheel_self_test():
     ["crenel on axle with small crenel_height", "--gear_tooth_nb 25 --gear_module 10 --axle_type circle --axle_x_width 50 --crenel_number 8 --crenel_router_bit_radius 3 --crenel_width 17"],
     ["crenel with big crenel_height", "--gear_tooth_nb 25 --gear_module 10 --axle_type circle --axle_x_width 50 --crenel_number 4 --crenel_router_bit_radius 3 --crenel_width 20 --crenel_diameter 70 --crenel_height 10 --crenel_angle 0.1"],
     ["crenel with small crenel_height", "--gear_tooth_nb 25 --gear_module 10 --axle_type circle --axle_x_width 50 --crenel_number 8 --crenel_router_bit_radius 3 --crenel_width 20 --crenel_diameter 70"],
+    ["crenel circle", "--gear_tooth_nb 19 --gear_module 1 --axle_type circle --axle_x_width 8 --crenel_number 6 --crenel_type circle --crenel_width 1.9 --crenel_diameter 12"],
     ["last test"                      , "--gear_tooth_nb 30 --gear_module 10.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')

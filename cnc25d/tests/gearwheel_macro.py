@@ -158,8 +158,9 @@ gw_constraint['axle_x_width']             = 20.0
 gw_constraint['axle_y_width']             = 0.0
 gw_constraint['axle_router_bit_radius']   = 2.0
 ### crenel
-gw_constraint['crenel_diameter']     = 0.0
 gw_constraint['crenel_number']       = 2
+gw_constraint['crenel_type']         = 'rectangle' # 'rectangle' or 'circle'
+gw_constraint['crenel_diameter']     = 0.0
 gw_constraint['crenel_angle']        = 0.0
 gw_constraint['crenel_width']        = 10.0
 gw_constraint['crenel_height']       = 5.0
