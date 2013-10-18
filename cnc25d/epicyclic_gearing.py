@@ -78,7 +78,10 @@ def epicyclic_gearing_dictionary_init():
   r_egd['gearring_dedendum_to_hollow_pourcentage']  = 0.0
   r_egd['gear_addendum_height_pourcentage']         = 100.0
   ### sun-gear
-  r_egd['sun_axle_diameter']       = 3.0
+  r_egd['sun_axle_type']           = 'circle' # 'none', 'circle' or 'rectangle'
+  r_egd['sun_axle_x_width']        = 3.0
+  r_egd['sun_axle_y_width']        = 3.0
+  #r_egd['sun_axle_diameter']       = 3.0
   r_egd['sun_crenel_nb']           = 8
   r_egd['sun_crenel_type']         = 'rectangle' # 'rectangle' or 'circle'
   r_egd['sun_crenel_diameter']     = 0.0
@@ -165,8 +168,14 @@ def epicyclic_gearing_add_argument(ai_parser):
   r_parser.add_argument('--gear_addendum_height_pourcentage','--gadhp', action='store', type=float, default=100.0, dest='sw_gear_addendum_height_pourcentage',
     help="Set the gear_addendum_height_pourcentage of the sun-gear, planet-gear and annulus-gear. Use it to compensate gear_skin_thickness. Default: 100.0")
   ### sun-gear
-  r_parser.add_argument('--sun_axle_diameter','--sad', action='store', type=float, default=0.0, dest='sw_sun_axle_diameter',
-    help="Set the diameter of the sun-gear cylindrical axle. Default: 0.0")
+  r_parser.add_argument('--sun_axle_type','--sat', action='store', default='circle', dest='sw_sun_axle_type',
+    help="Select the type of axle for the sun-gear. Possible values: 'none', 'circle' and 'rectangle'. Default: 'circle'")
+  r_parser.add_argument('--sun_axle_x_width','--saxw', action='store', type=float, default=3.0, dest='sw_sun_axle_x_width',
+    help="Set the axle cylinder diameter or the axle rectangle x-width of the sun-gear. Default: 3.0")
+  r_parser.add_argument('--sun_axle_y_width','--sayw', action='store', type=float, default=3.0, dest='sw_sun_axle_y_width',
+    help="Set the axle rectangle y-width of the sun-gear. Default: 3.0")
+  #r_parser.add_argument('--sun_axle_diameter','--sad', action='store', type=float, default=0.0, dest='sw_sun_axle_diameter',
+  #  help="Set the diameter of the sun-gear cylindrical axle. Default: 0.0")
   r_parser.add_argument('--sun_crenel_nb','--scn', action='store', type=int, default=0, dest='sw_sun_crenel_nb',
     help="Set the number of sun-crenels. If equal to zero, no sun-crenel is created. Default: 0")
   r_parser.add_argument('--sun_crenel_type','--sct', action='store', default='rectangle', dest='sw_sun_crenel_type',
@@ -404,10 +413,9 @@ def epicyclic_gearing(ai_constraints):
   sg_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
   sg_c['gear_addendum_dedendum_parity']         = addendum_dedendum_parity
   sg_c['second_gear_addendum_dedendum_parity']  = addendum_dedendum_parity
-  sg_c['axle_type']                 = 'none' # axle
-  if(eg_c['sun_axle_diameter']>0):
-    sg_c['axle_type']               = 'circle'
-  sg_c['axle_x_width']              = eg_c['sun_axle_diameter']
+  sg_c['axle_type']                 = eg_c['sun_axle_type'] # axle
+  sg_c['axle_x_width']              = eg_c['sun_axle_x_width']
+  sg_c['axle_y_width']              = eg_c['sun_axle_y_width']
   sg_c['axle_router_bit_radius']    = sun_crenel_router_bit_radius
   sg_c['crenel_diameter']           = eg_c['sun_crenel_diameter'] # crenel
   sg_c['crenel_number']             = eg_c['sun_crenel_nb']
@@ -901,7 +909,10 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['gearring_dedendum_to_hollow_pourcentage']  =  ai_eg_args.sw_gearring_dedendum_to_hollow_pourcentage
   r_egd['gear_addendum_height_pourcentage']         =  ai_eg_args.sw_gear_addendum_height_pourcentage
   ### sun-gear
-  r_egd['sun_axle_diameter']       = ai_eg_args.sw_sun_axle_diameter
+  r_egd['sun_axle_type']           = ai_eg_args.sw_sun_axle_type
+  r_egd['sun_axle_x_width']        = ai_eg_args.sw_sun_axle_x_width
+  r_egd['sun_axle_y_width']        = ai_eg_args.sw_sun_axle_y_width
+  #r_egd['sun_axle_diameter']       = ai_eg_args.sw_sun_axle_diameter
   r_egd['sun_crenel_nb']           = ai_eg_args.sw_sun_crenel_nb
   r_egd['sun_crenel_type']         = ai_eg_args.sw_sun_crenel_type
   r_egd['sun_crenel_diameter']     = ai_eg_args.sw_sun_crenel_diameter
@@ -977,7 +988,7 @@ def epicyclic_gearing_self_test():
   """
   test_case_switch = [
     ["simplest test"        , "--sun_gear_tooth_nb 20 --planet_gear_tooth_nb 31 --gear_module 1.0 --planet_nb 3"],
-    ["sun crenel"           , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_diameter 6 --sun_crenel_nb 2"],
+    ["sun crenel"           , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 6 --sun_crenel_nb 2"],
     ["planet crenel"        , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --planet_axle_diameter 8 --planet_crenel_nb 5"],
     ["gearring crenel"      , "--sun_gear_tooth_nb 23 --planet_gear_tooth_nb 31 --gear_module 1.0 --holder_crenel_number 4"],
     ["carrier with peripheral and crenel", "--sun_gear_tooth_nb 20 --planet_gear_tooth_nb 31 --gear_module 1.0 --planet_nb 3"],
@@ -985,7 +996,7 @@ def epicyclic_gearing_self_test():
     ["carrier without peripheral and with crenel", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_central_diameter 30.0"],
     ["carrier without peripheral and crenel", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_crenel_height 0 --carrier_central_diameter 30.0"],
     ["carrier without peripheral and small central circle", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_central_diameter 20.0"],
-    ["sun crenel circle"    , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_diameter 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12"],
+    ["sun crenel circle"    , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12"],
     ["carrier crenel hole"  , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_hole_diameter 1.9"],
     ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
     ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --output_file_basename test_output/epicyclic_self_test.dxf"],
@@ -1038,7 +1049,7 @@ if __name__ == "__main__":
   #my_eg = epicyclic_gearing_cli()
   #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --return_type freecad_object".split())
   #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0".split())
-  my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_diameter 10 --sun_crenel_nb 4 --sun_crenel_height 1.0 --sun_crenel_width 3.0".split())
+  my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 10 --sun_crenel_nb 4 --sun_crenel_height 1.0 --sun_crenel_width 3.0".split())
   #Part.show(my_eg)
   try: # depending on eg_c['return_type'] it might be or not a freecad_object
     Part.show(my_eg)

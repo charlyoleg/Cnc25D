@@ -67,7 +67,7 @@ def gearwheel_dictionary_init():
   r_gwd.update(gear_profile.gear_profile_dictionary_init())
   #### gearwheel dictionary entries
   ### axle
-  r_gwd['axle_type']                = 'circle'
+  r_gwd['axle_type']                = 'none' # 'none', 'circle', 'rectangle'
   r_gwd['axle_x_width']             = 10.0
   r_gwd['axle_y_width']             = 10.0
   r_gwd['axle_router_bit_radius']   = 0.1

@@ -100,7 +100,9 @@ eg_constraint['gear_addendum_dedendum_parity_slack']      = 0.0
 eg_constraint['gearring_dedendum_to_hollow_pourcentage']  = 0.0
 eg_constraint['gear_addendum_height_pourcentage']         = 100.0
 ### sun-gear
-eg_constraint['sun_axle_diameter']       = 12.0
+eg_constraint['sun_axle_type']           = 'circle' # 'none', 'circle' or 'rectangle'
+eg_constraint['sun_axle_x_width']        = 12.0
+eg_constraint['sun_axle_y_width']        = 0.0
 eg_constraint['sun_crenel_nb']           = 4
 eg_constraint['sun_crenel_type']         = 'rectangle' # 'rectangle' or 'circle'
 eg_constraint['sun_crenel_diameter']     = 0.0

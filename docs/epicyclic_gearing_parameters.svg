@@ -24,7 +24,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994951"
      inkscape:cx="322.67619"
-     inkscape:cy="760.40478"
+     inkscape:cy="477.56207"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1876,7 +1876,8 @@
            height="49.497475"
            x="326.27927"
            y="3169.6714" /></flowRegion><flowPara
-         id="flowPara4486">axle_diameter</flowPara></flowRoot>    <flowRoot
+         id="flowPara4486">planet_axle_diameter</flowPara><flowPara
+         id="flowPara3479">sun_axle_x_width</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4488"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -2018,5 +2019,17 @@
        id="path3480"
        inkscape:connector-curvature="0"
        transform="translate(38.90625,64.9375)" />
-  </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3481"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(-43.926257,73.01872)"><flowRegion
+         id="flowRegion3483"><rect
+           id="rect3485"
+           width="339.41122"
+           height="46.466938"
+           x="354.56354"
+           y="3197.9558" /></flowRegion><flowPara
+         id="flowPara3487">sun_axle_type ('none', 'circle' or 'rectangle')</flowPara><flowPara
+         id="flowPara3489">sun_axle_y_width</flowPara></flowRoot>  </g>
 </svg>
