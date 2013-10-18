@@ -814,6 +814,17 @@ gear_tooth_resolution:    \t{:d}
 gear_skin_thickness:      \t{:0.3f}
 gear_addendum_dedendum_parity_slack: {:0.3f}
 """.format(eg_c['gear_module'], gear_router_bit_radius, eg_c['gear_tooth_resolution'], eg_c['gear_skin_thickness'], eg_c['gear_addendum_dedendum_parity_slack'])
+  eg_parameter_info += """
+carrier_central radius: \t{:0.3f}  diameter: {:0.3f}
+carrier_leg radius:     \t{:0.3f}  diameter: {:0.3f}
+carrier_peripheral_disable: \t{:d}
+carrier_hollow_disable:     \t{:d}
+carrier_peripheral_external radius: \t{:0.3f}  diameter: {:0.3f}
+carrier_peripheral_internal radius: \t{:0.3f}  diameter: {:0.3f}
+carrier_leg_middle radius:  \t{:0.3f}  diameter: {:0.3f}
+carrier_smoothing:          \t{:0.3f}  diameter: {:0.3f}
+carrier_leg_hole:           \t{:0.3f}  diameter: {:0.3f}
+""".format(carrier_central_radius, 2*carrier_central_radius, carrier_leg_radius, 2*carrier_leg_radius, carrier_peripheral_disable, carrier_hollow_disable, carrier_peripheral_external_radius, 2*carrier_peripheral_external_radius, carrier_peripheral_internal_radius, 2*carrier_peripheral_internal_radius, carrier_leg_middle_radius, 2*carrier_leg_middle_radius, carrier_smoothing_radius, 2*carrier_smoothing_radius, carrier_leg_hole_radius, 2*carrier_leg_hole_radius)
   #print(eg_parameter_info)
 
   ### display with Tkinter
