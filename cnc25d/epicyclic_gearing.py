@@ -84,6 +84,7 @@ def epicyclic_gearing_dictionary_init():
   #r_egd['sun_axle_diameter']       = 3.0
   r_egd['sun_crenel_nb']           = 8
   r_egd['sun_crenel_type']         = 'rectangle' # 'rectangle' or 'circle'
+  r_egd['sun_crenel_mark_nb']      = 0
   r_egd['sun_crenel_diameter']     = 0.0
   r_egd['sun_crenel_width']        = 4.0
   r_egd['sun_crenel_height']       = 2.0
@@ -92,6 +93,7 @@ def epicyclic_gearing_dictionary_init():
   r_egd['planet_axle_diameter']      = 3.0
   r_egd['planet_crenel_nb']          = 8
   r_egd['planet_crenel_type']        = 'rectangle' # 'rectangle' or 'circle'
+  r_egd['planet_crenel_mark_nb']     = 0
   r_egd['planet_crenel_diameter']    = 0.0
   r_egd['planet_crenel_width']       = 4.0
   r_egd['planet_crenel_height']      = 2.0
@@ -180,6 +182,8 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Set the number of sun-crenels. If equal to zero, no sun-crenel is created. Default: 0")
   r_parser.add_argument('--sun_crenel_type','--sct', action='store', default='rectangle', dest='sw_sun_crenel_type',
     help="Select the type of crenel for the sun-gear. Possible values: 'rectangle' or 'circle'. Default: 'rectangle'")
+  r_parser.add_argument('--sun_crenel_mark_nb','--scmn', action='store', type=int, default=0, dest='sw_sun_crenel_mark_nb',
+    help="Set the number of crenels that must be marked on the sun-gear. Default: 0")
   r_parser.add_argument('--sun_crenel_diameter','--scd', action='store', type=float, default=0.0, dest='sw_sun_crenel_diameter',
     help="Set the diameter of the positioning circle for the sun-crenel. Default: 0.0")
   r_parser.add_argument('--sun_crenel_width','--scw', action='store', type=float, default=4.0, dest='sw_sun_crenel_width',
@@ -195,6 +199,8 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Set the number of planet-crenels. If equal to zero, no planet-crenel is created. Default: 0")
   r_parser.add_argument('--planet_crenel_type','--pct', action='store', default='rectangle', dest='sw_planet_crenel_type',
     help="Select the type of crenel for the planet-gear. Possible values: 'rectangle' or 'circle'. Default: 'rectangle'")
+  r_parser.add_argument('--planet_crenel_mark_nb','--pcmn', action='store', type=int, default=0, dest='sw_planet_crenel_mark_nb',
+    help="Set the number of crenels that must be marked on the planet-gear. Default: 0")
   r_parser.add_argument('--planet_crenel_diameter','--pcd', action='store', type=float, default=0.0, dest='sw_planet_crenel_diameter',
     help="Set the diameter of the positioning circle for the planet-crenel. Default: 0.0")
   r_parser.add_argument('--planet_crenel_width','--pcw', action='store', type=float, default=4.0, dest='sw_planet_crenel_width',
@@ -359,7 +365,7 @@ def epicyclic_gearing(ai_constraints):
   gr_c['simulation_enable']           = False
   gr_c['output_file_basename']        = ""
   gr_c['args_in_txt']                 = "gearring for epicyclic_gearing"
-  gr_c['return_type']                 = 'cnc25d_figure'
+  gr_c['return_type']                 = 'cnc25d_figure_and_parameters' # 'cnc25d_figure'
   ### planet
   pg_c = {}
   pg_c['gear_tooth_nb']             = planet_gear_tooth_nb # gear-profile
@@ -380,6 +386,7 @@ def epicyclic_gearing(ai_constraints):
   pg_c['crenel_diameter']           = eg_c['planet_crenel_diameter'] # crenel
   pg_c['crenel_number']             = eg_c['planet_crenel_nb']
   pg_c['crenel_type']               = eg_c['planet_crenel_type']
+  pg_c['crenel_mark_nb']            = eg_c['planet_crenel_mark_nb']
   pg_c['crenel_angle']              = 0
   pg_c['crenel_width']              = eg_c['planet_crenel_width']
   pg_c['crenel_height']             = eg_c['planet_crenel_height']
@@ -420,6 +427,7 @@ def epicyclic_gearing(ai_constraints):
   sg_c['crenel_diameter']           = eg_c['sun_crenel_diameter'] # crenel
   sg_c['crenel_number']             = eg_c['sun_crenel_nb']
   sg_c['crenel_type']               = eg_c['sun_crenel_type']
+  sg_c['crenel_mark_nb']            = eg_c['sun_crenel_mark_nb']
   sg_c['crenel_angle']              = 0
   sg_c['crenel_width']              = eg_c['sun_crenel_width']
   sg_c['crenel_height']             = eg_c['sun_crenel_height']
@@ -485,7 +493,10 @@ def epicyclic_gearing(ai_constraints):
   
   #### epicyclic_gearing construction
   #print("dbg435: gr_c:", gr_c)
-  annulus_figure = gearring.gearring(gr_c)
+  (annulus_figure, holder_parameters) = gearring.gearring(gr_c)
+  ( holder_crenel_half_width, holder_crenel_half_angle, holder_smoothing_radius, holder_crenel_x_position, holder_maximal_height_plus,
+    holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
+    holder_hole_position_radius, holder_hole_radius, holder_radius) = holder_parameters
   planet_figures = []
   for i in range(planet_nb):
     planet_figures.append(gearwheel.gearwheel(pg_c_list[i]))
@@ -825,6 +836,21 @@ carrier_leg_middle radius:  \t{:0.3f}  diameter: {:0.3f}
 carrier_smoothing:          \t{:0.3f}  diameter: {:0.3f}
 carrier_leg_hole:           \t{:0.3f}  diameter: {:0.3f}
 """.format(carrier_central_radius, 2*carrier_central_radius, carrier_leg_radius, 2*carrier_leg_radius, carrier_peripheral_disable, carrier_hollow_disable, carrier_peripheral_external_radius, 2*carrier_peripheral_external_radius, carrier_peripheral_internal_radius, 2*carrier_peripheral_internal_radius, carrier_leg_middle_radius, 2*carrier_leg_middle_radius, carrier_smoothing_radius, 2*carrier_smoothing_radius, carrier_leg_hole_radius, 2*carrier_leg_hole_radius)
+  eg_parameter_info += """
+sun_crenel_nb:      {:d}
+sun_crenel_type:    {:s}
+sun_crenel_mark_nb: {:d}
+""".format(eg_c['sun_crenel_nb'], eg_c['sun_crenel_type'], eg_c['sun_crenel_mark_nb'])
+  eg_parameter_info += """
+planet_crenel_nb:      {:d}
+planet_crenel_type:    {:s}
+planet_crenel_mark_nb: {:d}
+""".format(eg_c['planet_crenel_nb'], eg_c['planet_crenel_type'], eg_c['planet_crenel_mark_nb'])
+  eg_parameter_info += """
+holder radius:  {:0.3f}  diameter: {:0.3f}
+holder_crenel_number: {:d}
+holder_hole_mark_nb:  {:d}
+""".format(holder_radius, 2*holder_radius, eg_c['holder_crenel_number'], eg_c['holder_hole_mark_nb'])
   #print(eg_parameter_info)
 
   ### display with Tkinter
@@ -926,6 +952,7 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   #r_egd['sun_axle_diameter']       = ai_eg_args.sw_sun_axle_diameter
   r_egd['sun_crenel_nb']           = ai_eg_args.sw_sun_crenel_nb
   r_egd['sun_crenel_type']         = ai_eg_args.sw_sun_crenel_type
+  r_egd['sun_crenel_mark_nb']      = ai_eg_args.sw_sun_crenel_mark_nb
   r_egd['sun_crenel_diameter']     = ai_eg_args.sw_sun_crenel_diameter
   r_egd['sun_crenel_width']        = ai_eg_args.sw_sun_crenel_width
   r_egd['sun_crenel_height']       = ai_eg_args.sw_sun_crenel_height
@@ -934,6 +961,7 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['planet_axle_diameter']      = ai_eg_args.sw_planet_axle_diameter
   r_egd['planet_crenel_nb']          = ai_eg_args.sw_planet_crenel_nb
   r_egd['planet_crenel_type']        = ai_eg_args.sw_planet_crenel_type
+  r_egd['planet_crenel_mark_nb']     = ai_eg_args.sw_planet_crenel_mark_nb
   r_egd['planet_crenel_diameter']    = ai_eg_args.sw_planet_crenel_diameter
   r_egd['planet_crenel_width']       = ai_eg_args.sw_planet_crenel_width
   r_egd['planet_crenel_height']      = ai_eg_args.sw_planet_crenel_height
@@ -1008,6 +1036,7 @@ def epicyclic_gearing_self_test():
     ["carrier without peripheral and crenel", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_crenel_height 0 --carrier_central_diameter 30.0"],
     ["carrier without peripheral and small central circle", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_central_diameter 20.0"],
     ["sun crenel circle"    , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12"],
+    ["sun crenel circle"    , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12 --sun_crenel_mark_nb 1"],
     ["carrier crenel hole"  , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_hole_diameter 1.9"],
     ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
     ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --output_file_basename test_output/epicyclic_self_test.dxf"],

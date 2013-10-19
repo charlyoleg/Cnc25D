@@ -105,6 +105,7 @@ eg_constraint['sun_axle_x_width']        = 12.0
 eg_constraint['sun_axle_y_width']        = 0.0
 eg_constraint['sun_crenel_nb']           = 4
 eg_constraint['sun_crenel_type']         = 'rectangle' # 'rectangle' or 'circle'
+eg_constraint['sun_crenel_mark_nb']      = 0
 eg_constraint['sun_crenel_diameter']     = 0.0
 eg_constraint['sun_crenel_width']        = 3.0
 eg_constraint['sun_crenel_height']       = 1.0
@@ -113,6 +114,7 @@ eg_constraint['sun_crenel_router_bit_radius']   = 0.1
 eg_constraint['planet_axle_diameter']      = 10.0
 eg_constraint['planet_crenel_nb']          = 0
 eg_constraint['planet_crenel_type']        = 'rectangle' # 'rectangle' or 'circle'
+eg_constraint['planet_crenel_mark_nb']     = 0
 eg_constraint['planet_crenel_diameter']    = 0.0
 eg_constraint['planet_crenel_width']       = 4.0
 eg_constraint['planet_crenel_height']      = 2.0
@@ -141,6 +143,7 @@ eg_constraint['holder_position_angle']      = 0.0
 ### holder-hole
 eg_constraint['holder_hole_position_radius']   = 0.0
 eg_constraint['holder_hole_diameter']          = 5.0
+eg_constraint['holder_hole_mark_nb']           = 0
 ### holder-crenel
 eg_constraint['holder_crenel_position']        = 4.0
 eg_constraint['holder_crenel_height']          = 2.0

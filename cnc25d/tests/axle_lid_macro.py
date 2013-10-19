@@ -105,6 +105,7 @@ al_constraint['holder_smoothing_radius']       = 0.0
 al_constraint['clearance_diameter']           = 100.0
 al_constraint['central_diameter']             = 40.0
 al_constraint['axle_hole_diameter']           = 22.0
+al_constraint['annulus_holder_axle_hole_diameter'] = 0.0
 ### general
 al_constraint['cnc_router_bit_radius']   = 0.1
 al_constraint['extrusion_height']     = 10.0

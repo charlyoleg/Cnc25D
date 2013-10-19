@@ -68,6 +68,7 @@ def axle_lid_dictionary_init():
   r_ald['clearance_diameter']     = 50.0
   r_ald['central_diameter']       = 30.0
   r_ald['axle_hole_diameter']     = 22.0
+  r_ald['annulus_holder_axle_hole_diameter'] = 0.0
   ### general
   r_ald['cnc_router_bit_radius']  = 0.1
   r_ald['extrusion_height']       = 10.0
@@ -99,6 +100,8 @@ def axle_lid_add_argument(ai_parser):
     help="Set the diameter of the central circle. Default: 30.0")
   r_parser.add_argument('--axle_hole_diameter','--ahd', action='store', type=float, default=22.0, dest='sw_axle_hole_diameter',
     help="Set the diameter of the axle-hole. Default: 22.0")
+  r_parser.add_argument('--annulus_holder_axle_hole_diameter','--ahahd', action='store', type=float, default=0.0, dest='sw_annulus_holder_axle_hole_diameter',
+    help="Set the diameter of the axle-hole on the annulus-holder side. If equal to 0.0, it is set to axle_hole_diameter. Default: 0.0")
   ### general
   r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
     help="Set the minimum router_bit radius of the axle-lid. Default: 0.1")
@@ -138,6 +141,9 @@ def axle_lid(ai_constraints):
   central_radius = al_c['central_diameter']/2.0
   clearance_radius = al_c['clearance_diameter']/2.0
   holder_radius = al_c['holder_diameter']/2.0
+  annulus_holder_axle_hole_radius = al_c['annulus_holder_axle_hole_diameter']/2.0
+  if(annulus_holder_axle_hole_radius==0):
+    annulus_holder_axle_hole_radius = axle_hole_radius
   if(cnc_router_bit_radius>axle_hole_radius):
     print("ERR141: Error, cnc_router_bit_radius {:0.3f} is bigger than axle_hole_radius {:0.3f}".format(cnc_router_bit_radius, axle_hole_radius))
     sys.exit(2)
@@ -149,6 +155,9 @@ def axle_lid(ai_constraints):
     sys.exit(2)
   if(clearance_radius>holder_radius-radian_epsilon):
     print("ERR151: Error, clearance_radius {:0.3f} is bigger than the holder_radius {:0.3f}".format(clearance_radius, holder_radius))
+    sys.exit(2)
+  if(annulus_holder_axle_hole_radius>clearance_radius):
+    print("ERR159: Error, annulus_holder_axle_hole_radius {:0.3f} is bigger than clearance_radius {:0.3f}".format(annulus_holder_axle_hole_radius, clearance_radius))
     sys.exit(2)
   holder_crenel_number = al_c['holder_crenel_number']
   if(holder_crenel_number<4):
@@ -163,7 +172,7 @@ def axle_lid(ai_constraints):
   ### gearring-holder
   gr_c = {}
   gr_c['gear_tooth_nb']               = 0
-  gr_c['gear_primitive_diameter']     = 2.0*axle_hole_radius
+  gr_c['gear_primitive_diameter']     = 2.0*annulus_holder_axle_hole_radius
   gr_c['holder_diameter']             = 2.0*holder_radius
   gr_c['holder_crenel_number']        = holder_crenel_number
   gr_c['holder_position_angle']       = al_c['holder_position_angle']
@@ -191,7 +200,7 @@ def axle_lid(ai_constraints):
   #
   ( holder_crenel_half_width, holder_crenel_half_angle, holder_smoothing_radius, holder_crenel_x_position, holder_maximal_height_plus,
     holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
-    holder_hole_position_radius, holder_hole_radius) = holder_parameters
+    holder_hole_position_radius, holder_hole_radius, holder_radius) = holder_parameters
   g1_ix = 0.0
   g1_iy = 0.0
   angle_incr = crenel_portion_angle
@@ -290,8 +299,9 @@ holder external radius:   \t{:0.3f} diameter: \t{:0.3f}
 clearance radius:         \t{:0.3f} diameter: \t{:0.3f}
 central radius:           \t{:0.3f} diameter: \t{:0.3f}
 axle-hole radius:         \t{:0.3f} diameter: \t{:0.3f}
+annulus-holder-axle-hole radius: \t{:0.3f} diameter: \t{:0.3f}
 cnc_router_bit_radius:    \t{:0.3f} diameter: \t{:0.3f}
-""".format(holder_crenel_number, al_c['holder_hole_diameter']/2.0, al_c['holder_hole_diameter'], holder_radius, 2*holder_radius, clearance_radius, 2*clearance_radius, central_radius, 2*central_radius, axle_hole_radius, 2*axle_hole_radius, cnc_router_bit_radius, 2*cnc_router_bit_radius)
+""".format(holder_crenel_number, al_c['holder_hole_diameter']/2.0, al_c['holder_hole_diameter'], holder_radius, 2*holder_radius, clearance_radius, 2*clearance_radius, central_radius, 2*central_radius, axle_hole_radius, 2*axle_hole_radius, annulus_holder_axle_hole_radius, 2*annulus_holder_axle_hole_radius, cnc_router_bit_radius, 2*cnc_router_bit_radius)
   #print(al_parameter_info)
 
   ### display with Tkinter
@@ -364,6 +374,7 @@ def axle_lid_argparse_to_dictionary(ai_al_args):
   r_ald['clearance_diameter']     = ai_al_args.sw_clearance_diameter
   r_ald['central_diameter']       = ai_al_args.sw_central_diameter
   r_ald['axle_hole_diameter']     = ai_al_args.sw_axle_hole_diameter
+  r_ald['annulus_holder_axle_hole_diameter']     = ai_al_args.sw_annulus_holder_axle_hole_diameter
   ### general
   r_ald['cnc_router_bit_radius']  = ai_al_args.sw_cnc_router_bit_radius
   r_ald['extrusion_height']       = ai_al_args.sw_extrusion_height
@@ -407,6 +418,7 @@ def axle_lid_self_test():
     ["odd number of crenel" , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 5"],
     ["four crenels"         , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 4"],
     ["with initial angle"   , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 35.0 --axle_hole_diameter 22.0 --holder_position_angle 0.25"],
+    ["with annulus-holder-axle-hole-diameter"   , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 35.0 --axle_hole_diameter 22.0 --annulus_holder_axle_hole_diameter 80.0"],
     ["output file"          , "--holder_diameter 130.0 --clearance_diameter 115.0 --central_diameter 100.0 --axle_hole_diameter 22.0 --output_file_basename test_output/axle_lid_self_test.dxf"],
     ["last test"            , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
