@@ -1474,7 +1474,7 @@ def cnc_cut_outline_test5(ai_sw_router_bit_radius):
 # cnc_cut_outline command line interface
 ################################################################
 
-def cnc_cut_outline_cli(ai_args=None):
+def cnc_cut_outline_cli(ai_args=""):
   """ command line interface of cnc_cut_outline.py when it is used in standalone
   """
   cco_parser = argparse.ArgumentParser(description='Run the function cnc_cut_outline() to check it.')
@@ -1519,13 +1519,13 @@ def cnc_cut_outline_cli(ai_args=None):
 if __name__ == "__main__":
   #FreeCAD.Console.PrintMessage("dbg109: I'm main\n")
   #cnc_cut_outline_cli()
-  #cnc_cut_outline_cli("--test1".split())
-  #cnc_cut_outline_cli("--test2".split())
-  #cnc_cut_outline_cli("--test1 --test2".split())
-  #cnc_cut_outline_cli("--test3".split())
-  cnc_cut_outline_cli("--test3 --router_bit_radius=2".split()) # --router_bit_radius=2 > no warning ; --router_bit_radius=3 > backends warnings
-  #cnc_cut_outline_cli("--test4 --router_bit_radius=-3".split())
-  #cnc_cut_outline_cli("--test5 --router_bit_radius=3".split())
+  #cnc_cut_outline_cli("--test1")
+  #cnc_cut_outline_cli("--test2")
+  #cnc_cut_outline_cli("--test1 --test2")
+  #cnc_cut_outline_cli("--test3")
+  cnc_cut_outline_cli("--test3 --router_bit_radius=2") # --router_bit_radius=2 > no warning ; --router_bit_radius=3 > backends warnings
+  #cnc_cut_outline_cli("--test4 --router_bit_radius=-3")
+  #cnc_cut_outline_cli("--test5 --router_bit_radius=3")
   #make_H_shape(1.0,2.0,'')
 
 

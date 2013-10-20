@@ -614,7 +614,7 @@ def split_gearwheel_self_test():
 # split_gearwheel command line interface
 ################################################################
 
-def split_gearwheel_cli(ai_args=None):
+def split_gearwheel_cli(ai_args=""):
   """ command line interface of split_gearwheel.py when it is used in standalone
   """
   # split_gearwheel parser
@@ -643,9 +643,9 @@ def split_gearwheel_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("split_gearwheel.py says hello!\n")
   #my_sgw = split_gearwheel_cli()
-  #my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --return_type freecad_object".split())
-  my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2".split())
-  #my_sgw = split_gearwheel_cli("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0".split())
+  #my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --return_type freecad_object")
+  my_sgw = split_gearwheel_cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2")
+  #my_sgw = split_gearwheel_cli("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0")
   #Part.show(my_sgw)
   try: # depending on sgw_c['return_type'] it might be or not a freecad_object
     Part.show(my_sgw)

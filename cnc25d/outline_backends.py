@@ -848,7 +848,7 @@ def outline_arc_line_test1():
 # ******** command line interface ***********
 ################################################################
 
-def outline_backends_cli(ai_args=None):
+def outline_backends_cli(ai_args=""):
   """ command line interface to run this script in standalone
   """
   ob_parser = argparse.ArgumentParser(description='Test the outline_backends API.')
@@ -871,5 +871,5 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("outline_backends.py says hello!\n")
   # select your script behavior
   #outline_backends_cli()
-  outline_backends_cli("--test1".split())
+  outline_backends_cli("--test1")
 

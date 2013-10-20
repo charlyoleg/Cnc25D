@@ -1195,7 +1195,7 @@ def gear_profile_self_test():
 # gear_profile command line interface
 ################################################################
 
-def gear_profile_cli(ai_args=None):
+def gear_profile_cli(ai_args=""):
   """ command line interface of gear_profile.py when it is used in standalone
   """
   # gear_profile parser
@@ -1225,14 +1225,14 @@ def gear_profile_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gear_profile.py says hello!\n")
   #my_gp = gear_profile_cli()
-  #my_gp = gear_profile_cli("--gear_tooth_nb 17".split())
-  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0".split())
-  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20 --return_type freecad_object".split())
-  my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20".split())
-  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1".split())
-  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename gear_profile_example_1.svg".split())
-  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --cut_portion 7 3 3 --output_file_basename gear_profile_example_2.svg".split())
-  #my_gp = gear_profile_cli("--gear_tooth_nb 20 --gear_force_angle {:0.3f} --gear_force_angle_n {:0.3f} --output_file_basename gear_profile_example_3.svg".format(25*math.pi/180, 35*math.pi/180,).split())
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17")
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0")
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20 --return_type freecad_object")
+  my_gp = gear_profile_cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20")
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1")
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --output_file_basename gear_profile_example_1.svg")
+  #my_gp = gear_profile_cli("--gear_tooth_nb 17 --cut_portion 7 3 3 --output_file_basename gear_profile_example_2.svg")
+  #my_gp = gear_profile_cli("--gear_tooth_nb 20 --gear_force_angle {:0.3f} --gear_force_angle_n {:0.3f} --output_file_basename gear_profile_example_3.svg".format(25*math.pi/180, 35*math.pi/180,))
   try: # depending on gp_c['return_type'] it might be or not a freecad_object
     Part.show(my_gp)
     print("freecad_object returned")

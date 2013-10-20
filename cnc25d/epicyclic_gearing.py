@@ -1101,7 +1101,7 @@ def epicyclic_gearing_self_test():
 # epicyclic_gearing command line interface
 ################################################################
 
-def epicyclic_gearing_cli(ai_args=None):
+def epicyclic_gearing_cli(ai_args=""):
   """ command line interface of epicyclic_gearing.py when it is used in standalone
   """
   # epicyclic_gearing parser
@@ -1130,9 +1130,9 @@ def epicyclic_gearing_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("epicyclic_gearing.py says hello!\n")
   #my_eg = epicyclic_gearing_cli()
-  #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --return_type freecad_object".split())
-  #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0".split())
-  my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 10 --sun_crenel_nb 4 --sun_crenel_height 1.0 --sun_crenel_width 3.0".split())
+  #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --return_type freecad_object")
+  #my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0")
+  my_eg = epicyclic_gearing_cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 10 --sun_crenel_nb 4 --sun_crenel_height 1.0 --sun_crenel_width 3.0")
   #Part.show(my_eg)
   try: # depending on eg_c['return_type'] it might be or not a freecad_object
     Part.show(my_eg)

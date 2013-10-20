@@ -99,7 +99,7 @@ def get_effective_args(ai_default_args):
         arg_index_offset=2
   r_effective_args = sys.argv[arg_index_offset+1:]
   if(len(r_effective_args)==0):
-    r_effective_args = ai_default_args
+    r_effective_args = ai_default_args.split()
   #print("dbg115: r_effective_args:", str(r_effective_args))
   #FreeCAD.Console.PrintMessage("dbg116: r_effective_args: %s\n"%(str(r_effective_args)))
   return(r_effective_args)

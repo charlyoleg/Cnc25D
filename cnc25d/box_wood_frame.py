@@ -1829,7 +1829,7 @@ def box_wood_frame_self_test():
 # box_wood_frame command line interface
 ################################################################
 
-def box_wood_frame_cli(ai_args=None):
+def box_wood_frame_cli(ai_args=""):
   """ it is the command line interface of box_wood_frame.py when it is used in standalone
   """
   bwf_parser = argparse.ArgumentParser(description='Command line interface for the function box_wood_frame().')
@@ -1858,8 +1858,8 @@ def box_wood_frame_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("box_wood_frame says hello!\n")
   #my_bwf = box_wood_frame_cli()
-  #my_bwf = box_wood_frame_cli("--box_height 600.0 --return_type freecad_object".split())
-  my_bwf = box_wood_frame_cli("--box_height 600.0".split())
+  #my_bwf = box_wood_frame_cli("--box_height 600.0 --return_type freecad_object")
+  my_bwf = box_wood_frame_cli("--box_height 600.0")
   try: # depending on bwf_c['return_type'] it might be or not a freecad_object
     Part.show(my_bwf)
     print("freecad_object returned")

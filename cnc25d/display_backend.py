@@ -923,7 +923,7 @@ Tenait en son bec un fromage.
 # ******** command line interface ***********
 ################################################################
 
-def display_backends_cli(ai_args=None):
+def display_backends_cli(ai_args=""):
   """ command line interface to run this script in standalone
   """
   db_parser = argparse.ArgumentParser(description='Test the display_backend Two_Canvas).')
@@ -950,6 +950,6 @@ if __name__ == "__main__":
   print("display_backend.py says hello!")
   # choose the script behavior
   #display_backends_cli()                   # get arguments from the command line
-  display_backends_cli("--test1".split())   # run the test1
-  #display_backends_cli("--test2".split())
+  display_backends_cli("--test1")   # run the test1
+  #display_backends_cli("--test2")
 

@@ -438,7 +438,7 @@ def axle_lid_self_test():
 # axle_lid command line interface
 ################################################################
 
-def axle_lid_cli(ai_args=None):
+def axle_lid_cli(ai_args=""):
   """ command line interface of axle_lid.py when it is used in standalone
   """
   # axle_lid parser
@@ -467,8 +467,8 @@ def axle_lid_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("axle_lid.py says hello!\n")
   #my_al = axle_lid_cli()
-  #my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object".split())
-  my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6".split())
+  #my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object")
+  my_al = axle_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6")
   #Part.show(my_al)
   try: # depending on al_c['return_type'] it might be or not a freecad_object
     Part.show(my_al)

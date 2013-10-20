@@ -145,7 +145,7 @@ def positioning_test1():
 # positioning command line interface
 ################################################################
 
-def positioning_cli(ai_args=None):
+def positioning_cli(ai_args=""):
   """ it is the command line interface of positioning.py when it is used in standalone
   """
   posi_parser = argparse.ArgumentParser(description='Test the positioning API')
@@ -168,5 +168,5 @@ def positioning_cli(ai_args=None):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("dbg109: I'm main\n")
   #positioning_cli()
-  positioning_cli("--test1".split())
+  positioning_cli("--test1")
 
