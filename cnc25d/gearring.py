@@ -487,7 +487,7 @@ def gearring_self_test():
 # gearring command line interface
 ################################################################
 
-def gearring_cli(ai_args="":
+def gearring_cli(ai_args=""):
   """ command line interface of gearring.py when it is used in standalone
   """
   # gearring parser
