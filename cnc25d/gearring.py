@@ -237,6 +237,7 @@ def gearring(ai_constraints):
     maximal_gear_profile_radius = gear_profile_parameters['hollow_radius']
     g1_ix = gear_profile_parameters['center_ox']
     g1_iy = gear_profile_parameters['center_oy']
+    gear_module = gear_profile_parameters['module']
   else: # no gear_profile, just a circle
     if(gr_c['gear_primitive_diameter']<radian_epsilon):
       print("ERR885: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(gr_c['gear_primitive_diameter']))
@@ -248,10 +249,11 @@ def gearring(ai_constraints):
     gear_profile_info += "outline circle radius: \t{:0.3f}  \tdiameter: {:0.3f}\n".format(gr_c['gear_primitive_diameter']/2.0, gr_c['gear_primitive_diameter'])
     gear_profile_info += "gear center (x, y):   \t{:0.3f}  \t{:0.3f}\n".format(g1_ix, g1_iy)
     maximal_gear_profile_radius = float(gr_c['gear_primitive_diameter'])/2
+    gear_module = 0
   ### check parameter coherence (part 2)
   holder_radius = float(gr_c['holder_diameter'])/2
   if(holder_radius==0): # dynamic default value
-    holder_radius = maximal_gear_profile_radius + 2.0*gear_profile_parameters['module'] + gr_c['holder_hole_diameter']/2.0
+    holder_radius = maximal_gear_profile_radius + 2.0*gear_module + gr_c['holder_hole_diameter']/2.0
   holder_hole_position_radius = gr_c['holder_hole_position_radius']
   if(holder_hole_position_radius==0):
     holder_hole_position_radius = holder_radius

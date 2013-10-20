@@ -123,6 +123,9 @@ def epicyclic_gearing_dictionary_init():
   r_egd['carrier_hole_diameter']               = 0.0
   ### annulus: inherit dictionary entries from gearring
   r_egd.update(gearring.gearring_dictionary_init(1))
+  ### side-cover
+  r_egd['input_axle_diameter']                = 0.0
+  r_egd['output_axle_diameter']               = 0.0
   ### general
   r_egd['cnc_router_bit_radius']   = 0.1
   r_egd['gear_profile_height']     = 10.0
@@ -243,6 +246,11 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Set the diameter of the carrier-crenel-holes. If equal zero, no carrier-crenel-hole are generated. Default: 0.0")
   ### annulus: inherit dictionary entries from gearring
   r_parser = gearring.gearring_add_argument(r_parser, 1)
+  ### side-cover
+  r_parser.add_argument('--input_axle_diameter','--iad', action='store', type=float, default=0.0, dest='sw_input_axle_diameter',
+    help="Set the diameter of the input cylindrical axle. If equal to zero, it is set to the sun-dedendum-diameter. Default: 0.0")
+  r_parser.add_argument('--output_axle_diameter','--oad', action='store', type=float, default=0.0, dest='sw_output_axle_diameter',
+    help="Set the diameter of the output cylindrical axle. If equal to zero, it is set to the sun-dedendum-diameter. Default: 0.0")
   ### cnc router_bit constraint
   r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
     help="Set the minimum router_bit radius of the epicyclic-gearing. Default: 0.1")
@@ -775,7 +783,35 @@ def epicyclic_gearing(ai_constraints):
       for i in range(planet_nb):
         ta = (i+0.5)*leg_hole_portion + first_planet_position_angle
         middle_planet_carrier_figures[i].append((0.0+carrier_hole_position_radius*math.cos(ta), 0.0+carrier_hole_position_radius*math.sin(ta), carrier_hole_radius))
-      
+  
+  ### input and output cover-axle
+  ## check parameters
+  input_axle_radius = eg_c['input_axle_diameter']/2.0
+  if(input_axle_radius==0):
+    input_axle_radius = (sun_gear_tooth_nb - 3.0)*eg_c['gear_module']/2.0
+  output_axle_radius = eg_c['output_axle_diameter']/2.0
+  if(output_axle_radius==0):
+    output_axle_radius = (sun_gear_tooth_nb - 3.0)*eg_c['gear_module']/2.0
+  ## preparation for the carrier-cover
+  gr_cover_c = gr_c.copy()
+  gr_cover_c['gear_tooth_nb'] = 0
+  gr_cover_c['gear_primitive_diameter'] = 2*carrier_peripheral_external_radius
+  gr_cover_c['holder_diameter'] = 2*holder_radius
+  gr_cover_c['return_type'] = 'cnc25d_figure'
+  input_carrier_cover_figure = gearring.gearring(gr_cover_c)
+  output_carrier_cover_figure = input_carrier_cover_figure[:]
+  ## input_carrier_cover_figure
+  input_carrier_cover_figure.extend(sun_figure[1:])
+  ## output_carrier_cover_figure
+  output_carrier_cover_figure.extend(front_planet_carrier_figure[:])
+  ## input_axle_cover_figure
+  gr_cover_c['gear_primitive_diameter'] = 2*input_axle_radius
+  input_axle_cover_figure = gearring.gearring(gr_cover_c)
+  input_axle_cover_figure.extend(sun_figure[1:])
+  ## output_axle_cover_figure
+  gr_cover_c['gear_primitive_diameter'] = 2*output_axle_radius
+  output_axle_cover_figure = gearring.gearring(gr_cover_c)
+  output_axle_cover_figure.extend(sun_figure[1:])
   
   ### design output
   part_figure_list = []
@@ -904,6 +940,10 @@ holder_hole_mark_nb:  {:d}
       cnc25d_api.generate_output_file(rear_planet_carrier_figure, output_file_basename + "_rear_carrier" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       for i in range(len(middle_planet_carrier_figures)):
         cnc25d_api.generate_output_file(middle_planet_carrier_figures[i], output_file_basename + "_middle_carrier{:02d}".format(i+1) + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(input_carrier_cover_figure, output_file_basename + "_input_carrier_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(output_carrier_cover_figure, output_file_basename + "_output_carrier_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(input_axle_cover_figure, output_file_basename + "_input_axle_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(output_axle_cover_figure, output_file_basename + "_output_axle_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       cnc25d_api.generate_output_file(eg_list_of_parts, output_file_basename + "_part_list" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
     else:
       cnc25d_api.generate_output_file(annulus_figure, output_file_basename + "_epicyclic_gearing_holder", eg_c['gear_profile_height'], eg_parameter_info) # to get the parameter info as test file
@@ -985,6 +1025,9 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['carrier_hole_diameter']               = ai_eg_args.sw_carrier_hole_diameter
   ### annulus: inherit dictionary entries from gearring
   r_egd.update(gearring.gearring_argparse_to_dictionary(ai_eg_args, 1))
+  ### side-cover
+  r_egd['input_axle_diameter']     = ai_eg_args.sw_input_axle_diameter
+  r_egd['output_axle_diameter']    = ai_eg_args.sw_output_axle_diameter
   ### general
   r_egd['cnc_router_bit_radius']   = ai_eg_args.sw_cnc_router_bit_radius
   r_egd['gear_profile_height']     = ai_eg_args.sw_gear_profile_height
@@ -1036,10 +1079,10 @@ def epicyclic_gearing_self_test():
     ["carrier without peripheral and crenel", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_crenel_height 0 --carrier_central_diameter 30.0"],
     ["carrier without peripheral and small central circle", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_peripheral_disable --carrier_central_diameter 20.0"],
     ["sun crenel circle"    , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12"],
-    ["sun crenel circle"    , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12 --sun_crenel_mark_nb 1"],
+    ["sun crenel circle marked", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12 --sun_crenel_mark_nb 1"],
     ["carrier crenel hole"  , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_hole_diameter 1.9"],
     ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
-    ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --output_file_basename test_output/epicyclic_self_test.dxf"],
+    ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --input_axle_diameter 16.0 --output_file_basename test_output/epicyclic_self_test.dxf"],
     ["last test"            , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   epicyclic_gearing_parser = argparse.ArgumentParser(description='Command line interface for the function epicyclic_gearing().')

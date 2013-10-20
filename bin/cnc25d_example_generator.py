@@ -1903,6 +1903,9 @@ eg_constraint['holder_crenel_width']           = 10.0
 eg_constraint['holder_crenel_skin_width']      = 5.0
 eg_constraint['holder_crenel_router_bit_radius']   = 1.0
 eg_constraint['holder_smoothing_radius']       = 0.0
+### side-cover
+eg_constraint['input_axle_diameter']           = 0.0
+eg_constraint['output_axle_diameter']          = 0.0
 ### general
 eg_constraint['cnc_router_bit_radius']   = 0.1
 eg_constraint['gear_profile_height']     = 10.0
