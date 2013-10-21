@@ -356,6 +356,7 @@ def epicyclic_gearing(ai_constraints):
   gr_c['holder_position_angle']       = eg_c['holder_position_angle']
   gr_c['holder_hole_position_radius'] = eg_c['holder_hole_position_radius']
   gr_c['holder_hole_diameter']        = eg_c['holder_hole_diameter']
+  gr_c['holder_hole_mark_nb']         = eg_c['holder_hole_mark_nb']
   gr_c['holder_crenel_position']      = eg_c['holder_crenel_position']
   gr_c['holder_crenel_height']        = eg_c['holder_crenel_height']
   gr_c['holder_crenel_width']         = eg_c['holder_crenel_width']
