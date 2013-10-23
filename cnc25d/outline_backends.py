@@ -64,7 +64,7 @@ import design_help # just for get_effective_args() and mkdir_p
 # global variable
 ################################################################
 
-unit_circle_resolution = 6
+unit_circle_resolution = 12 #6
 #default_dxf_layer_name = 'CNC25D'
 global_epsilon_length = math.pi/1000
 global_epsilon_angle = math.pi/10000
