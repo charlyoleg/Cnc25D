@@ -159,15 +159,28 @@ def gearwheel_add_argument(ai_parser):
 # sub-funcitons
 ################################################################
 
-def marked_circle_crenel(ai_x, ai_y, ai_radius, ai_orientation, ai_router_bit_radius):
+def marked_circle_crenel(ai_x, ai_y, ai_radius, ai_orientation, ai_router_bit_radius, ai_mark_type=2):
   """ generate the B-outline of a marked circle-crenel, centered on (ai_x, ai_y) and with the orientation ai_orientation
   """
-  A_mcc = []
-  A_mcc.append((ai_x+ai_radius*math.cos(ai_orientation-math.pi/4), ai_y+ai_radius*math.sin(ai_orientation-math.pi/4), 0))
-  A_mcc.append((ai_x+math.sqrt(2)*ai_radius*math.cos(ai_orientation-0*math.pi/4), ai_y+math.sqrt(2)*ai_radius*math.sin(ai_orientation-0*math.pi/4), ai_router_bit_radius))
-  A_mcc.append((ai_x+ai_radius*math.cos(ai_orientation+math.pi/4), ai_y+ai_radius*math.sin(ai_orientation+math.pi/4), 0))
-  A_mcc.append((ai_x+ai_radius*math.cos(ai_orientation+math.pi), ai_y+ai_radius*math.sin(ai_orientation+math.pi), ai_x+ai_radius*math.cos(ai_orientation-math.pi/4), ai_y+ai_radius*math.sin(ai_orientation-math.pi/4), 0))
-  r_mcc = cnc25d_api.cnc_cut_outline(A_mcc, "marked_circle_crenel")
+  if(ai_mark_type==0):
+    r_mcc = (ai_x, ai_y, ai_radius)
+  elif(ai_mark_type==1):
+    A_mcc = []
+    A_mcc.append((ai_x+ai_radius*math.cos(ai_orientation-math.pi/4), ai_y+ai_radius*math.sin(ai_orientation-math.pi/4), 0))
+    A_mcc.append((ai_x+math.sqrt(2)*ai_radius*math.cos(ai_orientation-0*math.pi/4), ai_y+math.sqrt(2)*ai_radius*math.sin(ai_orientation-0*math.pi/4), ai_router_bit_radius))
+    A_mcc.append((ai_x+ai_radius*math.cos(ai_orientation+math.pi/4), ai_y+ai_radius*math.sin(ai_orientation+math.pi/4), 0))
+    A_mcc.append((ai_x+ai_radius*math.cos(ai_orientation+math.pi), ai_y+ai_radius*math.sin(ai_orientation+math.pi), ai_x+ai_radius*math.cos(ai_orientation-math.pi/4), ai_y+ai_radius*math.sin(ai_orientation-math.pi/4), 0))
+    r_mcc = cnc25d_api.cnc_cut_outline(A_mcc, "marked_circle_crenel")
+  elif(ai_mark_type==2):
+    A_mcc = []
+    A_mcc.append((ai_x+ai_radius*math.cos(-math.pi/2), ai_y+ai_radius*math.sin(-math.pi/2), 0))
+    A_mcc.append((ai_x+(1+math.sqrt(2))*ai_radius, ai_y-ai_radius, ai_router_bit_radius))
+    A_mcc.append((ai_x+ai_radius*math.cos(math.pi/4), ai_y+ai_radius*math.sin(math.pi/4), 0))
+    A_mcc.append((ai_x+ai_radius*math.cos(math.pi), ai_y+ai_radius*math.sin(math.pi), A_mcc[0][0], A_mcc[0][1], 0))
+    r_mcc = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_rotate(A_mcc, ai_x, ai_y, ai_orientation), "marked_circle_crenel")
+  else:
+    print("ERR182: Error, ai_mark_type {:d} doesn't exist".format(ai_mark_type))
+    sys.exit(2)
   return(r_mcc)
     
 ################################################################
