@@ -453,6 +453,9 @@ def epicyclic_gearing(ai_constraints):
   sg_c['output_file_basename']      = ""
   sg_c['args_in_txt']               = ""
   sg_c['return_type']               = 'cnc25d_figure'
+  #print("dbg456: gr_c:", gr_c)
+  #print("dbg457: pg_c:", pg_c)
+  #print("dbg458: sg_c:", sg_c)
 
   #### angle position calculation
   gp_ci = gear_profile.gear_profile_dictionary_init()
@@ -509,6 +512,7 @@ def epicyclic_gearing(ai_constraints):
   planet_figures = []
   for i in range(planet_nb):
     planet_figures.append(gearwheel.gearwheel(pg_c_list[i]))
+  #print("dbg512: sg_c:", sg_c)
   sun_figure = gearwheel.gearwheel(sg_c)
 
   ##### planet-carrier
@@ -725,7 +729,14 @@ def epicyclic_gearing(ai_constraints):
     if(2*carrier_leg_middle_radius>planet_planet_length-radian_epsilon):
       middle_radius_intersection = True
     # intersection carrier_leg_middle_radius and carrier_peripheral_external_radius from planet
-    imea = math.acos((carrier_leg_middle_radius**2+sun_planet_length**2-carrier_peripheral_external_radius**2)/(2*carrier_leg_middle_radius*sun_planet_length))
+    if(sun_planet_length+carrier_leg_middle_radius<carrier_peripheral_external_radius):
+      print("ERR731: Error, carrier_leg_middle_radius {:0.3f} is too small compare to sun_planet_length {:0.3f} and carrier_peripheral_external_radius {:0.3f}".format(carrier_leg_middle_radius, sun_planet_length, carrier_peripheral_external_radius))
+      sys.exit(2)
+    cos_imea = (carrier_leg_middle_radius**2+sun_planet_length**2-carrier_peripheral_external_radius**2)/(2*carrier_leg_middle_radius*sun_planet_length)
+    if((cos_imea<-1)or(cos_imea>1)):
+      print("ERR730: Error, cos_imea {:0.3f} is out of the range -1,1".format(cos_imea))
+      sys.exit(2)
+    imea = math.acos(cos_imea)
     # intersection carrier_leg_middle_radius and carrier_peripheral_internal_radius from planet
     imia = math.acos((carrier_leg_middle_radius**2+sun_planet_length**2-carrier_peripheral_internal_radius**2)/(2*carrier_leg_middle_radius*sun_planet_length))
     if(middle_radius_intersection):
