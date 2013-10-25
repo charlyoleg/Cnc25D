@@ -386,7 +386,7 @@ def gearwheel(ai_constraints):
           (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy+gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
           (g1_ix+axle_radius*math.cos(1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(1*crenel_half_width_angle), 0)]
         crenel_A_marked = crenel_A[:]
-        crenel_A_marked[-1] = (crenel_A[-1][0], crenel_A[-1][1], gw_c['crenel_height']/2.0)
+        crenel_A_marked[-1] = (crenel_A[-1][0], crenel_A[-1][1], 0.6*gw_c['crenel_height'])
       elif(crenel_rectangle_type==2):
         tmp_l = crenel_router_bit_radius * (1+math.sqrt(2))
         crenel_A = [
@@ -396,7 +396,7 @@ def gearwheel(ai_constraints):
           (g1_ix+axle_radius+gw_c['crenel_height']+1*tmp_l, g1_iy+gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
           (g1_ix+axle_radius*math.cos(1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(1*crenel_half_width_angle), 0)]
         crenel_A_marked = crenel_A[:]
-        crenel_A_marked[-1] = (crenel_A[-1][0], crenel_A[-1][1], gw_c['crenel_height']/2.0)
+        crenel_A_marked[-1] = (crenel_A[-1][0], crenel_A[-1][1], 0.6*gw_c['crenel_height'])
       arc_half_angle = (crenel_portion_angle - 2*crenel_half_width_angle)/2.0
       arc_middle_a = crenel_half_width_angle + arc_half_angle
       arc_end_a = arc_middle_a + arc_half_angle
