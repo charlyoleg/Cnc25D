@@ -368,9 +368,9 @@ def gearwheel(ai_constraints):
     crenel_rectangle_type = 2
   if(gw_c['crenel_number']>0):
     crenel_portion_angle = 2*math.pi/gw_c['crenel_number']
-  # check for crenel_mark_nb
-  if((gw_c['crenel_mark_nb']>0)and(gw_c['crenel_type']!='circle')):
-    print("WARN359: Warning, crenel_mark_nb {:d} is bigger than zero and crenel_type {:s} is not set to circle".format(gw_c['crenel_mark_nb'], gw_c['crenel_type']))
+  # check for crenel_mark_nb: now, crenel-mark is implemented for configuration circle and merged-rectangle, but not for independant-rectangle
+  #if((gw_c['crenel_mark_nb']>0)and(gw_c['crenel_type']!='circle')):
+  #  print("WARN359: Warning, crenel_mark_nb {:d} is bigger than zero and crenel_type {:s} is not set to circle".format(gw_c['crenel_mark_nb'], gw_c['crenel_type']))
 
   ### axle
   axle_figure = []
@@ -385,6 +385,8 @@ def gearwheel(ai_constraints):
           (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy-gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
           (g1_ix+axle_radius+gw_c['crenel_height'], g1_iy+gw_c['crenel_width']/2.0, -1*crenel_router_bit_radius),
           (g1_ix+axle_radius*math.cos(1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(1*crenel_half_width_angle), 0)]
+        crenel_A_marked = crenel_A[:]
+        crenel_A_marked[-1] = (crenel_A[-1][0], crenel_A[-1][1], gw_c['crenel_height']/2.0)
       elif(crenel_rectangle_type==2):
         tmp_l = crenel_router_bit_radius * (1+math.sqrt(2))
         crenel_A = [
@@ -393,12 +395,19 @@ def gearwheel(ai_constraints):
           (g1_ix+axle_radius+gw_c['crenel_height']+0*tmp_l, g1_iy+gw_c['crenel_width']/2.0-1*tmp_l, 0*crenel_router_bit_radius),
           (g1_ix+axle_radius+gw_c['crenel_height']+1*tmp_l, g1_iy+gw_c['crenel_width']/2.0-0*tmp_l, 1*crenel_router_bit_radius),
           (g1_ix+axle_radius*math.cos(1*crenel_half_width_angle), g1_iy+axle_radius*math.sin(1*crenel_half_width_angle), 0)]
+        crenel_A_marked = crenel_A[:]
+        crenel_A_marked[-1] = (crenel_A[-1][0], crenel_A[-1][1], gw_c['crenel_height']/2.0)
       arc_half_angle = (crenel_portion_angle - 2*crenel_half_width_angle)/2.0
       arc_middle_a = crenel_half_width_angle + arc_half_angle
       arc_end_a = arc_middle_a + arc_half_angle
       crenel_A.append((g1_ix+axle_radius*math.cos(arc_middle_a), g1_iy+axle_radius*math.sin(arc_middle_a), g1_ix+axle_radius*math.cos(arc_end_a), g1_iy+axle_radius*math.sin(arc_end_a), 0))
+      crenel_A_marked.append(crenel_A[-1])
       for i in range(gw_c['crenel_number']):
-        axle_A.extend(cnc25d_api.outline_rotate(crenel_A, g1_ix, g1_iy, i*crenel_portion_angle))
+        if(i<gw_c['crenel_mark_nb']):
+          crenel_A_selected = crenel_A_marked
+        else:
+          crenel_A_selected = crenel_A
+        axle_A.extend(cnc25d_api.outline_rotate(crenel_A_selected, g1_ix, g1_iy, i*crenel_portion_angle))
       axle_A[-1] = (axle_A[-1][0], axle_A[-1][1], axle_A[0][0], axle_A[0][1], 0)
       axle_A_rotated = cnc25d_api.outline_rotate(axle_A, g1_ix, g1_iy, gw_c['crenel_angle'])
       axle_figure.append(cnc25d_api.cnc_cut_outline(axle_A_rotated, "axle_and_crenel"))
@@ -439,7 +448,7 @@ def gearwheel(ai_constraints):
         crenel_A = cnc25d_api.outline_rotate(template_crenel, g1_ix, g1_iy, gw_c['crenel_angle']+i*crenel_portion_angle)
         axle_figure.append(cnc25d_api.cnc_cut_outline(crenel_A, "crenel_A"))
         axle_figure_overlay.append(cnc25d_api.ideal_outline(crenel_A, "crenel_A"))
-    if(crenel_type=='circle'):
+    elif(crenel_type=='circle'):
       for i in range(gw_c['crenel_number']):
         ta = gw_c['crenel_angle']+i*crenel_portion_angle
         if(i<gw_c['crenel_mark_nb']):
@@ -640,6 +649,7 @@ def gearwheel_self_test():
     ["crenel with small crenel_height", "--gear_tooth_nb 25 --gear_module 10 --axle_type circle --axle_x_width 50 --crenel_number 8 --crenel_router_bit_radius 3 --crenel_width 20 --crenel_diameter 70"],
     ["crenel circle", "--gear_tooth_nb 19 --gear_module 1 --axle_type circle --axle_x_width 8 --crenel_number 6 --crenel_type circle --crenel_width 1.9 --crenel_diameter 12"],
     ["crenel circle marked", "--gear_tooth_nb 13 --gear_module 10 --axle_type circle --axle_x_width 50 --crenel_number 6 --crenel_type circle --crenel_width 5 --crenel_diameter 70 --crenel_mark_nb 2"],
+    ["crenel rectangle marked", "--gear_tooth_nb 13 --gear_module 1 --axle_type circle --axle_x_width 6 --crenel_number 4 --crenel_type rectangle --crenel_width 2  --crenel_height 1 --crenel_mark_nb 3"],
     ["last test"                      , "--gear_tooth_nb 30 --gear_module 10.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   gearwheel_parser = argparse.ArgumentParser(description='Command line interface for the function gearwheel().')
