@@ -151,9 +151,25 @@ eg_constraint['holder_crenel_width']           = 10.0
 eg_constraint['holder_crenel_skin_width']      = 5.0
 eg_constraint['holder_crenel_router_bit_radius']   = 1.0
 eg_constraint['holder_smoothing_radius']       = 0.0
-### side-cover
-eg_constraint['input_axle_diameter']           = 0.0
-eg_constraint['output_axle_diameter']          = 0.0
+#### side-cover
+### input-gearwheel
+eg_constraint['input_gearwheel_tooth_nb']                  = 0
+eg_constraint['input_gearwheel_module']                    = 1.0
+eg_constraint['input_gearwheel_axle_diameter']             = 0.0
+eg_constraint['input_gearwheel_crenel_number']             = 0
+eg_constraint['input_gearwheel_crenel_position_diameter']  = 0.0
+eg_constraint['input_gearwheel_crenel_diameter']           = 0.0
+eg_constraint['input_gearwheel_crenel_angle']              = 0.0
+eg_constraint['input_cover_extra_space']                   = 0.0
+### output-gearwheel
+eg_constraint['output_gearwheel_tooth_nb']                  = 0
+eg_constraint['output_gearwheel_module']                    = 1.0
+eg_constraint['output_gearwheel_axle_diameter']             = 0.0
+eg_constraint['output_gearwheel_crenel_number']             = 0
+eg_constraint['output_gearwheel_crenel_position_diameter']  = 0.0
+eg_constraint['output_gearwheel_crenel_diameter']           = 0.0
+eg_constraint['output_gearwheel_crenel_angle']              = 0.0
+eg_constraint['output_cover_extra_space']                   = 0.0
 ### general
 eg_constraint['cnc_router_bit_radius']   = 0.1
 eg_constraint['gear_profile_height']     = 10.0

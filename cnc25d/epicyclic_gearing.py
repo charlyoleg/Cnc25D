@@ -123,9 +123,25 @@ def epicyclic_gearing_dictionary_init():
   r_egd['carrier_hole_diameter']               = 0.0
   ### annulus: inherit dictionary entries from gearring
   r_egd.update(gearring.gearring_dictionary_init(1))
-  ### side-cover
-  r_egd['input_axle_diameter']                = 0.0
-  r_egd['output_axle_diameter']               = 0.0
+  #### side-cover
+  ### input-gearwheel
+  r_egd['input_gearwheel_tooth_nb']                  = 0
+  r_egd['input_gearwheel_module']                    = 1.0
+  r_egd['input_gearwheel_axle_diameter']             = 0.0
+  r_egd['input_gearwheel_crenel_number']             = 0
+  r_egd['input_gearwheel_crenel_position_diameter']  = 0.0
+  r_egd['input_gearwheel_crenel_diameter']           = 0.0
+  r_egd['input_gearwheel_crenel_angle']              = 0.0
+  r_egd['input_cover_extra_space']                   = 0.0
+  ### output-gearwheel
+  r_egd['output_gearwheel_tooth_nb']                  = 0
+  r_egd['output_gearwheel_module']                    = 1.0
+  r_egd['output_gearwheel_axle_diameter']             = 0.0
+  r_egd['output_gearwheel_crenel_number']             = 0
+  r_egd['output_gearwheel_crenel_position_diameter']  = 0.0
+  r_egd['output_gearwheel_crenel_diameter']           = 0.0
+  r_egd['output_gearwheel_crenel_angle']              = 0.0
+  r_egd['output_cover_extra_space']                   = 0.0
   ### general
   r_egd['cnc_router_bit_radius']   = 0.1
   r_egd['gear_profile_height']     = 10.0
@@ -246,11 +262,41 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Set the diameter of the carrier-crenel-holes. If equal zero, no carrier-crenel-hole are generated. Default: 0.0")
   ### annulus: inherit dictionary entries from gearring
   r_parser = gearring.gearring_add_argument(r_parser, 1)
-  ### side-cover
-  r_parser.add_argument('--input_axle_diameter','--iad', action='store', type=float, default=0.0, dest='sw_input_axle_diameter',
-    help="Set the diameter of the input cylindrical axle. If equal to zero, it is set to the sun-dedendum-diameter. Default: 0.0")
-  r_parser.add_argument('--output_axle_diameter','--oad', action='store', type=float, default=0.0, dest='sw_output_axle_diameter',
-    help="Set the diameter of the output cylindrical axle. If equal to zero, it is set to the sun-dedendum-diameter. Default: 0.0")
+  #### side-cover
+  ### input-gearwheel
+  r_parser.add_argument('--input_gearwheel_tooth_nb','--igtn', action='store', type=int, default=0, dest='sw_input_gearwheel_tooth_nb',
+    help="Set the number of tooth to the input gearwheel. If equal to zero, no input side-cover is generated. Default: 0")
+  r_parser.add_argument('--input_gearwheel_module','--igm', action='store', type=float, default=1.0, dest='sw_input_gearwheel_module',
+    help="Set the gear-module of the input gearwheel. Default: 1.0")
+  r_parser.add_argument('--input_gearwheel_axle_diameter','--igad', action='store', type=float, default=0.0, dest='sw_input_gearwheel_axle_diameter',
+    help="Set the axle diameter of the input gearwheel. If equal to zero, no axel is created. Default: 0.0")
+  r_parser.add_argument('--input_gearwheel_crenel_number','--igcn', action='store', type=int, default=0, dest='sw_input_gearwheel_crenel_number',
+    help="Set the number of circle-crenels of the input gearwheel. If equal to zero, no axel is created. Default: 0")
+  r_parser.add_argument('--input_gearwheel_crenel_position_diameter','--igcpd', action='store', type=float, default=0.0, dest='sw_input_gearwheel_crenel_position_diameter',
+    help="Set the diameter of the circle to place the circle-crenels of the input gearwheel. Default: 0.0")
+  r_parser.add_argument('--input_gearwheel_crenel_diameter','--igcd', action='store', type=float, default=0.0, dest='sw_input_gearwheel_crenel_diameter',
+    help="Set the diameter of the circle-crenels of the input gearwheel. Default: 0.0")
+  r_parser.add_argument('--input_gearwheel_crenel_angle','--igca', action='store', type=float, default=0.0, dest='sw_input_gearwheel_crenel_angle',
+    help="Set the angle position of the first circle-crenels of the input gearwheel. Default: 0.0")
+  r_parser.add_argument('--input_cover_extra_space','--ices', action='store', type=float, default=0.0, dest='sw_input_cover_extra_space',
+    help="Set the extra-space between the radius of the annulus-holder and the input-shaft-cylinder. Default: 0.0")
+  ### output-gearwheel
+  r_parser.add_argument('--output_gearwheel_tooth_nb','--ogtn', action='store', type=int, default=0, dest='sw_output_gearwheel_tooth_nb',
+    help="Set the number of tooth to the output gearwheel. If equal to zero, no output side-cover is generated. Default: 0")
+  r_parser.add_argument('--output_gearwheel_module','--ogm', action='store', type=float, default=1.0, dest='sw_output_gearwheel_module',
+    help="Set the gear-module of the output gearwheel. Default: 1.0")
+  r_parser.add_argument('--output_gearwheel_axle_diameter','--ogad', action='store', type=float, default=0.0, dest='sw_output_gearwheel_axle_diameter',
+    help="Set the axle diameter of the output gearwheel. If equal to zero, no axel is created. Default: 0.0")
+  r_parser.add_argument('--output_gearwheel_crenel_number','--ogcn', action='store', type=int, default=0, dest='sw_output_gearwheel_crenel_number',
+    help="Set the number of circle-crenels of the output gearwheel. If equal to zero, no axel is created. Default: 0")
+  r_parser.add_argument('--output_gearwheel_crenel_position_diameter','--ogcpd', action='store', type=float, default=0.0, dest='sw_output_gearwheel_crenel_position_diameter',
+    help="Set the diameter of the circle to place the circle-crenels of the output gearwheel. Default: 0.0")
+  r_parser.add_argument('--output_gearwheel_crenel_diameter','--ogcd', action='store', type=float, default=0.0, dest='sw_output_gearwheel_crenel_diameter',
+    help="Set the diameter of the circle-crenels of the output gearwheel. Default: 0.0")
+  r_parser.add_argument('--output_gearwheel_crenel_angle','--ogca', action='store', type=float, default=0.0, dest='sw_output_gearwheel_crenel_angle',
+    help="Set the angle position of the first circle-crenels of the output gearwheel. Default: 0.0")
+  r_parser.add_argument('--output_cover_extra_space','--oces', action='store', type=float, default=0.0, dest='sw_output_cover_extra_space',
+    help="Set the extra-space between the radius of the annulus-holder and the output-shaft-cylinder. Default: 0.0")
   ### cnc router_bit constraint
   r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
     help="Set the minimum router_bit radius of the epicyclic-gearing. Default: 0.1")
@@ -796,34 +842,98 @@ def epicyclic_gearing(ai_constraints):
         ta = (i+0.5)*leg_hole_portion + first_planet_position_angle
         middle_planet_carrier_figures[i].append((0.0+carrier_hole_position_radius*math.cos(ta), 0.0+carrier_hole_position_radius*math.sin(ta), carrier_hole_radius))
   
-  ### input and output cover-axle
-  ## check parameters
-  input_axle_radius = eg_c['input_axle_diameter']/2.0
-  if(input_axle_radius==0):
-    input_axle_radius = (sun_gear_tooth_nb - 3.0)*eg_c['gear_module']/2.0
-  output_axle_radius = eg_c['output_axle_diameter']/2.0
-  if(output_axle_radius==0):
-    output_axle_radius = (sun_gear_tooth_nb - 3.0)*eg_c['gear_module']/2.0
-  ## preparation for the carrier-cover
-  gr_cover_c = gr_c.copy()
-  gr_cover_c['gear_tooth_nb'] = 0
-  gr_cover_c['gear_primitive_diameter'] = 2*carrier_peripheral_external_radius
-  gr_cover_c['holder_diameter'] = 2*holder_radius
-  gr_cover_c['return_type'] = 'cnc25d_figure'
-  input_carrier_cover_figure = gearring.gearring(gr_cover_c)
-  output_carrier_cover_figure = input_carrier_cover_figure[:]
-  ## input_carrier_cover_figure
-  input_carrier_cover_figure.extend(sun_figure[1:])
-  ## output_carrier_cover_figure
-  output_carrier_cover_figure.extend(front_planet_carrier_figure[:])
-  ## input_axle_cover_figure
-  gr_cover_c['gear_primitive_diameter'] = 2*input_axle_radius
-  input_axle_cover_figure = gearring.gearring(gr_cover_c)
-  input_axle_cover_figure.extend(sun_figure[1:])
-  ## output_axle_cover_figure
-  gr_cover_c['gear_primitive_diameter'] = 2*output_axle_radius
-  output_axle_cover_figure = gearring.gearring(gr_cover_c)
-  output_axle_cover_figure.extend(sun_figure[1:])
+  ### input cover
+  input_gearwheel_figure = []
+  input_axle_shaft_figure = []
+  input_cover_figure = []
+  input_cover_shaft_merge_figure = []
+  if(eg_c['input_gearwheel_tooth_nb']>0):
+    input_axle_shaft_radius = (eg_c['input_gearwheel_tooth_nb']+2)*eg_c['input_gearwheel_module']/2.0
+    ig_c = {} # input_gearwheel
+    ig_c['gear_tooth_nb']             = eg_c['input_gearwheel_tooth_nb']
+    ig_c['gear_module']               = eg_c['input_gearwheel_module']
+    ig_c['gear_router_bit_radius']    = gear_router_bit_radius
+    ig_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
+    ig_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
+    if(eg_c['input_gearwheel_axle_diameter']>0): # axle
+      ig_c['axle_type']                 = 'circle'
+    else:
+      ig_c['axle_type']                 = 'none'
+    ig_c['axle_x_width']              = eg_c['input_gearwheel_axle_diameter']
+    ig_c['crenel_diameter']           = eg_c['input_gearwheel_crenel_position_diameter'] # crenel
+    ig_c['crenel_number']             = eg_c['input_gearwheel_crenel_number']
+    ig_c['crenel_type']               = 'circle'
+    ig_c['crenel_angle']              = eg_c['input_gearwheel_crenel_angle']
+    ig_c['crenel_width']              = eg_c['input_gearwheel_crenel_diameter']
+    ig_c['wheel_hollow_leg_number']   = 0 # wheel-hollow
+    ig_c['cnc_router_bit_radius']     = eg_c['cnc_router_bit_radius'] # general
+    ig_c['gear_profile_height']       = eg_c['gear_profile_height']
+    ig_c['center_position_x']                   = 0.0
+    ig_c['center_position_y']                   = 0.0
+    ig_c['gear_initial_angle']                  = 0.0
+    ig_c['tkinter_view']              = False
+    ig_c['output_file_basename']      = ""
+    ig_c['args_in_txt']               = ""
+    ig_c['return_type']               = 'cnc25d_figure'
+    input_gearwheel_figure = gearwheel.gearwheel(ig_c)
+    ic_c = gr_c.copy() # input_cover
+    ic_c['gear_tooth_nb'] = 0
+    ic_c['gear_primitive_diameter'] = 2*(input_axle_shaft_radius+eg_c['input_cover_extra_space'])
+    ic_c['holder_diameter'] = 2*holder_radius
+    ic_c['return_type'] = 'cnc25d_figure'
+    input_cover_figure = gearring.gearring(ic_c)
+    input_axle_shaft_figure.append((0.0, 0.0, input_axle_shaft_radius)) # input_axle_shaft
+    input_axle_shaft_figure.extend(sun_figure[1:]) # get the axle and the crenels
+    if(eg_c['input_gearwheel_axle_diameter']==0):
+      input_axle_shaft_figure.extend(input_gearwheel_figure[1:]) # get the crenels only
+    else:
+      input_axle_shaft_figure.extend(input_gearwheel_figure[2:]) # get the crenels only
+    input_cover_shaft_merge_figure.extend(input_cover_figure) # input_cover_shaft_merge_figure
+    input_cover_shaft_merge_figure.extend(input_axle_shaft_figure)
+  ### output cover
+  output_gearwheel_figure = []
+  output_axle_shaft_figure = []
+  output_cover_figure = []
+  output_cover_shaft_merge_figure = []
+  if(eg_c['output_gearwheel_tooth_nb']>0):
+    output_axle_shaft_radius = (eg_c['output_gearwheel_tooth_nb']+2)*eg_c['output_gearwheel_module']/2.0
+    og_c = {} # output_gearwheel
+    og_c['gear_tooth_nb']             = eg_c['output_gearwheel_tooth_nb']
+    og_c['gear_module']               = eg_c['output_gearwheel_module']
+    og_c['gear_router_bit_radius']    = gear_router_bit_radius
+    og_c['gear_tooth_resolution']     = eg_c['gear_tooth_resolution']
+    og_c['gear_skin_thickness']       = eg_c['gear_skin_thickness']
+    if(eg_c['output_gearwheel_axle_diameter']>0): # axle
+      og_c['axle_type']                 = 'circle'
+    else:
+      og_c['axle_type']                 = 'none'
+    og_c['axle_x_width']              = eg_c['output_gearwheel_axle_diameter']
+    og_c['crenel_diameter']           = eg_c['output_gearwheel_crenel_position_diameter'] # crenel
+    og_c['crenel_number']             = eg_c['output_gearwheel_crenel_number']
+    og_c['crenel_type']               = 'circle'
+    og_c['crenel_angle']              = eg_c['output_gearwheel_crenel_angle']
+    og_c['crenel_width']              = eg_c['output_gearwheel_crenel_diameter']
+    og_c['wheel_hollow_leg_number']   = 0 # wheel-hollow
+    og_c['cnc_router_bit_radius']     = eg_c['cnc_router_bit_radius'] # general
+    og_c['gear_profile_height']       = eg_c['gear_profile_height']
+    og_c['center_position_x']                   = 0.0
+    og_c['center_position_y']                   = 0.0
+    og_c['gear_initial_angle']                  = 0.0
+    og_c['tkinter_view']              = False
+    og_c['output_file_basename']      = ""
+    og_c['args_in_txt']               = ""
+    og_c['return_type']               = 'cnc25d_figure'
+    output_gearwheel_figure = gearwheel.gearwheel(og_c)
+    oc_c = gr_c.copy() # output_cover
+    oc_c['gear_tooth_nb'] = 0
+    oc_c['gear_primitive_diameter'] = 2*(output_axle_shaft_radius+eg_c['output_cover_extra_space'])
+    oc_c['holder_diameter'] = 2*holder_radius
+    oc_c['return_type'] = 'cnc25d_figure'
+    output_cover_figure = gearring.gearring(oc_c)
+    output_axle_shaft_figure.extend(front_planet_carrier_figure_copy) # output_axle_shaft
+    output_axle_shaft_figure.extend(output_gearwheel_figure[1:]) # get the axle and the crenels
+    output_cover_shaft_merge_figure.extend(output_cover_figure) # output_cover_shaft_merge_figure
+    output_cover_shaft_merge_figure.extend(output_axle_shaft_figure)
   
   ### design output
   part_figure_list = []
@@ -952,10 +1062,16 @@ holder_hole_mark_nb:  {:d}
       cnc25d_api.generate_output_file(rear_planet_carrier_figure, output_file_basename + "_rear_carrier" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       for i in range(len(middle_planet_carrier_figures)):
         cnc25d_api.generate_output_file(middle_planet_carrier_figures[i], output_file_basename + "_middle_carrier{:02d}".format(i+1) + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
-      cnc25d_api.generate_output_file(input_carrier_cover_figure, output_file_basename + "_input_carrier_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
-      cnc25d_api.generate_output_file(output_carrier_cover_figure, output_file_basename + "_output_carrier_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
-      cnc25d_api.generate_output_file(input_axle_cover_figure, output_file_basename + "_input_axle_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
-      cnc25d_api.generate_output_file(output_axle_cover_figure, output_file_basename + "_output_axle_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      if(eg_c['input_gearwheel_tooth_nb']>0):
+        cnc25d_api.generate_output_file(input_gearwheel_figure, output_file_basename + "_input_gearwheel" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+        cnc25d_api.generate_output_file(input_axle_shaft_figure, output_file_basename + "_input_shaft" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+        cnc25d_api.generate_output_file(input_cover_figure, output_file_basename + "_input_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+        cnc25d_api.generate_output_file(input_cover_shaft_merge_figure, output_file_basename + "_input_cover_shaft_merge" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      if(eg_c['output_gearwheel_tooth_nb']>0):
+        cnc25d_api.generate_output_file(output_gearwheel_figure, output_file_basename + "_output_gearwheel" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+        cnc25d_api.generate_output_file(output_axle_shaft_figure, output_file_basename + "_output_shaft" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+        cnc25d_api.generate_output_file(output_cover_figure, output_file_basename + "_output_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+        cnc25d_api.generate_output_file(output_cover_shaft_merge_figure, output_file_basename + "_output_cover_shaft_merge" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       cnc25d_api.generate_output_file(eg_list_of_parts, output_file_basename + "_part_list" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
     else:
       cnc25d_api.generate_output_file(annulus_figure, output_file_basename + "_epicyclic_gearing_holder", eg_c['gear_profile_height'], eg_parameter_info) # to get the parameter info as test file
@@ -1037,9 +1153,25 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['carrier_hole_diameter']               = ai_eg_args.sw_carrier_hole_diameter
   ### annulus: inherit dictionary entries from gearring
   r_egd.update(gearring.gearring_argparse_to_dictionary(ai_eg_args, 1))
-  ### side-cover
-  r_egd['input_axle_diameter']     = ai_eg_args.sw_input_axle_diameter
-  r_egd['output_axle_diameter']    = ai_eg_args.sw_output_axle_diameter
+  #### side-cover
+  ### input-gearwheel
+  r_egd['input_gearwheel_tooth_nb']                  = ai_eg_args.sw_input_gearwheel_tooth_nb
+  r_egd['input_gearwheel_module']                    = ai_eg_args.sw_input_gearwheel_module
+  r_egd['input_gearwheel_axle_diameter']             = ai_eg_args.sw_input_gearwheel_axle_diameter
+  r_egd['input_gearwheel_crenel_number']             = ai_eg_args.sw_input_gearwheel_crenel_number
+  r_egd['input_gearwheel_crenel_position_diameter']  = ai_eg_args.sw_input_gearwheel_crenel_position_diameter
+  r_egd['input_gearwheel_crenel_diameter']           = ai_eg_args.sw_input_gearwheel_crenel_diameter
+  r_egd['input_gearwheel_crenel_angle']              = ai_eg_args.sw_input_gearwheel_crenel_angle
+  r_egd['input_cover_extra_space']                   = ai_eg_args.sw_input_cover_extra_space
+  ### output-gearwheel
+  r_egd['output_gearwheel_tooth_nb']                  = ai_eg_args.sw_output_gearwheel_tooth_nb
+  r_egd['output_gearwheel_module']                    = ai_eg_args.sw_output_gearwheel_module
+  r_egd['output_gearwheel_axle_diameter']             = ai_eg_args.sw_output_gearwheel_axle_diameter
+  r_egd['output_gearwheel_crenel_number']             = ai_eg_args.sw_output_gearwheel_crenel_number
+  r_egd['output_gearwheel_crenel_position_diameter']  = ai_eg_args.sw_output_gearwheel_crenel_position_diameter
+  r_egd['output_gearwheel_crenel_diameter']           = ai_eg_args.sw_output_gearwheel_crenel_diameter
+  r_egd['output_gearwheel_crenel_angle']              = ai_eg_args.sw_output_gearwheel_crenel_angle
+  r_egd['output_cover_extra_space']                   = ai_eg_args.sw_output_cover_extra_space
   ### general
   r_egd['cnc_router_bit_radius']   = ai_eg_args.sw_cnc_router_bit_radius
   r_egd['gear_profile_height']     = ai_eg_args.sw_gear_profile_height
@@ -1094,7 +1226,8 @@ def epicyclic_gearing_self_test():
     ["sun crenel circle marked", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12 --sun_crenel_mark_nb 1"],
     ["carrier crenel hole"  , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_hole_diameter 1.9"],
     ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
-    ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --input_axle_diameter 16.0 --output_file_basename test_output/epicyclic_self_test.dxf"],
+    ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --input_gearwheel_tooth_nb 29 --output_file_basename test_output/epicyclic_self_test.dxf"],
+    ["output file2"         , "--sun_gear_tooth_nb 13 --planet_gear_tooth_nb 19 --gear_module 1.0 --holder_hole_diameter 1.0 --holder_crenel_position 2.0 --holder_crenel_height 2.0 --holder_crenel_width 6.0 --holder_crenel_skin_width 4.0 --input_gearwheel_tooth_nb 29 --input_gearwheel_module 1.0 --input_gearwheel_axle_diameter 19.0 --input_gearwheel_crenel_number 6 --input_gearwheel_crenel_position_diameter 24.0 --input_gearwheel_crenel_diameter 1.0 --input_cover_extra_space 0.5 --output_gearwheel_tooth_nb 13 --output_gearwheel_module 3.0 --output_gearwheel_axle_diameter 22.0 --output_gearwheel_crenel_number 6 --output_gearwheel_crenel_position_diameter 28.0 --output_gearwheel_crenel_diameter 3.0 --output_gearwheel_crenel_angle 0.3 --output_cover_extra_space 0.5 --output_file_basename test_output/epicyclic_self_test2.dxf"],
     ["last test"            , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   epicyclic_gearing_parser = argparse.ArgumentParser(description='Command line interface for the function epicyclic_gearing().')
