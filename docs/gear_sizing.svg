@@ -417,9 +417,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="282.71758"
-     inkscape:cy="899.77038"
+     inkscape:zoom="1.4808652"
+     inkscape:cx="300.5"
+     inkscape:cy="259.61062"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -427,11 +427,11 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
-     inkscape:window-x="0"
+     inkscape:window-width="1055"
+     inkscape:window-height="1007"
+     inkscape:window-x="48"
      inkscape:window-y="24"
-     inkscape:window-maximized="1"
+     inkscape:window-maximized="0"
      inkscape:snap-object-midpoints="true"
      inkscape:snap-global="false"
      inkscape:object-paths="true"
@@ -445,7 +445,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -489,7 +489,7 @@
        sodipodi:cy="191.7009"
        sodipodi:rx="62.857143"
        sodipodi:ry="62.857143"
-       d="m 254.28572,191.7009 a 62.857143,62.857143 0 1 1 -125.71429,0 62.857143,62.857143 0 1 1 125.71429,0 z"
+       d="m 254.28572,191.7009 c 0,34.71504 -28.1421,62.85714 -62.85715,62.85714 -34.71504,0 -62.85714,-28.1421 -62.85714,-62.85714 0,-34.71504 28.1421,-62.85715 62.85714,-62.85715 34.71505,0 62.85715,28.14211 62.85715,62.85715 z"
        transform="translate(20.040114,126.13245)" />
     <path
        sodipodi:type="arc"
@@ -499,7 +499,7 @@
        sodipodi:cy="141.7009"
        sodipodi:rx="45"
        sodipodi:ry="45"
-       d="m 382.85715,141.7009 a 45,45 0 1 1 -90,0 45,45 0 1 1 90,0 z"
+       d="m 382.85715,141.7009 c 0,24.85281 -20.14719,45 -45,45 -24.85282,0 -45,-20.14719 -45,-45 0,-24.85282 20.14718,-45.000003 45,-45.000003 24.85281,0 45,20.147183 45,45.000003 z"
        transform="translate(-44.2456,106.84674)" />
     <path
        style="color:#000000;fill:none;stroke:#008000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1241,7 +1241,7 @@
        sodipodi:cy="1567.4152"
        sodipodi:rx="30.714285"
        sodipodi:ry="30.714285"
-       d="m 234.28571,1567.4152 a 30.714285,30.714285 0 1 1 -61.42857,0 30.714285,30.714285 0 1 1 61.42857,0 z"
+       d="m 234.28571,1567.4152 c 0,16.963 -13.75125,30.7142 -30.71428,30.7142 -16.96303,0 -30.71429,-13.7512 -30.71429,-30.7142 0,-16.9631 13.75126,-30.7143 30.71429,-30.7143 16.96303,0 30.71428,13.7512 30.71428,30.7143 z"
        transform="translate(73.78125,151.86161)" />
     <path
        sodipodi:type="arc"
@@ -1251,7 +1251,7 @@
        sodipodi:cy="1520.9866"
        sodipodi:rx="57.142857"
        sodipodi:ry="57.142857"
-       d="m 385,1520.9866 a 57.142857,57.142857 0 1 1 -114.28571,0 57.142857,57.142857 0 1 1 114.28571,0 z"
+       d="m 385,1520.9866 c 0,31.5591 -25.58372,57.1428 -57.14285,57.1428 -31.55913,0 -57.14286,-25.5837 -57.14286,-57.1428 0,-31.5592 25.58373,-57.1429 57.14286,-57.1429 31.55913,0 57.14285,25.5837 57.14285,57.1429 z"
        transform="matrix(0.51875,0,0,0.51875,152.63393,890.62212)" />
     <path
        sodipodi:type="arc"
@@ -1261,7 +1261,7 @@
        sodipodi:cy="1520.9866"
        sodipodi:rx="57.142857"
        sodipodi:ry="57.142857"
-       d="m 385,1520.9866 a 57.142857,57.142857 0 1 1 -114.28571,0 57.142857,57.142857 0 1 1 114.28571,0 z"
+       d="m 385,1520.9866 c 0,31.5591 -25.58372,57.1428 -57.14285,57.1428 -31.55913,0 -57.14286,-25.5837 -57.14286,-57.1428 0,-31.5592 25.58373,-57.1429 57.14286,-57.1429 31.55913,0 57.14285,25.5837 57.14285,57.1429 z"
        transform="matrix(0.51875,0,0,0.51875,129.41964,985.97928)" />
     <path
        sodipodi:type="arc"
@@ -1271,7 +1271,7 @@
        sodipodi:cy="1520.9866"
        sodipodi:rx="57.142857"
        sodipodi:ry="57.142857"
-       d="m 385,1520.9866 a 57.142857,57.142857 0 1 1 -114.28571,0 57.142857,57.142857 0 1 1 114.28571,0 z"
+       d="m 385,1520.9866 c 0,31.5591 -25.58372,57.1428 -57.14285,57.1428 -31.55913,0 -57.14286,-25.5837 -57.14286,-57.1428 0,-31.5592 25.58373,-57.1429 57.14286,-57.1429 31.55913,0 57.14285,25.5837 57.14285,57.1429 z"
        transform="matrix(0.51875,0,0,0.51875,47.991067,918.83643)" />
     <path
        style="color:#000000;fill:none;stroke:#d4aa00;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1286,7 +1286,7 @@
        sodipodi:cy="1580.2723"
        sodipodi:rx="108.57143"
        sodipodi:ry="108.57143"
-       d="m 297.85715,1580.2723 a 108.57143,108.57143 0 1 1 -217.142856,0 108.57143,108.57143 0 1 1 217.142856,0 z"
+       d="m 297.85715,1580.2723 c 0,59.9624 -48.60909,108.5715 -108.57143,108.5715 -59.96234,0 -108.571426,-48.6091 -108.571426,-108.5715 0,-59.9623 48.609086,-108.5714 108.571426,-108.5714 59.96234,0 108.57143,48.6091 108.57143,108.5714 z"
        transform="matrix(0.82565789,0,0,0.82565789,121.7817,414.86961)" />
     <path
        style="color:#000000;fill:none;stroke:#999999;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -1381,5 +1381,56 @@
          id="flowPara4605">fa = force_angle</flowPara><flowPara
          id="flowPara4607">F = force on the gear-tooth</flowPara><flowPara
          id="flowPara4601" /><flowPara
-         id="flowPara4603">F = To/(2*N*(R2+R3)*cos(fa))</flowPara></flowRoot>  </g>
+         id="flowPara4603">F = To/(2*N*(R2+R3)*cos(fa))</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3280"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(93.78125,134.71875)"><flowRegion
+         id="flowRegion3282"><rect
+           id="rect3284"
+           width="353.40167"
+           height="649.61011"
+           x="50"
+           y="1765.2947" /></flowRegion><flowPara
+         id="flowPara3286">Module sizing formula in the literaure:</flowPara><flowPara
+         id="flowPara3290">m&gt;2.34*sqrt(T/(k*Rpe))</flowPara><flowPara
+         id="flowPara3292">with:</flowPara><flowPara
+         id="flowPara3294">T = tangential effort on the tooth = F*cos(a)</flowPara><flowPara
+         id="flowPara3304">torque = C = d*F</flowPara><flowPara
+         id="flowPara3306">d = R*cos(a) (R = primitive radius = Z*m/2)</flowPara><flowPara
+         id="flowPara3308">T = F*cos(a) = C/d*cos(a) = C/R</flowPara><flowPara
+         id="flowPara3296">k = tooth width coefficient (usually k=8 or 10)</flowPara><flowPara
+         id="flowPara3298">tooth width = b = k*m</flowPara><flowPara
+         id="flowPara3288">Rpe = Re/s</flowPara><flowPara
+         id="flowPara3300">Re = Yield = elasticity limit </flowPara><flowPara
+         id="flowPara3302">s = security coefficient</flowPara><flowPara
+         id="flowPara3310" /><flowPara
+         id="flowPara3314">Eg1:</flowPara><flowPara
+         id="flowPara3323">C = 100 N.m</flowPara><flowPara
+         id="flowPara3316">R = 100 mm</flowPara><flowPara
+         id="flowPara3319">Then, T = 100/0.1 = 1000 N</flowPara><flowPara
+         id="flowPara3327">If Rpe = 400 MPa / 4 = 100 MPa and k = 8</flowPara><flowPara
+         id="flowPara3329">Then m &gt; 2.616 &lt;3 and b=3*8 = 24 mm</flowPara><flowPara
+         id="flowPara3331">If Rpe = 80 MPa / 4 = 20 MPa and k = 8</flowPara><flowPara
+         id="flowPara3335">Then m &gt; 5.85 &lt;6 and b = 8*6 = 48 mm</flowPara><flowPara
+         id="flowPara3305">If R=200 mm, Rpe = 100 N and k=8,</flowPara><flowPara
+         id="flowPara3307">Then m &gt; 1.85 &lt;2 and b=8*2 = 16 mm</flowPara><flowPara
+         id="flowPara3337">If R=100mm, s=1, Rpe=400N and k=8</flowPara><flowPara
+         id="flowPara3309">Then m&gt;1.308 &lt;1.5 and b=8*1.5= 12 mm</flowPara><flowPara
+         id="flowPara3311">If R=200mm, s=1, Rpe=400N and k=8</flowPara><flowPara
+         id="flowPara3313">Then m&gt;0.925 &lt;1 and b=8*1= 8 mm</flowPara><flowPara
+         id="flowPara3312" /><flowPara
+         id="flowPara3315">Eg2:</flowPara><flowPara
+         id="flowPara3334">Epicyloid with 4 planets. Zsun = 13 and Zplanet=19</flowPara><flowPara
+         id="flowPara3320">With C = 100*39/100 = 39 N.m</flowPara><flowPara
+         id="flowPara3322">R = (13+19)*1.0/2 = 16.0</flowPara><flowPara
+         id="flowPara3324">T = C/(R*8) = 304.7 N</flowPara><flowPara
+         id="flowPara3326">If Rpe=400MPa, m &gt; 0.722 &lt; 1 and b=8*1= 8 mm</flowPara><flowPara
+         id="flowPara3328">If Rpe=100MPa, m &gt; 1.444 &lt; 1.5 and b=8*1.5= 12 mm</flowPara><flowPara
+         id="flowPara3336">With C = 100*39/200 = 19.5 N.m</flowPara><flowPara
+         id="flowPara3338">R = (13+19)*1.0/2 = 16.0</flowPara><flowPara
+         id="flowPara3340">T = C/(R*8) = 152.4 N</flowPara><flowPara
+         id="flowPara3342">If Rpe=400MPa, m &gt; 0.51 &lt; 1 and b=8*1= 8 mm</flowPara><flowPara
+         id="flowPara3344">If Rpe=100MPa, m &gt; 1.02 &lt; 1.5 and b=8*1.5= 12 mm</flowPara><flowPara
+         id="flowPara3330" /></flowRoot>  </g>
 </svg>
