@@ -1016,6 +1016,15 @@ def epicyclic_gearing(ai_constraints):
   part_figure_list.append(front_planet_carrier_figure)
   part_figure_list.append(rear_planet_carrier_figure)
   part_figure_list.extend(middle_planet_carrier_figures)
+  part_figure_list.append(input_gearwheel_figure)
+  part_figure_list.append(input_axle_shaft_figure)
+  part_figure_list.append(input_cover_figure)
+  part_figure_list.append(output_gearwheel_figure)
+  part_figure_list.append(output_axle_shaft_figure)
+  part_figure_list.append(output_cover_figure)
+  part_figure_list.append(top_lid_arc_1_figure)
+  part_figure_list.append(top_lid_arc_2_figure)
+  part_figure_list.append(top_lid_plate_figure)
   # eg_assembly_figure: assembly flatted in one figure
   eg_assembly_figure = []
   for i in range(len(part_figure_list)):
