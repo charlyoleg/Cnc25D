@@ -121,6 +121,8 @@ def epicyclic_gearing_dictionary_init():
   r_egd['carrier_crenel_router_bit_radius']    = 0.1
   r_egd['carrier_hole_position_diameter']      = 0.0
   r_egd['carrier_hole_diameter']               = 0.0
+  ### planet carrier angle
+  r_egd['planet_carrier_angle']                = 0.0
   ### annulus: inherit dictionary entries from gearring
   r_egd.update(gearring.gearring_dictionary_init(1))
   #### side-cover
@@ -260,6 +262,9 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Set the diameter of the position circle of the carrier-crenel-holes. Default: 0.0")
   r_parser.add_argument('--carrier_hole_diameter','--cchd', action='store', type=float, default=0.0, dest='sw_carrier_hole_diameter',
     help="Set the diameter of the carrier-crenel-holes. If equal zero, no carrier-crenel-hole are generated. Default: 0.0")
+  ## planet_carrier_angle
+  r_parser.add_argument('--planet_carrier_angle','--pca', action='store', type=float, default=0.0, dest='sw_planet_carrier_angle',
+    help="Set the initial angle of the planet carrier. It impacts the initial sun-gear angle. Default: 0.0")
   ### annulus: inherit dictionary entries from gearring
   r_parser = gearring.gearring_add_argument(r_parser, 1)
   #### side-cover
@@ -321,7 +326,7 @@ def epicyclic_gearing(ai_constraints):
   It generates a epicyclic-gearing according to the constraint-arguments
   """
   ### default constant
-  first_planet_position_angle = 0.1
+  #first_planet_position_angle = 0.1
   ### check the dictionary-arguments ai_constraints
   egdi = epicyclic_gearing_dictionary_init()
   eg_c = egdi.copy()
@@ -379,6 +384,7 @@ def epicyclic_gearing(ai_constraints):
     print("ERR274: Error, gear_addendum_dedendum_parity_slack {:0.3f} is out of the range 0..30".format(eg_c['gear_addendum_dedendum_parity_slack']))
     sys.exit(2)
   addendum_dedendum_parity = 50.0-eg_c['gear_addendum_dedendum_parity_slack']/2.0
+  first_planet_position_angle = eg_c['planet_carrier_angle']
   
   ##### gears
   
@@ -848,7 +854,8 @@ def epicyclic_gearing(ai_constraints):
   input_cover_figure = []
   input_cover_shaft_merge_figure = []
   if(eg_c['input_gearwheel_tooth_nb']>0):
-    input_axle_shaft_radius = (eg_c['input_gearwheel_tooth_nb']+2)*eg_c['input_gearwheel_module']/2.0
+    #input_axle_shaft_radius = (eg_c['input_gearwheel_tooth_nb']+2)*eg_c['input_gearwheel_module']/2.0 # no, to avoid Z-axis issue, we don't want to make this radius as small as possible, but set it to carrier_peripheral_external_radius
+    input_axle_shaft_radius = carrier_peripheral_external_radius
     ig_c = {} # input_gearwheel
     ig_c['gear_tooth_nb']             = eg_c['input_gearwheel_tooth_nb']
     ig_c['gear_module']               = eg_c['input_gearwheel_module']
@@ -890,13 +897,15 @@ def epicyclic_gearing(ai_constraints):
       input_axle_shaft_figure.extend(input_gearwheel_figure[2:]) # get the crenels only
     input_cover_shaft_merge_figure.extend(input_cover_figure) # input_cover_shaft_merge_figure
     input_cover_shaft_merge_figure.extend(input_axle_shaft_figure)
+    #input_cover_shaft_merge_figure.extend(input_gearwheel_figure) # just for debug
   ### output cover
   output_gearwheel_figure = []
   output_axle_shaft_figure = []
   output_cover_figure = []
   output_cover_shaft_merge_figure = []
   if(eg_c['output_gearwheel_tooth_nb']>0):
-    output_axle_shaft_radius = (eg_c['output_gearwheel_tooth_nb']+2)*eg_c['output_gearwheel_module']/2.0
+    #output_axle_shaft_radius = (eg_c['output_gearwheel_tooth_nb']+2)*eg_c['output_gearwheel_module']/2.0 # no, it's not defined by the output gearwheel
+    output_axle_shaft_radius = carrier_peripheral_external_radius
     og_c = {} # output_gearwheel
     og_c['gear_tooth_nb']             = eg_c['output_gearwheel_tooth_nb']
     og_c['gear_module']               = eg_c['output_gearwheel_module']
@@ -931,10 +940,17 @@ def epicyclic_gearing(ai_constraints):
     oc_c['return_type'] = 'cnc25d_figure'
     output_cover_figure = gearring.gearring(oc_c)
     output_axle_shaft_figure.extend(front_planet_carrier_figure_copy) # output_axle_shaft
-    output_axle_shaft_figure.extend(output_gearwheel_figure[1:]) # get the axle and the crenels
+    if(eg_c['output_gearwheel_axle_diameter']>0):
+      output_axle_shaft_figure.extend(output_gearwheel_figure[2:]) # get the crenels only without the axle
+    else:
+      output_axle_shaft_figure.extend(output_gearwheel_figure[1:])
+    if(eg_c['sun_axle_type']!='circle'):
+      print("WARN945: Warning, sun_axle_type {:s} is not circle but sun_axle_x_width {:0.3f} is used as axle diameter for the output shaft".format(eg_c['sun_axle_type'], eg_c['sun_axle_x_width']))
+    output_axle_shaft_figure.append((0.0, 0.0, eg_c['sun_axle_x_width']/2.0))
     output_cover_shaft_merge_figure.extend(output_cover_figure) # output_cover_shaft_merge_figure
     output_cover_shaft_merge_figure.extend(output_axle_shaft_figure)
-  
+    #output_cover_shaft_merge_figure.extend(output_gearwheel_figure) # just for the debug
+   
   ### design output
   part_figure_list = []
   part_figure_list.append(annulus_figure)
@@ -1009,6 +1025,16 @@ holder radius:  {:0.3f}  diameter: {:0.3f}
 holder_crenel_number: {:d}
 holder_hole_mark_nb:  {:d}
 """.format(holder_radius, 2*holder_radius, eg_c['holder_crenel_number'], eg_c['holder_hole_mark_nb'])
+  eg_parameter_info += """
+planet_nb:                      {:d}
+planet-carrier angle:           {:0.3f}
+planet-axle radius:             {:0.3f}  diameter: {:0.3f}
+planet-axle positioning radius: {:0.3f}  diameter: {:0.3f}
+output-gearwheel-crenel nb:     {:d}
+output-gearwheel-crenel angle:  {:0.3f}
+output-gearwheel-crenel radius: {:0.3f}  diameter: {:0.3f}
+output-gearwheel-crenel positioning radius: {:0.3f}  diameter: {:0.3f}
+""".format(planet_nb, first_planet_position_angle, carrier_leg_hole_radius, 2*carrier_leg_hole_radius, carrier_hole_position_radius, 2*carrier_hole_position_radius, eg_c['output_gearwheel_crenel_number'], eg_c['output_gearwheel_crenel_angle'], eg_c['output_gearwheel_crenel_diameter']/2.0, eg_c['output_gearwheel_crenel_diameter'], eg_c['output_gearwheel_crenel_position_diameter']/2.0, eg_c['output_gearwheel_crenel_position_diameter'])
   #print(eg_parameter_info)
 
   ### display with Tkinter
@@ -1151,6 +1177,8 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['carrier_crenel_router_bit_radius']    = ai_eg_args.sw_carrier_crenel_router_bit_radius
   r_egd['carrier_hole_position_diameter']      = ai_eg_args.sw_carrier_hole_position_diameter
   r_egd['carrier_hole_diameter']               = ai_eg_args.sw_carrier_hole_diameter
+  ## planet_carrier_angle
+  r_egd['planet_carrier_angle']                = ai_eg_args.sw_planet_carrier_angle
   ### annulus: inherit dictionary entries from gearring
   r_egd.update(gearring.gearring_argparse_to_dictionary(ai_eg_args, 1))
   #### side-cover
