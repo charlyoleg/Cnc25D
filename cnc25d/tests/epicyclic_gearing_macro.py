@@ -172,6 +172,10 @@ eg_constraint['output_gearwheel_crenel_position_diameter']  = 0.0
 eg_constraint['output_gearwheel_crenel_diameter']           = 0.0
 eg_constraint['output_gearwheel_crenel_angle']              = 0.0
 eg_constraint['output_cover_extra_space']                   = 0.0
+### axle-lid
+eg_constraint['top_clearance_diameter']     = 0.0
+eg_constraint['top_axle_hole_diameter']     = 0.0
+eg_constraint['top_central_diameter']       = 0.0
 ### general
 eg_constraint['cnc_router_bit_radius']   = 0.1
 eg_constraint['gear_profile_height']     = 10.0

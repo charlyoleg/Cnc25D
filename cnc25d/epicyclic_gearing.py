@@ -55,6 +55,7 @@ from FreeCAD import Base
 import gearring
 import gearwheel
 import gear_profile # to get the high-level parameter to find the angle position
+import axle_lid
 
 ################################################################
 # epicyclic_gearing dictionary-arguments default values
@@ -144,6 +145,10 @@ def epicyclic_gearing_dictionary_init():
   r_egd['output_gearwheel_crenel_diameter']           = 0.0
   r_egd['output_gearwheel_crenel_angle']              = 0.0
   r_egd['output_cover_extra_space']                   = 0.0
+  ### axle-lid
+  r_egd['top_clearance_diameter']     = 0.0
+  r_egd['top_axle_hole_diameter']     = 0.0
+  r_egd['top_central_diameter']       = 0.0
   ### general
   r_egd['cnc_router_bit_radius']   = 0.1
   r_egd['gear_profile_height']     = 10.0
@@ -302,6 +307,13 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Set the angle position of the first circle-crenels of the output gearwheel. Default: 0.0")
   r_parser.add_argument('--output_cover_extra_space','--oces', action='store', type=float, default=0.0, dest='sw_output_cover_extra_space',
     help="Set the extra-space between the radius of the annulus-holder and the output-shaft-cylinder. Default: 0.0")
+  ### top : axle-lid
+  r_parser.add_argument('--top_clearance_diameter','--tcld', action='store', type=float, default=0.0, dest='sw_top_clearance_diameter',
+    help="Set the diameter of the clearence cylinder for the input and output gearwheel. If equal to 0.0, set to a bit more than the biggest gearwheel. Default: 0.0")
+  r_parser.add_argument('--top_axle_hole_diameter','--tahd', action='store', type=float, default=0.0, dest='sw_top_axle_hole_diameter',
+    help="Set the diameter of the axle hole of the top-axle-lid. If equal to 0.0, set to the sun-gear axle width. Default: 0.0")
+  r_parser.add_argument('--top_central_diameter','--tced', action='store', type=float, default=0.0, dest='sw_top_central_diameter',
+    help="Set the diameter of the central-circle of the top-axle-lid. If equal to 0.0, set to three times the sun-gear axle width. Default: 0.0")
   ### cnc router_bit constraint
   r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
     help="Set the minimum router_bit radius of the epicyclic-gearing. Default: 0.1")
@@ -538,7 +550,7 @@ def epicyclic_gearing(ai_constraints):
     #print("tooth_check = (sun_nb {:d} + annulus_nb {:d}) % planet_nb {:d}".format(sun_gear_tooth_nb, annulus_gear_tooth_nb, planet_nb))
     print("tooth_check = (2*(sun_nb {:d} + planet_nb {:d})) % planet_nb {:d}".format(sun_gear_tooth_nb, planet_gear_tooth_nb, planet_nb))
   for i in range(planet_nb):
-    a0_ai_diff = math.fmod(sun_angle_position[i]-sun_angle_position[0]+0.5*g2_pi_module_angle, g2_pi_module_angle) - 0.5*g2_pi_module_angle
+    a0_ai_diff = math.fmod(sun_angle_position[i]-sun_angle_position[0]+5.5*g2_pi_module_angle, g2_pi_module_angle) - 0.5*g2_pi_module_angle
     if(abs(a0_ai_diff)>radian_epsilon):
       print("ERR414: Error, the i {:d} sun_angle_position {:0.5f} differ from the 0 sun_angle_position {:0.5f} with g2_pi_module_angle {:0.8f}".format(i, sun_angle_position[i], sun_angle_position[0], g2_pi_module_angle))
       print("dbg417: a0_ai_diff {:0.8f}".format(a0_ai_diff))
@@ -950,6 +962,51 @@ def epicyclic_gearing(ai_constraints):
     output_cover_shaft_merge_figure.extend(output_cover_figure) # output_cover_shaft_merge_figure
     output_cover_shaft_merge_figure.extend(output_axle_shaft_figure)
     #output_cover_shaft_merge_figure.extend(output_gearwheel_figure) # just for the debug
+  ### top (axle-lid)
+  top_clearance_radius = eg_c['top_clearance_diameter']/2.0
+  if(top_clearance_radius == 0):
+    top_clearance_radius = (carrier_peripheral_external_radius + holder_radius)/2.0 # default value
+  if(top_clearance_radius < carrier_peripheral_external_radius):
+    print("ERR968: Error, top_clearance_radius {:0.3f} is smaller than carrier_peripheral_external_radius {:0.3f}".format(top_clearance_radius, carrier_peripheral_external_radius))
+    sys.exit(2)
+  if(top_clearance_radius > holder_radius):
+    print("ERR971: Error, top_clearance_radius {:0.3f} is bigger than holder_radius {:0.3f}".format(top_clearance_radius, holder_radius))
+    sys.exit(2)
+  top_axle_hole_radius = eg_c['top_axle_hole_diameter']/2.0
+  if(top_axle_hole_radius == 0):
+    if(eg_c['sun_axle_type'] != 'circle'):
+      print("WARN978: Warning, sun_axle_type {:s} is not set to circle but sun_axle_x_width {:0.3f} is used to set the top_axle_hole_diameter".format(eg_c['sun_axle_type'], eg_c['sun_axle_x_width']))
+    top_axle_hole_radius = eg_c['sun_axle_x_width']/2.0
+  top_central_radius = eg_c['top_central_diameter']/2.0
+  if(top_central_radius == 0):
+    top_central_radius = 3*top_axle_hole_radius
+  if(top_central_radius<top_axle_hole_radius):
+    print("ERR984: Error, top_central_radius {:0.3f} is smaller than top_axle_hole_radius {:0.3f}".format(top_central_radius, top_axle_hole_radius))
+    sys.exit(2)
+  if(top_central_radius>holder_radius):
+    print("ERR987: Error, top_central_radius {:0.3f} is bigger than holder_radius {:0.3f}".format(top_central_radius, holder_radius))
+    sys.exit(2)
+  al_ci = gearring.gearring_dictionary_init(1)
+  al_c = dict([ (k, eg_c[k]) for k in al_ci.keys() ]) # extract only the entries of the gearring dictionary
+  al_c['holder_diameter']       = 2*holder_radius
+  al_c['clearance_diameter']     = 2*top_clearance_radius
+  al_c['central_diameter']       = 2*top_central_radius
+  al_c['axle_hole_diameter']     = 2*top_axle_hole_radius
+  al_c['annulus_holder_axle_hole_diameter'] = 0.0
+  # general
+  al_c['cnc_router_bit_radius']  = eg_c['cnc_router_bit_radius']
+  al_c['extrusion_height']       = eg_c['gear_profile_height']
+  # output
+  al_c['tkinter_view']           = False
+  al_c['output_file_basename']   = ''
+  # optional
+  al_c['args_in_txt'] = "from epicyclic_gearing"
+  al_c['return_type'] = 'cnc25d_figure' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+  ## generate the axle-lid-figures
+  axle_lid_figures = axle_lid.axle_lid(al_c)
+  top_lid_plate_figure = axle_lid_figures[3]
+  top_lid_arc_1_figure = axle_lid_figures[1]
+  top_lid_arc_2_figure = axle_lid_figures[2]
    
   ### design output
   part_figure_list = []
@@ -979,6 +1036,18 @@ def epicyclic_gearing(ai_constraints):
   middle_planet_carrier_figure = []
   for i in range(len(middle_planet_carrier_figures)):
     middle_planet_carrier_figure.extend(middle_planet_carrier_figures[i])
+  # input_top_assembly_figure
+  input_top_assembly_figure = []
+  input_top_assembly_figure.extend(input_gearwheel_figure)
+  input_top_assembly_figure.extend(top_lid_arc_1_figure)
+  input_top_assembly_figure.extend(top_lid_arc_2_figure)
+  input_top_assembly_figure.extend(top_lid_plate_figure)
+  # output_top_assembly_figure
+  output_top_assembly_figure = []
+  output_top_assembly_figure.extend(output_gearwheel_figure)
+  output_top_assembly_figure.extend(top_lid_arc_1_figure)
+  output_top_assembly_figure.extend(top_lid_arc_2_figure)
+  output_top_assembly_figure.extend(top_lid_plate_figure)
 
   # eg_parameter_info
   eg_parameter_info = "\nepicyclic_gearing parameter info:\n"
@@ -1098,6 +1167,11 @@ output-gearwheel-crenel positioning radius: {:0.3f}  diameter: {:0.3f}
         cnc25d_api.generate_output_file(output_axle_shaft_figure, output_file_basename + "_output_shaft" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
         cnc25d_api.generate_output_file(output_cover_figure, output_file_basename + "_output_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
         cnc25d_api.generate_output_file(output_cover_shaft_merge_figure, output_file_basename + "_output_cover_shaft_merge" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(input_top_assembly_figure, output_file_basename + "_input_top_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(output_top_assembly_figure, output_file_basename + "_output_top_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(top_lid_plate_figure, output_file_basename + "_top_lid_plate" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(top_lid_arc_1_figure, output_file_basename + "_top_lid_arc_1" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(top_lid_arc_2_figure, output_file_basename + "_top_lid_arc_2" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       cnc25d_api.generate_output_file(eg_list_of_parts, output_file_basename + "_part_list" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
     else:
       cnc25d_api.generate_output_file(annulus_figure, output_file_basename + "_epicyclic_gearing_holder", eg_c['gear_profile_height'], eg_parameter_info) # to get the parameter info as test file
@@ -1200,6 +1274,10 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['output_gearwheel_crenel_diameter']           = ai_eg_args.sw_output_gearwheel_crenel_diameter
   r_egd['output_gearwheel_crenel_angle']              = ai_eg_args.sw_output_gearwheel_crenel_angle
   r_egd['output_cover_extra_space']                   = ai_eg_args.sw_output_cover_extra_space
+  ### top : axle-lid
+  r_egd['top_clearance_diameter']                     = ai_eg_args.sw_top_clearance_diameter
+  r_egd['top_axle_hole_diameter']                     = ai_eg_args.sw_top_axle_hole_diameter
+  r_egd['top_central_diameter']                       = ai_eg_args.sw_top_central_diameter
   ### general
   r_egd['cnc_router_bit_radius']   = ai_eg_args.sw_cnc_router_bit_radius
   r_egd['gear_profile_height']     = ai_eg_args.sw_gear_profile_height
