@@ -1113,6 +1113,11 @@ output-gearwheel-crenel angle:  {:0.3f}
 output-gearwheel-crenel radius: {:0.3f}  diameter: {:0.3f}
 output-gearwheel-crenel positioning radius: {:0.3f}  diameter: {:0.3f}
 """.format(planet_nb, first_planet_position_angle, carrier_leg_hole_radius, 2*carrier_leg_hole_radius, carrier_hole_position_radius, 2*carrier_hole_position_radius, eg_c['output_gearwheel_crenel_number'], eg_c['output_gearwheel_crenel_angle'], eg_c['output_gearwheel_crenel_diameter']/2.0, eg_c['output_gearwheel_crenel_diameter'], eg_c['output_gearwheel_crenel_position_diameter']/2.0, eg_c['output_gearwheel_crenel_position_diameter'])
+  eg_parameter_info += """
+top_clearance_radius: {:0.3f}  diameter: {:0.3}
+top_axle_hole_radius: {:0.3f}  diameter: {:0.3}
+top_central_radius:   {:0.3f}  diameter: {:0.3}
+""".format(top_clearance_radius, 2*top_clearance_radius, top_axle_hole_radius, 2*top_axle_hole_radius, top_central_radius, 2*top_central_radius)
   #print(eg_parameter_info)
 
   ### display with Tkinter
