@@ -13,6 +13,7 @@ Contents:
    :maxdepth: 2
 
    cnc25d_presentation
+   cnc25d_release_notes
    cnc25d_api_overview
    cnc25d_api_outline_creation
    cnc_cut_outline_details
