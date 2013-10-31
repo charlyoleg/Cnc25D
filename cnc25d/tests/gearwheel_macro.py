@@ -163,6 +163,7 @@ gw_constraint['crenel_type']         = 'rectangle' # 'rectangle' or 'circle'
 gw_constraint['crenel_mark_nb']      = 0
 gw_constraint['crenel_diameter']     = 0.0
 gw_constraint['crenel_angle']        = 0.0
+gw_constraint['crenel_tooth_align']  = 0
 gw_constraint['crenel_width']        = 10.0
 gw_constraint['crenel_height']       = 5.0
 gw_constraint['crenel_router_bit_radius']      = 1.0

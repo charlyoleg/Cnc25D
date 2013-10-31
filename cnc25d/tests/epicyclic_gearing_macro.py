@@ -104,6 +104,7 @@ eg_constraint['sun_axle_type']           = 'circle' # 'none', 'circle' or 'recta
 eg_constraint['sun_axle_x_width']        = 12.0
 eg_constraint['sun_axle_y_width']        = 0.0
 eg_constraint['sun_crenel_nb']           = 4
+eg_constraint['sun_crenel_tooth_align']  = 0
 eg_constraint['sun_crenel_type']         = 'rectangle' # 'rectangle' or 'circle'
 eg_constraint['sun_crenel_mark_nb']      = 0
 eg_constraint['sun_crenel_diameter']     = 0.0
@@ -113,6 +114,7 @@ eg_constraint['sun_crenel_router_bit_radius']   = 0.1
 ### planet-gear
 eg_constraint['planet_axle_diameter']      = 10.0
 eg_constraint['planet_crenel_nb']          = 0
+eg_constraint['planet_crenel_tooth_align'] = 0
 eg_constraint['planet_crenel_type']        = 'rectangle' # 'rectangle' or 'circle'
 eg_constraint['planet_crenel_mark_nb']     = 0
 eg_constraint['planet_crenel_diameter']    = 0.0
