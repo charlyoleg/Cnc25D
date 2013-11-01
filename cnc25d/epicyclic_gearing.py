@@ -1053,6 +1053,21 @@ def epicyclic_gearing(ai_constraints):
   middle_planet_carrier_figure = []
   for i in range(len(middle_planet_carrier_figures)):
     middle_planet_carrier_figure.extend(middle_planet_carrier_figures[i])
+  # planet_carrier_assembly_figure
+  planet_carrier_assembly_figure = []
+  planet_carrier_assembly_figure.extend(front_planet_carrier_figure)
+  planet_carrier_assembly_figure.extend(middle_planet_carrier_figure)
+  planet_carrier_assembly_figure.extend(rear_planet_carrier_figure)
+  # planet_and_carrier_assembly_figure
+  planet_and_carrier_assembly_figure = []
+  for i in range(len(planet_figures)):
+    planet_and_carrier_assembly_figure.extend(planet_figures[i])
+  planet_and_carrier_assembly_figure.extend(middle_planet_carrier_figure)
+  # planet_and_rear_carrier_assembly_figure
+  planet_and_rear_carrier_assembly_figure = []
+  for i in range(len(planet_figures)):
+    planet_and_rear_carrier_assembly_figure.extend(planet_figures[i])
+  planet_and_rear_carrier_assembly_figure.extend(rear_planet_carrier_figure)
   # input_top_assembly_figure
   input_top_assembly_figure = []
   input_top_assembly_figure.extend(input_gearwheel_figure)
@@ -1179,6 +1194,9 @@ top_central_radius:   {:0.3f}  diameter: {:0.3}
       cnc25d_api.generate_output_file(rear_planet_carrier_figure, output_file_basename + "_rear_carrier" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       for i in range(len(middle_planet_carrier_figures)):
         cnc25d_api.generate_output_file(middle_planet_carrier_figures[i], output_file_basename + "_middle_carrier{:02d}".format(i+1) + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(planet_carrier_assembly_figure, output_file_basename + "_planet_carrier_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(planet_and_carrier_assembly_figure, output_file_basename + "_planet_and_carrier_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      cnc25d_api.generate_output_file(planet_and_rear_carrier_assembly_figure, output_file_basename + "_planet_and_rear_carrier_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       if(eg_c['input_gearwheel_tooth_nb']>0):
         cnc25d_api.generate_output_file(input_gearwheel_figure, output_file_basename + "_input_gearwheel" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
         cnc25d_api.generate_output_file(input_axle_shaft_figure, output_file_basename + "_input_shaft" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
