@@ -137,6 +137,7 @@ eg_constraint['carrier_crenel_height']               = 2.0
 eg_constraint['carrier_crenel_router_bit_radius']    = 0.1
 eg_constraint['carrier_hole_position_diameter']      = 0.0
 eg_constraint['carrier_hole_diameter']               = 0.0
+eg_constraint['carrier_double_hole_length']          = 0.0
 ## planet carrier angle
 eg_constraint['planet_carrier_angle']                = 0.0
 ### annulus: inherit dictionary entries from gearring
@@ -148,6 +149,7 @@ eg_constraint['holder_position_angle']      = 0.0
 eg_constraint['holder_hole_position_radius']   = 0.0
 eg_constraint['holder_hole_diameter']          = 5.0
 eg_constraint['holder_hole_mark_nb']           = 0
+eg_constraint['holder_double_hole_length']     = 0.0
 ### holder-crenel
 eg_constraint['holder_crenel_position']        = 4.0
 eg_constraint['holder_crenel_height']          = 2.0

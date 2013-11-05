@@ -94,6 +94,7 @@ al_constraint['holder_position_angle']      = 0.0
 ### holder-hole
 al_constraint['holder_hole_position_radius']   = 0.0
 al_constraint['holder_hole_diameter']          = 5.0
+al_constraint['holder_double_hole_length']     = 0.0
 ### holder-crenel
 al_constraint['holder_crenel_position']        = 4.0
 al_constraint['holder_crenel_height']          = 2.0

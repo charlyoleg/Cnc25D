@@ -124,6 +124,7 @@ def epicyclic_gearing_dictionary_init():
   r_egd['carrier_crenel_router_bit_radius']    = 0.1
   r_egd['carrier_hole_position_diameter']      = 0.0
   r_egd['carrier_hole_diameter']               = 0.0
+  r_egd['carrier_double_hole_length']          = 0.0
   ### planet carrier angle
   r_egd['planet_carrier_angle']                = 0.0
   ### annulus: inherit dictionary entries from gearring
@@ -273,6 +274,8 @@ def epicyclic_gearing_add_argument(ai_parser):
     help="Set the diameter of the position circle of the carrier-crenel-holes. Default: 0.0")
   r_parser.add_argument('--carrier_hole_diameter','--cchd', action='store', type=float, default=0.0, dest='sw_carrier_hole_diameter',
     help="Set the diameter of the carrier-crenel-holes. If equal zero, no carrier-crenel-hole are generated. Default: 0.0")
+  r_parser.add_argument('--carrier_double_hole_length','--ccdhl', action='store', type=float, default=0.0, dest='sw_carrier_double_hole_length',
+    help="Set the length between of the double-carrier-crenel-holes. If equal zero, a single carrier-crenel-hole is generated. Default: 0.0")
   ## planet_carrier_angle
   r_parser.add_argument('--planet_carrier_angle','--pca', action='store', type=float, default=0.0, dest='sw_planet_carrier_angle',
     help="Set the initial angle of the planet carrier. It impacts the initial sun-gear angle. Default: 0.0")
@@ -427,6 +430,7 @@ def epicyclic_gearing(ai_constraints):
   gr_c['holder_hole_position_radius'] = eg_c['holder_hole_position_radius']
   gr_c['holder_hole_diameter']        = eg_c['holder_hole_diameter']
   gr_c['holder_hole_mark_nb']         = eg_c['holder_hole_mark_nb']
+  gr_c['holder_double_hole_length']   = eg_c['holder_double_hole_length']
   gr_c['holder_crenel_position']      = eg_c['holder_crenel_position']
   gr_c['holder_crenel_height']        = eg_c['holder_crenel_height']
   gr_c['holder_crenel_width']         = eg_c['holder_crenel_width']
@@ -580,7 +584,7 @@ def epicyclic_gearing(ai_constraints):
   (annulus_figure, holder_parameters) = gearring.gearring(gr_c)
   ( holder_crenel_half_width, holder_crenel_half_angle, holder_smoothing_radius, holder_crenel_x_position, holder_maximal_height_plus,
     holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
-    holder_hole_position_radius, holder_hole_radius, holder_radius) = holder_parameters
+    holder_hole_position_radius, holder_hole_radius, holder_double_hole_length, holder_radius) = holder_parameters
   planet_figures = []
   for i in range(planet_nb):
     planet_figures.append(gearwheel.gearwheel(pg_c_list[i]))
@@ -651,7 +655,13 @@ def epicyclic_gearing(ai_constraints):
     if(carrier_hole_position_radius>(carrier_peripheral_external_radius-eg_c['carrier_crenel_height']-carrier_hole_radius-radian_epsilon)):
       print("ERR548: Error, carrier_hole_position_radius {:0.3f} is too big compare to carrier_peripheral_external_radius {:0.3f} carrier_crenel_height {:0.3f} and carrier_hole_radius {:0.3f}".format(carrier_hole_position_radius, carrier_peripheral_external_radius, eg_c['carrier_crenel_height'], carrier_hole_radius))
       sys.exit(2)
-  
+  if(eg_c['carrier_double_hole_length']<0):
+    print("ERR658: Error, carrier_double_hole_length {:0.3f} should be positive".format(eg_c['carrier_double_hole_length']))
+    sys.exit(2)
+  elif(eg_c['carrier_double_hole_length']>0):
+    if(carrier_hole_radius==0):
+      print("ERR662: Error, carrier_double_hole_length {:0.3f} is positive whereas carrier_hole_radius is set to zero".format(eg_c['carrier_double_hole_length']))
+      sys.exit(2)
   ## carrier_crenel_outline function
   def carrier_crenel_outline(nai_radius):
     """ create the portion of outline for the carrier-crenel centered on Ox
@@ -745,10 +755,16 @@ def epicyclic_gearing(ai_constraints):
       tmp_a = first_planet_position_angle + i * leg_hole_portion
       front_planet_carrier_figure.append((0.0+sun_planet_length*math.cos(tmp_a), 0.0+sun_planet_length*math.sin(tmp_a), carrier_leg_hole_radius))
   carrier_hole_portion = 2*math.pi/(2*planet_nb)
+  tmp_a2 = math.atan(eg_c['carrier_double_hole_length']/2.0/carrier_hole_position_radius) # if double carrier-crenel-hole
+  carrier_hole_position_radius2 = math.sqrt(carrier_hole_position_radius**2+(eg_c['carrier_double_hole_length']/2.0)**2)
   if(carrier_hole_radius>0):
     for i in range(2*planet_nb):
       tmp_a = first_planet_position_angle + i * carrier_hole_portion
-      front_planet_carrier_figure.append((0.0+carrier_hole_position_radius*math.cos(tmp_a), 0.0+carrier_hole_position_radius*math.sin(tmp_a), carrier_hole_radius))
+      if(eg_c['carrier_double_hole_length']==0): # single crenel hole
+        front_planet_carrier_figure.append((0.0+carrier_hole_position_radius*math.cos(tmp_a), 0.0+carrier_hole_position_radius*math.sin(tmp_a), carrier_hole_radius))
+      else: # double crenel hole
+        front_planet_carrier_figure.append((0.0+carrier_hole_position_radius2*math.cos(tmp_a-tmp_a2), 0.0+carrier_hole_position_radius2*math.sin(tmp_a-tmp_a2), carrier_hole_radius))
+        front_planet_carrier_figure.append((0.0+carrier_hole_position_radius2*math.cos(tmp_a+tmp_a2), 0.0+carrier_hole_position_radius2*math.sin(tmp_a+tmp_a2), carrier_hole_radius))
   # copy for the rear_planet_carrier_figure
   front_planet_carrier_figure_copy = front_planet_carrier_figure[:]
   #print("dbg573: len(front_planet_carrier_figure_copy[0]) {:d}".format(len(front_planet_carrier_figure_copy[0])))
@@ -863,11 +879,16 @@ def epicyclic_gearing(ai_constraints):
       middle_planet_carrier_figures.append( [ cnc25d_api.outline_rotate(middle_planet_carrier_outline, 0.0, 0.0, (i+0.5)*leg_hole_portion) ] )
     middle_planet_carrier_figure_overlay = [ cnc25d_api.outline_rotate(middle_planet_carrier_outline_overlay, 0.0, 0.0, (0+0.5)*leg_hole_portion) ]
     ## add carrier-crenel-hole
+    tmp_a2 = math.atan(eg_c['carrier_double_hole_length']/2.0/carrier_hole_position_radius) # if double carrier-crenel-hole
+    carrier_hole_position_radius2 = math.sqrt(carrier_hole_position_radius**2+(eg_c['carrier_double_hole_length']/2.0)**2)
     if(carrier_hole_radius>0):
       for i in range(planet_nb):
         ta = (i+0.5)*leg_hole_portion + first_planet_position_angle
-        middle_planet_carrier_figures[i].append((0.0+carrier_hole_position_radius*math.cos(ta), 0.0+carrier_hole_position_radius*math.sin(ta), carrier_hole_radius))
-  
+        if(eg_c['carrier_double_hole_length']==0): # single crenel hole
+          middle_planet_carrier_figures[i].append((0.0+carrier_hole_position_radius*math.cos(ta), 0.0+carrier_hole_position_radius*math.sin(ta), carrier_hole_radius))
+        else: # double crenel hole
+          middle_planet_carrier_figures[i].append((0.0+carrier_hole_position_radius2*math.cos(ta-tmp_a2), 0.0+carrier_hole_position_radius2*math.sin(ta-tmp_a2), carrier_hole_radius))
+          middle_planet_carrier_figures[i].append((0.0+carrier_hole_position_radius2*math.cos(ta+tmp_a2), 0.0+carrier_hole_position_radius2*math.sin(ta+tmp_a2), carrier_hole_radius))
   ### input cover
   input_gearwheel_figure = []
   input_axle_shaft_figure = []
@@ -1293,6 +1314,7 @@ def epicyclic_gearing_argparse_to_dictionary(ai_eg_args):
   r_egd['carrier_crenel_router_bit_radius']    = ai_eg_args.sw_carrier_crenel_router_bit_radius
   r_egd['carrier_hole_position_diameter']      = ai_eg_args.sw_carrier_hole_position_diameter
   r_egd['carrier_hole_diameter']               = ai_eg_args.sw_carrier_hole_diameter
+  r_egd['carrier_double_hole_length']          = ai_eg_args.sw_carrier_double_hole_length
   ## planet_carrier_angle
   r_egd['planet_carrier_angle']                = ai_eg_args.sw_planet_carrier_angle
   ### annulus: inherit dictionary entries from gearring
@@ -1373,6 +1395,8 @@ def epicyclic_gearing_self_test():
     ["sun crenel circle"    , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12"],
     ["sun crenel circle marked", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12 --sun_crenel_mark_nb 1"],
     ["carrier crenel hole"  , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_hole_diameter 1.9"],
+    ["carrier crenel double hole"  , "--sun_gear_tooth_nb 17 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_hole_diameter 1.0 --carrier_double_hole_length 2.0"],
+    ["holder crenel double hole"  , "--sun_gear_tooth_nb 17 --planet_gear_tooth_nb 31 --gear_module 1.0 --holder_hole_diameter 2.0 --holder_double_hole_length 3.0 --holder_crenel_skin_width 2.0 --holder_crenel_position 2.0 --holder_crenel_height 2.0"],
     ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
     ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --input_gearwheel_tooth_nb 29 --output_file_basename test_output/epicyclic_self_test.dxf"],
     ["output file2"         , "--sun_gear_tooth_nb 13 --planet_gear_tooth_nb 19 --gear_module 1.0 --holder_hole_diameter 1.0 --holder_crenel_position 2.0 --holder_crenel_height 2.0 --holder_crenel_width 6.0 --holder_crenel_skin_width 4.0 --input_gearwheel_tooth_nb 29 --input_gearwheel_module 1.0 --input_gearwheel_axle_diameter 19.0 --input_gearwheel_crenel_number 6 --input_gearwheel_crenel_position_diameter 24.0 --input_gearwheel_crenel_diameter 1.0 --input_cover_extra_space 0.5 --output_gearwheel_tooth_nb 13 --output_gearwheel_module 3.0 --output_gearwheel_axle_diameter 22.0 --output_gearwheel_crenel_number 6 --output_gearwheel_crenel_position_diameter 28.0 --output_gearwheel_crenel_diameter 3.0 --output_gearwheel_crenel_angle 0.3 --output_cover_extra_space 0.5 --output_file_basename test_output/epicyclic_self_test2.dxf"],
