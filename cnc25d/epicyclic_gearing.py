@@ -944,6 +944,8 @@ def epicyclic_gearing(ai_constraints):
   output_axle_shaft_figure = []
   output_cover_figure = []
   output_cover_shaft_merge_figure = []
+  inout_axle_shaft_figure = []
+  inout_cover_shaft_merge_figure = []
   if(eg_c['output_gearwheel_tooth_nb']>0):
     #output_axle_shaft_radius = (eg_c['output_gearwheel_tooth_nb']+2)*eg_c['output_gearwheel_module']/2.0 # no, it's not defined by the output gearwheel
     output_axle_shaft_radius = carrier_peripheral_external_radius
@@ -985,12 +987,16 @@ def epicyclic_gearing(ai_constraints):
       output_axle_shaft_figure.extend(output_gearwheel_figure[2:]) # get the crenels only without the axle
     else:
       output_axle_shaft_figure.extend(output_gearwheel_figure[1:])
+    inout_axle_shaft_figure = output_axle_shaft_figure[:] # inherit outline and holes from output_axle_shaft_figure
     if(eg_c['sun_axle_type']!='circle'):
       print("WARN945: Warning, sun_axle_type {:s} is not circle but sun_axle_x_width {:0.3f} is used as axle diameter for the output shaft".format(eg_c['sun_axle_type'], eg_c['sun_axle_x_width']))
     output_axle_shaft_figure.append((0.0, 0.0, eg_c['sun_axle_x_width']/2.0))
     output_cover_shaft_merge_figure.extend(output_cover_figure) # output_cover_shaft_merge_figure
     output_cover_shaft_merge_figure.extend(output_axle_shaft_figure)
     #output_cover_shaft_merge_figure.extend(output_gearwheel_figure) # just for the debug
+    inout_axle_shaft_figure.extend(sun_figure[1:]) # get the axle and the crenels
+    inout_cover_shaft_merge_figure.extend(output_cover_figure) # output_cover_shaft_merge_figure
+    inout_cover_shaft_merge_figure.extend(inout_axle_shaft_figure)
   ### top (axle-lid)
   top_clearance_radius = eg_c['top_clearance_diameter']/2.0
   if(top_clearance_radius == 0):
@@ -1051,6 +1057,7 @@ def epicyclic_gearing(ai_constraints):
   part_figure_list.append(output_gearwheel_figure)
   part_figure_list.append(output_axle_shaft_figure)
   part_figure_list.append(output_cover_figure)
+  part_figure_list.append(inout_axle_shaft_figure)
   part_figure_list.append(top_lid_arc_1_figure)
   part_figure_list.append(top_lid_arc_2_figure)
   part_figure_list.append(top_lid_plate_figure)
@@ -1228,6 +1235,9 @@ top_central_radius:   {:0.3f}  diameter: {:0.3}
         cnc25d_api.generate_output_file(output_axle_shaft_figure, output_file_basename + "_output_shaft" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
         cnc25d_api.generate_output_file(output_cover_figure, output_file_basename + "_output_cover" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
         cnc25d_api.generate_output_file(output_cover_shaft_merge_figure, output_file_basename + "_output_cover_shaft_merge" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+      if((eg_c['input_gearwheel_tooth_nb']>0)or(eg_c['output_gearwheel_tooth_nb']>0)):
+        cnc25d_api.generate_output_file(inout_axle_shaft_figure, output_file_basename + "_inout_shaft" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
+        cnc25d_api.generate_output_file(inout_cover_shaft_merge_figure, output_file_basename + "_inout_cover_shaft_merge" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       cnc25d_api.generate_output_file(input_top_assembly_figure, output_file_basename + "_input_top_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       cnc25d_api.generate_output_file(output_top_assembly_figure, output_file_basename + "_output_top_assembly" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
       cnc25d_api.generate_output_file(top_lid_plate_figure, output_file_basename + "_top_lid_plate" + output_file_suffix, eg_c['gear_profile_height'], eg_parameter_info)
