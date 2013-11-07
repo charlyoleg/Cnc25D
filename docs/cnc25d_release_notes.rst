@@ -2,16 +2,21 @@
 Cnc25D Release Notes
 ====================
 
+Release 0.1.9
+-------------
+Released on 2013-12-01
+
+* gearlever
+* gear_train  
+* hexa_bone
+
 Release 0.1.8
 -------------
-Released on 2013-11-01
+Released on 2013-11-07
 
 * add crenels to the gearwheel
 * epicyclic
 * axle_lid
-* gearlever
-* gear_train  
-* hexa_bone
 
 Release 0.1.7
 -------------
