@@ -58,7 +58,13 @@ Alignment angles
 
 The rectangle axle is always fixed to the XY-axis. The angle between the first *wheel_hollow leg* (middle of it) and the X-axis is set with *wheel_hollow_leg_angle*. The angle between the first *gear_profile* tooth (middle of the addendum) and the X-axis is set with *gear_initial_angle*.
 
+crenel_mark_nb
+--------------
 
+*crenel_mark_nb* lets you modify the first (or the several first) crenel to help you recognizing the first tooth. If the *crenel_type* is set to *rectangle*, the right-angle of the first crenels are rounded. If the *crenel_type* is set to *circle*, the first crenels have a egg-form. If you don't want to mark the first crenel, set *crenel_mark_nb* to *zero*. This feature is useful when you work with small gearwheel and you want to align them easily.
 
+crenel_tooth_align
+------------------
 
+*crenel_tooth_align* is an alternative to the parameters *crenel_number* and *crenel_angle*. If *crenel_tooth_align* is set to a positive integer N, crenels are generated just under the gear-teeth, every N teeth. This feature is useful when you have a small space between the gear-teeth and the axle. In this case, material must be optimized by aligning crenel and teeth to avoid weak points (a.k.a. bottle-neck). To use *crenel_tooth_align*, the parameters *crenel_number* and *crenel_angle* must be set to *zero*.
 

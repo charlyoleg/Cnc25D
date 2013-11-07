@@ -30,6 +30,7 @@ The parameter relative to the gearring are inherit from the :doc:`gearring_desig
 .. image:: images/middle_planet_carrier_parameters.png
 .. image:: images/front_planet_carrier_parameters.png
 .. image:: images/front_planet_carrier_without_peripheral_parameters.png
+.. image:: images/planet_carrier_double_hole_length_parameter.png
 
 Epicyclic Gearring Parameter Dependency
 =======================================
@@ -60,6 +61,10 @@ To get a working epicyclic-gearing, the sum of sun_gear_tooth_nb and annulus_gea
   equivalent to:
   (2*(sun_gear_tooth_nb + planet_gear_tooth_nb)) % planet_nb = 0
 
+The transmission ration is equal to::
+
+  sun_gear_tooth_nb/(sun_gear_tooth_nb + annulus_gear_tooth_nb)
+
 planet_nb
 ---------
 
@@ -89,6 +94,21 @@ sun axle and carrier axle design
 --------------------------------
 
 The sun axle design is defined with several parameters such as *sun_axle_diameter*, *sun_crenel_diameter*, *sun_crenel_nb*, *sun_crenel_width*, *sun_crenel_height* and *sun_crenel_router_bit_radius*. The design of the axle of the plant-carrier is copied from the sun axle design. So there is no parameters directly related to the planet-carrier axle design. Notice that in case of cascade epicyclic gearing, the planet-carrier of a stage intends to be jammed to the sun-gear of the next stage.
+
+carrier_double_hole_length
+--------------------------
+
+The crenel-hole can is replaced by a double-crenel-hole when *carrier_double_hole_length* is set to a float bigger than zero. In this case, two holes are created with a distance of *carrier_double_hole_length*. Double-hole are useful to increase the stability of the planet-carrier.
+
+top_lid parameters
+------------------
+
+Those parameters are inherit from :doc:`axle_lid_design`
+
+input and output gearwheels
+---------------------------
+
+The *epicyclic-gearing* design can generate the input and the output gearwheels. It is recommended to re-generate those gearwheels with the *gearwheel.py* script to get access to the complete :doc:`gearwheel_design` parameter list.
 
 Epicyclic Gearing Recommendations
 =================================

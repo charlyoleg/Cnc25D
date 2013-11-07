@@ -17,6 +17,7 @@ The parameter relative to the gear-profile are directly inherit from the :doc:`g
 
 .. image:: images/gearring_holder_parameters.png
 .. image:: images/gearring_holder_crenel_details.png
+.. image:: images/gearring_holder_double_hole_length_parameter.png
 
 Gearring Parameter Dependency
 =============================
@@ -61,7 +62,15 @@ Alignment angles
 
 *gear_initial_angle* sets the angle between the X-axis and the middle of the addendum of the first tooth. *holder_position_angle* sets the angle between the X-axis and the middle of the first holder-crenel. Use *gear_initial_angle* or  *holder_position_angle* or both to ajust the offset angle between the gear-profile anf the gearring-holder.
 
+holder_hole_mark_nb
+-------------------
 
+*holder_hole_mark_nb* lets you modify the first (or the several first) crenel to help you recognizing the first tooth. The first crenels have a egg-form instead of the circle-form. If you don't want to mark the first crenel, set *crenel_mark_nb* to *zero*. This feature is useful when you need pile up gearring and find easily the first tooth to align them.
 
+holder_double_hole_length
+-------------------------
+
+The crenel-hole can is replaced by a double-crenel-hole when *holder_double_hole_length* is set to a float bigger than zero. In this case, two holes are created with a distance of *holder_double_hole_length*.
+Double-hole are usefull when you use the crenel-hole with thin steel-rod for alignment and Z-shearing resistance and you want to increase the stability.
 
 
