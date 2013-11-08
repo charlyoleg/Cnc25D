@@ -430,7 +430,10 @@ def epicyclic_gearing(ai_constraints):
   gr_c['holder_hole_position_radius'] = eg_c['holder_hole_position_radius']
   gr_c['holder_hole_diameter']        = eg_c['holder_hole_diameter']
   gr_c['holder_hole_mark_nb']         = eg_c['holder_hole_mark_nb']
+  gr_c['holder_double_hole_diameter'] = eg_c['holder_double_hole_diameter']
   gr_c['holder_double_hole_length']   = eg_c['holder_double_hole_length']
+  gr_c['holder_double_hole_position'] = eg_c['holder_double_hole_position']
+  gr_c['holder_double_hole_mark_nb']  = eg_c['holder_double_hole_mark_nb']
   gr_c['holder_crenel_position']      = eg_c['holder_crenel_position']
   gr_c['holder_crenel_height']        = eg_c['holder_crenel_height']
   gr_c['holder_crenel_width']         = eg_c['holder_crenel_width']
@@ -584,7 +587,9 @@ def epicyclic_gearing(ai_constraints):
   (annulus_figure, holder_parameters) = gearring.gearring(gr_c)
   ( holder_crenel_half_width, holder_crenel_half_angle, holder_smoothing_radius, holder_crenel_x_position, holder_maximal_height_plus,
     holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
-    holder_hole_position_radius, holder_hole_radius, holder_double_hole_length, holder_radius) = holder_parameters
+    holder_hole_position_radius, holder_hole_radius,
+    holder_double_hole_diameter, holder_double_hole_length, holder_double_hole_position, holder_double_hole_mark_nb, holder_double_hole_position_radius,
+    holder_radius) = holder_parameters
   planet_figures = []
   for i in range(planet_nb):
     planet_figures.append(gearwheel.gearwheel(pg_c_list[i]))
@@ -1406,7 +1411,7 @@ def epicyclic_gearing_self_test():
     ["sun crenel circle marked", "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 8 --sun_crenel_nb 6 --sun_crenel_type circle --sun_crenel_width 1.9 --sun_crenel_diameter 12 --sun_crenel_mark_nb 1"],
     ["carrier crenel hole"  , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_hole_diameter 1.9"],
     ["carrier crenel double hole"  , "--sun_gear_tooth_nb 17 --planet_gear_tooth_nb 31 --gear_module 1.0 --carrier_hole_diameter 1.0 --carrier_double_hole_length 2.0"],
-    ["holder crenel double hole"  , "--sun_gear_tooth_nb 17 --planet_gear_tooth_nb 31 --gear_module 1.0 --holder_hole_diameter 2.0 --holder_double_hole_length 3.0 --holder_crenel_skin_width 2.0 --holder_crenel_position 2.0 --holder_crenel_height 2.0"],
+    ["holder crenel double hole"  , "--sun_gear_tooth_nb 17 --planet_gear_tooth_nb 31 --gear_module 1.0 --holder_hole_diameter 5.0 --holder_double_hole_diameter 3.0 --holder_double_hole_length 10.0 --holder_crenel_skin_width 2.0 --holder_crenel_position 3.0 --holder_crenel_height 2.0"],
     ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
     ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --input_gearwheel_tooth_nb 29 --output_file_basename test_output/epicyclic_self_test.dxf"],
     ["output file2"         , "--sun_gear_tooth_nb 13 --planet_gear_tooth_nb 19 --gear_module 1.0 --holder_hole_diameter 1.0 --holder_crenel_position 2.0 --holder_crenel_height 2.0 --holder_crenel_width 6.0 --holder_crenel_skin_width 4.0 --input_gearwheel_tooth_nb 29 --input_gearwheel_module 1.0 --input_gearwheel_axle_diameter 19.0 --input_gearwheel_crenel_number 6 --input_gearwheel_crenel_position_diameter 24.0 --input_gearwheel_crenel_diameter 1.0 --input_cover_extra_space 0.5 --output_gearwheel_tooth_nb 13 --output_gearwheel_module 3.0 --output_gearwheel_axle_diameter 22.0 --output_gearwheel_crenel_number 6 --output_gearwheel_crenel_position_diameter 28.0 --output_gearwheel_crenel_diameter 3.0 --output_gearwheel_crenel_angle 0.3 --output_cover_extra_space 0.5 --output_file_basename test_output/epicyclic_self_test2.dxf"],

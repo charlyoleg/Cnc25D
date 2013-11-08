@@ -178,7 +178,10 @@ def axle_lid(ai_constraints):
   gr_c['holder_position_angle']       = al_c['holder_position_angle']
   gr_c['holder_hole_position_radius'] = al_c['holder_hole_position_radius']
   gr_c['holder_hole_diameter']        = al_c['holder_hole_diameter']
+  gr_c['holder_double_hole_diameter'] = al_c['holder_double_hole_diameter']
   gr_c['holder_double_hole_length']   = al_c['holder_double_hole_length']
+  gr_c['holder_double_hole_position'] = al_c['holder_double_hole_position']
+  gr_c['holder_double_hole_mark_nb']  = al_c['holder_double_hole_mark_nb']
   gr_c['holder_crenel_position']      = al_c['holder_crenel_position']
   gr_c['holder_crenel_height']        = al_c['holder_crenel_height']
   gr_c['holder_crenel_width']         = al_c['holder_crenel_width']
@@ -201,8 +204,10 @@ def axle_lid(ai_constraints):
   #
   ( holder_crenel_half_width, holder_crenel_half_angle, holder_smoothing_radius, holder_crenel_x_position, holder_maximal_height_plus,
     holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
-    holder_hole_position_radius, holder_hole_radius, holder_double_hole_length, holder_radius) = holder_parameters
-  print("dbg204: holder_hole_radius {:0.3f}  holder_double_hole_length {:0.3f}".format(holder_hole_radius, holder_double_hole_length))
+    holder_hole_position_radius, holder_hole_radius,
+    holder_double_hole_radius, holder_double_hole_length, holder_double_hole_position, holder_double_hole_mark_nb, holder_double_hole_position_radius,
+    holder_radius) = holder_parameters
+  #print("dbg204: holder_hole_radius {:0.3f}  holder_double_hole_length {:0.3f}".format(holder_hole_radius, holder_double_hole_length))
   g1_ix = 0.0
   g1_iy = 0.0
   angle_incr = crenel_portion_angle
@@ -245,15 +250,16 @@ def axle_lid(ai_constraints):
     one_middle_figure = []
     one_middle_figure.append(cnc25d_api.cnc_cut_outline(middle_lid_outlines[i], "middle_lid_outlines"))
     if(holder_hole_radius>0):
-      tmp_a2 = math.atan(holder_double_hole_length/2.0/holder_hole_position_radius) # if double carrier-crenel-hole
-      tmp_l2 = math.sqrt(holder_hole_position_radius**2+(holder_double_hole_length/2.0)**2)
       for j in range(2):
         hole_angle = gr_c['holder_position_angle']+((middle_crenel_index[i]+j)*angle_incr)
-        if(holder_double_hole_length==0):
-          one_middle_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
-        else:
-          one_middle_figure.append([g1_ix+tmp_l2*math.cos(hole_angle-tmp_a2), g1_iy+tmp_l2*math.sin(hole_angle-tmp_a2), holder_hole_radius])
-          one_middle_figure.append([g1_ix+tmp_l2*math.cos(hole_angle+tmp_a2), g1_iy+tmp_l2*math.sin(hole_angle+tmp_a2), holder_hole_radius])
+        one_middle_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
+    if(holder_double_hole_radius>0):
+      tmp_a2 = math.atan(holder_double_hole_length/2.0/holder_double_hole_position_radius) # if double carrier-crenel-hole
+      tmp_l2 = math.sqrt(holder_double_hole_position_radius**2+(holder_double_hole_length/2.0)**2)
+      for j in range(2):
+        hole_angle = gr_c['holder_position_angle']+((middle_crenel_index[i]+j)*angle_incr)
+        one_middle_figure.append([g1_ix+tmp_l2*math.cos(hole_angle-tmp_a2), g1_iy+tmp_l2*math.sin(hole_angle-tmp_a2), holder_double_hole_radius])
+        one_middle_figure.append([g1_ix+tmp_l2*math.cos(hole_angle+tmp_a2), g1_iy+tmp_l2*math.sin(hole_angle+tmp_a2), holder_double_hole_radius])
           
     middle_lid_figures.append(one_middle_figure[:])
 
@@ -274,16 +280,18 @@ def axle_lid(ai_constraints):
   top_lid_figure.append(cnc25d_api.cnc_cut_outline(top_lid_outline, "top_lid_outline"))
   top_lid_figure.append((g1_ix, g1_iy, axle_hole_radius))
   if(holder_hole_radius>0):
-    tmp_a2 = math.atan(holder_double_hole_length/2.0/holder_hole_position_radius) # if double carrier-crenel-hole
-    tmp_l2 = math.sqrt(holder_hole_position_radius**2+(holder_double_hole_length/2.0)**2)
     for i in range(2):
       for j in range(2):
         hole_angle = gr_c['holder_position_angle']+((middle_crenel_index[i]+j)*angle_incr)
-        if(holder_double_hole_length==0):
-          top_lid_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
-        else:
-          top_lid_figure.append([g1_ix+tmp_l2*math.cos(hole_angle-tmp_a2), g1_iy+tmp_l2*math.sin(hole_angle-tmp_a2), holder_hole_radius])
-          top_lid_figure.append([g1_ix+tmp_l2*math.cos(hole_angle+tmp_a2), g1_iy+tmp_l2*math.sin(hole_angle+tmp_a2), holder_hole_radius])
+        top_lid_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius])
+  if(holder_double_hole_radius>0):
+    tmp_a2 = math.atan(holder_double_hole_length/2.0/holder_double_hole_position_radius) # if double carrier-crenel-hole
+    tmp_l2 = math.sqrt(holder_double_hole_position_radius**2+(holder_double_hole_length/2.0)**2)
+    for i in range(2):
+      for j in range(2):
+        hole_angle = gr_c['holder_position_angle']+((middle_crenel_index[i]+j)*angle_incr)
+        top_lid_figure.append([g1_ix+tmp_l2*math.cos(hole_angle-tmp_a2), g1_iy+tmp_l2*math.sin(hole_angle-tmp_a2), holder_double_hole_radius])
+        top_lid_figure.append([g1_ix+tmp_l2*math.cos(hole_angle+tmp_a2), g1_iy+tmp_l2*math.sin(hole_angle+tmp_a2), holder_double_hole_radius])
   
   ### design output
   part_figure_list = []
@@ -432,7 +440,8 @@ def axle_lid_self_test():
     ["simplest test"        , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 79.0 --axle_hole_diameter 22.0 --holder_crenel_number 6"],
     ["odd number of crenel" , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 5"],
     ["four crenels"         , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 4"],
-    ["double crenel-holes"  , "--holder_diameter 220.0 --clearance_diameter 200.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 8 --holder_double_hole_length 4.0 --holder_hole_diameter 3.0"],
+    ["double-holes only"  , "--holder_diameter 220.0 --clearance_diameter 200.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 8 --holder_double_hole_length 4.0 --holder_double_hole_diameter 3.0 --holder_hole_diameter 0.0"],
+    ["single and double holes"  , "--holder_diameter 220.0 --clearance_diameter 200.0 --central_diameter 70.0 --axle_hole_diameter 22.0 --holder_crenel_number 8 --holder_double_hole_length 16.0 --holder_double_hole_diameter 3.0 --holder_hole_diameter 5.0"],
     ["with initial angle"   , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 35.0 --axle_hole_diameter 22.0 --holder_position_angle 0.25"],
     ["with annulus-holder-axle-hole-diameter"   , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 35.0 --axle_hole_diameter 22.0 --annulus_holder_axle_hole_diameter 80.0"],
     ["output file"          , "--holder_diameter 130.0 --clearance_diameter 115.0 --central_diameter 100.0 --axle_hole_diameter 22.0 --output_file_basename test_output/axle_lid_self_test.dxf"],

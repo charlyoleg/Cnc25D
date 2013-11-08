@@ -67,10 +67,10 @@ holder_hole_mark_nb
 
 *holder_hole_mark_nb* lets you modify the first (or the several first) crenel to help you recognizing the first tooth. The first crenels have a egg-form instead of the circle-form. If you don't want to mark the first crenel, set *crenel_mark_nb* to *zero*. This feature is useful when you need pile up gearring and find easily the first tooth to align them.
 
-holder_double_hole_length
--------------------------
+holder_double_hole
+------------------
 
-The crenel-hole can is replaced by a double-crenel-hole when *holder_double_hole_length* is set to a float bigger than zero. In this case, two holes are created with a distance of *holder_double_hole_length*.
-Double-hole are usefull when you use the crenel-hole with thin steel-rod for alignment and Z-shearing resistance and you want to increase the stability.
+In addition to the *holder_hole*, you can generate the *holder_double_hole* defined by the parameters *holder_double_hole_diameter*, *holder_double_hole_length* and *holder_double_holde_position*. The distance between the two double_holes is set by *holder_double_hole_length*. The radius position is set by *holder_double_holde_position* relative to the *holder_hole_position_radius*.
+The *holder_double_holes* are useful when you use the crenel-hole with thin steel-rod for alignment and Z-shearing resistance and you want to increase the stability. At the same time, you can use the *holder_holes* to put threaded rods.
 
 
