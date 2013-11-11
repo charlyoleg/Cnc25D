@@ -26,7 +26,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="193.30379"
-     inkscape:cy="1409.934"
+     inkscape:cy="1838.5054"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -2179,11 +2179,10 @@
          id="flowPara3672">front_large</flowPara></flowRoot>    <rect
        style="fill:none;stroke:#e3dedb;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3674"
-       width="463.66"
+       width="503.66"
        height="474.7717"
-       x="14.142136"
-       y="44.527382"
-       transform="translate(99.5,60.4375)"
+       x="113.64214"
+       y="104.96488"
        inkscape:export-filename="images/axle_lid_holder_cut_outlines.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
@@ -2241,6 +2240,24 @@
        style="color:#000000;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 154.3008,703.39937 3.283,4.29315 3.78807,-3.03046"
        id="path6612"
+       inkscape:connector-curvature="0"
+       transform="translate(99.5,60.4375)" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3354"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-style:italic;-inkscape-font-specification:Sans Italic"
+       transform="translate(127.35714,37.580357)"><flowRegion
+         id="flowRegion3356"><rect
+           id="rect3358"
+           width="80.714287"
+           height="32.857143"
+           x="389.28571"
+           y="313.85715"
+           style="font-style:italic;-inkscape-font-specification:Sans Italic" /></flowRegion><flowPara
+         id="flowPara3360">first_crenel</flowPara></flowRoot>    <path
+       style="color:#000000;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 380.71429,274.57143 35,16.42857"
+       id="path3362"
        inkscape:connector-curvature="0"
        transform="translate(99.5,60.4375)" />
   </g>

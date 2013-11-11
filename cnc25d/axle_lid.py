@@ -440,6 +440,10 @@ def axle_lid(ai_constraints):
   main_annulus_holder_figure = annulus_holder_figure_2[:]
 
   ### axle_B
+  output_axle_B_internal_radius = al_c['output_axle_B_internal_diameter']/2.0
+  output_axle_B_external_radius = al_c['output_axle_B_external_diameter']/2.0
+  output_axle_B_crenel_radius = al_c['output_axle_B_crenel_diameter']/2.0
+  output_axle_B_crenel_position_radius = al_c['output_axle_B_crenel_position_diameter']/2.0
   if(al_c['output_axle_B_place'] != 'none'):
     if((al_c['output_axle_B_place'] != 'small')and(al_c['output_axle_B_place'] != 'large')):
       print("ERR442: Error, output_axle_B_place {:s} is unknown. Possible values: 'none', 'small' or 'large'".format(al_c['output_axle_B_place']))
@@ -447,19 +451,15 @@ def axle_lid(ai_constraints):
     if(al_c['output_axle_distance']<=0.0):
       print("ERR445: Error, output_axle_distance {:0.3f} must be positive".format(al_c['output_axle_distance']))
       sys.exit(2)
-    output_axle_B_internal_radius = al_c['output_axle_B_internal_diameter']/2.0
-    output_axle_B_external_radius = al_c['output_axle_B_external_diameter']/2.0
     if(output_axle_B_external_radius == 0):
       output_axle_B_external_radius = 2*output_axle_B_internal_radius
     if(output_axle_B_external_radius<=output_axle_B_internal_radius):
       print("ERR452: Error, output_axle_B_external_radius {:0.3f} is null or smaller than output_axle_B_internal_radius {:0.3f}".format(output_axle_B_external_radius, output_axle_B_internal_radius))
       sys.exit(2)
     if(al_c['output_axle_B_crenel_number']>0):
-      output_axle_B_crenel_radius = al_c['output_axle_B_crenel_diameter']/2.0
       if(output_axle_B_crenel_radius<radian_epsilon):
         print("ERR460: Error, output_axle_B_crenel_radius {:0.3f} is too small".format(output_axle_B_crenel_radius))
         sys.exit(2)
-      output_axle_B_crenel_position_radius = al_c['output_axle_B_crenel_position_diameter']/2.0
       if(output_axle_B_crenel_position_radius == 0):
         output_axle_B_crenel_position_radius = (output_axle_B_internal_radius + output_axle_B_external_radius)/2.0
       if(output_axle_B_crenel_position_radius<(output_axle_B_internal_radius+output_axle_B_crenel_radius)):
@@ -469,7 +469,7 @@ def axle_lid(ai_constraints):
         print("ERR463: Error, output_axle_B_crenel_position_radius {:0.3f} is too big compare to output_axle_B_external_radius {:0.3f} and output_axle_B_crenel_radius {:0.3f}".format(output_axle_B_crenel_position_radius, output_axle_B_external_radius, output_axle_B_crenel_radius))
         sys.exit(2)
     ## calculation of the angle (DCE)
-    ABC = (middle_crenel_2 - middle_crenel_1) * crenel_portion_angle / 2.0 - holder_crenel_half_angle
+    ABC = (middle_crenel_2 - middle_crenel_1 - 1) * crenel_portion_angle / 2.0 - holder_crenel_half_angle
     AB = holder_maximal_radius
     BC = al_c['output_axle_distance']
     # law of cosines to get AC and (ACB)
@@ -483,7 +483,8 @@ def axle_lid(ai_constraints):
     cos_ACD = float(DC)/AC
     ACD = math.acos(cos_ACD)
     DCE = math.pi - ACD - ACB
-    print("dbg483: DCE {:0.3f}  middle_angle_1 {:0.3f}".format(DCE, middle_angle_1))
+    #print("dbg486: ACD {:0.3f}  ACB {:0.3f}  DC {:0.3f}  AC {:0.3f}".format(ACD, ACB, DC, AC))
+    #print("dbg483: DCE {:0.3f}  middle_angle_1 {:0.3f}".format(DCE, middle_angle_1))
     ## axle_B_outline
     axle_B_outline = []
     axle_B_outline.append((g1_ix+BC*math.cos(middle_angle_1)+DC*math.cos(middle_angle_1-DCE), g1_iy+BC*math.sin(middle_angle_1)+DC*math.sin(middle_angle_1-DCE), 0))
@@ -564,6 +565,16 @@ axle-hole radius:         \t{:0.3f} diameter: \t{:0.3f}
 annulus-holder-axle-hole radius: \t{:0.3f} diameter: \t{:0.3f}
 cnc_router_bit_radius:    \t{:0.3f} diameter: \t{:0.3f}
 """.format(holder_crenel_number, al_c['holder_hole_diameter']/2.0, al_c['holder_hole_diameter'], holder_radius, 2*holder_radius, clearance_radius, 2*clearance_radius, central_radius, 2*central_radius, axle_hole_radius, 2*axle_hole_radius, annulus_holder_axle_hole_radius, 2*annulus_holder_axle_hole_radius, cnc_router_bit_radius, 2*cnc_router_bit_radius)
+  al_parameter_info += """
+output_axle_B_place:  \t{:s}
+output_axle_distance: \t{:0.3f}
+output_axle_B_internal_radius: \t{:0.3f}  diameter: \t{:0.3f}
+output_axle_B_external_radius: \t{:0.3f}  diameter: \t{:0.3f}
+output_axle_B_crenel_number: \t{:d}
+output_axle_B_crenel_radius: \t{:0.3f}  diameter: \t{:0.3f}
+output_axle_B_crenel_position_radius: \t{:0.3f}  diameter: \t{:0.3f}
+output_axle_B_crenel_angle: \t{:0.3f}
+""".format(al_c['output_axle_B_place'], al_c['output_axle_distance'], output_axle_B_internal_radius, 2*output_axle_B_internal_radius, output_axle_B_external_radius, 2*output_axle_B_external_radius, al_c['output_axle_B_crenel_number'], output_axle_B_crenel_radius, 2*output_axle_B_crenel_radius, output_axle_B_crenel_position_radius, 2*output_axle_B_crenel_position_radius, al_c['output_axle_B_crenel_angle'])
   #print(al_parameter_info)
 
   ### display with Tkinter
@@ -705,8 +716,8 @@ def axle_lid_self_test():
     ["with initial angle"   , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 35.0 --axle_hole_diameter 22.0 --holder_position_angle 0.25"],
     ["with annulus-holder-axle-hole-diameter"   , "--holder_diameter 120.0 --clearance_diameter 100.0 --central_diameter 35.0 --axle_hole_diameter 22.0 --annulus_holder_axle_hole_diameter 80.0"],
     ["axle_B with even crenel", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --output_axle_B_place small --output_axle_distance 130.0 --output_axle_B_internal_diameter 20.0 --output_axle_B_external_diameter 40.0"],
-    ["axle_B small side", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --output_axle_B_place small --output_axle_distance 130.0 --output_axle_B_internal_diameter 20.0 --output_axle_B_external_diameter 40.0"],
-    ["axle_B large side with crenels", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --output_axle_B_place large --output_axle_distance 130.0 --output_axle_B_internal_diameter 20.0 --output_axle_B_external_diameter 40.0 --output_axle_B_crenel_number 7 --output_axle_B_crenel_diameter 1.0"],
+    ["axle_B small side", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --output_axle_B_place small --output_axle_distance 100.0 --output_axle_B_internal_diameter 30.0 --output_axle_B_external_diameter 65.0"],
+    ["axle_B large side with crenels", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --output_axle_B_place large --output_axle_distance 170.0 --output_axle_B_internal_diameter 40.0 --output_axle_B_external_diameter 50.0 --output_axle_B_crenel_number 7 --output_axle_B_crenel_diameter 1.0"],
     ["output file"          , "--holder_diameter 130.0 --clearance_diameter 115.0 --central_diameter 100.0 --axle_hole_diameter 22.0 --output_file_basename test_output/axle_lid_self_test.dxf"],
     ["last test"            , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
