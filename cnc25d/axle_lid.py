@@ -255,7 +255,7 @@ def axle_lid(ai_constraints):
   gr_c['output_file_basename']        = ""
   gr_c['args_in_txt']                 = "gearring for axle_lid"
   gr_c['return_type']                 = 'cnc25d_figure_and_parameters'
-  (annulus_holder_figure, holder_parameters) = gearring.gearring(gr_c)
+  (annulus_holder_figure_not_used, holder_parameters) = gearring.gearring(gr_c)
   ### holder_cut_outlines
   holder_cut_side_outlines = []
   holder_cut_face_outlines = []
@@ -405,40 +405,6 @@ def axle_lid(ai_constraints):
     # save the portion of outline
     face_top_lid_outlines.append(holder_A[:])
 
-  # top_lid_outline
-  top_lid_outline = []
-  top_lid_outline.extend(holder_cut_side_outlines[0])
-  top_lid_outline.extend(face_top_lid_outlines[0])
-  top_lid_outline.extend(holder_cut_side_outlines[1])
-  top_lid_outline.extend(face_top_lid_outlines[1])
-  top_lid_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], 0))
-  # overlay debug
-  axle_lid_overlay_figure.append(cnc25d_api.ideal_outline(top_lid_outline, "top_lid_outline"))
-  # top_lid_figure
-  top_lid_figure = []
-  top_lid_figure.append(cnc25d_api.cnc_cut_outline(top_lid_outline, "top_lid_outline"))
-  top_lid_figure.append((g1_ix, g1_iy, axle_hole_radius))
-  top_lid_figure.extend(side_hole_figures[0])
-  top_lid_figure.extend(side_hole_figures[1])
-  main_top_lid_figure = top_lid_figure[:]
-  
-  ### annulus_holder_figure_2 # remake of the annulus_holder_figure
-  annulus_holder_outline = []
-  annulus_holder_outline.extend(holder_cut_side_outlines[0])
-  annulus_holder_outline.extend(holder_cut_face_outlines[0])
-  annulus_holder_outline.extend(holder_cut_side_outlines[1])
-  annulus_holder_outline.extend(holder_cut_face_outlines[1])
-  annulus_holder_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], 0))
-  annulus_holder_figure_2 = []
-  annulus_holder_figure_2.append(cnc25d_api.cnc_cut_outline(annulus_holder_outline, "annulus_holder_outline"))
-  #annulus_holder_figure_2.append(cnc25d_api.ideal_outline(annulus_holder_outline, "annulus_holder_outline"))
-  annulus_holder_figure_2.append((g1_ix, g1_iy, annulus_holder_axle_hole_radius))
-  annulus_holder_figure_2.extend(side_hole_figures[0])
-  annulus_holder_figure_2.extend(face_hole_figures[0])
-  annulus_holder_figure_2.extend(side_hole_figures[1])
-  annulus_holder_figure_2.extend(face_hole_figures[1])
-  main_annulus_holder_figure = annulus_holder_figure_2[:]
-
   ### axle_B
   output_axle_B_internal_radius = al_c['output_axle_B_internal_diameter']/2.0
   output_axle_B_external_radius = al_c['output_axle_B_external_diameter']/2.0
@@ -499,41 +465,205 @@ def axle_lid(ai_constraints):
         axle_B_hole_figure.append((g1_ix+BC*math.cos(middle_angle_1)+output_axle_B_crenel_position_radius*math.cos(middle_angle_1+i*crenel_B_angle+al_c['output_axle_B_crenel_angle']),
                               g1_iy+BC*math.sin(middle_angle_1)+output_axle_B_crenel_position_radius*math.sin(middle_angle_1+i*crenel_B_angle+al_c['output_axle_B_crenel_angle']),
                               output_axle_B_crenel_radius))
-    # annulus_holder_with_axle_B_figure
-    annulus_holder_with_axle_B_outline = []
-    annulus_holder_with_axle_B_outline.extend(holder_cut_side_outlines[0])
-    annulus_holder_with_axle_B_outline.extend(axle_B_outline)
-    annulus_holder_with_axle_B_outline.extend(holder_cut_side_outlines[1])
-    annulus_holder_with_axle_B_outline.extend(holder_cut_face_outlines[1])
-    annulus_holder_with_axle_B_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], 0))
-    annulus_holder_with_axle_B_figure = []
-    annulus_holder_with_axle_B_figure.append(cnc25d_api.cnc_cut_outline(annulus_holder_with_axle_B_outline, "annulus_holder_with_axle_B_outline"))
-    annulus_holder_with_axle_B_figure.append((g1_ix, g1_iy, annulus_holder_axle_hole_radius))
-    annulus_holder_with_axle_B_figure.extend(side_hole_figures[0])
-    annulus_holder_with_axle_B_figure.extend(axle_B_hole_figure)
-    annulus_holder_with_axle_B_figure.extend(side_hole_figures[1])
-    annulus_holder_with_axle_B_figure.extend(face_hole_figures[1])
-    # top_lid_with_axle_B_figure
-    top_lid_with_axle_B_outline = []
-    top_lid_with_axle_B_outline.extend(holder_cut_side_outlines[0])
-    top_lid_with_axle_B_outline.extend(axle_B_outline)
-    top_lid_with_axle_B_outline.extend(holder_cut_side_outlines[1])
-    top_lid_with_axle_B_outline.extend(face_top_lid_outlines[1])
-    top_lid_with_axle_B_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], 0))
-    top_lid_with_axle_B_figure = []
-    top_lid_with_axle_B_figure.append(cnc25d_api.cnc_cut_outline(top_lid_with_axle_B_outline, "top_lid_with_axle_B_outline"))
-    top_lid_with_axle_B_figure.append((g1_ix, g1_iy, axle_hole_radius))
-    top_lid_with_axle_B_figure.extend(side_hole_figures[0])
-    top_lid_with_axle_B_figure.extend(axle_B_hole_figure)
-    top_lid_with_axle_B_figure.extend(side_hole_figures[1])
-    # selection
-    main_annulus_holder_figure = annulus_holder_with_axle_B_figure[:]
-    main_top_lid_figure = top_lid_with_axle_B_figure[:]
+
+  ### leg_outline
+  # default values
+  leg_hole_radius = al_c['leg_hole_diameter']/2.0
+  foot_length = al_c['foot_length']
+  if(foot_length==0):
+    foot_length = 2*leg_hole_radius
+  toe_length = al_c['toe_length']
+  if(toe_length==0):
+    toe_length = 2*leg_hole_radius
+  leg_border_length = al_c['leg_border_length']
+  if(leg_border_length==0):
+    leg_border_length = 2*leg_hole_radius
+  leg_hole_distance = al_c['leg_hole_distance']
+  if(leg_hole_distance==0):
+    leg_hole_distance = 2*(2*leg_hole_radius + al_c['leg_hole_length'])
+  if(al_c['leg_type'] != 'none'):
+    if((al_c['leg_type'] != 'rear') and (al_c['leg_type'] != 'side')):
+      print("ERR536: Error, leg_type {:s} set to an unknow value. Possible values: 'none', 'rear' or 'side'".format(al_c['leg_type']))
+      sys.exit(2)
+    if(al_c['leg_length']<=0):
+      print("ERR539: Error, leg_length {:0.3f} must be strictly positive".format(al_c['leg_length']))
+      sys.exit(2)
+    if(toe_length<leg_hole_radius):
+      print("ERR543: Error, toe_length {:0.3f} is smaller than leg_hole_radius {:0.3f}".format(toe_length, leg_hole_radius))
+      sys.exit(2)
+    #if(foot_length<leg_hole_radius):
+    #  print("ERR543: Error, foot_length {:0.3f} is smaller than leg_hole_radius {:0.3f}".format(foot_length, leg_hole_radius))
+    #  sys.exit(2)
+    if(leg_hole_distance<2*leg_hole_radius+al_c['leg_hole_length']):
+      print("ERR549: Error, leg_hole_distance {:0.3f} is too small compare to leg_hole_radius {:0.3f} and leg_hole_length {:0.3f}".format(leg_hole_distance, leg_hole_radius, al_c['leg_hole_length']))
+      sys.exit(2)
+    if(leg_border_length<leg_hole_radius):
+      print("ERR552: Error, leg_border_length {:0.3f} is smaller than leg_hole_radius {:0.3f}".format(leg_border_length, leg_hole_radius))
+      sys.exit(2)
+
+  def leg_outline(ai_direction, ai_shift_coef):
+    """ It generates the outline of a leg. It can be used to generate the left-side, right-side and rear leg.
+        ai_shift_coef lets invert the leg_shift_length parameter if needed
+    """
+    r_leg_outline = []
+    leg_width = leg_hole_distance + al_c['leg_hole_length'] + 2 * leg_border_length
+    tx = g1_ix + al_c['leg_length'] * math.cos(ai_direction)
+    ty = g1_iy + al_c['leg_length'] * math.sin(ai_direction)
+    tx += (leg_width/2.0 + ai_shift_coef * al_c['leg_shift_length']) * math.cos(ai_direction-math.pi/2)
+    ty += (leg_width/2.0 + ai_shift_coef * al_c['leg_shift_length']) * math.sin(ai_direction-math.pi/2)
+    r_leg_outline.append((tx, ty, lid_router_bit_radius))
+    tx += (foot_length + toe_length) * math.cos(ai_direction)
+    ty += (foot_length + toe_length) * math.sin(ai_direction)
+    r_leg_outline.append((tx, ty, lid_router_bit_radius))
+    tx += leg_width * math.cos(ai_direction + math.pi/2)
+    ty += leg_width * math.sin(ai_direction + math.pi/2)
+    r_leg_outline.append((tx, ty, lid_router_bit_radius))
+    tx += (foot_length + toe_length) * math.cos(ai_direction + math.pi)
+    ty += (foot_length + toe_length) * math.sin(ai_direction + math.pi)
+    r_leg_outline.append((tx, ty, lid_router_bit_radius))
+    return(r_leg_outline)
+
+  def leg_hole_figure(ai_direction, ai_shift_coef):
+    """ It generates the holes of a leg. It can be used to generate the holes of the left-side, right-side and rear leg.
+        ai_shift_coef lets invert the leg_shift_length parameter if needed
+    """
+    r_leg_hole_figure = []
+    cx = g1_ix + (al_c['leg_length'] + foot_length) * math.cos(ai_direction)
+    cy = g1_iy + (al_c['leg_length'] + foot_length) * math.sin(ai_direction)
+    hd = (leg_hole_distance - al_c['leg_hole_length'])/2.0 + ai_shift_coef * al_c['leg_shift_length']
+    cx += hd * math.cos(ai_direction - math.pi/2)
+    cy += hd * math.sin(ai_direction - math.pi/2)
+    if(leg_hole_radius>0):
+      for i in range(2):
+        hole_outline = []
+        c1x = cx + i * leg_hole_distance * math.cos(ai_direction+math.pi/2)
+        c1y = cy + i * leg_hole_distance * math.sin(ai_direction+math.pi/2)
+        s1x = c1x + leg_hole_radius * math.cos(ai_direction)
+        s1y = c1y + leg_hole_radius * math.sin(ai_direction)
+        m1x = c1x + leg_hole_radius * math.cos(ai_direction+math.pi/2)
+        m1y = c1y + leg_hole_radius * math.sin(ai_direction+math.pi/2)
+        e1x = c1x + leg_hole_radius * math.cos(ai_direction+math.pi)
+        e1y = c1y + leg_hole_radius * math.sin(ai_direction+math.pi)
+        c2x = c1x + al_c['leg_hole_length'] * math.cos(ai_direction-math.pi/2)
+        c2y = c1y + al_c['leg_hole_length'] * math.sin(ai_direction-math.pi/2)
+        s2x = c2x +  leg_hole_radius * math.cos(ai_direction-math.pi)
+        s2y = c2y +  leg_hole_radius * math.sin(ai_direction-math.pi)
+        m2x = c2x +  leg_hole_radius * math.cos(ai_direction-math.pi/2)
+        m2y = c2y +  leg_hole_radius * math.sin(ai_direction-math.pi/2)
+        e2x = c2x +  leg_hole_radius * math.cos(ai_direction)
+        e2y = c2y +  leg_hole_radius * math.sin(ai_direction)
+        hole_outline.append((e1x, e1y))
+        if(al_c['leg_hole_length']>0):
+          hole_outline.append((s2x, s2y))
+        hole_outline.append((m2x, m2y, e2x, e2y))
+        if(al_c['leg_hole_length']>0):
+          hole_outline.append((s1x, s1y))
+        hole_outline.append((m1x, m1y, e1x, e1y))
+        r_leg_hole_figure.append(hole_outline[:])
+    return(r_leg_hole_figure)
+
+  ## annulus_holder_figure
+  def f_annulus_holder_figure(ai_axle_B_type, ai_leg_type):
+    """ generate the annulus_holder_figure
+    """
+    annulus_holder_outline = []
+    if(ai_leg_type == 'side'):
+      annulus_holder_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], lid_router_bit_radius))
+      annulus_holder_outline.extend(leg_outline(middle_angle_1-math.pi/2, 1))
+      annulus_holder_outline.append((holder_cut_side_outlines[0][-1][0], holder_cut_side_outlines[0][-1][1], lid_router_bit_radius))
+    else:
+      annulus_holder_outline.extend(holder_cut_side_outlines[0])
+    if(ai_axle_B_type != 'none'):
+      annulus_holder_outline.extend(axle_B_outline)
+    else:
+      annulus_holder_outline.extend(holder_cut_face_outlines[0])
+    if(ai_leg_type == 'side'):
+      annulus_holder_outline.append((holder_cut_side_outlines[1][0][0], holder_cut_side_outlines[1][0][1], lid_router_bit_radius))
+      annulus_holder_outline.extend(leg_outline(middle_angle_1+math.pi/2, -1))
+      annulus_holder_outline.append((holder_cut_side_outlines[1][-1][0], holder_cut_side_outlines[1][-1][1], lid_router_bit_radius))
+    else:
+      annulus_holder_outline.extend(holder_cut_side_outlines[1])
+    if(ai_leg_type == 'rear'):
+      annulus_holder_outline.extend(leg_outline(middle_angle_1+math.pi, 1))
+    else:
+      annulus_holder_outline.extend(holder_cut_face_outlines[1])
+    annulus_holder_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], 0))
+    r_annulus_holder_figure = []
+    r_annulus_holder_figure.append(cnc25d_api.cnc_cut_outline(annulus_holder_outline, "annulus_holder_outline"))
+    r_annulus_holder_figure.append((g1_ix, g1_iy, annulus_holder_axle_hole_radius))
+    r_annulus_holder_figure.extend(side_hole_figures[0])
+    if(ai_axle_B_type != 'none'):
+      r_annulus_holder_figure.extend(axle_B_hole_figure)
+    else:
+      r_annulus_holder_figure.extend(face_hole_figures[0])
+    r_annulus_holder_figure.extend(side_hole_figures[1])
+    r_annulus_holder_figure.extend(face_hole_figures[1])
+    if(ai_leg_type == 'side'):
+      r_annulus_holder_figure.extend(leg_hole_figure(middle_angle_1-math.pi/2, 1))
+      r_annulus_holder_figure.extend(leg_hole_figure(middle_angle_1+math.pi/2, -1))
+    elif(ai_leg_type == 'rear'):
+      r_annulus_holder_figure.extend(leg_hole_figure(middle_angle_1+math.pi, 1))
+    return(r_annulus_holder_figure)
+
+    # top_lid_figure
+  def f_top_lid_figure(ai_axle_B_type, ai_leg_type):
+    """ generate the top_lid_figure
+    """
+    top_lid_outline = []
+    if(ai_leg_type == 'side'):
+      top_lid_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], lid_router_bit_radius))
+      top_lid_outline.extend(leg_outline(middle_angle_1-math.pi/2, 1))
+      top_lid_outline.append((holder_cut_side_outlines[0][-1][0], holder_cut_side_outlines[0][-1][1], lid_router_bit_radius))
+    else:
+      top_lid_outline.extend(holder_cut_side_outlines[0])
+    if(ai_axle_B_type != 'none'):
+      top_lid_outline.extend(axle_B_outline)
+    else:
+      top_lid_outline.extend(face_top_lid_outlines[0])
+    if(ai_leg_type == 'side'):
+      top_lid_outline.append((holder_cut_side_outlines[1][0][0], holder_cut_side_outlines[1][0][1], lid_router_bit_radius))
+      top_lid_outline.extend(leg_outline(middle_angle_1+math.pi/2, -1))
+      top_lid_outline.append((holder_cut_side_outlines[1][-1][0], holder_cut_side_outlines[1][-1][1], lid_router_bit_radius))
+    else:
+      top_lid_outline.extend(holder_cut_side_outlines[1])
+    if(ai_leg_type == 'rear'):
+      top_lid_outline.extend(leg_outline(middle_angle_1+math.pi, 1))
+    else:
+      top_lid_outline.extend(face_top_lid_outlines[1])
+    top_lid_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], 0))
+    r_top_lid_figure = []
+    r_top_lid_figure.append(cnc25d_api.cnc_cut_outline(top_lid_outline, "top_lid_outline"))
+    r_top_lid_figure.append((g1_ix, g1_iy, axle_hole_radius))
+    r_top_lid_figure.extend(side_hole_figures[0])
+    if(ai_axle_B_type != 'none'):
+      r_top_lid_figure.extend(axle_B_hole_figure)
+    r_top_lid_figure.extend(side_hole_figures[1])
+    if(ai_leg_type == 'side'):
+      r_top_lid_figure.extend(leg_hole_figure(middle_angle_1-math.pi/2, 1))
+      r_top_lid_figure.extend(leg_hole_figure(middle_angle_1+math.pi/2, -1))
+    elif(ai_leg_type == 'rear'):
+      r_top_lid_figure.extend(leg_hole_figure(middle_angle_1+math.pi, 1))
+    return(r_top_lid_figure)
+
+  ## figure generation
+  annulus_holder_figure = f_annulus_holder_figure(al_c['output_axle_B_place'], al_c['leg_type'])
+  top_lid_figure = f_top_lid_figure(al_c['output_axle_B_place'], al_c['leg_type'])
+  annulus_holder_simple_figure = f_annulus_holder_figure('none', 'none')
+  top_lid_simple_figure = f_top_lid_figure('none', 'none')
+  annulus_holder_with_axle_B_figure = f_annulus_holder_figure(al_c['output_axle_B_place'], 'none')
+  top_lid_with_axle_B_figure = f_top_lid_figure(al_c['output_axle_B_place'], 'none')
+  annulus_holder_with_leg_figure = f_annulus_holder_figure('none', al_c['leg_type'])
+  top_lid_with_leg_figure = f_top_lid_figure('none', al_c['leg_type'])
+  # selection
+  main_annulus_holder_figure = annulus_holder_figure[:]
+  main_top_lid_figure = top_lid_figure[:]
+
+  # overlay debug
+  #axle_lid_overlay_figure.append(cnc25d_api.ideal_outline(top_lid_outline, "top_lid_outline"))
 
   ### design output
   part_figure_list = []
   #part_figure_list.append(annulus_holder_figure)
-  #part_figure_list.append(annulus_holder_figure_2)
   part_figure_list.append(main_annulus_holder_figure)
   part_figure_list.append(middle_lid_figures[0])
   part_figure_list.append(middle_lid_figures[1])
@@ -575,6 +705,17 @@ output_axle_B_crenel_radius: \t{:0.3f}  diameter: \t{:0.3f}
 output_axle_B_crenel_position_radius: \t{:0.3f}  diameter: \t{:0.3f}
 output_axle_B_crenel_angle: \t{:0.3f}
 """.format(al_c['output_axle_B_place'], al_c['output_axle_distance'], output_axle_B_internal_radius, 2*output_axle_B_internal_radius, output_axle_B_external_radius, 2*output_axle_B_external_radius, al_c['output_axle_B_crenel_number'], output_axle_B_crenel_radius, 2*output_axle_B_crenel_radius, output_axle_B_crenel_position_radius, 2*output_axle_B_crenel_position_radius, al_c['output_axle_B_crenel_angle'])
+  al_parameter_info += """
+leg_type:     \t{:s}
+leg_length:   \t{:0.3f}
+foot_length:  \t{:0.3f}
+toe_length:   \t{:0.3f}
+leg_hole_radius:    \t{:0.3f}  \tdiameter: {:0.3f}
+leg_hole_distance:  \t{:0.3f}
+leg_hole_length:    \t{:0.3f}
+leg_border_length:  \t{:0.3f}
+leg_shift_length:   \t{:0.3f}
+""".format(al_c['leg_type'], al_c['leg_length'], foot_length, toe_length, leg_hole_radius, 2*leg_hole_radius, leg_hole_distance, al_c['leg_hole_length'], leg_border_length, al_c['leg_shift_length'])
   #print(al_parameter_info)
 
   ### display with Tkinter
@@ -718,6 +859,10 @@ def axle_lid_self_test():
     ["axle_B with even crenel", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --output_axle_B_place small --output_axle_distance 130.0 --output_axle_B_internal_diameter 20.0 --output_axle_B_external_diameter 40.0"],
     ["axle_B small side", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --output_axle_B_place small --output_axle_distance 100.0 --output_axle_B_internal_diameter 30.0 --output_axle_B_external_diameter 65.0"],
     ["axle_B large side with crenels", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --output_axle_B_place large --output_axle_distance 170.0 --output_axle_B_internal_diameter 40.0 --output_axle_B_external_diameter 50.0 --output_axle_B_crenel_number 7 --output_axle_B_crenel_diameter 1.0"],
+    ["with side leg", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --leg_type side --leg_length 100.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0"],
+    ["with rear leg", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --leg_type rear --leg_length 100.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length -20.0"],
+    ["complete with rear leg", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --leg_type rear --leg_length 100.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0 --output_axle_B_place large --output_axle_distance 170.0 --output_axle_B_internal_diameter 40.0 --output_axle_B_external_diameter 50.0 --output_axle_B_crenel_number 7 --output_axle_B_crenel_diameter 1.0"],
+    ["complete with side leg", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --leg_type side --leg_length 100.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0 --output_axle_B_place large --output_axle_distance 170.0 --output_axle_B_internal_diameter 40.0 --output_axle_B_external_diameter 50.0 --output_axle_B_crenel_number 7 --output_axle_B_crenel_diameter 1.0"],
     ["output file"          , "--holder_diameter 130.0 --clearance_diameter 115.0 --central_diameter 100.0 --axle_hole_diameter 22.0 --output_file_basename test_output/axle_lid_self_test.dxf"],
     ["last test"            , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
