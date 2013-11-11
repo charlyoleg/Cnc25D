@@ -37,6 +37,8 @@ Contents:
    epicyclic_gearing_design
    epicyclic_gearing_details
    axle_lid_design
+   axle_lid_details
+   motor_lid_design
 
 Indices and tables
 ==================

@@ -19,6 +19,11 @@ Axle-lid Parameter List
 
 The parameter relative to the external outline are inherit from the :doc:`gearring_design`.
 
+.. image:: images/axle_lid_parameters.png
+.. image:: images/axle_lid_axle_B_parameters.png
+.. image:: images/axle_lid_rear_leg_parameters.png
+.. image:: images/axle_lid_side_leg_parmeters.png
+
 Axle-lid Parameter Dependency
 =============================
 
@@ -31,4 +36,12 @@ The following relations between diameters (or radius) must be respected::
   axle_hole_diameter    < central_diameter
   central_diameter      < clearance_diameter
   clearance_diameter    < holder_diameter
+
+Generated files
+---------------
+
+For a same set of parameters, you may need several flavour of the design such as a plate with a hole and the same plate without this hole. Instead of adding input parameters to select if the plate must have a hole or not, the both variants are generated. You just need to pick up the file you need.
+
+.. image:: images/axle_lid_generated_files.png
+
 

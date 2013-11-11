@@ -175,7 +175,7 @@ def make_holder_crenel(ai_holder_maximal_height_plus, ai_holder_crenel_height, a
   y23 = y21 - dx3
   y13 = -1*y23
   holder_crenel = []
-  #holder_crenel.append([x0, y12, ai_holder_smoothing_radius])
+  holder_crenel.append([x0, y12, ai_holder_smoothing_radius]) # it will be removed at the end of the function
   holder_crenel.append([x1, y12, ai_holder_side_outer_smoothing_radius])
   holder_crenel.append([x1, y11, 0])
   if(y23>ai_holder_crenel_half_width*0.1):
@@ -191,7 +191,8 @@ def make_holder_crenel(ai_holder_maximal_height_plus, ai_holder_crenel_height, a
   holder_crenel.append([x0, y22, ai_holder_smoothing_radius])
   #
   r_holder_crenel = cnc25d_api.outline_rotate(holder_crenel, ai_ox, ai_oy, ai_angle)
-  return(r_holder_crenel)
+  #first_point = r_holder_crenel[1]
+  return(r_holder_crenel[1:])
 
 ################################################################
 # the most important function to be used in other scripts
@@ -435,7 +436,7 @@ cnc_router_bit_radius:            \t{:0.3f}
       holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
       holder_hole_position_radius, holder_hole_radius,
       gr_c['holder_double_hole_diameter']/2.0, gr_c['holder_double_hole_length'], gr_c['holder_double_hole_position'], gr_c['holder_double_hole_mark_nb'], holder_double_hole_position_radius,
-      holder_radius)
+      holder_radius, holder_maximal_radius)
     r_gr = (gr_figure, holder_parameters)
   else:
     print("ERR346: Error the return_type {:s} is unknown".format(gr_c['return_type']))
