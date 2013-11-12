@@ -721,9 +721,9 @@ leg_shift_length:   \t{:0.3f}
   ### display with Tkinter
   if(al_c['tkinter_view']):
     print(al_parameter_info)
-    #cnc25d_api.figure_simple_display(al_assembly_figure, axle_lid_overlay_figure, al_parameter_info)
-    cnc25d_api.figure_simple_display(main_annulus_holder_figure, axle_lid_overlay_figure, al_parameter_info)
-    cnc25d_api.figure_simple_display(main_top_lid_figure, axle_lid_overlay_figure, al_parameter_info)
+    cnc25d_api.figure_simple_display(al_assembly_figure, axle_lid_overlay_figure, al_parameter_info)
+    #cnc25d_api.figure_simple_display(main_annulus_holder_figure, axle_lid_overlay_figure, al_parameter_info)
+    #cnc25d_api.figure_simple_display(main_top_lid_figure, axle_lid_overlay_figure, al_parameter_info)
       
   ### sub-function to create the freecad-object
   def freecad_axle_lid(nai_part_figure_list):
@@ -754,6 +754,12 @@ leg_shift_length:   \t{:0.3f}
     cnc25d_api.generate_output_file(middle_lid_figures[0], output_file_basename + "_middle_lid1" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
     cnc25d_api.generate_output_file(middle_lid_figures[1], output_file_basename + "_middle_lid2" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
     cnc25d_api.generate_output_file(top_lid_figure, output_file_basename + "_top_lid" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(annulus_holder_simple_figure, output_file_basename + "_annulus_holder_simple" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(top_lid_simple_figure, output_file_basename + "_top_lid_simple" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(annulus_holder_with_axle_B_figure, output_file_basename + "_annulus_holder_with_axle_B" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(top_lid_with_axle_B_figure, output_file_basename + "_top_lid_with_axle_B" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(annulus_holder_with_leg_figure, output_file_basename + "_annulus_holder_with_leg" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
+    cnc25d_api.generate_output_file(top_lid_with_leg_figure, output_file_basename + "_top_lid_with_leg" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
     # assembly
     if((output_file_suffix=='.svg')or(output_file_suffix=='.dxf')):
       cnc25d_api.generate_output_file(al_assembly_figure, output_file_basename + "_assembly" + output_file_suffix, al_c['extrusion_height'], al_parameter_info)
@@ -863,6 +869,7 @@ def axle_lid_self_test():
     ["with rear leg", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --leg_type rear --leg_length 100.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length -20.0"],
     ["complete with rear leg", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --leg_type rear --leg_length 100.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0 --output_axle_B_place large --output_axle_distance 170.0 --output_axle_B_internal_diameter 40.0 --output_axle_B_external_diameter 50.0 --output_axle_B_crenel_number 7 --output_axle_B_crenel_diameter 1.0"],
     ["complete with side leg", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --leg_type side --leg_length 100.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0 --output_axle_B_place large --output_axle_distance 170.0 --output_axle_B_internal_diameter 40.0 --output_axle_B_external_diameter 50.0 --output_axle_B_crenel_number 7 --output_axle_B_crenel_diameter 1.0"],
+    ["complete with side leg into file", "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 5 --leg_type side --leg_length 100.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0 --output_axle_B_place large --output_axle_distance 170.0 --output_axle_B_internal_diameter 40.0 --output_axle_B_external_diameter 50.0 --output_axle_B_crenel_number 7 --output_axle_B_crenel_diameter 1.0 --output_file_basename test_output/axle_lid_self_test2.dxf"],
     ["output file"          , "--holder_diameter 130.0 --clearance_diameter 115.0 --central_diameter 100.0 --axle_hole_diameter 22.0 --output_file_basename test_output/axle_lid_self_test.dxf"],
     ["last test"            , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))

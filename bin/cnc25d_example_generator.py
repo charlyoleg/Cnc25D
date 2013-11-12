@@ -2085,6 +2085,25 @@ al_constraint['clearance_diameter']           = 100.0
 al_constraint['central_diameter']             = 40.0
 al_constraint['axle_hole_diameter']           = 22.0
 al_constraint['annulus_holder_axle_hole_diameter'] = 0.0
+### axle-B
+al_constraint['output_axle_B_place']              = 'none' # 'none', 'small' or 'large' # useful when the gearring has an odd number of crenels
+al_constraint['output_axle_distance']             = 0.0
+al_constraint['output_axle_B_internal_diameter']  = 0.0
+al_constraint['output_axle_B_external_diameter']  = 0.0
+al_constraint['output_axle_B_crenel_number']              = 0
+al_constraint['output_axle_B_crenel_diameter']            = 0.0
+al_constraint['output_axle_B_crenel_position_diameter']   = 0.0
+al_constraint['output_axle_B_crenel_angle']               = 0.0
+### leg
+al_constraint['leg_type']             = 'none' # 'none', 'rear' or 'side'
+al_constraint['leg_length']           = 0.0
+al_constraint['foot_length']          = 0.0
+al_constraint['toe_length']           = 0.0
+al_constraint['leg_hole_diameter']    = 0.0
+al_constraint['leg_hole_distance']    = 0.0
+al_constraint['leg_hole_length']      = 0.0
+al_constraint['leg_border_length']    = 0.0
+al_constraint['leg_shift_length']     = 0.0
 ### general
 al_constraint['cnc_router_bit_radius']   = 0.1
 al_constraint['extrusion_height']     = 10.0
