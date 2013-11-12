@@ -162,7 +162,7 @@ def epicyclic_gearing_dictionary_init():
   r_egd['output_file_basename']            = ''
   ### optional
   r_egd['args_in_txt'] = ""
-  r_egd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+  r_egd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object', 'cnc25d_figure_and_parameters'
   #### return
   return(r_egd)
 
@@ -589,7 +589,7 @@ def epicyclic_gearing(ai_constraints):
     holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius,
     holder_hole_position_radius, holder_hole_radius,
     holder_double_hole_diameter, holder_double_hole_length, holder_double_hole_position, holder_double_hole_mark_nb, holder_double_hole_position_radius,
-    holder_radius) = holder_parameters
+    holder_radius, holder_maximal_radius) = holder_parameters
   planet_figures = []
   for i in range(planet_nb):
     planet_figures.append(gearwheel.gearwheel(pg_c_list[i]))
@@ -1256,6 +1256,9 @@ top_central_radius:   {:0.3f}  diameter: {:0.3}
       fc_assembly = freecad_epicyclic_gearing(part_figure_list)
       fc_assembly.exportBrep(fc_assembly_filename)
 
+  ## eg_param
+  eg_param = (2*holder_radius, 2*top_clearance_radius, 2*top_central_radius, 2*top_axle_hole_radius)
+
   #### return
   if(eg_c['return_type']=='int_status'):
     r_eg = 1
@@ -1263,6 +1266,8 @@ top_central_radius:   {:0.3f}  diameter: {:0.3}
     r_eg = part_figure_list
   elif(eg_c['return_type']=='freecad_object'):
     r_eg = freecad_epicyclic_gearing(part_figure_list)
+  elif(eg_c['return_type']=='cnc25d_figure_and_parameters'):
+    r_eg = (part_figure_list, eg_param)
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(eg_c['return_type']))
     sys.exit(2)
