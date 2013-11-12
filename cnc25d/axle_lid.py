@@ -89,6 +89,7 @@ def axle_lid_dictionary_init():
   r_ald['leg_border_length']    = 0.0
   r_ald['leg_shift_length']     = 0.0
   ### general
+  r_ald['smoothing_radius']       = 0.0
   r_ald['cnc_router_bit_radius']  = 0.1
   r_ald['extrusion_height']       = 10.0
   ### output
@@ -158,6 +159,8 @@ def axle_lid_add_argument(ai_parser):
   r_parser.add_argument('--leg_shift_length','--lsl', action='store', type=float, default=0.0, dest='sw_leg_shift_length',
     help="Set the length between middle axe of the gearring and the middle of the pair of leg-holes. Default: 0.0")
   ### general
+  r_parser.add_argument('--smoothing_radius','--sr', action='store', type=float, default=0.0, dest='sw_smoothing_radius',
+    help="Set the smoothing radius for the axle-lid. If equal to 0.0, it is set to cnc_router_bit_radius. Default: 0.0")
   r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
     help="Set the minimum router_bit radius of the axle-lid. Default: 0.1")
   r_parser.add_argument('--extrusion_height','--eh', action='store', type=float, default=10.0, dest='sw_extrusion_height',
@@ -273,6 +276,9 @@ def axle_lid(ai_constraints):
   middle_angles = (middle_angle_1, middle_angle_2)
   angle_incr = crenel_portion_angle
   lid_router_bit_radius = holder_crenel_router_bit_radius
+  lid_smoothing_router_bit_radius = al_c['smoothing_radius']
+  if(lid_smoothing_router_bit_radius==0):
+    lid_smoothing_router_bit_radius = lid_router_bit_radius
   ## holder_cut_side_outlines
   for i in range(len(middle_crenel_index)):
     idx = middle_crenel_index[i]
@@ -511,16 +517,16 @@ def axle_lid(ai_constraints):
     ty = g1_iy + al_c['leg_length'] * math.sin(ai_direction)
     tx += (leg_width/2.0 + ai_shift_coef * al_c['leg_shift_length']) * math.cos(ai_direction-math.pi/2)
     ty += (leg_width/2.0 + ai_shift_coef * al_c['leg_shift_length']) * math.sin(ai_direction-math.pi/2)
-    r_leg_outline.append((tx, ty, lid_router_bit_radius))
+    r_leg_outline.append((tx, ty, lid_smoothing_router_bit_radius))
     tx += (foot_length + toe_length) * math.cos(ai_direction)
     ty += (foot_length + toe_length) * math.sin(ai_direction)
-    r_leg_outline.append((tx, ty, lid_router_bit_radius))
+    r_leg_outline.append((tx, ty, lid_smoothing_router_bit_radius))
     tx += leg_width * math.cos(ai_direction + math.pi/2)
     ty += leg_width * math.sin(ai_direction + math.pi/2)
-    r_leg_outline.append((tx, ty, lid_router_bit_radius))
+    r_leg_outline.append((tx, ty, lid_smoothing_router_bit_radius))
     tx += (foot_length + toe_length) * math.cos(ai_direction + math.pi)
     ty += (foot_length + toe_length) * math.sin(ai_direction + math.pi)
-    r_leg_outline.append((tx, ty, lid_router_bit_radius))
+    r_leg_outline.append((tx, ty, lid_smoothing_router_bit_radius))
     return(r_leg_outline)
 
   def leg_hole_figure(ai_direction, ai_shift_coef):
@@ -568,9 +574,9 @@ def axle_lid(ai_constraints):
     """
     annulus_holder_outline = []
     if(ai_leg_type == 'side'):
-      annulus_holder_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], lid_router_bit_radius))
+      annulus_holder_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], lid_smoothing_router_bit_radius))
       annulus_holder_outline.extend(leg_outline(middle_angle_1-math.pi/2, 1))
-      annulus_holder_outline.append((holder_cut_side_outlines[0][-1][0], holder_cut_side_outlines[0][-1][1], lid_router_bit_radius))
+      annulus_holder_outline.append((holder_cut_side_outlines[0][-1][0], holder_cut_side_outlines[0][-1][1], lid_smoothing_router_bit_radius))
     else:
       annulus_holder_outline.extend(holder_cut_side_outlines[0])
     if(ai_axle_B_type != 'none'):
@@ -578,9 +584,9 @@ def axle_lid(ai_constraints):
     else:
       annulus_holder_outline.extend(holder_cut_face_outlines[0])
     if(ai_leg_type == 'side'):
-      annulus_holder_outline.append((holder_cut_side_outlines[1][0][0], holder_cut_side_outlines[1][0][1], lid_router_bit_radius))
+      annulus_holder_outline.append((holder_cut_side_outlines[1][0][0], holder_cut_side_outlines[1][0][1], lid_smoothing_router_bit_radius))
       annulus_holder_outline.extend(leg_outline(middle_angle_1+math.pi/2, -1))
-      annulus_holder_outline.append((holder_cut_side_outlines[1][-1][0], holder_cut_side_outlines[1][-1][1], lid_router_bit_radius))
+      annulus_holder_outline.append((holder_cut_side_outlines[1][-1][0], holder_cut_side_outlines[1][-1][1], lid_smoothing_router_bit_radius))
     else:
       annulus_holder_outline.extend(holder_cut_side_outlines[1])
     if(ai_leg_type == 'rear'):
@@ -611,9 +617,9 @@ def axle_lid(ai_constraints):
     """
     top_lid_outline = []
     if(ai_leg_type == 'side'):
-      top_lid_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], lid_router_bit_radius))
+      top_lid_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], lid_smoothing_router_bit_radius))
       top_lid_outline.extend(leg_outline(middle_angle_1-math.pi/2, 1))
-      top_lid_outline.append((holder_cut_side_outlines[0][-1][0], holder_cut_side_outlines[0][-1][1], lid_router_bit_radius))
+      top_lid_outline.append((holder_cut_side_outlines[0][-1][0], holder_cut_side_outlines[0][-1][1], lid_smoothing_router_bit_radius))
     else:
       top_lid_outline.extend(holder_cut_side_outlines[0])
     if(ai_axle_B_type != 'none'):
@@ -621,9 +627,9 @@ def axle_lid(ai_constraints):
     else:
       top_lid_outline.extend(face_top_lid_outlines[0])
     if(ai_leg_type == 'side'):
-      top_lid_outline.append((holder_cut_side_outlines[1][0][0], holder_cut_side_outlines[1][0][1], lid_router_bit_radius))
+      top_lid_outline.append((holder_cut_side_outlines[1][0][0], holder_cut_side_outlines[1][0][1], lid_smoothing_router_bit_radius))
       top_lid_outline.extend(leg_outline(middle_angle_1+math.pi/2, -1))
-      top_lid_outline.append((holder_cut_side_outlines[1][-1][0], holder_cut_side_outlines[1][-1][1], lid_router_bit_radius))
+      top_lid_outline.append((holder_cut_side_outlines[1][-1][0], holder_cut_side_outlines[1][-1][1], lid_smoothing_router_bit_radius))
     else:
       top_lid_outline.extend(holder_cut_side_outlines[1])
     if(ai_leg_type == 'rear'):
@@ -693,8 +699,10 @@ clearance radius:         \t{:0.3f} diameter: \t{:0.3f}
 central radius:           \t{:0.3f} diameter: \t{:0.3f}
 axle-hole radius:         \t{:0.3f} diameter: \t{:0.3f}
 annulus-holder-axle-hole radius: \t{:0.3f} diameter: \t{:0.3f}
+holder_crenel_router_bit_radius:  \t{:0.3f} diameter: \t{:0.3f}
+holder_smoothing_radius:          \t{:0.3f} diameter: \t{:0.3f}
 cnc_router_bit_radius:    \t{:0.3f} diameter: \t{:0.3f}
-""".format(holder_crenel_number, al_c['holder_hole_diameter']/2.0, al_c['holder_hole_diameter'], holder_radius, 2*holder_radius, clearance_radius, 2*clearance_radius, central_radius, 2*central_radius, axle_hole_radius, 2*axle_hole_radius, annulus_holder_axle_hole_radius, 2*annulus_holder_axle_hole_radius, cnc_router_bit_radius, 2*cnc_router_bit_radius)
+""".format(holder_crenel_number, al_c['holder_hole_diameter']/2.0, al_c['holder_hole_diameter'], holder_radius, 2*holder_radius, clearance_radius, 2*clearance_radius, central_radius, 2*central_radius, axle_hole_radius, 2*axle_hole_radius, annulus_holder_axle_hole_radius, 2*annulus_holder_axle_hole_radius, holder_crenel_router_bit_radius, 2*holder_crenel_router_bit_radius, holder_smoothing_radius, 2*holder_smoothing_radius, cnc_router_bit_radius, 2*cnc_router_bit_radius)
   al_parameter_info += """
 output_axle_B_place:  \t{:s}
 output_axle_distance: \t{:0.3f}
@@ -817,6 +825,7 @@ def axle_lid_argparse_to_dictionary(ai_al_args):
   r_ald['leg_border_length']    = ai_al_args.sw_leg_border_length
   r_ald['leg_shift_length']     = ai_al_args.sw_leg_shift_length
   ### general
+  r_ald['smoothing_radius']       = ai_al_args.sw_smoothing_radius
   r_ald['cnc_router_bit_radius']  = ai_al_args.sw_cnc_router_bit_radius
   r_ald['extrusion_height']       = ai_al_args.sw_extrusion_height
   ### output

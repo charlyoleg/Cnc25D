@@ -129,7 +129,8 @@ al_constraint['leg_hole_length']      = 0.0
 al_constraint['leg_border_length']    = 0.0
 al_constraint['leg_shift_length']     = 0.0
 ### general
-al_constraint['cnc_router_bit_radius']   = 0.1
+al_constraint['smoothing_radius']       = 0.0
+al_constraint['cnc_router_bit_radius']  = 0.1
 al_constraint['extrusion_height']     = 10.0
 ### design output : view the gearring with tkinter or write files
 al_constraint['tkinter_view']                    = True
