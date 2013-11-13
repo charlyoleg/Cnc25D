@@ -112,6 +112,7 @@ al_constraint['annulus_holder_axle_hole_diameter'] = 0.0
 ### axle-B
 al_constraint['output_axle_B_place']              = 'none' # 'none', 'small' or 'large' # useful when the gearring has an odd number of crenels
 al_constraint['output_axle_distance']             = 0.0
+al_constraint['output_axle_angle']                = 0.0
 al_constraint['output_axle_B_internal_diameter']  = 0.0
 al_constraint['output_axle_B_external_diameter']  = 0.0
 al_constraint['output_axle_B_crenel_number']              = 0
