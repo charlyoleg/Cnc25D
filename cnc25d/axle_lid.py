@@ -58,7 +58,7 @@ import gearring
 # axle_lid dictionary-arguments default values
 ################################################################
 
-def axle_lid_dictionary_init():
+def axle_lid_dictionary_init(ai_variant=0):
   """ create and initiate an axle_lid_dictionary with the default value
   """
   r_ald = {}
@@ -69,7 +69,7 @@ def axle_lid_dictionary_init():
   r_ald['central_diameter']       = 30.0
   r_ald['axle_hole_diameter']     = 22.0
   r_ald['annulus_holder_axle_hole_diameter'] = 0.0
-  ### axle-B
+  ### output axle-B
   r_ald['output_axle_B_place']              = 'none' # 'none', 'small' or 'large' # useful when the gearring has an odd number of crenels
   r_ald['output_axle_distance']             = 0.0
   r_ald['output_axle_angle']             = 0.0
@@ -89,16 +89,17 @@ def axle_lid_dictionary_init():
   r_ald['leg_hole_length']      = 0.0
   r_ald['leg_border_length']    = 0.0
   r_ald['leg_shift_length']     = 0.0
-  ### general
-  r_ald['smoothing_radius']       = 0.0
-  r_ald['cnc_router_bit_radius']  = 0.1
-  r_ald['extrusion_height']       = 10.0
-  ### output
-  r_ald['tkinter_view']           = False
-  r_ald['output_file_basename']   = ''
-  ### optional
-  r_ald['args_in_txt'] = ""
-  r_ald['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+  if(ai_variant!=1):
+    ### general
+    r_ald['smoothing_radius']       = 0.0
+    r_ald['cnc_router_bit_radius']  = 0.1
+    r_ald['extrusion_height']       = 10.0
+    ### output
+    r_ald['tkinter_view']           = False
+    r_ald['output_file_basename']   = ''
+    ### optional
+    r_ald['args_in_txt'] = ""
+    r_ald['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
   #### return
   return(r_ald)
 
@@ -106,7 +107,7 @@ def axle_lid_dictionary_init():
 # axle_lid argparse
 ################################################################
 
-def axle_lid_add_argument(ai_parser):
+def axle_lid_add_argument(ai_parser, ai_variant=0):
   """
   Add arguments relative to the axle-lid in addition to the argument of gearring(variant=1)
   This function intends to be used by the axle_lid_cli and axle_lid_self_test
@@ -161,13 +162,14 @@ def axle_lid_add_argument(ai_parser):
     help="Set the width of the leg-borders. If equal to 0.0, it is set to leg_hole_diameter. Default: 0.0")
   r_parser.add_argument('--leg_shift_length','--lsl', action='store', type=float, default=0.0, dest='sw_leg_shift_length',
     help="Set the length between middle axe of the gearring and the middle of the pair of leg-holes. Default: 0.0")
-  ### general
-  r_parser.add_argument('--smoothing_radius','--sr', action='store', type=float, default=0.0, dest='sw_smoothing_radius',
-    help="Set the smoothing radius for the axle-lid. If equal to 0.0, it is set to cnc_router_bit_radius. Default: 0.0")
-  r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
-    help="Set the minimum router_bit radius of the axle-lid. Default: 0.1")
-  r_parser.add_argument('--extrusion_height','--eh', action='store', type=float, default=10.0, dest='sw_extrusion_height',
-    help="Set the height of the linear extrusion of each part of the axle_lid assembly. Default: 10.0")
+  if(ai_variant!=1):
+    ### general
+    r_parser.add_argument('--smoothing_radius','--sr', action='store', type=float, default=0.0, dest='sw_smoothing_radius',
+      help="Set the smoothing radius for the axle-lid. If equal to 0.0, it is set to cnc_router_bit_radius. Default: 0.0")
+    r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
+      help="Set the minimum router_bit radius of the axle-lid. Default: 0.1")
+    r_parser.add_argument('--extrusion_height','--eh', action='store', type=float, default=10.0, dest='sw_extrusion_height',
+      help="Set the height of the linear extrusion of each part of the axle_lid assembly. Default: 10.0")
   ### output
   # return
   return(r_parser)
@@ -812,7 +814,7 @@ leg_shift_length:   \t{:0.3f}
 # axle-lid wrapper dance
 ################################################################
 
-def axle_lid_argparse_to_dictionary(ai_al_args):
+def axle_lid_argparse_to_dictionary(ai_al_args, ai_variant=0):
   """ convert a axle_lid_argparse into a axle_lid_dictionary
   """
   r_ald = {}
@@ -843,16 +845,17 @@ def axle_lid_argparse_to_dictionary(ai_al_args):
   r_ald['leg_hole_length']      = ai_al_args.sw_leg_hole_length
   r_ald['leg_border_length']    = ai_al_args.sw_leg_border_length
   r_ald['leg_shift_length']     = ai_al_args.sw_leg_shift_length
-  ### general
-  r_ald['smoothing_radius']       = ai_al_args.sw_smoothing_radius
-  r_ald['cnc_router_bit_radius']  = ai_al_args.sw_cnc_router_bit_radius
-  r_ald['extrusion_height']       = ai_al_args.sw_extrusion_height
-  ### output
-  #r_ald['tkinter_view']           = False
-  r_ald['output_file_basename']   = ai_al_args.sw_output_file_basename
-  ### optional
-  #r_ald['args_in_txt'] = ""
-  r_ald['return_type'] = ai_al_args.sw_return_type
+  if(ai_variant!=1):
+    ### general
+    r_ald['smoothing_radius']       = ai_al_args.sw_smoothing_radius
+    r_ald['cnc_router_bit_radius']  = ai_al_args.sw_cnc_router_bit_radius
+    r_ald['extrusion_height']       = ai_al_args.sw_extrusion_height
+    ### output
+    #r_ald['tkinter_view']           = False
+    r_ald['output_file_basename']   = ai_al_args.sw_output_file_basename
+    ### optional
+    #r_ald['args_in_txt'] = ""
+    r_ald['return_type'] = ai_al_args.sw_return_type
   #### return
   return(r_ald)
   

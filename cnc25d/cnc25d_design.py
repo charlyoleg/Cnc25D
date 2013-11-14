@@ -37,6 +37,7 @@ import gearbar
 import split_gearwheel
 import epicyclic_gearing
 import axle_lid
+import motor_lid
 
 ################################################################
 # Cnc25d Designs
@@ -59,6 +60,7 @@ split_gearwheel = split_gearwheel.split_gearwheel
 # gear system
 epicyclic_gearing = epicyclic_gearing.epicyclic_gearing
 axle_lid = axle_lid.axle_lid
+motor_lid = motor_lid.motor_lid
 #gear_train = gear_train.gear_train
 
 
