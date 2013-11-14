@@ -52,7 +52,7 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import gearring
+import axle_lid
 
 ################################################################
 # motor_lid dictionary-arguments default values
@@ -62,8 +62,7 @@ def motor_lid_dictionary_init():
   """ create and initiate a motor_lid_dictionary with the default value
   """
   r_mld = {}
-  ### holder-A and holder-B: inherit dictionary entries from gearring and axle_lid
-  r_mld.update(gearring.gearring_dictionary_init(1))
+  ### holder-A and holder-B: inherit dictionary entries from axle_lid
   r_mld.update(axle_lid.axle_lid_dictionary_init(1))
   #### motor_lid dictionary entries
   ### input axle-B
@@ -118,12 +117,11 @@ def motor_lid_dictionary_init():
 
 def motor_lid_add_argument(ai_parser):
   """
-  Add arguments relative to the motor-lid in addition to the argument of gearring(variant=1) and axle_lid(variant=1)
+  Add arguments relative to the motor-lid in addition to the argument of axle_lid(variant=1)
   This function intends to be used by the motor_lid_cli and motor_lid_self_test
   """
   r_parser = ai_parser
-  ### holder-A and holder-B : inherit dictionary entries from gearring and axle_lid
-  r_parser = gearring.gearring_add_argument(r_parser, 1)
+  ### holder-A and holder-B : inherit dictionary entries from axle_lid
   r_parser = axle_lid.axle_lid_add_argument(r_parser, 1)
   ### input axle-B
   r_parser.add_argument('--axle_B_place','--abp', action='store', default='small', dest='sw_axle_B_place',
@@ -192,11 +190,11 @@ def motor_lid_add_argument(ai_parser):
     help="Set the angle between the AB-axis and the top fastening hole. Default: 0.0")
   ### general
   r_parser.add_argument('--smoothing_radius','--sr', action='store', type=float, default=0.0, dest='sw_smoothing_radius',
-    help="Set the smoothing radius for the axle-lid. If equal to 0.0, it is set to cnc_router_bit_radius. Default: 0.0")
+    help="Set the smoothing radius for the motor-lid. If equal to 0.0, it is set to cnc_router_bit_radius. Default: 0.0")
   r_parser.add_argument('--cnc_router_bit_radius','--crr', action='store', type=float, default=0.1, dest='sw_cnc_router_bit_radius',
-    help="Set the minimum router_bit radius of the axle-lid. Default: 0.1")
+    help="Set the minimum router_bit radius of the motor-lid. Default: 0.1")
   r_parser.add_argument('--extrusion_height','--eh', action='store', type=float, default=10.0, dest='sw_extrusion_height',
-    help="Set the height of the linear extrusion of each part of the axle_lid assembly. Default: 10.0")
+    help="Set the height of the linear extrusion of each part of the motor_lid assembly. Default: 10.0")
   ### output
   # return
   return(r_parser)
@@ -215,17 +213,171 @@ def motor_lid(ai_constraints):
   mldi = motor_lid_dictionary_init()
   ml_c = mldi.copy()
   ml_c.update(ai_constraints)
-  #print("dbg155: al_c:", al_c)
-  if(len(ml_c.viewkeys() & mldi.viewkeys()) != len(ml_c.viewkeys() | mldi.viewkeys())): # check if the dictionary al_c has exactly all the keys compare to motor_lid_dictionary_init()
+  #print("dbg155: ml_c:", ml_c)
+  if(len(ml_c.viewkeys() & mldi.viewkeys()) != len(ml_c.viewkeys() | mldi.viewkeys())): # check if the dictionary ml_c has exactly all the keys compare to motor_lid_dictionary_init()
     print("ERR157: Error, ml_c has too much entries as {:s} or missing entries as {:s}".format(ml_c.viewkeys() - mldi.viewkeys(), mldi.viewkeys() - ml_c.viewkeys()))
     sys.exit(2)
   #print("dbg164: new motor_lid constraints:")
   #for k in ml_c.viewkeys():
   #  if(ml_c[k] != mldi[k]):
-  #    print("dbg166: for k {:s}, al_c[k] {:s} != mldi[k] {:s}".format(k, str(ml_c[k]), str(mldi[k])))
+  #    print("dbg166: for k {:s}, ml_c[k] {:s} != mldi[k] {:s}".format(k, str(ml_c[k]), str(mldi[k])))
   ### precision
   radian_epsilon = math.pi/1000
 
 
+
+  #### return
+  if(ml_c['return_type']=='int_status'):
+    r_ml = 1
+  elif(ml_c['return_type']=='cnc25d_figure'):
+    r_ml = part_figure_list
+  elif(ml_c['return_type']=='freecad_object'):
+    r_ml = 1 #freecad_motor_lid(part_figure_list)
+  else:
+    print("ERR508: Error the return_type {:s} is unknown".format(ml_c['return_type']))
+    sys.exit(2)
+  return(r_ml)
+
+################################################################
+# motor-lid wrapper dance
+################################################################
+
+def motor_lid_argparse_to_dictionary(ai_ml_args):
+  """ convert a motor_lid_argparse into a motor_lid_dictionary
+  """
+  r_mld = {}
+  ### annulus-holder: inherit dictionary entries from axle_lid
+  r_mld.update(axle_lid.axle_lid_argparse_to_dictionary(ai_ml_args, 1))
+  #### motor_lid dictionary entries
+  ### input axle-B
+  r_mld['axle_B_place']             = ai_ml_args.sw_axle_B_place
+  r_mld['axle_B_distance']          = ai_ml_args.sw_axle_B_distance
+  r_mld['axle_B_angle']             = ai_ml_args.sw_axle_B_angle
+  r_mld['axle_B_diameter']          = ai_ml_args.sw_axle_B_diameter
+  r_mld['axle_B_external_diameter'] = ai_ml_args.sw_axle_B_external_diameter
+  r_mld['axle_B_hole_diameter']     = ai_ml_args.sw_axle_B_hole_diameter
+  r_mld['axle_B_central_diameter']  = ai_ml_args.sw_axle_B_central_diameter
+  ### input axle-C
+  r_mld['axle_C_distance']          = ai_ml_args.sw_axle_C_distance
+  r_mld['axle_C_angle']             = ai_ml_args.sw_axle_C_angle
+  r_mld['axle_C_hole_diameter']     = ai_ml_args.sw_axle_C_hole_diameter
+  r_mld['axle_C_external_diameter'] = ai_ml_args.sw_axle_C_external_diameter
+  ### motor screws
+  r_mld['motor_screw1_diameter']    = ai_ml_args.sw_motor_screw1_diameter
+  r_mld['motor_screw1_angle']       = ai_ml_args.sw_motor_screw1_angle
+  r_mld['motor_screw1_x_length']    = ai_ml_args.sw_motor_screw1_x_length
+  r_mld['motor_screw1_y_length']    = ai_ml_args.sw_motor_screw1_y_length
+  r_mld['motor_screw2_diameter']    = ai_ml_args.sw_motor_screw2_diameter
+  r_mld['motor_screw2_angle']       = ai_ml_args.sw_motor_screw2_angle
+  r_mld['motor_screw2_x_length']    = ai_ml_args.sw_motor_screw2_x_length
+  r_mld['motor_screw2_y_length']    = ai_ml_args.sw_motor_screw2_y_length
+  r_mld['motor_screw3_diameter']    = ai_ml_args.sw_motor_screw3_diameter
+  r_mld['motor_screw3_angle']       = ai_ml_args.sw_motor_screw3_angle
+  r_mld['motor_screw3_x_length']    = ai_ml_args.sw_motor_screw3_x_length
+  r_mld['motor_screw3_y_length']    = ai_ml_args.sw_motor_screw3_y_length
+  ### holder-C
+  r_mld['fastening_BC_hole_diameter']             = ai_ml_args.sw_fastening_BC_hole_diameter
+  r_mld['fastening_BC_external_diameter']         = ai_ml_args.sw_fastening_BC_external_diameter
+  r_mld['fastening_BC_bottom_position_diameter']  = ai_ml_args.sw_fastening_BC_bottom_position_diameter
+  r_mld['fastening_BC_bottom_angle']              = ai_ml_args.sw_fastening_BC_bottom_angle
+  r_mld['fastening_BC_top_position_diameter']     = ai_ml_args.sw_fastening_BC_top_position_diameter
+  r_mld['fastening_BC_top_angle']                 = ai_ml_args.sw_fastening_BC_top_angle
+  ### general
+  r_mld['smoothing_radius']       = ai_ml_args.sw_smoothing_radius
+  r_mld['cnc_router_bit_radius']  = ai_ml_args.sw_cnc_router_bit_radius
+  r_mld['extrusion_height']       = ai_ml_args.sw_extrusion_height
+  ### output
+  #r_mld['tkinter_view']           = False
+  r_mld['output_file_basename']   = ai_ml_args.sw_output_file_basename
+  ### optional
+  #r_mld['args_in_txt'] = ""
+  r_mld['return_type'] = ai_ml_args.sw_return_type
+  #### return
+  return(r_mld)
+  
+def motor_lid_argparse_wrapper(ai_ml_args, ai_args_in_txt=""):
+  """
+  wrapper function of motor_lid() to call it using the motor_lid_parser.
+  motor_lid_parser is mostly used for debug and non-regression tests.
+  """
+  # view the motor_lid with Tkinter as default action
+  tkinter_view = True
+  if(ai_ml_args.sw_output_file_basename!=''):
+    tkinter_view = False
+  # wrapper
+  mld = motor_lid_argparse_to_dictionary(ai_ml_args)
+  mld['args_in_txt'] = ai_args_in_txt
+  mld['tkinter_view'] = tkinter_view
+  #mld['return_type'] = 'int_status'
+  r_ml = motor_lid(mld)
+  return(r_ml)
+
+################################################################
+# self test
+################################################################
+
+def motor_lid_self_test():
+  """
+  This is the non-regression test of motor_lid.
+  Look at the Tk window to check errors.
+  """
+  test_case_switch = [
+    ["simplest test"        , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 79.0 --axle_hole_diameter 22.0 --holder_crenel_number 6"],
+    ["last test"            , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"]]
+  #print("dbg741: len(test_case_switch):", len(test_case_switch))
+  motor_lid_parser = argparse.ArgumentParser(description='Command line interface for the function motor_lid().')
+  motor_lid_parser = motor_lid_add_argument(motor_lid_parser)
+  motor_lid_parser = cnc25d_api.generate_output_file_add_argument(motor_lid_parser, 1)
+  for i in range(len(test_case_switch)):
+    l_test_switch = test_case_switch[i][1]
+    print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
+    l_args = l_test_switch.split()
+    #print("dbg414: l_args:", l_args)
+    st_args = motor_lid_parser.parse_args(l_args)
+    r_mlst = motor_lid_argparse_wrapper(st_args)
+  return(r_mlst)
+
+################################################################
+# motor_lid command line interface
+################################################################
+
+def motor_lid_cli(ai_args=""):
+  """ command line interface of motor_lid.py when it is used in standalone
+  """
+  # motor_lid parser
+  motor_lid_parser = argparse.ArgumentParser(description='Command line interface for the function motor_lid().')
+  motor_lid_parser = motor_lid_add_argument(motor_lid_parser)
+  motor_lid_parser = cnc25d_api.generate_output_file_add_argument(motor_lid_parser, 1)
+  # switch for self_test
+  motor_lid_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
+    help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
+  effective_args = cnc25d_api.get_effective_args(ai_args)
+  effective_args_in_txt = "motor_lid arguments: " + ' '.join(effective_args)
+  ml_args = motor_lid_parser.parse_args(effective_args)
+  print("dbg111: start making motor_lid")
+  if(ml_args.sw_run_self_test):
+    r_ml = motor_lid_self_test()
+  else:
+    r_ml = motor_lid_argparse_wrapper(ml_args, effective_args_in_txt)
+  print("dbg999: end of script")
+  return(r_ml)
+
+################################################################
+# main
+################################################################
+
+# this works with python and freecad :)
+if __name__ == "__main__":
+  FreeCAD.Console.PrintMessage("motor_lid.py says hello!\n")
+  #my_ml = motor_lid_cli()
+  #my_ml = motor_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object")
+  my_ml = motor_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6")
+  #Part.show(my_ml)
+  try: # depending on ml_c['return_type'] it might be or not a freecad_object
+    Part.show(my_ml)
+    print("freecad_object returned")
+  except:
+    pass
+    #print("return_type is not a freecad-object")
 
 
