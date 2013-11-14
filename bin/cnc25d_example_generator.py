@@ -2095,6 +2095,7 @@ al_constraint['output_axle_B_crenel_number']              = 0
 al_constraint['output_axle_B_crenel_diameter']            = 0.0
 al_constraint['output_axle_B_crenel_position_diameter']   = 0.0
 al_constraint['output_axle_B_crenel_angle']               = 0.0
+al_constraint['input_axle_B_enable']                      = False
 ### leg
 al_constraint['leg_type']             = 'none' # 'none', 'rear' or 'side'
 al_constraint['leg_length']           = 0.0
