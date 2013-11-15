@@ -232,6 +232,9 @@ def motor_lid(ai_constraints):
     print("ERR232: Error, smoothing_radius {:0.3f} is smaller than cnc_router_bit_radius {:0.3f}".format(smoothing_radius, cnc_router_bit_radius))
     sys.exit(2)
   ## holder-axis
+  if((ml_c['axle_B_place']!='small')and(ml_c['axle_B_place']!='large')):
+    print("ERR236: Error, axle_B_place {:s} accept only 'small' or 'large'".format(ml_c['axle_B_place']))
+    sys.exit(2)
   holder_crenel_number = ml_c['holder_crenel_number']
   middle_crenel_1 = 0
   middle_crenel_2 = int(holder_crenel_number/2)
@@ -241,52 +244,62 @@ def motor_lid(ai_constraints):
   crenel_portion_angle = 2*math.pi/holder_crenel_number
   holder_axis_angle = ml_c['holder_position_angle'] + (middle_crenel_1 + 1 + middle_crenel_2)*crenel_portion_angle/2.0
   # axle_C
-  if(ml_c['axle_C_distance']<radian_epsilon):
-    print("ERR237: Error, axle_C_distance {:0.3f} is too small".format(ml_c['axle_C_distance']))
-    sys.exit(2)
-  a_abc = math.pi-abs(ml_c['axle_C_angle']) # angle (ABC)
-  l_AC = math.sqrt( ml_c['axle_B_distance']**2 + ml_c['axle_C_distance']**2 - 2 *  ml_c['axle_B_distance'] * ml_c['axle_C_distance'] * math.cos(a_abc)) # length (AC): law of cosines
-  sin_a = math.sin(a_abc) * ml_c['axle_C_distance'] / l_AC # angle (CAB): law of sines
-  a_cab = math.asin(sin_a)
-  a_AC = ml_c['axle_B_angle'] + math.copysign(a_cab, ml_c['axle_C_angle']) # angle (holder-axis, AC)
   holder_radius = ml_c['holder_diameter']/2.0
-  if(l_AC<holder_radius):
-    print("ERR245: l_AC {:0.3} is smaller than the holder_radius {:0.3f}".format(l_AC, holder_radius))
-    sys.exit(2)
+  l_AC = 0.0
+  a_AC = 0.0
+  #if(ml_c['axle_C_distance']<radian_epsilon):
+  #  print("ERR237: Error, axle_C_distance {:0.3f} is too small".format(ml_c['axle_C_distance']))
+  #  sys.exit(2)
+  if(ml_c['axle_C_distance']>radian_epsilon):
+    a_abc = math.pi-abs(ml_c['axle_C_angle']) # angle (ABC)
+    l_AC = math.sqrt( ml_c['axle_B_distance']**2 + ml_c['axle_C_distance']**2 - 2 *  ml_c['axle_B_distance'] * ml_c['axle_C_distance'] * math.cos(a_abc)) # length (AC): law of cosines
+    sin_a = math.sin(a_abc) * ml_c['axle_C_distance'] / l_AC # angle (CAB): law of sines
+    a_cab = math.asin(sin_a)
+    a_AC = ml_c['axle_B_angle'] + math.copysign(a_cab, ml_c['axle_C_angle']) # angle (holder-axis, AC)
+    if(l_AC<holder_radius):
+      print("ERR245: l_AC {:0.3} is smaller than the holder_radius {:0.3f}".format(l_AC, holder_radius))
+      sys.exit(2)
   ### holder_A
+  holder_A_axle_B_place = ml_c['axle_B_place']
+  if(ml_c['axle_B_distance']<radian_epsilon):
+    holder_A_axle_B_place = 'none'
   axle_B_radius = ml_c['axle_B_diameter']/2.0
   axle_B_external_radius = ml_c['axle_B_external_diameter']/2.0
   if(axle_B_external_radius==0):
     axle_B_external_radius = 2*axle_B_radius
-  if(axle_B_external_radius<axle_B_radius+radian_epsilon):
-    print("ERR262: Error, axle_B_external_radius {:0.3f} is smaller than axle_B_radius {:0.3f}".format(axle_B_external_radius, axle_B_radius))
-    sys.exit(2)
+  if(holder_A_axle_B_place != 'none'):
+    if(axle_B_external_radius<axle_B_radius+radian_epsilon):
+      print("ERR262: Error, axle_B_external_radius {:0.3f} is smaller than axle_B_radius {:0.3f}".format(axle_B_external_radius, axle_B_radius))
+      sys.exit(2)
   alml_ci_keys = axle_lid.axle_lid_dictionary_init(1).viewkeys() & motor_lid_dictionary_init().viewkeys()
-  if(ml_c['axle_B_distance']>radian_epsilon):
-    al_c = dict([ (k, ml_c[k]) for k in alml_ci_keys ]) # extract only the entries of the axle_lid
-    al_c['output_axle_B_place'] = ml_c['axle_B_place']
-    al_c['output_axle_distance'] = ml_c['axle_B_distance']
-    al_c['output_axle_angle'] = ml_c['axle_B_angle']
-    al_c['output_axle_B_external_diameter'] = 2*axle_B_external_radius
-    al_c['output_axle_B_internal_diameter'] = 2*axle_B_radius
-    al_c['input_axle_B_enable'] = True
-    al_c['smoothing_radius'] = smoothing_radius
-    al_c['cnc_router_bit_radius'] = ml_c['cnc_router_bit_radius']
-    al_c['extrusion_height'] = ml_c['extrusion_height']
-    al_c['tkinter_view'] = False
-    al_c['output_file_basename'] = ""
-    al_c['return_type'] = 'figures_for_motor_lid_holder_A'
-    (holder_A_figure, holder_A_simple_figure, holder_A_with_motor_lid_figure, holder_A_with_leg_figure) = axle_lid.axle_lid(al_c)
+  al_c = dict([ (k, ml_c[k]) for k in alml_ci_keys ]) # extract only the entries of the axle_lid
+  al_c['output_axle_B_place'] = holder_A_axle_B_place
+  al_c['output_axle_distance'] = ml_c['axle_B_distance']
+  al_c['output_axle_angle'] = ml_c['axle_B_angle']
+  al_c['output_axle_B_external_diameter'] = 2*axle_B_external_radius
+  al_c['output_axle_B_internal_diameter'] = 2*axle_B_radius
+  al_c['input_axle_B_enable'] = True
+  al_c['smoothing_radius'] = smoothing_radius
+  al_c['cnc_router_bit_radius'] = ml_c['cnc_router_bit_radius']
+  al_c['extrusion_height'] = ml_c['extrusion_height']
+  al_c['tkinter_view'] = False
+  al_c['output_file_basename'] = ""
+  al_c['return_type'] = 'figures_for_motor_lid_holder_A'
+  (holder_A_figure, holder_A_simple_figure, holder_A_with_motor_lid_figure, holder_A_with_leg_figure) = axle_lid.axle_lid(al_c)
   ### holder_B
+  holder_B_axle_B_place = ml_c['axle_B_place']
+  if(l_AC<radian_epsilon):
+    holder_B_axle_B_place = 'none'
   axle_C_hole_radius = ml_c['axle_C_hole_diameter']/2.0
   axle_C_external_radius = ml_c['axle_C_external_diameter']/2.0
   if(axle_C_external_radius==0):
     axle_C_external_radius = 2*axle_C_hole_radius
-  if(axle_C_external_radius<axle_C_hole_radius+radian_epsilon):
-    print("ERR280: Error, axle_C_external_radius {:0.3f} is too small compare to axle_C_hole_radius {:0.3f}".format(axle_C_external_radius, axle_C_hole_radius))
-    sys.exit(2)
+  if(holder_B_axle_B_place != 'none'):
+    if(axle_C_external_radius<axle_C_hole_radius+radian_epsilon):
+      print("ERR280: Error, axle_C_external_radius {:0.3f} is too small compare to axle_C_hole_radius {:0.3f}".format(axle_C_external_radius, axle_C_hole_radius))
+      sys.exit(2)
   al_c = dict([ (k, ml_c[k]) for k in alml_ci_keys ]) # extract only the entries of the axle_lid
-  al_c['output_axle_B_place'] = ml_c['axle_B_place']
+  al_c['output_axle_B_place'] = holder_B_axle_B_place
   al_c['output_axle_distance'] = l_AC
   al_c['output_axle_angle'] = a_AC
   al_c['output_axle_B_external_diameter'] = 2*axle_C_external_radius
@@ -351,11 +364,11 @@ def motor_lid(ai_constraints):
   axle_B_central_radius = ml_c['axle_B_central_diameter']/2.0
   if(axle_B_central_radius==0):
     axle_B_central_radius = 2*axle_B_radius
-  if(axle_B_central_radius<axle_B_radius+radian_epsilon):
-    print("ERR355: Error, axle_B_central_radius {:0.3f} is too small compare to axle_B_radius {:0.3f}".format(axle_B_central_radius, axle_B_radius))
-    sys.exit(2)
   holder_C_figure = []
   if(fastening_BC_external_radius>0):
+    if(axle_B_central_radius<axle_B_radius+radian_epsilon):
+      print("ERR355: Error, axle_B_central_radius {:0.3f} is too small compare to axle_B_radius {:0.3f}".format(axle_B_central_radius, axle_B_radius))
+      sys.exit(2)
     if(fastening_BC_hole_radius<radian_epsilon):
       print("ERR324: Error, fastening_BC_hole_radius {:0.3f} is too small".format(fastening_BC_hole_radius))
       sys.exit(2)
@@ -591,8 +604,8 @@ def motor_lid_self_test():
   Look at the Tk window to check errors.
   """
   test_case_switch = [
-    ["simplest test"        , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 79.0 --axle_hole_diameter 22.0 --holder_crenel_number 6"],
-    ["last test"            , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"]]
+    ["simplest test"        , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"],
+    ["last test"            , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0  --holder_crenel_number 6 --axle_B_distance 52.0 --axle_C_distance 40.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   motor_lid_parser = argparse.ArgumentParser(description='Command line interface for the function motor_lid().')
   motor_lid_parser = motor_lid_add_argument(motor_lid_parser)

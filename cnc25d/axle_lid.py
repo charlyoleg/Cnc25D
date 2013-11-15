@@ -497,9 +497,9 @@ def axle_lid(ai_constraints):
 
   ### input_axle_B_outline and input_axle_B_hole_figure for motor_lid
   if(al_c['input_axle_B_enable']):
-    if(al_c['output_axle_B_place']=='none'):
-      print("ERR501: Error, output_axle_B_place set to 'none' and input_axle_B_enable set to True!")
-      sys.exit(2)
+    #if(al_c['output_axle_B_place']=='none'):
+    #  print("ERR501: Error, output_axle_B_place set to 'none' and input_axle_B_enable set to True!")
+    #  sys.exit(2)
     input_axle_B_external_radius = output_axle_B_external_radius
     input_axle_B_internal_radius = output_axle_B_internal_radius
     first_angle = gr_c['holder_position_angle'] + (middle_crenel_1+1.0)*angle_incr + holder_crenel_half_angle
