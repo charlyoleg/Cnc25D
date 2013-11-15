@@ -340,7 +340,7 @@ def motor_lid(ai_constraints):
       a_bottom = a_AB + math.pi + s * ml_c['fastening_BC_bottom_angle']
       fastening_BC_hole_figure.append((bx+fastening_BC_bottom_position_radius*math.cos(a_bottom), by+fastening_BC_bottom_position_radius*math.sin(a_bottom), fastening_BC_hole_radius))
       a_top = a_BC + s * ml_c['fastening_BC_top_angle']
-      fastening_BC_hole_figure.append((bx+fastening_BC_bottom_position_radius*math.cos(a_top), by+fastening_BC_bottom_position_radius*math.sin(a_top), fastening_BC_hole_radius))
+      fastening_BC_hole_figure.append((bx+fastening_BC_top_position_radius*math.cos(a_top), by+fastening_BC_top_position_radius*math.sin(a_top), fastening_BC_hole_radius))
   holder_B_hole_figure.extend(fastening_BC_hole_figure)
   # motor_screw
   motor_screw_diameter = [ml_c['motor_screw1_diameter'], ml_c['motor_screw2_diameter'], ml_c['motor_screw3_diameter']]
@@ -361,11 +361,16 @@ def motor_lid(ai_constraints):
   holder_B_with_motor_lid_figure.extend(holder_B_hole_figure)
   ### holder_C
   fastening_BC_external_radius = ml_c['fastening_BC_external_diameter']/2.0
+  if(fastening_BC_external_radius==0):
+    fastening_BC_external_radius = 2*fastening_BC_hole_radius
   axle_B_central_radius = ml_c['axle_B_central_diameter']/2.0
   if(axle_B_central_radius==0):
     axle_B_central_radius = 2*axle_B_radius
   holder_C_figure = []
   if(fastening_BC_external_radius>0):
+    if(fastening_BC_external_radius<fastening_BC_hole_radius+radian_epsilon):
+      print("ERR367: Error, fastening_BC_external_radius {:0.3f} is too small compare to fastening_BC_hole_radius {:0.3f}".format(fastening_BC_external_radius, fastening_BC_hole_radius))
+      sys.exit(2)
     if(axle_B_central_radius<axle_B_radius+radian_epsilon):
       print("ERR355: Error, axle_B_central_radius {:0.3f} is too small compare to axle_B_radius {:0.3f}".format(axle_B_central_radius, axle_B_radius))
       sys.exit(2)
@@ -385,16 +390,17 @@ def motor_lid(ai_constraints):
            (a_BC - ml_c['fastening_BC_top_angle'], fastening_BC_top_position_radius),
            (a_BC + ml_c['fastening_BC_top_angle'], fastening_BC_top_position_radius))
     for i in range(len(hca)):
-      ma = (hca[i][0] + hca[i-1][0])/2.0
+      ea = hca[i][0]
+      ma = hca[i-1][0] + (math.fmod(hca[i][0] - hca[i-1][0] + 5*math.pi, 2*math.pi) - math.pi)/2.0
       dl = math.sqrt(hca[i][1]**2 + fastening_BC_external_radius**2)
       da = math.atan(float(fastening_BC_external_radius)/hca[i][1])
       sl = hca[i][1] + fastening_BC_external_radius
       holder_C_outline_A.append((bx+axle_B_central_radius*math.cos(ma), by+axle_B_central_radius*math.sin(ma), smoothing_radius))
-      holder_C_outline_A.append((bx+dl*math.cos(ma-da), by+dl*math.sin(ma-da), 0))
-      holder_C_outline_A.append((bx+sl*math.cos(ma), by+sl*math.sin(ma), bx+dl*math.cos(ma+da), by+dl*math.sin(ma+da), 0))
+      holder_C_outline_A.append((bx+dl*math.cos(ea-da), by+dl*math.sin(ea-da), 0))
+      holder_C_outline_A.append((bx+sl*math.cos(ea), by+sl*math.sin(ea), bx+dl*math.cos(ea+da), by+dl*math.sin(ea+da), 0))
     holder_C_outline_A.append((holder_C_outline_A[0][0], holder_C_outline_A[0][1], 0))
     # holder_C_figure
-    holder_C_figure.append(holder_C_outline_A)
+    holder_C_figure.append(cnc25d_api.cnc_cut_outline(holder_C_outline_A, "holder_C_outline_A"))
     if(axle_B_radius>0):
       holder_C_figure.append((bx, by, axle_B_radius))
     holder_C_figure.extend(fastening_BC_hole_figure)
@@ -406,6 +412,7 @@ def motor_lid(ai_constraints):
   part_figure_list.append(middle_lid_figures[0])
   part_figure_list.append(middle_lid_figures[1])
   part_figure_list.append(holder_B_figure)
+  part_figure_list.append(holder_C_figure)
   # assembly
   ml_assembly_figure = []
   for i in range(len(part_figure_list)):
@@ -462,16 +469,19 @@ cnc_router_bit_radius {:0.3f}  diameter {:0.3f}
     cnc25d_api.figure_simple_display(ml_assembly_figure, ml_assembly_figure_overlay, ml_parameter_info)
     #cnc25d_api.figure_simple_display(holder_A_figure, ml_assembly_figure_overlay, ml_parameter_info)
     #cnc25d_api.figure_simple_display(holder_B_figure, ml_assembly_figure_overlay, ml_parameter_info)
+    #cnc25d_api.figure_simple_display(holder_C_figure, ml_assembly_figure_overlay, ml_parameter_info)
       
   ### sub-function to create the freecad-object
   def freecad_motor_lid(nai_part_figure_list):
     fc_obj = []
     for i in range(len(nai_part_figure_list)):
       fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(nai_part_figure_list[i], ml_c['extrusion_height']))
-      if((i==1)or(i==2)): # front planet-carrier
+      if((i==1)or(i==2)): # middle_lid
         fc_obj[i].translate(Base.Vector(0,0,5.0*ml_c['extrusion_height']))
-      if(i==3): # rear planet-carrier
+      if(i==3): # holder_B
         fc_obj[i].translate(Base.Vector(0,0,10.0*ml_c['extrusion_height']))
+      if(i==4): # holder_C
+        fc_obj[i].translate(Base.Vector(0,0,15.0*ml_c['extrusion_height']))
     r_fal = Part.makeCompound(fc_obj)
     return(r_fal)
 
@@ -492,6 +502,7 @@ cnc_router_bit_radius {:0.3f}  diameter {:0.3f}
     cnc25d_api.generate_output_file(middle_lid_figures[0], output_file_basename + "_middle_lid1" + output_file_suffix, ml_c['extrusion_height'], ml_parameter_info)
     cnc25d_api.generate_output_file(middle_lid_figures[1], output_file_basename + "_middle_lid2" + output_file_suffix, ml_c['extrusion_height'], ml_parameter_info)
     cnc25d_api.generate_output_file(holder_B_figure, output_file_basename + "_holder_B" + output_file_suffix, ml_c['extrusion_height'], ml_parameter_info)
+    cnc25d_api.generate_output_file(holder_C_figure, output_file_basename + "_holder_C" + output_file_suffix, ml_c['extrusion_height'], ml_parameter_info)
     cnc25d_api.generate_output_file(holder_A_simple_figure, output_file_basename + "_holder_A_simple" + output_file_suffix, ml_c['extrusion_height'], ml_parameter_info)
     cnc25d_api.generate_output_file(holder_B_simple_figure, output_file_basename + "_holder_B_simple" + output_file_suffix, ml_c['extrusion_height'], ml_parameter_info)
     cnc25d_api.generate_output_file(holder_A_with_motor_lid_figure, output_file_basename + "_holder_A_with_motor_lid" + output_file_suffix, ml_c['extrusion_height'], ml_parameter_info)
@@ -605,6 +616,9 @@ def motor_lid_self_test():
   """
   test_case_switch = [
     ["simplest test"        , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"],
+    ["small side"            , "--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place small --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 5.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_external_diameter 15.0"],
+    ["large side with side leg" , "--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place large --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 5.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_external_diameter 15.0 --leg_type side --leg_length 120.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0"],
+    ["output files" , "--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place large --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 5.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_external_diameter 15.0 --leg_type side --leg_length 120.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0 --axle_B_hole_diameter 20.0 --output_file_basename test_output/motor_lid_self_test.dxf"],
     ["last test"            , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0  --holder_crenel_number 6 --axle_B_distance 52.0 --axle_C_distance 40.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   motor_lid_parser = argparse.ArgumentParser(description='Command line interface for the function motor_lid().')
@@ -653,7 +667,9 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("motor_lid.py says hello!\n")
   #my_ml = motor_lid_cli()
   #my_ml = motor_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object")
-  my_ml = motor_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --axle_B_distance 52.0 --axle_C_distance 40.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0")
+  #my_ml = motor_lid_cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --axle_B_distance 52.0 --axle_C_distance 40.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0")
+  my_ml = motor_lid_cli("--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place small --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 5.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_hole_diameter 20.0 --axle_B_external_diameter 15.0")
+  #my_ml = motor_lid_cli("--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place small --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 5.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_hole_diameter 20.0 --axle_B_external_diameter 15.0 --return_type freecad_object")
   #Part.show(my_ml)
   try: # depending on ml_c['return_type'] it might be or not a freecad_object
     Part.show(my_ml)

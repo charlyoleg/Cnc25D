@@ -211,6 +211,16 @@ al_script_content='''#!/usr/bin/env python
 #include "../cnc25d/tests/axle_lid_macro.py"
 '''
 
+### motor_lid script example
+ml_script_name="eg11_motor_lid_example.py"
+# copy from ../cnc25d/tests/motor_lid_macro.py
+ml_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/motor_lid_macro.py
+#
+#include "../cnc25d/tests/motor_lid_macro.py"
+'''
+
 ### Generating the script examples
 
 ceg_example_list={
@@ -223,7 +233,8 @@ ceg_example_list={
   gb_script_name : gb_script_content,
   sgw_script_name : sgw_script_content,
   eg_script_name : eg_script_content,
-  al_script_name : al_script_content}
+  al_script_name : al_script_content,
+  ml_script_name : ml_script_content}
 
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")
