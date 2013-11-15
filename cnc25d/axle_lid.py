@@ -782,7 +782,7 @@ def axle_lid(ai_constraints):
   # al_parameter_info
   al_parameter_info = "\naxle_lid parameter info:\n"
   al_parameter_info += "\n" + al_c['args_in_txt'] + "\n\n"
-  al_parameter_info += """
+  holder_parameter_info = """
 holder crenel number:     \t{:d}
 holder hole radius:       \t{:0.3f} diameter: \t{:0.3f}
 holder external radius:   \t{:0.3f} diameter: \t{:0.3f}
@@ -794,6 +794,7 @@ holder_crenel_router_bit_radius:  \t{:0.3f} diameter: \t{:0.3f}
 holder_smoothing_radius:          \t{:0.3f} diameter: \t{:0.3f}
 cnc_router_bit_radius:    \t{:0.3f} diameter: \t{:0.3f}
 """.format(holder_crenel_number, al_c['holder_hole_diameter']/2.0, al_c['holder_hole_diameter'], holder_radius, 2*holder_radius, clearance_radius, 2*clearance_radius, central_radius, 2*central_radius, axle_hole_radius, 2*axle_hole_radius, annulus_holder_axle_hole_radius, 2*annulus_holder_axle_hole_radius, holder_crenel_router_bit_radius, 2*holder_crenel_router_bit_radius, holder_smoothing_radius, 2*holder_smoothing_radius, cnc_router_bit_radius, 2*cnc_router_bit_radius)
+  al_parameter_info += holder_parameter_info
   al_parameter_info += """
 output_axle_B_place:  \t{:s}
 output_axle_distance: \t{:0.3f}
@@ -805,7 +806,7 @@ output_axle_B_crenel_radius: \t{:0.3f}  diameter: \t{:0.3f}
 output_axle_B_crenel_position_radius: \t{:0.3f}  diameter: \t{:0.3f}
 output_axle_B_crenel_angle: \t{:0.3f}
 """.format(al_c['output_axle_B_place'], al_c['output_axle_distance'], al_c['output_axle_angle'], al_c['output_axle_angle']*180/math.pi,  output_axle_B_internal_radius, 2*output_axle_B_internal_radius, output_axle_B_external_radius, 2*output_axle_B_external_radius, al_c['output_axle_B_crenel_number'], output_axle_B_crenel_radius, 2*output_axle_B_crenel_radius, output_axle_B_crenel_position_radius, 2*output_axle_B_crenel_position_radius, al_c['output_axle_B_crenel_angle'])
-  al_parameter_info += """
+  leg_parameter_info = """
 leg_type:     \t{:s}
 leg_length:   \t{:0.3f}
 foot_length:  \t{:0.3f}
@@ -816,7 +817,9 @@ leg_hole_length:    \t{:0.3f}
 leg_border_length:  \t{:0.3f}
 leg_shift_length:   \t{:0.3f}
 """.format(al_c['leg_type'], al_c['leg_length'], foot_length, toe_length, leg_hole_radius, 2*leg_hole_radius, leg_hole_distance, al_c['leg_hole_length'], leg_border_length, al_c['leg_shift_length'])
+  al_parameter_info += leg_parameter_info
   #print(al_parameter_info)
+  parameter_info_for_motor_lid = holder_parameter_info + leg_parameter_info
 
   ### display with Tkinter
   if(al_c['tkinter_view']):
@@ -877,8 +880,14 @@ leg_shift_length:   \t{:0.3f}
     r_al = part_figure_list
   elif(al_c['return_type']=='freecad_object'):
     r_al = freecad_axle_lid(part_figure_list)
-  elif(al_c['return_type']=='figures_for_motor_lid'):
-    r_al = (annulus_holder_figure, annulus_holder_with_axle_B_figure, top_lid_figure, top_lid_with_axle_B_figure)
+  elif(al_c['return_type']=='figures_for_motor_lid_holder_A'):
+    r_al = (annulus_holder_figure, annulus_holder_simple_figure, annulus_holder_with_axle_B_figure, annulus_holder_with_leg_figure)
+  elif(al_c['return_type']=='figures_for_motor_lid_holder_B'):
+    r_al = (top_lid_figure, top_lid_simple_figure, top_lid_with_axle_B_figure, top_lid_with_leg_figure)
+  elif(al_c['return_type']=='figures_for_motor_lid_middle_lid'):
+    r_al = middle_lid_figures
+  elif(al_c['return_type']=='figures_for_motor_lid_parameter_info'):
+    r_al = parameter_info_for_motor_lid
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(al_c['return_type']))
     sys.exit(2)
