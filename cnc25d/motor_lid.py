@@ -391,7 +391,7 @@ def motor_lid(ai_constraints):
            (a_BC + ml_c['fastening_BC_top_angle'], fastening_BC_top_position_radius))
     for i in range(len(hca)):
       ea = hca[i][0]
-      ma = hca[i-1][0] + (math.fmod(hca[i][0] - hca[i-1][0] + 5*math.pi, 2*math.pi) - math.pi)/2.0
+      ma = hca[i-1][0] + (math.fmod(hca[i][0] - hca[i-1][0] + 4*math.pi, 2*math.pi) - 0*math.pi)/2.0 # we always want the angle positive because we always turn CCW
       dl = math.sqrt(hca[i][1]**2 + fastening_BC_external_radius**2)
       da = math.atan(float(fastening_BC_external_radius)/hca[i][1])
       sl = hca[i][1] + fastening_BC_external_radius
@@ -413,6 +413,7 @@ def motor_lid(ai_constraints):
   part_figure_list.append(middle_lid_figures[1])
   part_figure_list.append(holder_B_figure)
   part_figure_list.append(holder_C_figure)
+  part_figure_list.append(holder_A_with_motor_lid_figure)
   # assembly
   ml_assembly_figure = []
   for i in range(len(part_figure_list)):
