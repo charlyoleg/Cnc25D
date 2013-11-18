@@ -1257,7 +1257,7 @@ top_central_radius:   {:0.3f}  diameter: {:0.3}
       fc_assembly.exportBrep(fc_assembly_filename)
 
   ## eg_param
-  eg_param = (2*holder_radius, 2*top_clearance_radius, 2*top_central_radius, 2*top_axle_hole_radius)
+  eg_param = (2*holder_radius, 2*top_clearance_radius, 2*top_central_radius, 2*top_axle_hole_radius, oc_c['gear_primitive_diameter'])
 
   #### return
   if(eg_c['return_type']=='int_status'):

@@ -344,7 +344,7 @@ def motor_lid(ai_constraints):
   holder_B_hole_figure.extend(fastening_BC_hole_figure)
   # motor_screw
   motor_screw_diameter = [ml_c['motor_screw1_diameter'], ml_c['motor_screw2_diameter'], ml_c['motor_screw3_diameter']]
-  motor_screw_angle = [ml_c['motor_screw1_angle'], ml_c['motor_screw2_angle'], ml_c['motor_screw2_angle']]
+  motor_screw_angle = [ml_c['motor_screw1_angle'], ml_c['motor_screw2_angle'], ml_c['motor_screw3_angle']]
   motor_screw_x_length = [ml_c['motor_screw1_x_length'], ml_c['motor_screw2_x_length'], ml_c['motor_screw3_x_length']]
   motor_screw_y_length = [ml_c['motor_screw1_y_length'], ml_c['motor_screw2_y_length'], ml_c['motor_screw3_y_length']]
   cx = bx + ml_c['axle_C_distance']*math.cos(a_BC)
