@@ -88,7 +88,7 @@ def gearring_dictionary_init(ai_variant=0):
   r_grd['holder_crenel_skin_width']      = 10.0
   r_grd['holder_crenel_router_bit_radius']   = 1.0
   r_grd['holder_smoothing_radius']       = 0.0
-  ### holder-hole-B
+  ### holder-hole-B (experimental)
   r_grd['holder_hole_B_diameter']          = 10.0
   r_grd['holder_crenel_B_position']        = 10.0
   r_grd['holder_hole_B_crenel_list']       = []

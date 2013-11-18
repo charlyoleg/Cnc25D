@@ -171,7 +171,7 @@ gr_constraint['holder_crenel_width']           = 10.0
 gr_constraint['holder_crenel_skin_width']      = 10.0
 gr_constraint['holder_crenel_router_bit_radius']   = 1.0
 gr_constraint['holder_smoothing_radius']       = 0.0
-### holder-hole-B
+### holder-hole-B (experimental)
 gr_constraint['holder_hole_B_diameter']          = 10.0
 gr_constraint['holder_crenel_B_position']        = 10.0
 gr_constraint['holder_hole_B_crenel_list']       = []
