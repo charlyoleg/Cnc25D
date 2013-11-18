@@ -1339,6 +1339,10 @@ gr_constraint['holder_crenel_width']           = 10.0
 gr_constraint['holder_crenel_skin_width']      = 10.0
 gr_constraint['holder_crenel_router_bit_radius']   = 1.0
 gr_constraint['holder_smoothing_radius']       = 0.0
+### holder-hole-B
+gr_constraint['holder_hole_B_diameter']          = 10.0
+gr_constraint['holder_crenel_B_position']        = 10.0
+gr_constraint['holder_hole_B_crenel_list']       = []
 ### cnc router_bit constraint
 gr_constraint['cnc_router_bit_radius']          = 1.0
 ### design output : view the gearring with tkinter or write files
@@ -1917,6 +1921,10 @@ eg_constraint['holder_crenel_width']           = 10.0
 eg_constraint['holder_crenel_skin_width']      = 5.0
 eg_constraint['holder_crenel_router_bit_radius']   = 1.0
 eg_constraint['holder_smoothing_radius']       = 0.0
+### holder-hole-B
+eg_constraint['holder_hole_B_diameter']          = 10.0
+eg_constraint['holder_crenel_B_position']        = 10.0
+eg_constraint['holder_hole_B_crenel_list']       = []
 #### side-cover
 ### input-gearwheel
 eg_constraint['input_gearwheel_tooth_nb']                  = 0
