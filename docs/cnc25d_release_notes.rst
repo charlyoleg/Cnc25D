@@ -6,6 +6,7 @@ Release 0.1.9
 -------------
 Released on 2013-12-01
 
+* motor_lid
 * gearlever
 * gear_train  
 * hexa_bone
@@ -15,7 +16,7 @@ Release 0.1.8
 Released on 2013-11-07
 
 * add crenels to the gearwheel
-* epicyclic
+* epicyclic-gearing
 * axle_lid
 
 Release 0.1.7

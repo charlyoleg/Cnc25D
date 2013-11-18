@@ -43,6 +43,12 @@ Designing with Python_ let you work in a similar way as software development. Yo
 
 The complete list of *Cnc25D Design* is available in the section :doc:`cnc25d_designs`.
 
+Some realizations designed with *Cnc25D*:
+
+* https://cubehero.com/physibles/charlyoleg/Box_Wood_Frame_N1
+* https://cubehero.com/physibles/charlyoleg/Epicyclic_gearing_with_laser_cutter
+* https://cubehero.com/physibles/charlyoleg/Epicyclic_gearing_with_3D_printer
+
 .. _cnc25d_installation :
 
 Cnc25D Installation
