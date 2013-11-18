@@ -285,7 +285,7 @@ def motor_lid(ai_constraints):
   al_c['tkinter_view'] = False
   al_c['output_file_basename'] = ""
   al_c['return_type'] = 'figures_for_motor_lid_holder_A'
-  (holder_A_figure, holder_A_simple_figure, holder_A_with_motor_lid_figure, holder_A_with_leg_figure) = axle_lid.axle_lid(al_c)
+  (holder_A_figure, holder_A_simple_figure, holder_A_with_motor_lid_figure, holder_A_with_leg_figure, holder_A_with_motor_lid_overlay_figure) = axle_lid.axle_lid(al_c)
   ### holder_B
   holder_B_axle_B_place = ml_c['axle_B_place']
   if(l_AC<radian_epsilon):
@@ -414,6 +414,7 @@ def motor_lid(ai_constraints):
   part_figure_list.append(holder_B_figure)
   part_figure_list.append(holder_C_figure)
   part_figure_list.append(holder_A_with_motor_lid_figure)
+  part_figure_list.append(holder_A_with_motor_lid_overlay_figure)
   # assembly
   ml_assembly_figure = []
   for i in range(len(part_figure_list)):

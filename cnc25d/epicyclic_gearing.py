@@ -636,7 +636,7 @@ def epicyclic_gearing(ai_constraints):
     print("ERR448: Error, carrier_peripheral_internal_radius {:0.3f} is bigger than sun_planet_length {:0.3f}".format(carrier_peripheral_internal_radius, sun_planet_length))
     sys.exit(2)
   if(carrier_peripheral_internal_radius<(carrier_central_radius+3*carrier_smoothing_radius)):
-    print("WARN455: Warning, carrier_peripheral_internal_radius {:0.3f} is too small compare to  carrier_central_radius {:0.3f} and carrier_smoothing_radius {:0.3f}".format(carrier_peripheral_internal_radius, carrier_central_radius, carrier_smoothing_radius))
+    #print("WARN455: Warning, carrier_peripheral_internal_radius {:0.3f} is too small compare to  carrier_central_radius {:0.3f} and carrier_smoothing_radius {:0.3f}".format(carrier_peripheral_internal_radius, carrier_central_radius, carrier_smoothing_radius))
     carrier_hollow_disable = True
   if(carrier_peripheral_external_radius<(sun_planet_length+carrier_leg_radius)):
     print("WARN461: Warning, carrier_peripheral_external_radius {:0.3f} is too small compare to sun_planet_length {:0.3f} and carrier_leg_radius {:0.3f}".format(carrier_peripheral_external_radius, sun_planet_length, carrier_leg_radius))
@@ -951,9 +951,10 @@ def epicyclic_gearing(ai_constraints):
   output_cover_shaft_merge_figure = []
   inout_axle_shaft_figure = []
   inout_cover_shaft_merge_figure = []
+  #output_axle_shaft_radius = (eg_c['output_gearwheel_tooth_nb']+2)*eg_c['output_gearwheel_module']/2.0 # no, it's not defined by the output gearwheel
+  output_axle_shaft_radius = carrier_peripheral_external_radius
+  output_hole_diameter = 2*(output_axle_shaft_radius+eg_c['output_cover_extra_space'])
   if(eg_c['output_gearwheel_tooth_nb']>0):
-    #output_axle_shaft_radius = (eg_c['output_gearwheel_tooth_nb']+2)*eg_c['output_gearwheel_module']/2.0 # no, it's not defined by the output gearwheel
-    output_axle_shaft_radius = carrier_peripheral_external_radius
     og_c = {} # output_gearwheel
     og_c['gear_tooth_nb']             = eg_c['output_gearwheel_tooth_nb']
     og_c['gear_module']               = eg_c['output_gearwheel_module']
@@ -983,7 +984,7 @@ def epicyclic_gearing(ai_constraints):
     output_gearwheel_figure = gearwheel.gearwheel(og_c)
     oc_c = gr_c.copy() # output_cover
     oc_c['gear_tooth_nb'] = 0
-    oc_c['gear_primitive_diameter'] = 2*(output_axle_shaft_radius+eg_c['output_cover_extra_space'])
+    oc_c['gear_primitive_diameter'] = output_hole_diameter #2*(output_axle_shaft_radius+eg_c['output_cover_extra_space'])
     oc_c['holder_diameter'] = 2*holder_radius
     oc_c['return_type'] = 'cnc25d_figure'
     output_cover_figure = gearring.gearring(oc_c)
@@ -1257,7 +1258,7 @@ top_central_radius:   {:0.3f}  diameter: {:0.3}
       fc_assembly.exportBrep(fc_assembly_filename)
 
   ## eg_param
-  eg_param = (2*holder_radius, 2*top_clearance_radius, 2*top_central_radius, 2*top_axle_hole_radius, oc_c['gear_primitive_diameter'])
+  eg_param = (2*holder_radius, 2*top_clearance_radius, 2*top_central_radius, 2*top_axle_hole_radius, output_hole_diameter)
 
   #### return
   if(eg_c['return_type']=='int_status'):

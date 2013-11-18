@@ -653,7 +653,7 @@ def axle_lid(ai_constraints):
     return(r_leg_hole_figure)
 
   ## annulus_holder_figure
-  def f_annulus_holder_figure(ai_axle_B_type, ai_leg_type, ai_input_axle_B_enable):
+  def f_annulus_holder_figure(ai_axle_B_type, ai_leg_type, ai_input_axle_B_enable, ai_ideal_outline = False):
     """ generate the annulus_holder_figure
     """
     annulus_holder_outline = []
@@ -682,7 +682,11 @@ def axle_lid(ai_constraints):
       annulus_holder_outline.extend(holder_cut_face_outlines[1])
     annulus_holder_outline.append((holder_cut_first_point[0], holder_cut_first_point[1], 0))
     r_annulus_holder_figure = []
-    r_annulus_holder_figure.append(cnc25d_api.cnc_cut_outline(annulus_holder_outline, "annulus_holder_outline"))
+    cnc_cut_string_id = "annulus_holder_outline_axle_B_{:s}_leg_{:s}_input_axle_B_{:s}".format(ai_axle_B_type, ai_leg_type, "t"if(ai_input_axle_B_enable)else"f")
+    if(ai_ideal_outline):
+      r_annulus_holder_figure.append(cnc25d_api.ideal_outline(annulus_holder_outline, cnc_cut_string_id))
+    else:
+      r_annulus_holder_figure.append(cnc25d_api.cnc_cut_outline(annulus_holder_outline, cnc_cut_string_id))
     r_annulus_holder_figure.append((g1_ix, g1_iy, annulus_holder_axle_hole_radius))
     r_annulus_holder_figure.extend(side_hole_figures[0])
     if(ai_axle_B_type != 'none'):
@@ -754,9 +758,11 @@ def axle_lid(ai_constraints):
   # selection
   main_annulus_holder_figure = annulus_holder_figure[:]
   main_top_lid_figure = top_lid_figure[:]
+  annulus_holder_with_axle_B_overlay_figure = f_annulus_holder_figure(al_c['output_axle_B_place'], 'none', al_c['input_axle_B_enable'], True)
 
   # overlay debug
   #axle_lid_overlay_figure.append(cnc25d_api.ideal_outline(top_lid_outline, "top_lid_outline"))
+  #axle_lid_overlay_figure.append(annulus_holder_with_axle_B_overlay_figure)
 
   ### design output
   part_figure_list = []
@@ -881,7 +887,7 @@ leg_shift_length:   \t{:0.3f}
   elif(al_c['return_type']=='freecad_object'):
     r_al = freecad_axle_lid(part_figure_list)
   elif(al_c['return_type']=='figures_for_motor_lid_holder_A'):
-    r_al = (annulus_holder_figure, annulus_holder_simple_figure, annulus_holder_with_axle_B_figure, annulus_holder_with_leg_figure)
+    r_al = (annulus_holder_figure, annulus_holder_simple_figure, annulus_holder_with_axle_B_figure, annulus_holder_with_leg_figure, annulus_holder_with_axle_B_overlay_figure)
   elif(al_c['return_type']=='figures_for_motor_lid_holder_B'):
     r_al = (top_lid_figure, top_lid_simple_figure, top_lid_with_axle_B_figure, top_lid_with_leg_figure)
   elif(al_c['return_type']=='figures_for_motor_lid_middle_lid'):

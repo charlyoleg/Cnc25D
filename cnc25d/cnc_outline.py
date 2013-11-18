@@ -536,6 +536,9 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
     arc_middle_status = 2
   # check the orientation of E,F compare to A,B,C
   if(abs(ud)>abs(ue)):
+    print("dbg539: u {:0.3f}  uw {:0.3f}  w {:0.3f}  d {:0.3f}  e {:0.3f}".format(u, uw, w, d, e))
+    print("dbg540: AX {:0.3f}  AY {:0.3f}  BX {:0.3f}  BY {:0.3f}  CX {:0.3f}  CY {:0.3f}  DX {:0.3f}  DY {:0.3f}  EX {:0.3f}  EY {:0.3f}".format(AX, AY, BX, BY, CX, CY, DX, DY, EX, EY))
+    print("dbg541: ud {:0.3f}  ue {:0.3f}".format(ud, ue))
     print("ERR442: Error, in {:s}, E,F have not the same orientation as A,B,C! ud={:0.2f} ue={:0.2f}".format(error_msg_id, ud, ue))
     #sys.exit(2)
     arc_middle_status = 2
@@ -544,6 +547,8 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
     de = -1*math.fmod(d-e+4*math.pi, 2*math.pi)
   else:
     de = math.fmod(e-d+4*math.pi, 2*math.pi)
+  if(arc_middle_status == 2):
+    print("dbg550: de {:0.3f}  arc_radius {:0.3f}".format(de, arc_radius))
   # calculation of the angle f=(Ix, IF)=(Ix, ID)+(ID, IF)
   f = d + de/2
   # calculation of F
@@ -556,8 +561,12 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
     #print("WARN221: Warning in {:s}, creating a dummy arc because of internal error!".format(error_msg_id))
     #lDE = math.sqrt((EX-DX)**2+(EY-DY)**2)
     #xDE = math.atan2(EY-DY, EX-DX)
-    #FX = (DX+EX)/2+math.cos(xDE+math.pi/2)*lDE/4
-    #FY = (DY+EY)/2+math.sin(xDE+math.pi/2)*lDE/4
+    #FX = (DX+EX)/2+math.cos(xDE+math.pi/2)*lDE*0.25
+    #FY = (DY+EY)/2+math.sin(xDE+math.pi/2)*lDE*0.25
+    #FX = IX+1.9*arc_radius*math.cos(f)
+    #FY = IY+1.9*arc_radius*math.sin(f)
+    #FX = 0
+    #FY = 0
   # return
   r_middle_point=(FX, FY)
   return(r_middle_point)
