@@ -80,6 +80,7 @@ get_effective_args = design_help.get_effective_args
 # from design_output
 generate_output_file_add_argument = design_output.generate_output_file_add_argument
 generate_output_file = design_output.generate_output_file
+rotate_and_translate_figure = design_output.rotate_and_translate_figure
 
 ################################################################
 # function combinations

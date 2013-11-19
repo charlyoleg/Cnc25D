@@ -57,6 +57,7 @@ from FreeCAD import Base
 import outline_backends
 import export_2d
 import design_help
+import cnc_outline
 
 
 ################################################################
@@ -115,6 +116,16 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height, ai_info_txt='
       ofh.close()
   # return
   return(0)
+
+def rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_center_y, ai_rotation_angle, ai_translate_x, ai_translate_y, ai_rotation_angle):
+  """ rotate and translate a figure (list of outlines). Usually used to agglomerate figures to create a cut-set.
+  """
+  r_figure = []
+  for i in range(len(ai_figure)):
+    r_figure.append(cnc_outline.outline_shift_xy(cnc_outline.outline_rotate(ai_figure[i], ai_rotation_center_x, ai_rotation_center_y, ai_rotation_angle), ai_translate_x, 1, ai_translate_y, 1))
+  return(r_figure)
+
+
 
 ################################################################
 # test-functions
