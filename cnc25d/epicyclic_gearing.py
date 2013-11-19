@@ -906,12 +906,13 @@ def epicyclic_gearing(ai_constraints):
   input_cover_shaft_merge_figure = []
   inout_in_axle_shaft_figure = []
   inout_in_cover_shaft_merge_figure = []
+  #input_axle_shaft_radius = (eg_c['input_gearwheel_tooth_nb']+2)*eg_c['input_gearwheel_module']/2.0 # no, to avoid Z-axis issue, we don't want to make this radius as small as possible, but set it to carrier_peripheral_external_radius. Nice to have: input_axle_shaft_radius < (annulus_gear_tooth_nb-2)*gear_module
+  #input_axle_shaft_radius = carrier_peripheral_external_radius
+  input_axle_shaft_radius = max((eg_c['input_gearwheel_tooth_nb']+2)*eg_c['input_gearwheel_module']/2.0, carrier_peripheral_external_radius)
+  if(input_axle_shaft_radius>(annulus_gear_tooth_nb-2)*eg_c['gear_module']/2.0-radian_epsilon):
+    print("WARN910: Warning, input_axle_shaft_radius {:0.3f} is too big compare to annulus_gear_tooth_nb {:d} and gear_module {:0.3f}".format(input_axle_shaft_radius, annulus_gear_tooth_nb, eg_c['gear_module']))
+  inout_in_hole_diameter = 2*(input_axle_shaft_radius+eg_c['input_cover_extra_space'])
   if(eg_c['input_gearwheel_tooth_nb']>0):
-    #input_axle_shaft_radius = (eg_c['input_gearwheel_tooth_nb']+2)*eg_c['input_gearwheel_module']/2.0 # no, to avoid Z-axis issue, we don't want to make this radius as small as possible, but set it to carrier_peripheral_external_radius. Nice to have: input_axle_shaft_radius < (annulus_gear_tooth_nb-2)*gear_module
-    #input_axle_shaft_radius = carrier_peripheral_external_radius
-    input_axle_shaft_radius = max((eg_c['input_gearwheel_tooth_nb']+2)*eg_c['input_gearwheel_module']/2.0, carrier_peripheral_external_radius)
-    if(input_axle_shaft_radius>(annulus_gear_tooth_nb-2)*eg_c['gear_module']/2.0-radian_epsilon):
-      print("WARN910: Warning, input_axle_shaft_radius {:0.3f} is too big compare to annulus_gear_tooth_nb {:d} and gear_module {:0.3f}".format(input_axle_shaft_radius, annulus_gear_tooth_nb, eg_c['gear_module']))
     ig_c = {} # input_gearwheel
     ig_c['gear_tooth_nb']             = eg_c['input_gearwheel_tooth_nb']
     ig_c['gear_module']               = eg_c['input_gearwheel_module']
@@ -941,7 +942,7 @@ def epicyclic_gearing(ai_constraints):
     input_gearwheel_figure = gearwheel.gearwheel(ig_c)
     ic_c = gr_c.copy() # input_cover
     ic_c['gear_tooth_nb'] = 0
-    ic_c['gear_primitive_diameter'] = 2*(input_axle_shaft_radius+eg_c['input_cover_extra_space'])
+    ic_c['gear_primitive_diameter'] = inout_in_hole_diameter
     ic_c['holder_diameter'] = 2*holder_radius
     ic_c['return_type'] = 'cnc25d_figure'
     input_cover_figure = gearring.gearring(ic_c)
@@ -967,7 +968,7 @@ def epicyclic_gearing(ai_constraints):
   inout_out_cover_shaft_merge_figure = []
   #output_axle_shaft_radius = (eg_c['output_gearwheel_tooth_nb']+2)*eg_c['output_gearwheel_module']/2.0 # no, it's not defined by the output gearwheel
   output_axle_shaft_radius = carrier_peripheral_external_radius
-  output_hole_diameter = 2*(output_axle_shaft_radius+eg_c['output_cover_extra_space'])
+  inout_out_hole_diameter = 2*(output_axle_shaft_radius+eg_c['output_cover_extra_space'])
   if(eg_c['output_gearwheel_tooth_nb']>0):
     og_c = {} # output_gearwheel
     og_c['gear_tooth_nb']             = eg_c['output_gearwheel_tooth_nb']
@@ -998,7 +999,7 @@ def epicyclic_gearing(ai_constraints):
     output_gearwheel_figure = gearwheel.gearwheel(og_c)
     oc_c = gr_c.copy() # output_cover
     oc_c['gear_tooth_nb'] = 0
-    oc_c['gear_primitive_diameter'] = output_hole_diameter #2*(output_axle_shaft_radius+eg_c['output_cover_extra_space'])
+    oc_c['gear_primitive_diameter'] = inout_out_hole_diameter #2*(output_axle_shaft_radius+eg_c['output_cover_extra_space'])
     oc_c['holder_diameter'] = 2*holder_radius
     oc_c['return_type'] = 'cnc25d_figure'
     output_cover_figure = gearring.gearring(oc_c)
@@ -1275,7 +1276,7 @@ top_central_radius:   {:0.3f}  diameter: {:0.3}
       fc_assembly.exportBrep(fc_assembly_filename)
 
   ## eg_param
-  eg_param = (2*holder_radius, 2*top_clearance_radius, 2*top_central_radius, 2*top_axle_hole_radius, output_hole_diameter)
+  eg_param = (2*holder_radius, 2*top_clearance_radius, 2*top_central_radius, 2*top_axle_hole_radius, inout_in_hole_diameter, inout_out_hole_diameter)
 
   #### return
   if(eg_c['return_type']=='int_status'):
@@ -1438,7 +1439,7 @@ def epicyclic_gearing_self_test():
     ["gear simulation"      , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 33 --gear_module 1.0 --gear_addendum_dedendum_parity_slack 1.5 --simulation_annulus_planet_gear"],
     ["output file"          , "--sun_gear_tooth_nb 21 --planet_gear_tooth_nb 31 --gear_module 1.0 --input_gearwheel_tooth_nb 29 --output_file_basename test_output/epicyclic_self_test.dxf"],
     ["output file2"         , "--sun_gear_tooth_nb 13 --planet_gear_tooth_nb 19 --gear_module 1.0 --holder_hole_diameter 1.0 --holder_crenel_position 2.0 --holder_crenel_height 2.0 --holder_crenel_width 6.0 --holder_crenel_skin_width 4.0 --input_gearwheel_tooth_nb 29 --input_gearwheel_module 1.0 --input_gearwheel_axle_diameter 19.0 --input_gearwheel_crenel_number 6 --input_gearwheel_crenel_position_diameter 24.0 --input_gearwheel_crenel_diameter 1.0 --input_cover_extra_space 0.5 --output_gearwheel_tooth_nb 13 --output_gearwheel_module 3.0 --output_gearwheel_axle_diameter 22.0 --output_gearwheel_crenel_number 6 --output_gearwheel_crenel_position_diameter 28.0 --output_gearwheel_crenel_diameter 3.0 --output_gearwheel_crenel_angle 0.3 --output_cover_extra_space 0.5 --output_file_basename test_output/epicyclic_self_test2.dxf"],
-    ["output file3"         , "--sun_gear_tooth_nb 13 --planet_gear_tooth_nb 19 --gear_module 1.0 --holder_hole_diameter 1.0 --holder_crenel_position 2.0 --holder_crenel_height 2.0 --holder_crenel_width 6.0 --holder_crenel_skin_width 4.0 --input_gearwheel_tooth_nb 45 --input_gearwheel_module 1.0 --input_gearwheel_axle_diameter 22.0 --input_gearwheel_crenel_number 6 --input_gearwheel_crenel_position_diameter 26.0 --input_gearwheel_crenel_diameter 1.0 --input_cover_extra_space 0.5 --output_gearwheel_tooth_nb 13 --output_gearwheel_module 3.0 --sun_crenel_nb 5 --sun_crenel_type 'circle' --sun_crenel_mark_nb 2 --sun_crenel_diameter 8.0 --sun_crenel_width 1.0 --carrier_hole_position_diameter 38.0 --carrier_hole_diameter 1.0 --carrier_double_hole_length 3.0 --carrier_leg_hole_diameter 3.0 --output_file_basename test_output/epicyclic_self_test3.dxf"],
+    ["output file3"         , "--sun_gear_tooth_nb 13 --planet_gear_tooth_nb 19 --gear_module 1.0 --holder_hole_diameter 1.0 --holder_crenel_position 2.0 --holder_crenel_height 2.0 --holder_crenel_width 6.0 --holder_crenel_skin_width 4.0 --input_gearwheel_tooth_nb 45 --input_gearwheel_module 1.0 --input_gearwheel_axle_diameter 22.0 --input_gearwheel_crenel_number 6 --input_gearwheel_crenel_position_diameter 26.0 --input_gearwheel_crenel_diameter 1.0 --input_cover_extra_space 0.5 --output_gearwheel_tooth_nb 13 --output_gearwheel_module 3.0 --sun_crenel_nb 5 --sun_crenel_type circle --sun_crenel_mark_nb 2 --sun_crenel_diameter 8.0 --sun_crenel_width 1.0 --carrier_hole_position_diameter 38.0 --carrier_hole_diameter 1.0 --carrier_double_hole_length 3.0 --carrier_leg_hole_diameter 3.0 --output_file_basename test_output/epicyclic_self_test3.dxf"],
     ["last test"            , "--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   epicyclic_gearing_parser = argparse.ArgumentParser(description='Command line interface for the function epicyclic_gearing().')
