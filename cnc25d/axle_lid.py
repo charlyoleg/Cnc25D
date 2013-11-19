@@ -551,6 +551,7 @@ def axle_lid(ai_constraints):
       holder_A.append([g1_ix+holder_radius*math.cos(a8), g1_iy+holder_radius*math.sin(a8),
                       g1_ix+holder_radius*math.cos(last_angle), g1_iy+holder_radius*math.sin(last_angle), holder_smoothing_radius])
     input_axle_B_outline = holder_A[:]
+    #print("dbg554: input_axle_B_outline:", input_axle_B_outline)
     
     input_axle_B_hole_figure = []
     if(input_axle_B_internal_radius>radian_epsilon):

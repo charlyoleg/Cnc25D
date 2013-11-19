@@ -304,7 +304,7 @@ def motor_lid(ai_constraints):
   al_c['output_axle_angle'] = a_AC
   al_c['output_axle_B_external_diameter'] = 2*axle_C_external_radius
   al_c['output_axle_B_internal_diameter'] = 2*axle_C_hole_radius
-  al_c['input_axle_B_enable'] = True
+  al_c['input_axle_B_enable'] = False
   al_c['smoothing_radius'] = smoothing_radius
   al_c['cnc_router_bit_radius'] = ml_c['cnc_router_bit_radius']
   al_c['extrusion_height'] = ml_c['extrusion_height']
@@ -414,12 +414,12 @@ def motor_lid(ai_constraints):
   part_figure_list.append(holder_B_figure)
   part_figure_list.append(holder_C_figure)
   part_figure_list.append(holder_A_with_motor_lid_figure)
-  part_figure_list.append(holder_A_with_motor_lid_overlay_figure)
   # assembly
   ml_assembly_figure = []
   for i in range(len(part_figure_list)):
     ml_assembly_figure.extend(part_figure_list[i])
   ml_assembly_figure_overlay = []
+  ml_assembly_figure_overlay.extend(holder_A_with_motor_lid_overlay_figure)
   # ml_list_of_parts
   x_space = 3.1*holder_radius
   ml_list_of_parts = []
@@ -620,6 +620,7 @@ def motor_lid_self_test():
     ["simplest test"        , "--holder_diameter 160.0 --clearance_diameter 140.0 --central_diameter 80.0 --axle_hole_diameter 22.0"],
     ["small side"            , "--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place small --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 10.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_external_diameter 15.0"],
     ["large side with side leg" , "--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place large --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 10.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_external_diameter 15.0 --leg_type side --leg_length 120.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0"],
+    ["seven holder", "--holder_diameter 59.0 --holder_hole_position_radius 30.5 --holder_hole_diameter 4.1 --holder_double_hole_diameter 0.9 --holder_double_hole_length 8.0 --holder_double_hole_position -1.0 --holder_double_hole_mark_nb 1 --holder_crenel_position 3.5 --holder_crenel_height 0.5 --holder_crenel_width 6.0 --holder_crenel_skin_width 3.0 --holder_crenel_router_bit_radius 0.1 --holder_smoothing_radius 0.0 --clearance_diameter 53.0 --axle_hole_diameter 5.9 --central_diameter 30.0 --axle_B_distance 0.0 --axle_B_external_diameter 0.0 --axle_C_distance 53.0 --axle_C_external_diameter 38.0 --holder_crenel_number 7"],
     ["output files" , "--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place large --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 10.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_external_diameter 15.0 --leg_type side --leg_length 120.0 --foot_length 20.0 --leg_hole_diameter 10.0 --leg_hole_distance 60.0 --leg_hole_length 20.0 --leg_shift_length 30.0 --axle_B_hole_diameter 20.0 --output_file_basename test_output/motor_lid_self_test.dxf"],
     ["last test"            , "--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0  --holder_crenel_number 6 --axle_B_distance 52.0 --axle_C_distance 40.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
