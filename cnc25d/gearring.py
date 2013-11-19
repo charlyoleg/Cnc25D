@@ -282,14 +282,6 @@ def gearring(ai_constraints):
   if(holder_hole_position_radius==0):
     holder_hole_position_radius = holder_radius
   holder_hole_radius = float(gr_c['holder_hole_diameter'])/2
-  holder_hole_B_radius = float(gr_c['holder_hole_B_diameter'])/2
-  # holder_hole_B_crenel_list
-  holder_hole_B_crenel_list = [ 0 for i in range(gr_c['holder_crenel_number']) ]
-  for i in range(len(gr_c['holder_hole_B_crenel_list'])):
-    if((int(gr_c['holder_hole_B_crenel_list'][i])<0)or(int(gr_c['holder_hole_B_crenel_list'][i])>=gr_c['holder_crenel_number'])):
-      print("ERR286: Error, the holder_hole_B_crenel_list index {:s} is out of the range 0..{:d}".format(gr_c['holder_hole_B_crenel_list'][i], gr_c['holder_crenel_number']))
-      sys.exit(2)
-    holder_hole_B_crenel_list[int(gr_c['holder_hole_B_crenel_list'][i])] = 1
   holder_maximal_radius = holder_hole_position_radius + gr_c['holder_crenel_position'] + gr_c['holder_crenel_height']
   holder_maximal_height = holder_maximal_radius - holder_radius
   holder_crenel_half_width = float(gr_c['holder_crenel_width'])/2
@@ -301,11 +293,9 @@ def gearring(ai_constraints):
   holder_crenel_x_position = math.sqrt((holder_radius)**2 - (holder_crenel_with_wall_half_width)**2)
   additional_holder_maximal_height = holder_radius - holder_crenel_x_position
   holder_maximal_height_plus = holder_maximal_height + additional_holder_maximal_height
-  holder_maximal_height_plus_B = holder_hole_position_radius + gr_c['holder_crenel_B_position'] + gr_c['holder_crenel_height'] - holder_radius + additional_holder_maximal_height
-  #print("dbg305: holder_maximal_height_plus {:0.3f}  holder_maximal_height_plus_B {:0.3f}".format(holder_maximal_height_plus, holder_maximal_height_plus_B))
-  #print("dbg306: holder_crenel_position {:0.3f}   holder_crenel_B_position {:0.3f}".format(gr_c['holder_crenel_position'], gr_c['holder_crenel_B_position']))
-  holder_side_outer_smoothing_radius = min(0.8*gr_c['holder_crenel_skin_width'], float(holder_maximal_height_plus)/4, float(holder_maximal_height_plus_B)/4)
-  holder_side_straigth_length = min(holder_maximal_height_plus, holder_maximal_height_plus_B) - holder_side_outer_smoothing_radius
+  holder_side_outer_smoothing_radius = min(0.8*gr_c['holder_crenel_skin_width'], float(holder_maximal_height_plus)/4)
+  holder_side_straigth_length = holder_maximal_height_plus - holder_side_outer_smoothing_radius
+  # check
   if(gr_c['holder_smoothing_radius']==0):
     holder_smoothing_radius = 0.9*holder_side_straigth_length
   if(gr_c['cnc_router_bit_radius']>holder_smoothing_radius):
@@ -356,6 +346,37 @@ def gearring(ai_constraints):
   if((gr_c['holder_double_hole_mark_nb']<0)or(gr_c['holder_double_hole_mark_nb']>gr_c['holder_crenel_number'])):
     print("ERR333: Error, holder_double_hole_mark_nb {:d} is out of its range 0..{:d}".format(gr_c['holder_double_hole_mark_nb'], gr_c['holder_crenel_number']))
     sys.exit(2)
+  ## holder_hole_B
+  holder_hole_B_radius = float(gr_c['holder_hole_B_diameter'])/2
+  # holder_hole_B_crenel_list
+  holder_hole_B_crenel_list = [ 0 for i in range(gr_c['holder_crenel_number']) ]
+  for i in range(len(gr_c['holder_hole_B_crenel_list'])):
+    if((int(gr_c['holder_hole_B_crenel_list'][i])<0)or(int(gr_c['holder_hole_B_crenel_list'][i])>=gr_c['holder_crenel_number'])):
+      print("ERR286: Error, the holder_hole_B_crenel_list index {:s} is out of the range 0..{:d}".format(gr_c['holder_hole_B_crenel_list'][i], gr_c['holder_crenel_number']))
+      sys.exit(2)
+    holder_hole_B_crenel_list[int(gr_c['holder_hole_B_crenel_list'][i])] = 1
+  #print("dbg358: holder_hole_B_crenel_list:", holder_hole_B_crenel_list)
+  holder_maximal_height_plus_B = holder_hole_position_radius + gr_c['holder_crenel_B_position'] + gr_c['holder_crenel_height'] - holder_radius + additional_holder_maximal_height
+  #print("dbg305: holder_maximal_height_plus {:0.3f}  holder_maximal_height_plus_B {:0.3f}".format(holder_maximal_height_plus, holder_maximal_height_plus_B))
+  #print("dbg306: holder_crenel_position {:0.3f}   holder_crenel_B_position {:0.3f}".format(gr_c['holder_crenel_position'], gr_c['holder_crenel_B_position']))
+  holder_side_outer_smoothing_radius_B = min(0.8*gr_c['holder_crenel_skin_width'], float(holder_maximal_height_plus_B)/4)
+  holder_side_straigth_length_B = holder_maximal_height_plus_B - holder_side_outer_smoothing_radius_B
+  holder_smoothing_radius_B = holder_smoothing_radius
+  if(gr_c['holder_smoothing_radius']==0):
+    holder_smoothing_radius_B = 0.9*holder_side_straigth_length_B
+  if(gr_c['cnc_router_bit_radius']>holder_smoothing_radius_B):
+    holder_smoothing_radius_B = gr_c['cnc_router_bit_radius']
+  #
+  holder_hole_radius_list = [ holder_hole_radius for i in range(len(holder_hole_B_crenel_list)) ]
+  holder_side_outer_smoothing_radius_list = [ holder_side_outer_smoothing_radius for i in range(len(holder_hole_B_crenel_list)) ]
+  holder_smoothing_radius_list = [ holder_smoothing_radius for i in range(len(holder_hole_B_crenel_list)+1) ] # generate n+1 values to simplify code in the loop
+  for i in range(len(holder_hole_B_crenel_list)):
+    if(holder_hole_B_crenel_list[i]==1):
+      holder_hole_radius_list[i] = holder_hole_B_radius
+      holder_side_outer_smoothing_radius_list[i] = holder_side_outer_smoothing_radius_B
+      holder_smoothing_radius_list[i] = holder_smoothing_radius_B
+  #print("dbg377: holder_side_outer_smoothing_radius_list:", holder_side_outer_smoothing_radius_list)
+  #print("dbg378: holder_smoothing_radius_list:", holder_smoothing_radius_list)
   ### holder outline
   holder_figure_overlay = []
   if(gr_c['holder_crenel_number']==0):
@@ -367,18 +388,18 @@ def gearring(ai_constraints):
       sys.exit(2)
     holder_A = []
     first_angle = gr_c['holder_position_angle'] - holder_crenel_half_angle
-    holder_A.append([g1_ix+holder_radius*math.cos(first_angle), g1_iy+holder_radius*math.sin(first_angle), holder_smoothing_radius])
+    holder_A.append([g1_ix+holder_radius*math.cos(first_angle), g1_iy+holder_radius*math.sin(first_angle), holder_smoothing_radius_list[i]])
     for i in range(gr_c['holder_crenel_number']):
       holder_maximal_height_plus_sel = holder_maximal_height_plus
       if(holder_hole_B_crenel_list[i]==1):
         holder_maximal_height_plus_sel = holder_maximal_height_plus_B
       holder_A .extend(make_holder_crenel(holder_maximal_height_plus_sel, gr_c['holder_crenel_height'], gr_c['holder_crenel_skin_width'], holder_crenel_half_width, 
-                                          holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius, holder_smoothing_radius,
+                                          holder_crenel_router_bit_radius, holder_side_outer_smoothing_radius_list[i], holder_smoothing_radius_list[i],
                                           holder_crenel_x_position, gr_c['holder_position_angle']+i*angle_incr, g1_ix, g1_iy))
       middle_angle = gr_c['holder_position_angle'] + (i+0.5)*angle_incr
       end_angle = gr_c['holder_position_angle'] + (i+1)*angle_incr - holder_crenel_half_angle
       holder_A.append([g1_ix+holder_radius*math.cos(middle_angle), g1_iy+holder_radius*math.sin(middle_angle),
-                        g1_ix+holder_radius*math.cos(end_angle), g1_iy+holder_radius*math.sin(end_angle), holder_smoothing_radius])
+                        g1_ix+holder_radius*math.cos(end_angle), g1_iy+holder_radius*math.sin(end_angle), holder_smoothing_radius_list[i+1]])
     holder_A[-1] = [holder_A[-1][0], holder_A[-1][1], holder_A[0][0], holder_A[0][1], 0]
     holder_outline = cnc25d_api.cnc_cut_outline(holder_A, "holder_A")
     holder_figure_overlay.append(cnc25d_api.ideal_outline(holder_A, "holder_A"))
@@ -386,14 +407,11 @@ def gearring(ai_constraints):
   holder_hole_figure = []
   for i in range(gr_c['holder_crenel_number']):
     hole_angle = gr_c['holder_position_angle']+i*angle_incr
-    holder_hole_radius_sel = holder_hole_radius
-    if(holder_hole_B_crenel_list[i]==1):
-      holder_hole_radius_sel = holder_hole_B_radius
-    if(holder_hole_radius_sel>0):
+    if(holder_hole_radius_list[i]>0):
       if(i<gr_c['holder_hole_mark_nb']):
-        holder_hole_figure.append(gearwheel.marked_circle_crenel(g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius_sel, hole_angle+math.pi/2, holder_crenel_router_bit_radius))
+        holder_hole_figure.append(gearwheel.marked_circle_crenel(g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius_list[i], hole_angle+math.pi/2, holder_crenel_router_bit_radius))
       else:
-        holder_hole_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius_sel])
+        holder_hole_figure.append([g1_ix+holder_hole_position_radius*math.cos(hole_angle), g1_iy+holder_hole_position_radius*math.sin(hole_angle), holder_hole_radius_list[i]])
   if((gr_c['holder_crenel_number']>0)and(holder_double_hole_radius>0)):
     tmp_a2 = math.atan(gr_c['holder_double_hole_length']/2.0/holder_double_hole_position_radius) # if double carrier-crenel-hole
     tmp_l2 = math.sqrt(holder_double_hole_position_radius**2+(gr_c['holder_double_hole_length']/2.0)**2)
