@@ -117,7 +117,7 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height, ai_info_txt='
   # return
   return(0)
 
-def rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_center_y, ai_rotation_angle, ai_translate_x, ai_translate_y, ai_rotation_angle):
+def rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_center_y, ai_rotation_angle, ai_translate_x, ai_translate_y):
   """ rotate and translate a figure (list of outlines). Usually used to agglomerate figures to create a cut-set.
   """
   r_figure = []
