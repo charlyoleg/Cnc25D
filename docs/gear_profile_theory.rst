@@ -87,8 +87,8 @@ Trigonometry formula remind::
 
 Tangent vector::
 
-  Mx'(a) = -a*R*sin(a-pi/2) = a*R*cos(a)
-  My'(a) = a*R*cos(a-pi/2) = a*R*sin(a)
+  Mx'(a) = -R*sin(a)+R*cos(a-pi/2)-a*R*sin(a-pi/2) = -a*R*sin(a-pi/2) = a*R*cos(a)
+  My'(a) =  R*cos(a)+R*sin(a-pi/2)+a*R*cos(a-pi/2) =  a*R*cos(a-pi/2) = a*R*sin(a)
 
 .. image:: images/gear_theory_involute_of_circle_and_tangent.png
 
