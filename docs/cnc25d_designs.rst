@@ -67,5 +67,12 @@ The :doc:`axle_lid_design` is a axle-lid design kit. You can use it to complete 
 
 .. image:: images/axle_lid_3d.png
 
+Motor_lid
+---------
+
+The :doc:`motor_lid_design` is an extension of the axle-lid design kit to mount an electrical motor. You can use it to complete the epicyclic_gearing design.
+
+.. image:: images/motor_lid_3d.png
+
 
 
