@@ -29,6 +29,7 @@ Contents:
    gear_profile_function
    gear_guideline
    gear_profile_theory
+   gear_profile_details
    gear_profile_implementation
    gearwheel_design
    gearring_design

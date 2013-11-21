@@ -2,66 +2,39 @@
 Gear Profile Theory
 ===================
 
-Involute of circle
-==================
+Transmission per adhesion
+=========================
 
-.. image:: images/involute_to_circle.png
-.. image:: images/involute_to_circle_relations.png
-.. image:: images/involute_to_circle_positive.png
-.. image:: images/involute_to_circle_negative.png
+.. image:: images/gear_theory_transmission_per_adhesion.png
 
-Gear outline
-============
+Transmission with teeth
+=======================
 
-Gearwheel
----------
+.. image:: images/gear_theory_addendum_and_dedendum.png
 
-.. image:: images/gearwheel_gearwheel_geometry.png
-.. image:: images/gear_tooth_profile.png
-.. image:: images/gear_tooth_profile_curve.png
-
-Gearring
---------
-
-.. image:: images/gearwheel_gearring_geometry.png
-
-Gearbar
--------
-
-.. image:: images/gearwheel_gearbar_geometry.png
-.. image:: images/linear_gear_profile.png
-
-Gear hollow
------------
-
-.. image:: images/gear_hollow_construction.png
-.. image:: images/hollow_optimization.png
-.. image:: images/hollow_optimization_condition.png
-.. image:: images/gear_half_hollow.png
-
-
-Gear position
+Tooth profile
 =============
 
-Gearwheel
----------
+.. image:: images/gear_theory_involute_of_circle.png
+.. image:: images/gear_theory_involute_of_circle_and_tangent.png
+.. image:: images/gear_theory_rotation_of_center_O.png
+.. image:: images/gear_theory_involute_of_circle_evolution.png
+.. image:: images/gear_theory_rotation_of_center_O_with_tangent.png
+.. image:: images/gear_theory_realistic_ponctual_contact.png
+.. image:: images/gear_theory_ideal_ponctual_contact.png
+.. image:: images/gear_theory_involute_of_circle_translating_a_bar.png
+.. image:: images/gear_theory_speed_at_the_contact_point.png
+.. image:: images/gear_theory_inversed_speed_and_new_point_of_view.png
+.. image:: images/gear_theory_two_wheels_and_a_bar.png
+.. image:: images/gear_theory_two_wheels.png
+.. image:: images/gear_theory_unidirectional_gearwheel.png
+.. image:: images/gear_theory_bidirectional_gearwheel.png
 
-.. image:: images/gear_friction.png
+Torque transmission
+===================
+
+.. image:: images/gear_theory_torque_transmission.png
 
 
-Gearbar
--------
-
-.. image:: images/linear_gear_position.png
-
-Position with additional inter-axis length
-------------------------------------------
-
-.. image:: images/gear_slack_sign.png
-.. image:: images/gearwheel_gearbar_with_aal_geometry.png
-.. image:: images/gearwheel_gearring_with_aal_geometry.png
-.. image:: images/gearwheel_gearwheel_with_aal_geometry.png
-.. image:: images/internal_external_gear_position.png
-.. image:: images/linear_external_gear_position.png
 
 
