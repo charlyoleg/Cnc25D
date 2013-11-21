@@ -27,7 +27,7 @@ Contents:
    box_wood_frame_design
    box_wood_frame_conception_details
    gear_profile_function
-   gear_guideline
+   gear_guidelines
    gear_profile_theory
    gear_profile_details
    gear_profile_implementation
