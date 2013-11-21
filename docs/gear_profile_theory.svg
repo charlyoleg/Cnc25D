@@ -1917,7 +1917,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="299.70877"
-     inkscape:cy="1908.7843"
+     inkscape:cy="1536.5528"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1944,7 +1944,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -2154,7 +2154,7 @@
        sodipodi:cy="258.69077"
        sodipodi:rx="60.356613"
        sodipodi:ry="60.356613"
-       d="m 266.68027,258.69077 a 60.356613,60.356613 0 1 1 -120.71323,0 60.356613,60.356613 0 1 1 120.71323,0 z"
+       d="m 266.68027,258.69077 c 0,33.33403 -27.02258,60.35661 -60.35662,60.35661 -33.33403,0 -60.35661,-27.02258 -60.35661,-60.35661 0,-33.33404 27.02258,-60.35662 60.35661,-60.35662 33.33404,0 60.35662,27.02258 60.35662,60.35662 z"
        transform="matrix(0.4187897,0,0,0.41748592,49.473249,1001.1861)" />
     <path
        style="color:#000000;fill:#6c5353;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -2175,7 +2175,7 @@
        sodipodi:cy="258.69077"
        sodipodi:rx="60.356613"
        sodipodi:ry="60.356613"
-       d="m 266.68027,258.69077 a 60.356613,60.356613 0 1 1 -120.71323,0 60.356613,60.356613 0 1 1 120.71323,0 z"
+       d="m 266.68027,258.69077 c 0,33.33403 -27.02258,60.35661 -60.35662,60.35661 -33.33403,0 -60.35661,-27.02258 -60.35661,-60.35661 0,-33.33404 27.02258,-60.35662 60.35661,-60.35662 33.33404,0 60.35662,27.02258 60.35662,60.35662 z"
        transform="matrix(0.4187897,0,0,0.41748592,155.55919,998.77709)" />
     <path
        style="color:#000000;fill:#6c5353;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -2202,7 +2202,7 @@
        sodipodi:cy="258.69077"
        sodipodi:rx="60.356613"
        sodipodi:ry="60.356613"
-       d="m 266.68027,258.69077 a 60.356613,60.356613 0 1 1 -120.71323,0 60.356613,60.356613 0 1 1 120.71323,0 z"
+       d="m 266.68027,258.69077 c 0,33.33403 -27.02258,60.35661 -60.35662,60.35661 -33.33403,0 -60.35661,-27.02258 -60.35661,-60.35661 0,-33.33404 27.02258,-60.35662 60.35661,-60.35662 33.33404,0 60.35662,27.02258 60.35662,60.35662 z"
        transform="matrix(0.4187897,0,0,0.41748592,262.70205,997.34849)" />
     <path
        style="color:#000000;fill:#6c5353;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -2234,7 +2234,7 @@
        sodipodi:cy="258.69077"
        sodipodi:rx="60.356613"
        sodipodi:ry="60.356613"
-       d="m 266.68027,258.69077 a 60.356613,60.356613 0 1 1 -120.71323,0 60.356613,60.356613 0 1 1 120.71323,0 z"
+       d="m 266.68027,258.69077 c 0,33.33403 -27.02258,60.35661 -60.35662,60.35661 -33.33403,0 -60.35661,-27.02258 -60.35661,-60.35661 0,-33.33404 27.02258,-60.35662 60.35661,-60.35662 33.33404,0 60.35662,27.02258 60.35662,60.35662 z"
        transform="matrix(0.4187897,0,0,0.41748592,372.3449,997.34849)" />
     <path
        style="color:#000000;fill:#6c5353;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -2267,7 +2267,7 @@
        sodipodi:cy="258.69077"
        sodipodi:rx="60.356613"
        sodipodi:ry="60.356613"
-       d="m 266.68027,258.69077 a 60.356613,60.356613 0 1 1 -120.71323,0 60.356613,60.356613 0 1 1 120.71323,0 z"
+       d="m 266.68027,258.69077 c 0,33.33403 -27.02258,60.35661 -60.35662,60.35661 -33.33403,0 -60.35661,-27.02258 -60.35661,-60.35661 0,-33.33404 27.02258,-60.35662 60.35661,-60.35662 33.33404,0 60.35662,27.02258 60.35662,60.35662 z"
        transform="matrix(0.4187897,0,0,0.41748592,474.72067,996.62659)" />
     <path
        style="color:#000000;fill:#6c5353;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -6394,7 +6394,7 @@
            x="63.57143"
            y="8215.9199" /></flowRegion><flowPara
          id="flowPara15797">Notices:</flowPara><flowPara
-         id="flowPara15799">- The base diameter of the two direction can be different</flowPara><flowPara
+         id="flowPara15799">- The base diameter of the two directions can be different</flowPara><flowPara
          id="flowPara15801">- The top-land and bottom-land are not critical part of the profile</flowPara><flowPara
          id="flowPara15803">The top-land can be a straight line</flowPara><flowPara
          id="flowPara15805">The bottom-land is usually a hollow to help the manufacturing</flowPara><flowPara
@@ -6645,7 +6645,8 @@
            y="9156.7549" /></flowRegion><flowPara
          id="flowPara16091">F = T1/R1 = T2/R2</flowPara><flowPara
          id="flowPara16093">T2 = T1*R2/R1</flowPara><flowPara
-         id="flowPara16095">The transmitted torque T2 does not independant on the angle a!</flowPara></flowRoot>    <path
+         id="flowPara16095">The transmitted torque T2 does not depend on the angle a!</flowPara><flowPara
+         id="flowPara4389" /></flowRoot>    <path
        style="color:#000000;fill:none;stroke:#ff8080;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#Arrow1Mstart-0);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 286.28611,7270.3324 c 0,0 4.30333,11.2514 2.17315,16.4121 -2.39587,5.8045 -15.21216,12.4732 -15.21216,12.4732"
        id="path4364-0-1-94-3-6-4"

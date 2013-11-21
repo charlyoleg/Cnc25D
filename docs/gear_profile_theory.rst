@@ -126,9 +126,12 @@ So,::
 
   v = Sn = u*R
 
+v does not depend on the angle a!
+
+::
+
   St = u*R*sqrt(1+a²)*sin(b) = u*R*tan(b) = u*R*a
 
-v does not depend on the angle a!
 
 .. image:: images/gear_theory_inversed_speed_and_new_point_of_view.png
 
@@ -216,6 +219,6 @@ Torque transmission
   F = T1/R1 = T2/R2
   T2 = T1*R2/R1
 
-The transmitted torque T2 does not independant on the angle a!
+The transmitted torque T2 does not depend on the angle a!
 
 
