@@ -168,6 +168,9 @@ v does not depend on the angle a!
 
 Sn1 = Sn2 because of the contact
 
+.. image:: images/gear_theory_two_wheel_evolution.png
+.. image:: images/gear_theory_two_wheel_evolution_with_speed_vectors.png
+
 Friction between the two wheels::
 
   Sf = St2 - St1 = u2*R2*a2 - u1*R1*a1
@@ -177,6 +180,8 @@ Friction between the two wheels::
   a2 = k2+u2*t
   Sf = u1*R1*(k1-k2+(u1+u2)*t)
 
+Gear profile construction
+=========================
 
 .. image:: images/gear_theory_unidirectional_gearwheel.png
 .. image:: images/gear_theory_bidirectional_gearwheel.png
@@ -209,6 +214,12 @@ Gear rules
 
 - The position of the positive involute of circle compare to the negative involute of circle is arbitrary and it is usually defined by the addendum-dedendum-ration on the primitive circle. Just make sure the top-land and bottom-land still exist (positive length). The addendum-dedendum-ration of the second wheel must be the complementary.
 
+Do not mix-up the *primitive circle* and the *base circle*. The *primitive circle* helps defining the *addendum* and *dedendum* circles. The *base circle* defines the *involutes of circle*.We have the relation::
+
+  base_radius < primitive_radius
+
+.. image:: images/gear_tooth_profile.png
+
 Torque transmission
 ===================
 
@@ -221,4 +232,11 @@ Torque transmission
 
 The transmitted torque T2 does not depend on the angle a!
 
+Gearwheel position
+==================
+
+.. image:: images/gear_theory_wheel_position.png
+.. image:: images/gear_theory_wheel_position_horizontal.png
+
+The rotation ration depends only on the two base circle diameters. It does not depend on the inter-axis length. The inter-axis length can be set arbitrary within a reasonable range (addendum and dedendum height constraints).
 
