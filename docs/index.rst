@@ -40,6 +40,7 @@ Contents:
    axle_lid_design
    axle_lid_details
    motor_lid_design
+   bell_design
 
 Indices and tables
 ==================
