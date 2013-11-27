@@ -506,7 +506,7 @@ def outline_arc_line(ai_segments, ai_backend):
   if(isinstance(ai_segments[0], (tuple, list))): # general outline
     # checks on ai_segments for general outline
     if(len(ai_segments)<2):
-      print("ERR402: Error, the segment list must contain at least 2 elements. Currently, len(ai_segments) = {:d}".format(len(ai_segments)))
+      print("ERR509: Error, the segment list must contain at least 2 elements. Currently, len(ai_segments) = {:d}".format(len(ai_segments)))
       sys.exit(2)
     # convert any format into format-B
     if(len(ai_segments[0])==3): # format-A or format-C

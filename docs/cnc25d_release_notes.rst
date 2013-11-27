@@ -6,7 +6,9 @@ Release 0.1.9
 -------------
 Released on 2013-12-01
 
+* complete the Cnc25D API with generic functions for figures
 * motor_lid
+* bell
 * gearlever
 * gear_train  
 * hexa_bone

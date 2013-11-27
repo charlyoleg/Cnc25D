@@ -125,6 +125,30 @@ def rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_cen
     r_figure.append(cnc_outline.outline_shift_xy(cnc_outline.outline_rotate(ai_figure[i], ai_rotation_center_x, ai_rotation_center_y, ai_rotation_angle), ai_translate_x, 1, ai_translate_y, 1))
   return(r_figure)
 
+def cnc_cut_figure(ai_figure, ai_error_msg_id):
+  """ apply the cnc_cut_outline function to all outlines of the input figure
+  """
+  r_figure = []
+  for i in range(len(ai_figure)):
+    #print("dbg133:", ai_figure[i])
+    if(cnc_outline.check_outline_format(ai_figure[i])==2):
+      r_figure.append(cnc25d_api.cnc_cut_outline(ai_figure[i], "{:s}.ol{:d}".format(ai_error_msg_id, i)))
+    else: # circle of format-B
+      r_figure.append(ai_figure[i])
+  return(r_figure)
+
+def ideal_figure(ai_figure, ai_error_msg_id):
+  """ apply the ideal_outline function to all outlines of the input figure
+  """
+  r_figure = []
+  for i in range(len(ai_figure)):
+    #print("dbg145:", ai_figure[i])
+    if(cnc_outline.check_outline_format(ai_figure[i])==2):
+      r_figure.append(cnc25d_api.ideal_outline(ai_figure[i], "{:s}.ol{:d}".format(ai_error_msg_id, i)))
+    else: # circle of format-B
+      r_figure.append(ai_figure[i])
+  return(r_figure)
+
 
 
 ################################################################

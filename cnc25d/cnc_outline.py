@@ -70,11 +70,16 @@ def check_outline_format(ai_outline):
   if(not isinstance(ai_outline, (tuple, list))):
     print("ERR937: Error, ai_outline must be a list or a tuple")
     sys.exit(2)
+  # check if the outline contains at least on element
+  if(len(ai_outline)==0):
+    print("ERR075: Error, ai_outline should not be empty!")
+    sys.exit(2)
   # check if the outline is a circle or a general outline
   if(isinstance(ai_outline[0], (tuple, list))): # general outline
     # checks on ai_outline for general outline
     if(len(ai_outline)<2):
       print("ERR402: Error, the segment list must contain at least 2 elements. Currently, len(ai_outline) = {:d}".format(len(ai_outline)))
+      print("dbg082: ai_outline:", ai_outline)
       sys.exit(2)
     # check the first point
     len_first_point = len(ai_outline[0])
