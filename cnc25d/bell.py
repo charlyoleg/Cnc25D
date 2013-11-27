@@ -389,6 +389,7 @@ def bell(ai_constraints):
     if(b_c['axle_hole_position_radius'] > b_c['axle_external_radius']-b_c['axle_hole_radius']-radian_epsilon):
       print("ERR381: Error: axle_hole_position_radius {:0.3f} is too big compare to axle_external_radius {:0.3f} and axle_hole_radius {:0.3f}".format(b_c['axle_hole_position_radius'], b_c['axle_external_radius'], b_c['axle_hole_radius']))
       sys.exit(2)
+    # axle_hole_angle
   # leg_spare_width
   if(b_c['leg_spare_width'] > (b_c['bell_face_width']-2*b_c['axle_external_radius'])/2.0+radian_epsilon):
     print("ERR385: Error, leg_spare_width {:0.3f} is too big compare to bell_face_width {:0.3f} and axle_external_radius {:0.3f}".format(b_c['leg_spare_width'], b_c['bell_face_width'], b_c['axle_external_radius']))
@@ -465,7 +466,7 @@ def bell(ai_constraints):
       sys.exit(2)
     # int_buttress_arc_height
     if(abs(b_c['int_buttress_arc_height'])>b_c['int_buttress_x_length']):
-      print("ERR465: Error, int_buttress_arc_height {:0.3f} must be smaller than int_buttress_x_length {:0.3f}".format(b_c['int_buttress_arc_height'], b_c['int_buttress_x_length']))
+      print("ERR465: Error, int_buttress_arc_height {:0.3f} absolute value must be smaller than int_buttress_x_length {:0.3f}".format(b_c['int_buttress_arc_height'], b_c['int_buttress_x_length']))
       sys.exit(2)
     # int_buttress_smoothing_radius
     if(b_c['int_buttress_smoothing_radius']>b_c['int_buttress_bump_length']):
@@ -504,8 +505,94 @@ def bell(ai_constraints):
       sys.exit(2)
     # ext_buttress_face_int_corner_length
     if(b_c['ext_buttress_face_int_corner_length']>b_c['ext_buttress_z_position']):
-      print("ERR507: Error")
-
+      print("ERR507: Error, ext_buttress_face_int_corner_length {:0.3f} must be smaller than ext_buttress_z_position {:0.3f}".format(b_c['ext_buttress_face_int_corner_length'], b_c['ext_buttress_z_position']))
+      sys.exit(2)
+    # ext_buttress_face_ext_corner_length
+    if(b_c['ext_buttress_face_ext_corner_length']>b_c['bell_face_height']+b_c['leg_length']-b_c['ext_buttress_z_length']):
+      print("ext_buttress_face_ext_corner_length {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f} and ext_buttress_z_length {:0.3f}".format(b_c['ext_buttress_face_ext_corner_length'], b_c['bell_face_height'], b_c['leg_length'], b_c['ext_buttress_z_length']))
+      sys.exit(2)
+    # ext_buttress_face_bump_length
+    if(b_c['ext_buttress_face_bump_length']>b_c['ext_buttress_y_position']+b_c['ext_buttress_y_length']):
+      print("ERR515: Error, ext_buttress_face_bump_length {:0.3f} is too big compare to ext_buttress_y_position {:0.3f} and ext_buttress_y_length {:0.3f}".format(b_c['ext_buttress_face_bump_length'], b_c['ext_buttress_y_position'], b_c['ext_buttress_y_length']))
+      sys.exit(2)
+    # ext_buttress_base_int_corner_length
+    if(b_c['ext_buttress_base_int_corner_length']>b_c['ext_buttress_y_position']):
+      print("ERR519: Error, ext_buttress_base_int_corner_length {:0.3f} must be smaller than ext_buttress_y_position {:0.3f}".format(b_c['ext_buttress_base_int_corner_length'], b_c['ext_buttress_y_position']))
+      sys.exit(2)
+    # ext_buttress_base_ext_corner_length
+    if(b_c['ext_buttress_base_ext_corner_length']>b_c['base_radius']-(b_c['bell_face_width']/2.0+b_c['ext_buttress_y_position']+b_c['ext_buttress_y_length'])):
+      print("ERR523: Error, ext_buttress_base_ext_corner_length {:0.3f} is too big compare to base_radius {:0.3f}, bell_face_width {:0.3f}, ext_buttress_y_position {:0.3f} and ext_buttress_y_length {:0.3f}".format(b_c['ext_buttress_base_ext_corner_length'], b_c['base_radius'], b_c['bell_face_width'], b_c['ext_buttress_y_position'], b_c['ext_buttress_y_length']))
+      sys.exit(2)
+    # ext_buttress_base_bump_length
+    if(b_c['ext_buttress_base_bump_length']>b_c['ext_buttress_z_position']+b_c['ext_buttress_z_length']):
+      print("ERR527: Error, ext_buttress_base_bump_length {:0.3f} is too big compare to ext_buttress_z_position {:0.3f} and ext_buttress_z_length {:0.3f}".format(b_c['ext_buttress_base_bump_length'], b_c['ext_buttress_z_position'], b_c['ext_buttress_z_length']))
+      sys.exit(2)
+    # ext_buttress_arc_height
+    if(abs(b_c['ext_buttress_arc_height'])>max(b_c['ext_buttress_z_length'], b_c['ext_buttress_y_length'])):
+      print("ERR531: Error, ext_buttress_arc_height {:0.3f} absolute value is too big compare to ext_buttress_z_length {:0.3f} and ext_buttress_y_length {:0.3f}".format(b_c['ext_buttress_arc_height'], b_c['ext_buttress_z_length'], b_c['ext_buttress_y_length']))
+      sys.exit(2)
+    # ext_buttress_smoothing_radius
+    if(b_c['ext_buttress_smoothing_radius']>max(b_c['ext_buttress_face_bump_length'], b_c['ext_buttress_base_bump_length'])):
+      print("ERR535: Error, ext_buttress_smoothing_radius {:0.3f} is too big compare to ext_buttress_face_bump_length {:0.3f} and ext_buttress_base_bump_length {:0.3f}".format(b_c['ext_buttress_smoothing_radius'], b_c['ext_buttress_face_bump_length'], b_c['ext_buttress_base_bump_length']))
+      sys.exit(2)
+  # hollow_z_height
+  if(b_c['hollow_z_height']>b_c['bell_face_height']):
+    print("ERR539: Error, hollow_z_height {:0.3f} must be smaller than bell_face_height {:0.3f}".format(b_c['hollow_z_height'], b_c['bell_face_height']))
+    sys.exit(2)
+  # hollow_y_width
+  if(b_c['hollow_y_width']<2*b_c['cnc_router_bit_radius']):
+    print("ERR543: Error, hollow_y_width {:0.3f} is too small compare to cnc_router_bit_radius {:0.3f}".format(b_c['hollow_y_width'], b_c['cnc_router_bit_radius']))
+    sys.exit(2)
+  if(b_c['hollow_y_width']>b_c['bell_face_width']-2*b_c['face_thickness']):
+    print("ERR546: Error, hollow_y_width {:0.3f} is too big compare to bell_face_width {:0.3f} and face_thickness {:0.3f}".format(b_c['hollow_y_width'], b_c['bell_face_width'], b_c['face_thickness']))
+    sys.exit(2)
+  # hollow_spare_width
+  if(b_c['hollow_spare_width']>b_c['bell_face_width']/2-b_c['face_thickness']-b_c['hollow_y_width']/2.0):
+    print("ERR550: Error, hollow_spare_width {:0.3f} is too big compare to bell_face_width {:0.3f}, face_thickness {:0.3f} and hollow_y_width {:0.3f}".format(b_c['hollow_spare_width'], b_c['bell_face_width'], b_c['face_thickness'], b_c['hollow_y_width']))
+    sys.exit(2)
+  # base_hole_nb
+  if(b_c['base_hole_nb']>0):
+    # base_hole_diameter
+    b_c['base_hole_radius'] = b_c['base_hole_diameter']/2.0
+    if(b_c['base_hole_radius']<radian_epsilon):
+      print("ERR556: Error, base_hole_radius {:0.3f} must be strictly positive".format(b_c['base_hole_radius']))
+      sys.exit(2)
+    # base_hole_position_diameter
+    b_c['base_hole_position_radius'] = b_c['base_hole_position_diameter']/2.0
+    if(b_c['base_hole_position_radius']==0):
+      b_c['base_hole_position_radius'] = b_c['base_radius'] - 2*b_c['base_hole_radius']
+    if(b_c['base_hole_position_radius']<b_c['bell_face_width']/2.0):
+      print("ERR564: Error, base_hole_position_radius {:0.3f} is too small compare to bell_face_width {:0.3f}".format(b_c['base_hole_position_radius'], b_c['bell_face_width']))
+      sys.exit(2)
+    if(b_c['base_hole_position_radius']>b_c['base_radius']-b_c['base_hole_radius']):
+      print("ERR567: Error, base_hole_position_radius {:0.3f} is too big compare to base_radius {:0.3f} and base_hole_radius {:0.3f}".format(b_c['base_hole_position_radius'], b_c['base_radius'], b_c['base_hole_radius']))
+      sys.exit(2)
+    # base_hole_angle
+  # y_hole_diameter
+  b_c['y_hole_radius'] = b_c['y_hole_diameter']/2.0
+  if(b_c['y_hole_diameter']>0):
+    # y_hole_z_position
+    if(abs(b_c['y_hole_z_position'])>b_c['bell_face_height']):
+      print("ERR575: Error, y_hole_z_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(b_c['y_hole_z_position'], b_c['bell_face_height']))
+      sys.exit(2)
+    if(b_c['y_hole_z_position']>0):
+      if(b_c['y_hole_z_position']<b_c['int_buttress_z_width']+b_c['y_hole_radius']):
+        print("ERR580: Error, positive y_hole_z_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and y_hole_radius {:0.3f}".format(b_c['y_hole_z_position'], b_c['int_buttress_z_width'], b_c['y_hole_radius']))
+        sys.exit(2)
+    else:
+      if(b_c['y_hole_z_position']>-1*b_c['y_hole_radius']):
+        print("ERR584: Error, negative y_hole_z_position {:0.3f} must be smaller than y_hole_radius {:0.3f}".format(b_c['y_hole_z_position'], -1*b_c['y_hole_radius']))
+        sys.exit(2)
+    # y_hole_x_position
+    if(b_c['y_hole_x_position']<b_c['y_hole_radius']):
+      print("ERR588: Error, y_hole_x_position {:0.3f} is too small compare to y_hole_radius {:0.3f}".format(b_c['y_hole_x_position'], b_c['y_hole_radius']))
+      sys.exit(2)
+    if(b_c['y_hole_x_position']>b_c['bell_face_width']/2.0-b_c['side_thickness']):
+      print("ERR591: Error, y_hole_x_position {:0.3f} is too big compare to bell_face_width {:0.3f} and side_thickness {:0.3f}".format(b_c['y_hole_x_position'], b_c['bell_face_width'], b_c['side_thickness']))
+      sys.exit(2)
+  # x_hole_diameter
+  b_c['x_hole_radius'] = b_c['x_hole_diameter']/2.0
+      
 
   #### return
   if(b_c['return_type']=='int_status'):
@@ -534,6 +621,8 @@ def bell_argparse_to_dictionary(ai_b_args):
   r_bd['leg_length']                      = ai_b_args.sw_leg_length
   r_bd['bell_face_height']                = ai_b_args.sw_bell_face_height
   r_bd['bell_face_width']                 = ai_b_args.sw_bell_face_width
+  ### bell_base_disc
+  r_bd['base_diameter']                   = ai_b_args.sw_base_diameter
   ## wall_thickness
   r_bd['face_thickness']                  = ai_b_args.sw_face_thickness
   r_bd['side_thickness']                  = ai_b_args.sw_side_thickness
@@ -582,9 +671,6 @@ def bell_argparse_to_dictionary(ai_b_args):
   r_bd['hollow_z_height']                 = ai_b_args.sw_hollow_z_height
   r_bd['hollow_y_width']                  = ai_b_args.sw_hollow_y_width
   r_bd['hollow_spare_width']              = ai_b_args.sw_hollow_spare_width
-  ### bell_base
-  ## base_disc
-  r_bd['base_diameter']                   = ai_b_args.sw_base_diameter
   ## base_hole
   r_bd['base_hole_nb']                    = ai_b_args.sw_base_hole_nb
   r_bd['base_hole_diameter']              = ai_b_args.sw_base_hole_diameter
