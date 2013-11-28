@@ -66,7 +66,7 @@ def bell_dictionary_init():
   ## bulk
   r_bd['axle_internal_diameter']          = 20.0
   r_bd['axle_external_diameter']          = 0.0
-  r_bd['leg_length']                      = 80.0
+  r_bd['leg_length']                      = 40.0
   r_bd['bell_face_height']                = 80.0
   r_bd['bell_face_width']                 = 80.0
   ### bell_base_disc
@@ -164,8 +164,8 @@ def bell_add_argument(ai_parser):
     help="Set the internal diameter of the bell-axle. Default: 20.0")
   r_parser.add_argument('--axle_external_diameter','--aed', action='store', type=float, default=0.0, dest='sw_axle_external_diameter',
     help="Set the external diameter of the bell-axle. If equal to 0.0, set to 2*axle_internal_diameter. Default: 0.0")
-  r_parser.add_argument('--leg_length','--ll', action='store', type=float, default=80.0, dest='sw_leg_length',
-    help="Set the length of the bell_leg. Default: 80.0")
+  r_parser.add_argument('--leg_length','--ll', action='store', type=float, default=40.0, dest='sw_leg_length',
+    help="Set the length of the bell_leg. Default: 40.0")
   r_parser.add_argument('--bell_face_height','--bfh', action='store', type=float, default=80.0, dest='sw_bell_face_height',
     help="Set the height of the bell-face and bell-side. Default: 80.0")
   r_parser.add_argument('--bell_face_width','--bfw', action='store', type=float, default=80.0, dest='sw_bell_face_width',
@@ -398,6 +398,9 @@ def bell(ai_constraints):
   # leg_smoothing_radius
   if(b_c['leg_smoothing_radius']<b_c['cnc_router_bit_radius']):
     print("ERR389: Error, leg_smoothing_radius {:0.3f} must be bigger than cnc_router_bit_radius {:0.3f}".format(b_c['leg_smoothing_radius'], b_c['cnc_router_bit_radius']))
+    sys.exit(2)
+  if(b_c['leg_smoothing_radius']<b_c['leg_spare_width']):
+    print("ERR403: Error, leg_smoothing_radius {:0.3f} must be bigger than leg_spare_width {:0.3f}".format(b_c['leg_smoothing_radius'], b_c['leg_spare_width']))
     sys.exit(2)
   if(b_c['leg_smoothing_radius']>b_c['leg_length']):
     print("ERR392: Error, leg_smoothing_radius {:0.3f} must be bigger than leg_length {:0.3f}".format(b_c['leg_smoothing_radius'], b_c['leg_length']))
@@ -773,8 +776,8 @@ extra_cut_thickness:    {:0.3f}
   part_list.append(bell_internal_buttress)
   part_list.append(bell_external_buttress)
   # part_list_figure
-  x_space = 2.1*b_c['base_radius'] 
-  y_space = 2.1*b_c['base_radius'] 
+  x_space = 1.2*b_c['base_radius'] 
+  y_space = 1.2*b_c['base_radius'] 
   part_list_figure = []
   for i in range(len(part_list)):
     part_list_figure.extend(cnc25d_api.rotate_and_translate_figure(part_list[i], 0.0, 0.0, 0.0, i*x_space, 0.0))
@@ -808,7 +811,7 @@ extra_cut_thickness:    {:0.3f}
   if(b_c['tkinter_view']):
     print(b_parameter_info)
     cnc25d_api.figure_simple_display(bell_part_overview_figure, bell_part_overview_figure_overlay, b_parameter_info)
-    cnc25d_api.figure_simple_display(external_buttress_assembly, internal_buttress_assembly, b_parameter_info)
+    #cnc25d_api.figure_simple_display(external_buttress_assembly, internal_buttress_assembly, b_parameter_info)
       
   ### sub-function to create the freecad-object
   def freecad_bell(nai_part_list):
@@ -1008,6 +1011,7 @@ def bell_cli(ai_args=""):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
   my_b = bell_cli()
+  #my_b = bell_cli("--leg_length 40.0")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")

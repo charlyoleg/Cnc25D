@@ -132,7 +132,7 @@ def cnc_cut_figure(ai_figure, ai_error_msg_id):
   for i in range(len(ai_figure)):
     #print("dbg133:", ai_figure[i])
     if(cnc_outline.check_outline_format(ai_figure[i])==2):
-      r_figure.append(cnc25d_api.cnc_cut_outline(ai_figure[i], "{:s}.ol{:d}".format(ai_error_msg_id, i)))
+      r_figure.append(cnc_outline.cnc_cut_outline(ai_figure[i], "{:s}.ol{:d}".format(ai_error_msg_id, i)))
     else: # circle of format-B
       r_figure.append(ai_figure[i])
   return(r_figure)
@@ -144,7 +144,7 @@ def ideal_figure(ai_figure, ai_error_msg_id):
   for i in range(len(ai_figure)):
     #print("dbg145:", ai_figure[i])
     if(cnc_outline.check_outline_format(ai_figure[i])==2):
-      r_figure.append(cnc25d_api.ideal_outline(ai_figure[i], "{:s}.ol{:d}".format(ai_error_msg_id, i)))
+      r_figure.append(cnc_outline.ideal_outline(ai_figure[i], "{:s}.ol{:d}".format(ai_error_msg_id, i)))
     else: # circle of format-B
       r_figure.append(ai_figure[i])
   return(r_figure)
