@@ -49,6 +49,7 @@ import math
 # cnc25d
 import small_geometry
 
+
 ################################################################
 # bell_face
 ################################################################
@@ -56,6 +57,8 @@ import small_geometry
 def bell_face_outline(ai_c):
   """ generate the external-outline (type-a) of the bell_face part
   """
+  ### precision
+  radian_epsilon = math.pi/1000
   ### leg slope inclination angle
   lAB = ai_c['bell_face_width']/2.0 - ai_c['leg_spare_width']
   lBC = ai_c['leg_length']
@@ -74,21 +77,36 @@ def bell_face_outline(ai_c):
   #print("dbg072: leg_inclination_angle {:0.3f}  leg_ext_axle_angle {:0.3f}".format(leg_inclination_angle, leg_ext_axle_angle))
   #print("dbg073: aBAC {:0.3f}  aCAD {:0.3f}  lAC {:0.3f}".format(aBAC, aCAD, lAC))
   ### smoothing leg
-  # coordiante of A
-  Ax = -1*ai_c['bell_face_width']/2.0 + ai_c['leg_spare_width']
-  Ay = ai_c['base_thickness'] + ai_c['bell_face_height']
-  # coordiante of C
-  Dx = -1*ai_c['axle_external_radius']*math.cos(leg_ext_axle_angle)
-  Dy = ai_c['base_thickness'] + ai_c['bell_face_height'] + ai_c['leg_length'] + ai_c['axle_external_radius']*math.sin(leg_ext_axle_angle)
-  # coordiante of E
-  Ex = -1*ai_c['bell_face_width']/2.0
-  Ey = ai_c['base_thickness'] + ai_c['bell_face_height']
-  # equation of the line AC
-  (AClx, ACly, ACk, lAC, xAC) = small_geometry.line_equation((Ax,Ay), (Dx,Dy), "line_AC")
-  # coordinate of F
-  (FX, FY, ACkF) = small_geometry.line_distance_point((Ax,Ay), (Dx,Dy), ai_c['leg_smoothing_radius'], "point_F")
-  # coordinate of G
-  (Gx, Gy, line_circle_intersection_status) = small_geometry.line_circle_intersection((AClx, ACly, ACkF), (Ex, Ey), ai_c['leg_smoothing_radius'], (Dx, Dy), math.pi/2, "point_G")
+  if(ai_c['leg_spare_width']>0):
+    # coordiante of A
+    Ax = -1*ai_c['bell_face_width']/2.0 + ai_c['leg_spare_width']
+    Ay = ai_c['base_thickness'] + ai_c['bell_face_height']
+    # coordiante of C
+    Dx = -1*ai_c['axle_external_radius']*math.cos(leg_ext_axle_angle)
+    Dy = ai_c['base_thickness'] + ai_c['bell_face_height'] + ai_c['leg_length'] + ai_c['axle_external_radius']*math.sin(leg_ext_axle_angle)
+    # coordiante of E
+    Ex = -1*ai_c['bell_face_width']/2.0
+    Ey = ai_c['base_thickness'] + ai_c['bell_face_height']
+    # equation of the line AC
+    (AClx, ACly, ACk, lAC, xAC) = small_geometry.line_equation((Ax,Ay), (Dx,Dy), "line_AC")
+    # coordinate of F: the point at the distance leg_smoothing_radius of AC an A
+    (FX, FY, ACkF) = small_geometry.line_distance_point((Ax,Ay), (Dx,Dy), ai_c['leg_smoothing_radius'], "point_F")
+    # coordinate of G: the intersection of the circle of center E and radius leg_smoothing_radius and the line parallet to AC passing through F
+    (Gx, Gy, line_circle_intersection_status) = small_geometry.line_circle_intersection((AClx, ACly, ACkF), (Ex, Ey), ai_c['leg_smoothing_radius'], (Dx, Dy), math.pi/2, "point_G")
+    # coordinate of H: projection of G on the line (AC)
+    (Hx, Hy) = small_geometry.line_point_projection((AClx, ACly, ACk), (Gx, Gy), "point_H")
+    # angle (Gx, GH)
+    axGH = math.atan2(Hy-Gy, Hx-Gx)
+    if(abs(axGH+leg_ext_axle_angle)>radian_epsilon): # check axGH
+      print("ERR097: Error, axGH {:0.3f} is not equal to -1*leg_ext_axle_angle {:0.3f}".format(axGH, leg_ext_axle_angle))
+      sys.exit(2)
+    # angle (Gx, GE)
+    axGE = math.atan2(Ey-Gy, Ex-Gx)
+    # angle (Gx, GI)
+    axGI = (axGH+axGE)/2.0
+    # coordinate of I
+    Ix = Gx + math.cos(axGI)*ai_c['leg_smoothing_radius']
+    Iy = Gy + math.sin(axGI)*ai_c['leg_smoothing_radius']
   ### intermediate parameters
   axle_center_y = ai_c['base_thickness']+ai_c['bell_face_height']+ai_c['leg_length']
   bell_face_height_5 = ai_c['bell_face_height']/5.0
@@ -100,11 +118,17 @@ def bell_face_outline(ai_c):
   ### bell_face_outline
   r_ol = []
   r_ol.append((bell_face_width_2,                        ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # top-right, CCW
-  r_ol.append((bell_face_width_2-ai_c['leg_spare_width'], ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # leg
+  #r_ol.append((bell_face_width_2-ai_c['leg_spare_width'], ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # leg
+  if(ai_c['leg_spare_width']>0):
+    r_ol.append((-1*Ix, Iy, -1*Hx, Hy, 0))
   r_ol.append((ai_c['axle_external_radius']*math.cos(leg_ext_axle_angle), axle_center_y+ai_c['axle_external_radius']*math.sin(leg_ext_axle_angle), 0)) # axle
   r_ol.append((0, axle_center_y+ai_c['axle_external_radius'], -1*ai_c['axle_external_radius']*math.cos(leg_ext_axle_angle), axle_center_y+ai_c['axle_external_radius']*math.sin(leg_ext_axle_angle), 0))
-  r_ol.append((-1*bell_face_width_2+ai_c['leg_spare_width'], ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # leg
-  r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # left-side
+  #r_ol.append((-1*bell_face_width_2+ai_c['leg_spare_width'], ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # leg
+  if(ai_c['leg_spare_width']>0):
+    r_ol.append((Hx, Hy, 0))
+    r_ol.append((Ix, Iy, -1*bell_face_width_2, ai_c['base_thickness']+ai_c['bell_face_height'], 0))
+  else:
+    r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # left-side
   r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+ai_c['bell_face_height'], 0))
   r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+4*bell_face_height_5+ect, 0))
   r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+4*bell_face_height_5+ect, -1*ai_c['cnc_router_bit_radius']))
