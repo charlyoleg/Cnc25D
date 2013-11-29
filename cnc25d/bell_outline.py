@@ -195,7 +195,6 @@ def bell_face_outline(ai_c):
     r_ol.append((Ix, Iy, -1*bell_face_width_2, ai_c['base_thickness']+ai_c['bell_face_height'], 0))
   else:
     r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # left-side
-  r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+ai_c['bell_face_height'], 0))
   r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+4*bell_face_height_5+ect, 0))
   r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+4*bell_face_height_5+ect, -1*ai_c['cnc_router_bit_radius']))
   r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+3*bell_face_height_5-ect, -1*ai_c['cnc_router_bit_radius']))

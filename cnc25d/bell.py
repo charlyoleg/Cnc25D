@@ -47,7 +47,7 @@ import re # to detect .dxf or .svg
 #import Tkinter # to display the outline in a small GUI
 #
 import Part
-from FreeCAD import Base
+#from FreeCAD import Base
 # 3rd parties
 #import svgwrite
 #from dxfwrite import DXFEngine
@@ -767,7 +767,7 @@ extra_cut_thickness:    {:0.3f}
 """.format(b_c['cnc_router_bit_radius'], b_c['extra_cut_thickness'])
   #print(b_parameter_info)
 
-  ### design output
+  ### figures output
   # part_list
   part_list = []
   part_list.append(bell_face)
@@ -807,25 +807,23 @@ extra_cut_thickness:    {:0.3f}
   bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress_overlay, 0.0, 0.0, 0.0, 1*x_space, 0*y_space))
   bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_external_buttress_overlay, 0.0, 0.0, 0.0, 1.5*x_space, 0*y_space))
 
+  ### freecad-object assembly configuration
+  # intermediate parameters
+  f_w2 = b_c['bell_face_width']/2.0
+  # conf1
+  bell_assembly_conf1 = []
+  bell_assembly_conf1.append((bell_base, 0, 0, b_c['base_radius'], b_c['base_radius'], b_c['base_thickness'], 'i', 'xy', 0, 0, 0))
+  bell_assembly_conf1.append((bell_face, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['face_thickness'], 'i', 'xz', -f_w2, f_w2-b_c['face_thickness'], 0))
+  bell_assembly_conf1.append((bell_face, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['face_thickness'], 'i', 'xz', -f_w2, -f_w2, 0))
+  bell_assembly_conf1.append((bell_side, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['side_thickness'], 'i', 'yz', f_w2-b_c['side_thickness'], -f_w2, 0))
+  bell_assembly_conf1.append((bell_side, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['side_thickness'], 'i', 'yz', -f_w2, -f_w2, 0))
+
+
   ### display with Tkinter
   if(b_c['tkinter_view']):
     print(b_parameter_info)
     cnc25d_api.figure_simple_display(bell_part_overview_figure, bell_part_overview_figure_overlay, b_parameter_info)
     #cnc25d_api.figure_simple_display(external_buttress_assembly, internal_buttress_assembly, b_parameter_info)
-      
-  ### sub-function to create the freecad-object
-  def freecad_bell(nai_part_list):
-    fc_obj = []
-    for i in range(len(nai_figure_list)):
-      fc_obj.append(cnc25d_api.figure_to_freecad_25d_part(nai_part_list[i], b_c['face_thickness']))
-      if((i==1)or(i==2)): # middle_lid
-        fc_obj[i].translate(Base.Vector(0,0,5.0*b_c['face_thickness']))
-      if(i==3): # holder_B
-        fc_obj[i].translate(Base.Vector(0,0,10.0*b_c['face_thickness']))
-      if(i==4): # holder_C
-        fc_obj[i].translate(Base.Vector(0,0,15.0*b_c['face_thickness']))
-    r_fb = Part.makeCompound(fc_obj)
-    return(r_fb)
 
   ### generate output file
 
@@ -836,7 +834,7 @@ extra_cut_thickness:    {:0.3f}
   elif(b_c['return_type']=='cnc25d_figure'):
     r_b = part_list
   elif(b_c['return_type']=='freecad_object'):
-    r_b = 1
+    r_b = cnc25d_api.figures_to_freecad_assembly(bell_assembly_conf1)
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(b_c['return_type']))
     sys.exit(2)
@@ -1010,8 +1008,8 @@ def bell_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
-  my_b = bell_cli()
-  #my_b = bell_cli("--z_hole_position_length 20.0")
+  #my_b = bell_cli()
+  my_b = bell_cli("--return_type freecad_object")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")

@@ -83,6 +83,7 @@ generate_output_file = design_output.generate_output_file
 rotate_and_translate_figure = design_output.rotate_and_translate_figure
 cnc_cut_figure =  design_output.cnc_cut_figure
 ideal_figure = design_output.ideal_figure
+figures_to_freecad_assembly = design_output.figures_to_freecad_assembly
 
 ################################################################
 # function combinations
