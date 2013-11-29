@@ -136,7 +136,7 @@ def bell_dictionary_init():
   ## z_hole
   r_bd['z_hole_diameter']                 = 4.0
   r_bd['z_hole_external_diameter']        = 0.0
-  r_bd['z_hole_position_length']          = 10.0
+  r_bd['z_hole_position_length']          = 15.0
   ### manufacturing
   r_bd['cnc_router_bit_radius']           = 1.0
   r_bd['extra_cut_thickness']             = 1.0
@@ -281,8 +281,8 @@ def bell_add_argument(ai_parser):
   ## x_hole
   r_parser.add_argument('--x_hole_diameter','--xhd', action='store', type=float, default=4.0, dest='sw_x_hole_diameter',
     help="Set the diameter of the x-holes. If equal to 0.0, no x-hole is created. Default: 4.0")
-  r_parser.add_argument('--x_hole_z_position','--xhzp', action='store', type=float, default=10.0, dest='sw_x_hole_z_position',
-    help="Set the z-position of the y-holes. Default: 10.0")
+  r_parser.add_argument('--x_hole_z_position','--xhzp', action='store', type=float, default=-6.0, dest='sw_x_hole_z_position',
+    help="Set the z-position of the y-holes. Default: -6.0")
   r_parser.add_argument('--x_hole_y_position','--xhyp', action='store', type=float, default=10.0, dest='sw_x_hole_y_position',
     help="Set the y-position of the x-holes. Default: 10.0")
   ## z_hole
@@ -290,8 +290,8 @@ def bell_add_argument(ai_parser):
     help="Set the diameter of the z-holes. If equal to 0.0, no z-hole is created. Default: 4.0")
   r_parser.add_argument('--z_hole_external_diameter','--zhed', action='store', type=float, default=0.0, dest='sw_z_hole_external_diameter',
     help="Set the external-diameter of the z-holes. If equal to 0.0, set to 2*z_hole_diameter. Default: 4.0")
-  r_parser.add_argument('--z_hole_position_length','--zhpl', action='store', type=float, default=10.0, dest='sw_z_hole_position_length',
-    help="Set the position-length of the z-holes. Default: 10.0")
+  r_parser.add_argument('--z_hole_position_length','--zhpl', action='store', type=float, default=15.0, dest='sw_z_hole_position_length',
+    help="Set the position-length of the z-holes. Default: 15.0")
   ### manufacturing
   r_parser.add_argument('--cnc_router_bit_radius','--crbr', action='store', type=float, default=1.0, dest='sw_cnc_router_bit_radius',
     help="Set the minimal router_bit_radius for the whole design. Default: 1.0")
@@ -630,8 +630,8 @@ def bell(ai_constraints):
     print("ERR626: Error, z_hole_position_length {:0.3f} is too big compare to bell_face_width {:0.3f}".format(b_c['z_hole_position_length'], b_c['bell_face_width']))
     sys.exit(2)
   # extra_cut_thickness
-  if(b_c['extra_cut_thickness']>b_c['bell_face_width']/5.0):
-    print("ERR630: Error, extra_cut_thickness {:0.3f} is too big compare to bell_face_width {:0.3f}".format(b_c['extra_cut_thickness'], b_c['bell_face_width']))
+  if(b_c['extra_cut_thickness']>min(b_c['bell_face_width'], b_c['bell_face_height'])/10.0):
+    print("ERR630: Error, extra_cut_thickness {:0.3f} is too big compare to bell_face_width {:0.3f} and bell_face_height {:0.3f}".format(b_c['extra_cut_thickness'], b_c['bell_face_width'], b_c['bell_face_height']))
     sys.exit(2)
 
   ################################################################
@@ -1011,7 +1011,7 @@ def bell_cli(ai_args=""):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
   my_b = bell_cli()
-  #my_b = bell_cli("--leg_length 40.0")
+  #my_b = bell_cli("--z_hole_position_length 20.0")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")
