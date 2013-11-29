@@ -87,11 +87,11 @@ def bell_dictionary_init():
   r_bd['motor_hole_diameter']             = 4.0
   r_bd['motor_hole_x_distance']           = 30.0
   r_bd['motor_hole_z_distance']           = 30.0
-  r_bd['motor_hole_z_position']           = 60.0
+  r_bd['motor_hole_z_position']           = 40.0
   ## internal_buttress
   r_bd['int_buttress_x_length']           = 10.0
   r_bd['int_buttress_z_width']            = 5.0
-  r_bd['int_buttress_z_distance']         = 20.0
+  r_bd['int_buttress_z_distance']         = 50.0
   r_bd['int_buttress_x_position']         = 10.0
   r_bd['int_buttress_z_position']         = 10.0
   r_bd['int_buttress_int_corner_length']  = 5.0
@@ -201,15 +201,15 @@ def bell_add_argument(ai_parser):
     help="Set the x-distance of the motor-hole. Make it fit the motor_lid parameters. Default: 30.0")
   r_parser.add_argument('--motor_hole_z_distance','--mhzd', action='store', type=float, default=30.0, dest='sw_motor_hole_z_distance',
     help="Set the z-distance of the motor-hole. Make it fit the motor_lid parameters. Default: 30.0")
-  r_parser.add_argument('--motor_hole_z_position','--mhzp', action='store', type=float, default=60.0, dest='sw_motor_hole_z_position',
-    help="Set the z-position of the motor-hole. Make it fit the gearwheel diameters. Default: 60.0")
+  r_parser.add_argument('--motor_hole_z_position','--mhzp', action='store', type=float, default=40.0, dest='sw_motor_hole_z_position',
+    help="Set the z-position of the motor-hole. Make it fit the gearwheel diameters. Default: 40.0")
   ## internal_buttress
   r_parser.add_argument('--int_buttress_x_length','--ibxl', action='store', type=float, default=10.0, dest='sw_int_buttress_x_length',
     help="Set the x-length of the internal-buttress-hole. If equal to 0.0, no internal-buttress hole is created. Default: 10.0")
   r_parser.add_argument('--int_buttress_z_width','--ibzw', action='store', type=float, default=5.0, dest='sw_int_buttress_z_width',
     help="Set the z-width of the internal-buttress-hole. Default: 5.0")
-  r_parser.add_argument('--int_buttress_z_distance','--ibzd', action='store', type=float, default=20.0, dest='sw_int_buttress_z_distance',
-    help="Set the z-distance between a pair of internal-buttress. Default: 20.0")
+  r_parser.add_argument('--int_buttress_z_distance','--ibzd', action='store', type=float, default=50.0, dest='sw_int_buttress_z_distance',
+    help="Set the z-distance between a pair of internal-buttress. Default: 50.0")
   r_parser.add_argument('--int_buttress_x_position','--ibxp', action='store', type=float, default=10.0, dest='sw_int_buttress_x_position',
     help="Set the x-position of the internal-buttress-hole. Default: 10.0")
   r_parser.add_argument('--int_buttress_z_position','--ibzp', action='store', type=float, default=10.0, dest='sw_int_buttress_z_position',

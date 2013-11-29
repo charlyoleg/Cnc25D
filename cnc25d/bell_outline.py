@@ -51,6 +51,71 @@ import small_geometry
 
 
 ################################################################
+# bell_face_side_holes
+################################################################
+# the common holes of the bell_face and side_face
+
+def bell_face_side_holes(ai_c, ai_type):
+  """ generate the commone hole outlines of the bell_face and side_face
+  """
+  # drawing in the xy space
+  ### select the wall
+  if(ai_type=='face'):
+    wall_thickness = ai_c['side_thickness']
+    axle_hole_radius = ai_c['y_hole_radius']
+    axle_hole_y_position = ai_c['y_hole_z_position']
+    axle_hole_x_position = ai_c['y_hole_x_position']
+  elif(ai_type=='side'):
+    wall_thickness = ai_c['face_thickness']
+    axle_hole_radius = ai_c['x_hole_radius']
+    axle_hole_y_position = ai_c['x_hole_z_position']
+    axle_hole_x_position = ai_c['x_hole_y_position']
+  else:
+    print("ERR065: Error, ")
+    sys.exit(2)
+  ### intermediate parameters
+  int_buttress_x1 = -1*ai_c['bell_face_width']/2.0 + wall_thickness + ai_c['int_buttress_x_position']
+  int_buttress_x2 = -1*int_buttress_x1 - ai_c['int_buttress_x_length']
+  int_buttress_y1 = ai_c['base_thickness'] + ai_c['int_buttress_z_position']
+  int_buttress_y2 = int_buttress_y1 + ai_c['int_buttress_z_distance']
+  axle_hole_x = -1*ai_c['bell_face_width']/2.0 + wall_thickness + axle_hole_x_position
+  axle_hole_y1 = int_buttress_y1 + axle_hole_y_position
+  axle_hole_y2 = int_buttress_y2 + axle_hole_y_position
+  ext_buttress_x1 = -1*ai_c['ext_buttress_x_distance']/2.0 - ai_c['ext_buttress_x_width']
+  ext_buttress_x2 = ai_c['ext_buttress_x_distance']/2.0
+  ext_buttress_y = ai_c['base_thickness'] + ai_c['ext_buttress_z_position']
+  ### figure construction
+  r_f =[]
+  # internal_buttress
+  if(ai_c['int_buttress_x_length']>0):
+    for px in (int_buttress_x1, int_buttress_x2):
+      for py in (int_buttress_y1, int_buttress_y2):
+        ib_ol = []
+        ib_ol.append((px+0*ai_c['int_buttress_x_length'], py+0*ai_c['int_buttress_z_width'], -1*ai_c['cnc_router_bit_radius']))
+        ib_ol.append((px+1*ai_c['int_buttress_x_length'], py+0*ai_c['int_buttress_z_width'], -1*ai_c['cnc_router_bit_radius']))
+        ib_ol.append((px+1*ai_c['int_buttress_x_length'], py+1*ai_c['int_buttress_z_width'], -1*ai_c['cnc_router_bit_radius']))
+        ib_ol.append((px+0*ai_c['int_buttress_x_length'], py+1*ai_c['int_buttress_z_width'], -1*ai_c['cnc_router_bit_radius']))
+        ib_ol.append((px+0*ai_c['int_buttress_x_length'], py+0*ai_c['int_buttress_z_width'], 0))
+        r_f.append(ib_ol[:])
+  # axle_hole
+  if(axle_hole_radius>0):
+    for px in (axle_hole_x, -1*axle_hole_x):
+      for py in (axle_hole_y1, axle_hole_y2):
+        r_f.append((px, py, axle_hole_radius))
+  # external_buttress
+  if(ai_c['ext_buttress_z_length']>0):
+    for px in (ext_buttress_x1, ext_buttress_x2):
+      eb_ol = []
+      eb_ol.append((px+0*ai_c['ext_buttress_x_width'], ext_buttress_y+0*ai_c['ext_buttress_z_length'], -1*ai_c['cnc_router_bit_radius']))
+      eb_ol.append((px+1*ai_c['ext_buttress_x_width'], ext_buttress_y+0*ai_c['ext_buttress_z_length'], -1*ai_c['cnc_router_bit_radius']))
+      eb_ol.append((px+1*ai_c['ext_buttress_x_width'], ext_buttress_y+1*ai_c['ext_buttress_z_length'], -1*ai_c['cnc_router_bit_radius']))
+      eb_ol.append((px+0*ai_c['ext_buttress_x_width'], ext_buttress_y+1*ai_c['ext_buttress_z_length'], -1*ai_c['cnc_router_bit_radius']))
+      eb_ol.append((px+0*ai_c['ext_buttress_x_width'], ext_buttress_y+0*ai_c['ext_buttress_z_length'], 0))
+      r_f.append(eb_ol[:])
+  ### return
+  return(r_f)
+
+################################################################
 # bell_face
 ################################################################
 
@@ -163,6 +228,26 @@ def bell_face_holes(ai_c):
   """ generate the hole-outlines (type-a) of the bell_face part
   """
   r_f = []
+  # intermediate parameters
+  axle_y = ai_c['base_thickness']+ai_c['bell_face_height']+ai_c['leg_length']
+  # axle_internal_hole
+  if(ai_c['axle_internal_radius']>0):
+    r_f.append((0, axle_y, ai_c['axle_internal_radius']))
+  # axle_fastening_holes
+  for i in  range(ai_c['axle_hole_nb']):
+    a = i*2*math.pi/ai_c['axle_hole_nb']+ai_c['axle_hole_angle']
+    r_f.append((ai_c['axle_hole_position_radius']*math.cos(a), axle_y+ai_c['axle_hole_position_radius']*math.sin(a), ai_c['axle_hole_radius']))
+  # motor_fastening_holes
+  if(ai_c['motor_hole_radius']>0):
+    motor_x = ai_c['motor_hole_x_distance']/2.0
+    motor_y1 = axle_y - ai_c['motor_hole_z_position']
+    motor_y2 = motor_y1 - ai_c['motor_hole_z_distance']
+    for px in [-motor_x, motor_x]:
+      for py in [motor_y1, motor_y2]:
+        r_f.append((px, py, ai_c['motor_hole_radius']))
+  # int_buttress, ext_buttress, axis_fastening
+  r_f.extend(bell_face_side_holes(ai_c, 'face'))
+  # return
   return(r_f)
 
 def bell_face(ai_c):
@@ -212,7 +297,13 @@ def bell_base_main_hole_outline(ai_c):
 def bell_base_holes(ai_c):
   """ generate the hole-outlines (type-a) of the bell_base part
   """
+  ### figure construction
   r_f = []
+  # base_fastening_holes
+  for i in range(ai_c['base_hole_nb']):
+    a = i*2*math.pi/ai_c['base_hole_nb']+ai_c['base_hole_angle']
+    r_f.append((ai_c['base_hole_position_radius']*math.cos(a), ai_c['base_hole_position_radius']*math.sin(a), ai_c['base_hole_radius']))
+  ### return
   return(r_f)
 
 def bell_base(ai_c):
