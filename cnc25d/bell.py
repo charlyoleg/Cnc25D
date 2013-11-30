@@ -792,22 +792,25 @@ bell_extra_cut_thickness:    {:0.3f}
     part_list_figure.extend(cnc25d_api.rotate_and_translate_figure(part_list[i], 0.0, 0.0, 0.0, i*x_space, 0.0))
   ## intermediate parameters
   f_w2 = b_c['bell_face_width']/2.0
-  int_buttress_absolute_x1_position = -1*b_c['bell_face_width']/2.0 + b_c['side_thickness'] + b_c['int_buttress_x_position']
-  int_buttress_absolute_x2_position = b_c['bell_face_width']/2.0 - b_c['side_thickness'] - b_c['int_buttress_x_position'] - b_c['int_buttress_x_length']
-  ext_buttress_absolute_x1_position = -1*f_w2 - b_c['ext_buttress_y_position'] - b_c['ext_buttress_y_length']
-  ext_buttress_absolute_x2_position = f_w2 + b_c['ext_buttress_y_position']
+  int_buttress_absolute_x1_position = -1*b_c['bell_face_width']/2.0 + b_c['side_thickness'] + b_c['int_buttress_x_position'] + b_c['int_buttress_x_length'] - b_c['int_buttress_ext_corner_length']
+  int_buttress_absolute_x2_position = b_c['bell_face_width']/2.0 - b_c['side_thickness'] - b_c['int_buttress_x_position'] - b_c['int_buttress_x_length'] - b_c['int_buttress_ext_corner_length']
+  ext_buttress_absolute_x1_position = -1*f_w2 - b_c['ext_buttress_y_position'] - b_c['ext_buttress_y_length'] - b_c['ext_buttress_base_ext_corner_length']
+  ext_buttress_absolute_x2_position = f_w2 + b_c['ext_buttress_y_position'] + b_c['ext_buttress_y_length'] - b_c['ext_buttress_base_ext_corner_length']
+  int_butt_x_zero = b_c['int_buttress_ext_corner_length']
+  ext_butt_x_zero = b_c['ext_buttress_base_ext_corner_length']
   ## sub-assembly
   # internal_buttress_assembly
   internal_buttress_assembly = []
-  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, int_buttress_absolute_x1_position,  1*f_w2))
-  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, int_buttress_absolute_x1_position, -1*f_w2))
-  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, int_buttress_absolute_x2_position,  1*f_w2))
-  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, int_buttress_absolute_x2_position, -1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_base, 0.0, 0.0, 0.0, 0.0, 0.0))
+  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_internal_buttress, int_butt_x_zero, 0.0, -1,  1, 0.0, int_buttress_absolute_x1_position, -1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_internal_buttress, int_butt_x_zero, 0.0, -1, -1, 0.0, int_buttress_absolute_x1_position,  1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_internal_buttress, int_butt_x_zero, 0.0,  1,  1, 0.0, int_buttress_absolute_x2_position, -1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_internal_buttress, int_butt_x_zero, 0.0,  1, -1, 0.0, int_buttress_absolute_x2_position,  1*f_w2))
   # external_buttress_assembly
   external_buttress_assembly = []
   external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_face, 0.0, 0.0, 0.0, 0.0, 0.0))
-  external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_external_side_buttress, 0.0, 0.0, 0.0, ext_buttress_absolute_x1_position, 0.0))
-  external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_external_side_buttress, 0.0, 0.0, 0.0, ext_buttress_absolute_x2_position, 0.0))
+  external_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_external_side_buttress, ext_butt_x_zero, 0.0,  1, 1, 0.0, ext_buttress_absolute_x1_position, 0.0))
+  external_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_external_side_buttress, ext_butt_x_zero, 0.0, -1, 1, 0.0, ext_buttress_absolute_x2_position, 0.0))
   ## bell_part_overview
   bell_part_overview_figure = []
   bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_face, 0.0, 0.0, 0.0, 0*x_space, 1*y_space))
@@ -897,7 +900,7 @@ bell_extra_cut_thickness:    {:0.3f}
   if(b_c['tkinter_view']):
     print(b_parameter_info)
     cnc25d_api.figure_simple_display(bell_part_overview_figure, bell_part_overview_figure_overlay, b_parameter_info)
-    #cnc25d_api.figure_simple_display(external_buttress_assembly, internal_buttress_assembly, b_parameter_info)
+    cnc25d_api.figure_simple_display(external_buttress_assembly, internal_buttress_assembly, b_parameter_info)
 
   ### generate output file
 
@@ -1082,8 +1085,8 @@ def bell_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
-  #my_b = bell_cli()
-  my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
+  my_b = bell_cli()
+  #my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")
