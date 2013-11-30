@@ -97,7 +97,7 @@ def bell_dictionary_init():
   r_bd['int_buttress_int_corner_length']  = 5.0
   r_bd['int_buttress_ext_corner_length']  = 5.0
   r_bd['int_buttress_bump_length']        = 10.0
-  r_bd['int_buttress_arc_height']         = -5.0
+  r_bd['int_buttress_arc_height']         = -2.0
   r_bd['int_buttress_smoothing_radius']   = 10.0
   ## external_buttress
   r_bd['ext_buttress_z_length']           = 10.0
@@ -220,8 +220,8 @@ def bell_add_argument(ai_parser):
     help="Set the external-corner-length of the internal-buttress. Default: 5.0")
   r_parser.add_argument('--int_buttress_bump_length','--ibbl', action='store', type=float, default=10.0, dest='sw_int_buttress_bump_length',
     help="Set the bump-length of the internal-buttress. Default: 10.0")
-  r_parser.add_argument('--int_buttress_arc_height','--ibah', action='store', type=float, default=-5.0, dest='sw_int_buttress_arc_height',
-    help="Set the arc-height of the internal-buttress. If equal to 0.0, a line is created instead of an arc. Default: -5.0")
+  r_parser.add_argument('--int_buttress_arc_height','--ibah', action='store', type=float, default=-2.0, dest='sw_int_buttress_arc_height',
+    help="Set the arc-height of the internal-buttress. If equal to 0.0, a line is created instead of an arc. Default: -2.0")
   r_parser.add_argument('--int_buttress_smoothing_radius','--ibsr', action='store', type=float, default=10.0, dest='sw_int_buttress_smoothing_radius',
     help="Set the smoothing-radius of the internal-buttress. Default: 10.0")
   ## external_buttress
@@ -658,9 +658,13 @@ def bell(ai_constraints):
   bell_internal_buttress = cnc25d_api.cnc_cut_figure(bell_internal_buttress_A, "bell_internal_buttress_A")
   bell_internal_buttress_overlay = cnc25d_api.ideal_figure(bell_internal_buttress_A, "bell_internal_buttress_A")
 
-  bell_external_buttress_A = bell_outline.bell_external_buttress(b_c)
-  bell_external_buttress = cnc25d_api.cnc_cut_figure(bell_external_buttress_A, "bell_external_buttress_A")
-  bell_external_buttress_overlay = cnc25d_api.ideal_figure(bell_external_buttress_A, "bell_external_buttress_A")
+  bell_external_face_buttress_A = bell_outline.bell_external_buttress(b_c, 'face')
+  bell_external_face_buttress = cnc25d_api.cnc_cut_figure(bell_external_face_buttress_A, "bell_external_face_buttress_A")
+  bell_external_face_buttress_overlay = cnc25d_api.ideal_figure(bell_external_face_buttress_A, "bell_external_face_buttress_A")
+
+  bell_external_side_buttress_A = bell_outline.bell_external_buttress(b_c, 'side')
+  bell_external_side_buttress = cnc25d_api.cnc_cut_figure(bell_external_side_buttress_A, "bell_external_side_buttress_A")
+  bell_external_side_buttress_overlay = cnc25d_api.ideal_figure(bell_external_side_buttress_A, "bell_external_side_buttress_A")
 
   ################################################################
   # output
@@ -778,42 +782,58 @@ bell_extra_cut_thickness:    {:0.3f}
   part_list.append(bell_side)
   part_list.append(bell_base)
   part_list.append(bell_internal_buttress)
-  part_list.append(bell_external_buttress)
+  part_list.append(bell_external_face_buttress)
+  part_list.append(bell_external_side_buttress)
   # part_list_figure
   x_space = 1.2*b_c['base_radius'] 
   y_space = 1.2*b_c['base_radius'] 
   part_list_figure = []
   for i in range(len(part_list)):
     part_list_figure.extend(cnc25d_api.rotate_and_translate_figure(part_list[i], 0.0, 0.0, 0.0, i*x_space, 0.0))
+  ## intermediate parameters
+  f_w2 = b_c['bell_face_width']/2.0
+  int_buttress_absolute_x1_position = -1*b_c['bell_face_width']/2.0 + b_c['side_thickness'] + b_c['int_buttress_x_position']
+  int_buttress_absolute_x2_position = b_c['bell_face_width']/2.0 - b_c['side_thickness'] - b_c['int_buttress_x_position'] - b_c['int_buttress_x_length']
+  ext_buttress_absolute_x1_position = -1*f_w2 - b_c['ext_buttress_y_position'] - b_c['ext_buttress_y_length']
+  ext_buttress_absolute_x2_position = f_w2 + b_c['ext_buttress_y_position']
   ## sub-assembly
   # internal_buttress_assembly
   internal_buttress_assembly = []
-  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, 0.0, 0.0))
-  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, 0.0, 0.0))
-  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, 0.0, 0.0))
-  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, 0.0, 0.0))
+  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, int_buttress_absolute_x1_position,  1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, int_buttress_absolute_x1_position, -1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, int_buttress_absolute_x2_position,  1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, int_buttress_absolute_x2_position, -1*f_w2))
   # external_buttress_assembly
   external_buttress_assembly = []
   external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_face, 0.0, 0.0, 0.0, 0.0, 0.0))
-  external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_external_buttress, 0.0, 0.0, 0.0, 0.0, 0.0))
-  external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_external_buttress, 0.0, 0.0, 0.0, 0.0, 0.0))
+  external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_external_side_buttress, 0.0, 0.0, 0.0, ext_buttress_absolute_x1_position, 0.0))
+  external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_external_side_buttress, 0.0, 0.0, 0.0, ext_buttress_absolute_x2_position, 0.0))
   ## bell_part_overview
   bell_part_overview_figure = []
   bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_face, 0.0, 0.0, 0.0, 0*x_space, 1*y_space))
   bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_side, 0.0, 0.0, 0.0, 1*x_space, 1*y_space))
   bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_base, 0.0, 0.0, 0.0, 0*x_space, 0*y_space))
   bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0.0, 0.0, 0.0, 1*x_space, 0*y_space))
-  bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_external_buttress, 0.0, 0.0, 0.0, 1.5*x_space, 0*y_space))
+  bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_external_face_buttress, 0.0, 0.0, 0.0, 1.5*x_space, 0*y_space))
+  bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_external_side_buttress, 0.0, 0.0, 0.0, 1.5*x_space, -0.8*y_space))
   bell_part_overview_figure_overlay = []
   bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_face_overlay, 0.0, 0.0, 0.0, 0*x_space, 1*y_space))
   bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_side_overlay, 0.0, 0.0, 0.0, 1*x_space, 1*y_space))
   bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_base_overlay, 0.0, 0.0, 0.0, 0*x_space, 0*y_space))
   bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_internal_buttress_overlay, 0.0, 0.0, 0.0, 1*x_space, 0*y_space))
-  bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_external_buttress_overlay, 0.0, 0.0, 0.0, 1.5*x_space, 0*y_space))
+  bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_external_face_buttress_overlay, 0.0, 0.0, 0.0, 1.5*x_space, 0*y_space))
+  bell_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(bell_external_side_buttress_overlay, 0.0, 0.0, 0.0, 1.5*x_space, -0.8*y_space))
 
   ### freecad-object assembly configuration
   # intermediate parameters
-  f_w2 = b_c['bell_face_width']/2.0
+  #int_buttress_y_size = b_c['face_thickness'] + b_c['int_buttress_x_position'] + b_c['int_buttress_int_corner_length'] + b_c['int_buttress_x_length'] + b_c['int_buttress_ext_corner_length']
+  int_buttress_absolute_z1_position = b_c['base_thickness'] + b_c['int_buttress_z_position']
+  int_buttress_absolute_z2_position = int_buttress_absolute_z1_position + b_c['int_buttress_z_distance']
+  int_butt_x_zero =  b_c['int_buttress_ext_corner_length']
+  int_butt_x_size = b_c['int_buttress_x_length']
+  int_butt_y_size = b_c['face_thickness']
+  int_butt_z_size = b_c['int_buttress_z_width']
+  f_w2b = f_w2 - b_c['face_thickness']
   # conf1
   bell_assembly_conf1 = []
   bell_assembly_conf1.append((bell_base, 0, 0, b_c['base_radius'], b_c['base_radius'], b_c['base_thickness'], 'i', 'xy', 0, 0, 0))
@@ -821,6 +841,14 @@ bell_extra_cut_thickness:    {:0.3f}
   bell_assembly_conf1.append((bell_face, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['face_thickness'], 'i', 'xz', -f_w2, -f_w2, 0))
   bell_assembly_conf1.append((bell_side, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['side_thickness'], 'i', 'yz', f_w2-b_c['side_thickness'], -f_w2, 0))
   bell_assembly_conf1.append((bell_side, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['side_thickness'], 'i', 'yz', -f_w2, -f_w2, 0))
+  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'y', 'xy', int_buttress_absolute_x1_position, -f_w2, int_buttress_absolute_z2_position))
+  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'i', 'xy', int_buttress_absolute_x2_position, -f_w2, int_buttress_absolute_z2_position))
+  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'z', 'xy', int_buttress_absolute_x1_position, f_w2b, int_buttress_absolute_z2_position))
+  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'x', 'xy', int_buttress_absolute_x2_position, f_w2b, int_buttress_absolute_z2_position))
+  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'y', 'xy', int_buttress_absolute_x1_position, -f_w2, int_buttress_absolute_z1_position))
+  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'i', 'xy', int_buttress_absolute_x2_position, -f_w2, int_buttress_absolute_z1_position))
+  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'z', 'xy', int_buttress_absolute_x1_position, f_w2b, int_buttress_absolute_z1_position))
+  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'x', 'xy', int_buttress_absolute_x2_position, f_w2b, int_buttress_absolute_z1_position))
 
 
   ### display with Tkinter
@@ -1012,8 +1040,8 @@ def bell_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
-  my_b = bell_cli()
-  #my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
+  #my_b = bell_cli()
+  my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")
