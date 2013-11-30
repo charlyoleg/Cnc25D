@@ -136,10 +136,10 @@ def bell_dictionary_init():
   ## z_hole
   r_bd['z_hole_diameter']                 = 4.0
   r_bd['z_hole_external_diameter']        = 0.0
-  r_bd['z_hole_position_length']          = 10.0
+  r_bd['z_hole_position_length']          = 15.0
   ### manufacturing
-  r_bd['cnc_router_bit_radius']           = 1.0
-  r_bd['extra_cut_thickness']             = 1.0
+  r_bd['bell_cnc_router_bit_radius']      = 1.0
+  r_bd['bell_extra_cut_thickness']        = 0.0
   ### output
   r_bd['tkinter_view']           = False
   r_bd['output_file_basename']   = ''
@@ -290,13 +290,13 @@ def bell_add_argument(ai_parser):
     help="Set the diameter of the z-holes. If equal to 0.0, no z-hole is created. Default: 4.0")
   r_parser.add_argument('--z_hole_external_diameter','--zhed', action='store', type=float, default=0.0, dest='sw_z_hole_external_diameter',
     help="Set the external-diameter of the z-holes. If equal to 0.0, set to 2*z_hole_diameter. Default: 4.0")
-  r_parser.add_argument('--z_hole_position_length','--zhpl', action='store', type=float, default=10.0, dest='sw_z_hole_position_length',
-    help="Set the position-length of the z-holes. Default: 10.0")
+  r_parser.add_argument('--z_hole_position_length','--zhpl', action='store', type=float, default=15.0, dest='sw_z_hole_position_length',
+    help="Set the position-length of the z-holes. Default: 15.0")
   ### manufacturing
-  r_parser.add_argument('--cnc_router_bit_radius','--crbr', action='store', type=float, default=1.0, dest='sw_cnc_router_bit_radius',
+  r_parser.add_argument('--bell_cnc_router_bit_radius','--crbr', action='store', type=float, default=1.0, dest='sw_bell_cnc_router_bit_radius',
     help="Set the minimal router_bit_radius for the whole design. Default: 1.0")
-  r_parser.add_argument('--extra_cut_thickness','--ect', action='store', type=float, default=1.0, dest='sw_extra_cut_thickness',
-    help="Set the extra-cut-thickness for the holes and crenels. Default: 1.0")
+  r_parser.add_argument('--bell_extra_cut_thickness','--ect', action='store', type=float, default=0.0, dest='sw_bell_extra_cut_thickness',
+    help="Set the extra-cut-thickness for the rectangular-crenels. It can be used to compensate the manufacturing process or to check the 3D assembly with FreeCAD. Default: 0.0")
   ### output
   # return
   return(r_parser)
@@ -396,8 +396,8 @@ def bell(ai_constraints):
     print("ERR385: Error, leg_spare_width {:0.3f} is too big compare to bell_face_width {:0.3f} and axle_external_radius {:0.3f}".format(b_c['leg_spare_width'], b_c['bell_face_width'], b_c['axle_external_radius']))
     sys.exit(2)
   # leg_smoothing_radius
-  if(b_c['leg_smoothing_radius']<b_c['cnc_router_bit_radius']):
-    print("ERR389: Error, leg_smoothing_radius {:0.3f} must be bigger than cnc_router_bit_radius {:0.3f}".format(b_c['leg_smoothing_radius'], b_c['cnc_router_bit_radius']))
+  if(b_c['leg_smoothing_radius']<b_c['bell_cnc_router_bit_radius']):
+    print("ERR389: Error, leg_smoothing_radius {:0.3f} must be bigger than bell_cnc_router_bit_radius {:0.3f}".format(b_c['leg_smoothing_radius'], b_c['bell_cnc_router_bit_radius']))
     sys.exit(2)
   if(b_c['leg_smoothing_radius']<b_c['leg_spare_width']):
     print("ERR403: Error, leg_smoothing_radius {:0.3f} must be bigger than leg_spare_width {:0.3f}".format(b_c['leg_smoothing_radius'], b_c['leg_spare_width']))
@@ -435,8 +435,8 @@ def bell(ai_constraints):
     sys.exit(2)
   if(b_c['int_buttress_x_length']>0):
     # int_buttress_z_width
-    if(b_c['int_buttress_z_width']<4*b_c['cnc_router_bit_radius']):
-      print("ERR431: Error, int_buttress_z_width {:0.3f} is too small compare to cnc_router_bit_radius {:0.3f}".format(b_c['int_buttress_z_width'], b_c['cnc_router_bit_radius']))
+    if(b_c['int_buttress_z_width']<3*b_c['bell_cnc_router_bit_radius']):
+      print("ERR431: Error, int_buttress_z_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(b_c['int_buttress_z_width'], b_c['bell_cnc_router_bit_radius']))
       sys.exit(2)
     if(b_c['int_buttress_z_width']>b_c['bell_face_height']/5.0):
       print("ERR434: Error, int_buttress_z_width {:0.3f} is too big compare to bell_face_height {:0.3f}".format(b_c['int_buttress_z_width'], b_c['bell_face_height']))
@@ -482,8 +482,8 @@ def bell(ai_constraints):
     sys.exit(2)
   if(b_c['ext_buttress_z_length']>0):
     # ext_buttress_x_width
-    if(b_c['ext_buttress_x_width']<4*b_c['cnc_router_bit_radius']):
-      print("ERR478: Error, ext_buttress_x_width {:0.3f} is too small compare to cnc_router_bit_radius {:0.3f}".format(b_c['ext_buttress_x_width'], b_c['cnc_router_bit_radius']))
+    if(b_c['ext_buttress_x_width']<3*b_c['bell_cnc_router_bit_radius']):
+      print("ERR478: Error, ext_buttress_x_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(b_c['ext_buttress_x_width'], b_c['bell_cnc_router_bit_radius']))
       sys.exit(2)
     if(b_c['ext_buttress_x_width']>b_c['bell_face_width']/5.0):
       print("ERR481: Error, ext_buttress_x_width {:0.3f} is too big compare to bell_face_width {:0.3f}".format(b_c['ext_buttress_x_width'], b_c['bell_face_width']))
@@ -544,8 +544,8 @@ def bell(ai_constraints):
     print("ERR539: Error, hollow_z_height {:0.3f} must be smaller than bell_face_height {:0.3f}".format(b_c['hollow_z_height'], b_c['bell_face_height']))
     sys.exit(2)
   # hollow_y_width
-  if(b_c['hollow_y_width']<2*b_c['cnc_router_bit_radius']):
-    print("ERR543: Error, hollow_y_width {:0.3f} is too small compare to cnc_router_bit_radius {:0.3f}".format(b_c['hollow_y_width'], b_c['cnc_router_bit_radius']))
+  if(b_c['hollow_y_width']<2*b_c['bell_cnc_router_bit_radius']):
+    print("ERR543: Error, hollow_y_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(b_c['hollow_y_width'], b_c['bell_cnc_router_bit_radius']))
     sys.exit(2)
   if(b_c['hollow_y_width']>b_c['bell_face_width']-2*b_c['face_thickness']):
     print("ERR546: Error, hollow_y_width {:0.3f} is too big compare to bell_face_width {:0.3f} and face_thickness {:0.3f}".format(b_c['hollow_y_width'], b_c['bell_face_width'], b_c['face_thickness']))
@@ -629,9 +629,13 @@ def bell(ai_constraints):
   if(b_c['z_hole_position_length']>b_c['bell_face_width']/2.0):
     print("ERR626: Error, z_hole_position_length {:0.3f} is too big compare to bell_face_width {:0.3f}".format(b_c['z_hole_position_length'], b_c['bell_face_width']))
     sys.exit(2)
-  # extra_cut_thickness
-  if(b_c['extra_cut_thickness']>min(b_c['bell_face_width'], b_c['bell_face_height'])/10.0):
-    print("ERR630: Error, extra_cut_thickness {:0.3f} is too big compare to bell_face_width {:0.3f} and bell_face_height {:0.3f}".format(b_c['extra_cut_thickness'], b_c['bell_face_width'], b_c['bell_face_height']))
+  # bell_cnc_router_bit_radius
+  if(b_c['bell_cnc_router_bit_radius']>min(b_c['face_thickness'], b_c['side_thickness'], b_c['base_thickness'])/2.0):
+    print("ERR634: Error, bell_cnc_router_bit_radius {:0.3f} is too big compare to face_thickness {:0.3f}, side_thickness {:0.3f} or base_thickness {:0.3f}".format(b_c['bell_cnc_router_bit_radius'], b_c['face_thickness'], b_c['side_thickness'], b_c['base_thickness']))
+    sys.exit(2)
+  # bell_extra_cut_thickness
+  if(b_c['bell_extra_cut_thickness']>min(b_c['bell_face_width'], b_c['bell_face_height'])/10.0):
+    print("ERR630: Error, bell_extra_cut_thickness {:0.3f} is too big compare to bell_face_width {:0.3f} and bell_face_height {:0.3f}".format(b_c['bell_extra_cut_thickness'], b_c['bell_face_width'], b_c['bell_face_height']))
     sys.exit(2)
 
   ################################################################
@@ -762,9 +766,9 @@ z_hole_position_length: {:0.3f}
 """.format(b_c['z_hole_radius'], 2*b_c['z_hole_radius'], b_c['z_hole_external_radius'], 2*b_c['z_hole_external_radius'], b_c['z_hole_position_length'])
   b_parameter_info += """
 manufacturing:
-cnc_router_bit_radius:  {:0.3f}
-extra_cut_thickness:    {:0.3f}
-""".format(b_c['cnc_router_bit_radius'], b_c['extra_cut_thickness'])
+bell_cnc_router_bit_radius:  {:0.3f}
+bell_extra_cut_thickness:    {:0.3f}
+""".format(b_c['bell_cnc_router_bit_radius'], b_c['bell_extra_cut_thickness'])
   #print(b_parameter_info)
 
   ### figures output
@@ -924,8 +928,8 @@ def bell_argparse_to_dictionary(ai_b_args):
   r_bd['z_hole_external_diameter']        = ai_b_args.sw_z_hole_external_diameter
   r_bd['z_hole_position_length']          = ai_b_args.sw_z_hole_position_length
   ### manufacturing
-  r_bd['cnc_router_bit_radius']           = ai_b_args.sw_cnc_router_bit_radius
-  r_bd['extra_cut_thickness']             = ai_b_args.sw_extra_cut_thickness
+  r_bd['bell_cnc_router_bit_radius']           = ai_b_args.sw_bell_cnc_router_bit_radius
+  r_bd['bell_extra_cut_thickness']             = ai_b_args.sw_bell_extra_cut_thickness
   ### output
   #r_bd['tkinter_view']           = False
   r_bd['output_file_basename']   = ai_b_args.sw_output_file_basename
@@ -1009,7 +1013,7 @@ def bell_cli(ai_args=""):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
   my_b = bell_cli()
-  #my_b = bell_cli("--return_type freecad_object")
+  #my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")

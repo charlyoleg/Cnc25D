@@ -84,7 +84,7 @@ def bell_face_side_holes(ai_c, ai_type):
   ext_buttress_x1 = -1*ai_c['ext_buttress_x_distance']/2.0 - ai_c['ext_buttress_x_width']
   ext_buttress_x2 = ai_c['ext_buttress_x_distance']/2.0
   ext_buttress_y = ai_c['base_thickness'] + ai_c['ext_buttress_z_position']
-  ect = ai_c['extra_cut_thickness']
+  ect = ai_c['bell_extra_cut_thickness']
   ### figure construction
   r_f =[]
   # internal_buttress
@@ -92,10 +92,10 @@ def bell_face_side_holes(ai_c, ai_type):
     for px in (int_buttress_x1, int_buttress_x2):
       for py in (int_buttress_y1, int_buttress_y2):
         ib_ol = []
-        ib_ol.append((px+0*ai_c['int_buttress_x_length']-ect, py+0*ai_c['int_buttress_z_width']-ect, -1*ai_c['cnc_router_bit_radius']))
-        ib_ol.append((px+1*ai_c['int_buttress_x_length']+ect, py+0*ai_c['int_buttress_z_width']-ect, -1*ai_c['cnc_router_bit_radius']))
-        ib_ol.append((px+1*ai_c['int_buttress_x_length']+ect, py+1*ai_c['int_buttress_z_width']+ect, -1*ai_c['cnc_router_bit_radius']))
-        ib_ol.append((px+0*ai_c['int_buttress_x_length']-ect, py+1*ai_c['int_buttress_z_width']+ect, -1*ai_c['cnc_router_bit_radius']))
+        ib_ol.append((px+0*ai_c['int_buttress_x_length']-ect, py+0*ai_c['int_buttress_z_width']-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+        ib_ol.append((px+1*ai_c['int_buttress_x_length']+ect, py+0*ai_c['int_buttress_z_width']-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+        ib_ol.append((px+1*ai_c['int_buttress_x_length']+ect, py+1*ai_c['int_buttress_z_width']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
+        ib_ol.append((px+0*ai_c['int_buttress_x_length']-ect, py+1*ai_c['int_buttress_z_width']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
         ib_ol.append((px+0*ai_c['int_buttress_x_length']-ect, py+0*ai_c['int_buttress_z_width']-ect, 0))
         r_f.append(ib_ol[:])
   # axle_hole
@@ -107,10 +107,10 @@ def bell_face_side_holes(ai_c, ai_type):
   if(ai_c['ext_buttress_z_length']>0):
     for px in (ext_buttress_x1, ext_buttress_x2):
       eb_ol = []
-      eb_ol.append((px+0*ai_c['ext_buttress_x_width']-ect, ext_buttress_y+0*ai_c['ext_buttress_z_length']-ect, -1*ai_c['cnc_router_bit_radius']))
-      eb_ol.append((px+1*ai_c['ext_buttress_x_width']+ect, ext_buttress_y+0*ai_c['ext_buttress_z_length']-ect, -1*ai_c['cnc_router_bit_radius']))
-      eb_ol.append((px+1*ai_c['ext_buttress_x_width']+ect, ext_buttress_y+1*ai_c['ext_buttress_z_length']+ect, -1*ai_c['cnc_router_bit_radius']))
-      eb_ol.append((px+0*ai_c['ext_buttress_x_width']-ect, ext_buttress_y+1*ai_c['ext_buttress_z_length']+ect, -1*ai_c['cnc_router_bit_radius']))
+      eb_ol.append((px+0*ai_c['ext_buttress_x_width']-ect, ext_buttress_y+0*ai_c['ext_buttress_z_length']-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+      eb_ol.append((px+1*ai_c['ext_buttress_x_width']+ect, ext_buttress_y+0*ai_c['ext_buttress_z_length']-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+      eb_ol.append((px+1*ai_c['ext_buttress_x_width']+ect, ext_buttress_y+1*ai_c['ext_buttress_z_length']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
+      eb_ol.append((px+0*ai_c['ext_buttress_x_width']-ect, ext_buttress_y+1*ai_c['ext_buttress_z_length']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
       eb_ol.append((px+0*ai_c['ext_buttress_x_width']-ect, ext_buttress_y+0*ai_c['ext_buttress_z_length']-ect, 0))
       r_f.append(eb_ol[:])
   ### return
@@ -178,7 +178,7 @@ def bell_face_outline(ai_c):
   bell_face_height_5 = ai_c['bell_face_height']/5.0
   bell_face_width_10 = ai_c['bell_face_width']/10.0
   bell_face_width_2 = ai_c['bell_face_width']/2.0
-  ect = ai_c['extra_cut_thickness']
+  ect = ai_c['bell_extra_cut_thickness']
   st = ai_c['side_thickness']
   bt = ai_c['base_thickness']
   ### bell_face_outline
@@ -196,30 +196,30 @@ def bell_face_outline(ai_c):
   else:
     r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+ai_c['bell_face_height'], 0)) # left-side
   r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+4*bell_face_height_5+ect, 0))
-  r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+4*bell_face_height_5+ect, -1*ai_c['cnc_router_bit_radius']))
-  r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+3*bell_face_height_5-ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+4*bell_face_height_5+ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+3*bell_face_height_5-ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+3*bell_face_height_5-ect, 0))
   r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+2*bell_face_height_5+ect, 0))
-  r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+2*bell_face_height_5+ect, -1*ai_c['cnc_router_bit_radius']))
-  r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+1*bell_face_height_5-ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+2*bell_face_height_5+ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  r_ol.append((-1*bell_face_width_2+st+ect, ai_c['base_thickness']+1*bell_face_height_5-ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+1*bell_face_height_5-ect, 0))
   r_ol.append((-1*bell_face_width_2, ai_c['base_thickness']+ect, 0)) # bottom
-  r_ol.append((-3*bell_face_width_10+ect, ai_c['base_thickness']+ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-3*bell_face_width_10+ect, ai_c['base_thickness']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((-3*bell_face_width_10+ect, 0, 0))
   r_ol.append((-1*bell_face_width_10-ect, 0, 0))
-  r_ol.append((-1*bell_face_width_10-ect, ai_c['base_thickness']+ect, -1*ai_c['cnc_router_bit_radius']))
-  r_ol.append((1*bell_face_width_10+ect, ai_c['base_thickness']+ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-1*bell_face_width_10-ect, ai_c['base_thickness']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  r_ol.append((1*bell_face_width_10+ect, ai_c['base_thickness']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((1*bell_face_width_10+ect, 0, 0))
   r_ol.append((3*bell_face_width_10-ect, 0, 0))
-  r_ol.append((3*bell_face_width_10-ect, ai_c['base_thickness']+ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((3*bell_face_width_10-ect, ai_c['base_thickness']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((bell_face_width_2, ai_c['base_thickness']+ect, 0)) # right-side
   r_ol.append((bell_face_width_2, ai_c['base_thickness']+1*bell_face_height_5-ect, 0))
-  r_ol.append((bell_face_width_2-(st+ect), ai_c['base_thickness']+1*bell_face_height_5-ect, -1*ai_c['cnc_router_bit_radius']))
-  r_ol.append((bell_face_width_2-(st+ect), ai_c['base_thickness']+2*bell_face_height_5+ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((bell_face_width_2-(st+ect), ai_c['base_thickness']+1*bell_face_height_5-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  r_ol.append((bell_face_width_2-(st+ect), ai_c['base_thickness']+2*bell_face_height_5+ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((bell_face_width_2, ai_c['base_thickness']+2*bell_face_height_5+ect, 0))
   r_ol.append((bell_face_width_2, ai_c['base_thickness']+3*bell_face_height_5-ect, 0))
-  r_ol.append((bell_face_width_2-(st+ect), ai_c['base_thickness']+3*bell_face_height_5-ect, -1*ai_c['cnc_router_bit_radius']))
-  r_ol.append((bell_face_width_2-(st+ect), ai_c['base_thickness']+4*bell_face_height_5+ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((bell_face_width_2-(st+ect), ai_c['base_thickness']+3*bell_face_height_5-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  r_ol.append((bell_face_width_2-(st+ect), ai_c['base_thickness']+4*bell_face_height_5+ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((bell_face_width_2, ai_c['base_thickness']+4*bell_face_height_5+ect, 0))
   r_ol.append((r_ol[0][0], r_ol[0][1], 0)) # close
   return(r_ol)
@@ -268,39 +268,39 @@ def bell_side_outline(ai_c):
   ### intermediate parameters
   bell_face_height_5 = ai_c['bell_face_height']/5.0
   bell_face_width_10 = ai_c['bell_face_width']/10.0
-  ect = ai_c['extra_cut_thickness']
+  ect = ai_c['bell_extra_cut_thickness']
   hollow_slope_length = math.sqrt((ai_c['bell_face_width']/2.0-ai_c['face_thickness']-ai_c['hollow_spare_width']-ai_c['hollow_y_width']/2.0)**2+ai_c['hollow_z_height']**2)
-  smoothing_hollow_int_radius = max(ai_c['cnc_router_bit_radius'], hollow_slope_length*3/4.0) # verification against hollow_y_width is difficult
+  smoothing_hollow_int_radius = max(ai_c['bell_cnc_router_bit_radius'], hollow_slope_length*3/4.0) # verification against hollow_y_width is difficult
   smoothing_hollow_ext_radius = max(0, (hollow_slope_length - smoothing_hollow_int_radius)*2/3.0)
   ### outline construction
   r_ol = []
   r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+5*bell_face_height_5, 0)) # left-side
-  r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+4*bell_face_height_5, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+4*bell_face_height_5, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((-5*bell_face_width_10, ai_c['base_thickness']+4*bell_face_height_5, 0))
   r_ol.append((-5*bell_face_width_10, ai_c['base_thickness']+3*bell_face_height_5, 0))
-  r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+3*bell_face_height_5, -1*ai_c['cnc_router_bit_radius']))
-  r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+2*bell_face_height_5, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+3*bell_face_height_5, -1*ai_c['bell_cnc_router_bit_radius']))
+  r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+2*bell_face_height_5, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((-5*bell_face_width_10, ai_c['base_thickness']+2*bell_face_height_5, 0))
   r_ol.append((-5*bell_face_width_10, ai_c['base_thickness']+1*bell_face_height_5, 0))
-  r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+1*bell_face_height_5, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+1*bell_face_height_5, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((-5*bell_face_width_10+ai_c['face_thickness']+ect, ai_c['base_thickness']+ect, 0)) # bottom-side
-  r_ol.append((-3*bell_face_width_10+ect, ai_c['base_thickness']+ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-3*bell_face_width_10+ect, ai_c['base_thickness']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((-3*bell_face_width_10+ect, 0, 0))
   r_ol.append((-1*bell_face_width_10-ect, 0, 0))
-  r_ol.append((-1*bell_face_width_10-ect, ai_c['base_thickness']+ect, -1*ai_c['cnc_router_bit_radius']))
-  r_ol.append((1*bell_face_width_10+ect, ai_c['base_thickness']+ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((-1*bell_face_width_10-ect, ai_c['base_thickness']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  r_ol.append((1*bell_face_width_10+ect, ai_c['base_thickness']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((1*bell_face_width_10+ect, 0, 0))
   r_ol.append((3*bell_face_width_10-ect, 0, 0))
-  r_ol.append((3*bell_face_width_10-ect, ai_c['base_thickness']+ect, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((3*bell_face_width_10-ect, ai_c['base_thickness']+ect, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+ect, 0)) # right-side
-  r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+1*bell_face_height_5, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+1*bell_face_height_5, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((5*bell_face_width_10, ai_c['base_thickness']+1*bell_face_height_5, 0))
   r_ol.append((5*bell_face_width_10, ai_c['base_thickness']+2*bell_face_height_5, 0))
-  r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+2*bell_face_height_5, -1*ai_c['cnc_router_bit_radius']))
-  r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+3*bell_face_height_5, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+2*bell_face_height_5, -1*ai_c['bell_cnc_router_bit_radius']))
+  r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+3*bell_face_height_5, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((5*bell_face_width_10, ai_c['base_thickness']+3*bell_face_height_5, 0))
   r_ol.append((5*bell_face_width_10, ai_c['base_thickness']+4*bell_face_height_5, 0))
-  r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+4*bell_face_height_5, -1*ai_c['cnc_router_bit_radius']))
+  r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+4*bell_face_height_5, -1*ai_c['bell_cnc_router_bit_radius']))
   r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ect, ai_c['base_thickness']+5*bell_face_height_5, 0))
   if(ai_c['hollow_z_height']>0): # top-side
     r_ol.append((5*bell_face_width_10-ai_c['face_thickness']-ai_c['hollow_spare_width'], ai_c['base_thickness']+5*bell_face_height_5, smoothing_hollow_ext_radius))
@@ -338,17 +338,17 @@ def bell_base_main_hole_outline(ai_c):
   ### intermediate parameters
   bell_face_width_10 = ai_c['bell_face_width']/10.0
   wall_thickness = max(ai_c['face_thickness'], ai_c['side_thickness'])
-  ect = ai_c['extra_cut_thickness']
+  ect = ai_c['bell_extra_cut_thickness']
   ### sub-outline construction
   sol = []
-  sol.append((-3*bell_face_width_10, -5*bell_face_width_10+1.5*wall_thickness, ai_c['cnc_router_bit_radius']))
-  sol.append((-3*bell_face_width_10, -5*bell_face_width_10-ect, -1*ai_c['cnc_router_bit_radius']))
-  sol.append((-1*bell_face_width_10, -5*bell_face_width_10-ect, -1*ai_c['cnc_router_bit_radius']))
+  sol.append((-3*bell_face_width_10, -5*bell_face_width_10+1.5*wall_thickness, ai_c['bell_cnc_router_bit_radius']))
+  sol.append((-3*bell_face_width_10, -5*bell_face_width_10-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  sol.append((-1*bell_face_width_10, -5*bell_face_width_10-ect, -1*ai_c['bell_cnc_router_bit_radius']))
   sol.append((-1*bell_face_width_10, -5*bell_face_width_10+wall_thickness, 0))
   sol.append((1*bell_face_width_10, -5*bell_face_width_10+wall_thickness, 0))
-  sol.append((1*bell_face_width_10, -5*bell_face_width_10-ect, -1*ai_c['cnc_router_bit_radius']))
-  sol.append((3*bell_face_width_10, -5*bell_face_width_10-ect, -1*ai_c['cnc_router_bit_radius']))
-  sol.append((3*bell_face_width_10, -5*bell_face_width_10+1.5*wall_thickness, ai_c['cnc_router_bit_radius']))
+  sol.append((1*bell_face_width_10, -5*bell_face_width_10-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  sol.append((3*bell_face_width_10, -5*bell_face_width_10-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+  sol.append((3*bell_face_width_10, -5*bell_face_width_10+1.5*wall_thickness, ai_c['bell_cnc_router_bit_radius']))
   if(ai_c['z_hole_radius']>0):
     lAB = 2*bell_face_width_10 - wall_thickness
     lAC = ai_c['z_hole_position_length']
@@ -377,7 +377,7 @@ def bell_base_main_hole_outline(ai_c):
     Gx = Cx + ai_c['z_hole_external_radius']*math.cos(-math.pi/4+aACD)
     Gy = Cy + ai_c['z_hole_external_radius']*math.sin(-math.pi/4+aACD)
     if(aACD>math.pi-radian_epsilon):
-      sol.append((Fx, Fy, ai_c['cnc_router_bit_radius']))
+      sol.append((Fx, Fy, ai_c['bell_cnc_router_bit_radius']))
     else:
       sol.append((Dx, Dy, 0))
       sol.append((Fx, Fy, Gx, Gy, 0))
@@ -395,7 +395,7 @@ def bell_base_holes(ai_c):
   """
   ### intermediate parameters
   wall_thickness = max(ai_c['face_thickness'], ai_c['side_thickness'])
-  ect = ai_c['extra_cut_thickness']
+  ect = ai_c['bell_extra_cut_thickness']
   ### figure construction
   r_f = []
   # z_axle_hole
@@ -416,10 +416,10 @@ def bell_base_holes(ai_c):
     for i in range(4):
       for px in (px1, px2):
         hol = []
-        hol.append((px-ect, py+ect, -1*ai_c['cnc_router_bit_radius']))
-        hol.append((px-ect, py-ai_c['ext_buttress_y_length']-ect, -1*ai_c['cnc_router_bit_radius']))
-        hol.append((px+ai_c['ext_buttress_x_width']+ect, py-ai_c['ext_buttress_y_length']-ect, -1*ai_c['cnc_router_bit_radius']))
-        hol.append((px+ai_c['ext_buttress_x_width']+ect, py+ect, -1*ai_c['cnc_router_bit_radius']))
+        hol.append((px-ect, py+ect, -1*ai_c['bell_cnc_router_bit_radius']))
+        hol.append((px-ect, py-ai_c['ext_buttress_y_length']-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+        hol.append((px+ai_c['ext_buttress_x_width']+ect, py-ai_c['ext_buttress_y_length']-ect, -1*ai_c['bell_cnc_router_bit_radius']))
+        hol.append((px+ai_c['ext_buttress_x_width']+ect, py+ect, -1*ai_c['bell_cnc_router_bit_radius']))
         hol.append((px-ect, py+ect, 0))
         r_f.append(cnc25d_api.outline_rotate(hol, 0.0, 0.0, i*math.pi/2))
   ### return
@@ -472,25 +472,25 @@ def bell_internal_buttress(ai_c):
   ib_ol = []
   ib_ol.append((x1, y2, 0))
   if((ai_c['int_buttress_ext_corner_length']>0)and(ai_c['int_buttress_x_length']>0)):
-    ib_ol.append((x2, y2, -1*ai_c['cnc_router_bit_radius']))
+    ib_ol.append((x2, y2, -1*ai_c['bell_cnc_router_bit_radius']))
   if(ai_c['int_buttress_x_length']>0):
     ib_ol.append((x2, y1, 0))
     ib_ol.append((x3, y1, 0))
   if((ai_c['int_buttress_int_corner_length']>0)and(ai_c['int_buttress_x_length']>0)):
-    ib_ol.append((x3, y2, -1*ai_c['cnc_router_bit_radius']))
+    ib_ol.append((x3, y2, -1*ai_c['bell_cnc_router_bit_radius']))
   if((ai_c['int_buttress_x_length']>0)and(ai_c['int_buttress_int_corner_length']==0)): # two branch because of the router_bit_radius
-    ib_ol.append((x4, y2, -1*ai_c['cnc_router_bit_radius']))
-    ib_ol.append((x5, y3, -1*ai_c['cnc_router_bit_radius']))
+    ib_ol.append((x4, y2, -1*ai_c['bell_cnc_router_bit_radius']))
+    ib_ol.append((x5, y3, -1*ai_c['bell_cnc_router_bit_radius']))
   else:
     ib_ol.append((x4, y2, 0))
     ib_ol.append((x5, y3, 0))
   if((ai_c['int_buttress_int_corner_length']>0)and(ai_c['int_buttress_x_length']>0)):
-    ib_ol.append((x5, y4, -1*ai_c['cnc_router_bit_radius']))
+    ib_ol.append((x5, y4, -1*ai_c['bell_cnc_router_bit_radius']))
   if(ai_c['int_buttress_x_length']>0):
     ib_ol.append((x6, y4, 0))
     ib_ol.append((x6, y5, 0))
   if((ai_c['int_buttress_ext_corner_length']>0)and(ai_c['int_buttress_x_length']>0)):
-    ib_ol.append((x5, y5, -1*ai_c['cnc_router_bit_radius']))
+    ib_ol.append((x5, y5, -1*ai_c['bell_cnc_router_bit_radius']))
   ib_ol.append((x5, y6, 0))
   if(ai_c['int_buttress_bump_length']>0):
     ib_ol.append((x7, y5, ai_c['int_buttress_smoothing_radius']))
