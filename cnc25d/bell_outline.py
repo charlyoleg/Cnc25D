@@ -435,79 +435,129 @@ def bell_base(ai_c):
   return(r_f)
 
 ################################################################
+# sub-function for bell_internal_buttress and bell_external_buttress
+################################################################
+
+def buttress_outline(ai_p):
+  """ generate the external A-outline figure of a buttress
+  """
+  ## ai_p dictionary:
+  # vertical_crenel_length
+  # vertical_thickness
+  # vertical_position
+  # horizontal_crenel_length
+  # horizontal_thickness
+  # horizontal_position
+  # vertical_int_corner_length
+  # vertical_ext_corner_length
+  # vertical_bump_length
+  # horizontal_int_corner_length
+  # horizontal_ext_corner_length
+  # horizontal_bump_length
+  # buttress_arc_height
+  # buttress_smoothing_radius
+  # buttress_cnc_router_bit_radius
+  # buttress_extra_cut_thickness
+  ### intermediate parameters
+  x1 = 0
+  x2 = x1 + ai_p['horizontal_ext_corner_length']
+  x3 = x2 + ai_p['horizontal_crenel_length']
+  x4 = x3 + ai_p['horizontal_int_corner_length']
+  x4b = x4 - ai_p['buttress_extra_cut_thickness']
+  x5 = x3 + ai_p['horizontal_position']
+  x5b = x5 - ai_p['buttress_extra_cut_thickness']
+  x6 = x5 + ai_p['vertical_thickness']
+  x7 = x5 - ai_p['vertical_bump_length']
+  if(ai_p['vertical_bump_length']>0):
+    x8 = (x2+x7)/2.0
+  else:
+    x8 = (x1+x5)/2.0
+  x9 = x8 - ai_p['buttress_arc_height']*math.sqrt(2)/2
+  y1 = 0
+  y2 = y1 + ai_p['horizontal_thickness']
+  y2b = y2 + ai_p['buttress_extra_cut_thickness']
+  y4 = y2 + ai_p['vertical_position']
+  y3 = y4 - ai_p['vertical_int_corner_length']
+  y3b = y3 + ai_p['buttress_extra_cut_thickness']
+  y5 = y4 + ai_p['vertical_crenel_length']
+  y6 = y5 + ai_p['vertical_ext_corner_length']
+  y7 = y2 + ai_p['horizontal_bump_length']
+  if(ai_p['horizontal_bump_length']>0):
+    y8 = (y5+y7)/2.0
+  else:
+    y8 = (y2+y6)/2.0
+  y9 = y8 + ai_p['buttress_arc_height']*math.sqrt(2)/2
+  ### outline construction
+  r_ol = []
+  r_ol.append((x1, y2b, 0))
+  if((ai_p['horizontal_ext_corner_length']>0)and(ai_p['horizontal_crenel_length']>0)):
+    r_ol.append((x2, y2b, -1*ai_p['buttress_cnc_router_bit_radius']))
+  if(ai_p['horizontal_crenel_length']>0):
+    r_ol.append((x2, y1, 0))
+    r_ol.append((x3, y1, 0))
+  if((ai_p['horizontal_int_corner_length']>0)and(ai_p['horizontal_crenel_length']>0)):
+    r_ol.append((x3, y2b, -1*ai_p['buttress_cnc_router_bit_radius']))
+  if((ai_p['horizontal_crenel_length']>0)and(ai_p['horizontal_int_corner_length']==0)): # two branch because of the router_bit_radius
+    r_ol.append((x4b, y2b, -1*ai_p['buttress_cnc_router_bit_radius']))
+  else:
+    r_ol.append((x4b, y2b, 0))
+  if((ai_p['vertical_crenel_length']>0)and(ai_p['vertical_int_corner_length']==0)): # two branch because of the router_bit_radius
+    r_ol.append((x5b, y3b, -1*ai_p['buttress_cnc_router_bit_radius']))
+  else:
+    r_ol.append((x5b, y3b, 0))
+  if((ai_p['vertical_int_corner_length']>0)and(ai_p['vertical_crenel_length']>0)):
+    r_ol.append((x5b, y4, -1*ai_p['buttress_cnc_router_bit_radius']))
+  if(ai_p['vertical_crenel_length']>0):
+    r_ol.append((x6, y4, 0))
+    r_ol.append((x6, y5, 0))
+  if((ai_p['vertical_ext_corner_length']>0)and(ai_p['vertical_crenel_length']>0)):
+    r_ol.append((x5b, y5, -1*ai_p['buttress_cnc_router_bit_radius']))
+  r_ol.append((x5b, y6, 0))
+  if(ai_p['vertical_bump_length']>0):
+    r_ol.append((x7, y5, ai_p['buttress_smoothing_radius']))
+  if(ai_p['buttress_arc_height']==0):
+    if(ai_p['horizontal_bump_length']>0):
+      r_ol.append((x2, y7, ai_p['buttress_smoothing_radius']))
+    r_ol.append((x1, y2b, 0))
+  else:
+    if(ai_p['horizontal_bump_length']>0):
+      r_ol.append((x9, y9, x2, y7, ai_p['buttress_smoothing_radius']))
+      r_ol.append((x1, y2b, 0))
+    else:
+      r_ol.append((x9, y9, x1, y2b, 0))
+  ### return
+  return(r_ol)
+
+################################################################
 # bell_internal_buttress
 ################################################################
 
 def bell_internal_buttress(ai_c):
   """ generate the A-outline figure of the bell_internal_buttress part
   """
-  ### intermediate parameters
-  x1 = 0
-  x2 = x1 + ai_c['int_buttress_ext_corner_length']
-  x3 = x2 + ai_c['int_buttress_x_length']
-  x4 = x3 + ai_c['int_buttress_int_corner_length']
-  x4b = x4 - ai_c['bell_extra_cut_thickness']
-  x5 = x3 + ai_c['int_buttress_x_position']
-  x5b = x5 - ai_c['bell_extra_cut_thickness']
-  x6 = x5 + ai_c['side_thickness']
-  x7 = x5 - ai_c['int_buttress_bump_length']
-  if(ai_c['int_buttress_bump_length']>0):
-    x8 = (x2+x7)/2.0
-  else:
-    x8 = (x1+x5)/2.0
-  x9 = x8 - ai_c['int_buttress_arc_height']*math.sqrt(2)/2
-  x10 = x5 - ai_c['z_hole_position_length']*math.sqrt(2)/2
-  y1 = 0
-  y2 = y1 + ai_c['face_thickness']
-  y2b = y2 + ai_c['bell_extra_cut_thickness']
-  y4 = y2 + ai_c['int_buttress_x_position']
-  y3 = y4 - ai_c['int_buttress_int_corner_length']
-  y3b = y3 + ai_c['bell_extra_cut_thickness']
-  y5 = y4 + ai_c['int_buttress_x_length']
-  y6 = y5 + ai_c['int_buttress_ext_corner_length']
-  y7 = y2 + ai_c['int_buttress_bump_length']
-  if(ai_c['int_buttress_bump_length']>0):
-    y8 = (y5+y7)/2.0
-  else:
-    y8 = (y2+y6)/2.0
-  y9 = y8 + ai_c['int_buttress_arc_height']*math.sqrt(2)/2
-  y10 = y2 + ai_c['z_hole_position_length']*math.sqrt(2)/2
   ### outline construction
-  ib_ol = []
-  ib_ol.append((x1, y2b, 0))
-  if((ai_c['int_buttress_ext_corner_length']>0)and(ai_c['int_buttress_x_length']>0)):
-    ib_ol.append((x2, y2b, -1*ai_c['bell_cnc_router_bit_radius']))
-  if(ai_c['int_buttress_x_length']>0):
-    ib_ol.append((x2, y1, 0))
-    ib_ol.append((x3, y1, 0))
-  if((ai_c['int_buttress_int_corner_length']>0)and(ai_c['int_buttress_x_length']>0)):
-    ib_ol.append((x3, y2b, -1*ai_c['bell_cnc_router_bit_radius']))
-  if((ai_c['int_buttress_x_length']>0)and(ai_c['int_buttress_int_corner_length']==0)): # two branch because of the router_bit_radius
-    ib_ol.append((x4b, y2b, -1*ai_c['bell_cnc_router_bit_radius']))
-    ib_ol.append((x5b, y3b, -1*ai_c['bell_cnc_router_bit_radius']))
-  else:
-    ib_ol.append((x4b, y2b, 0))
-    ib_ol.append((x5b, y3b, 0))
-  if((ai_c['int_buttress_int_corner_length']>0)and(ai_c['int_buttress_x_length']>0)):
-    ib_ol.append((x5b, y4, -1*ai_c['bell_cnc_router_bit_radius']))
-  if(ai_c['int_buttress_x_length']>0):
-    ib_ol.append((x6, y4, 0))
-    ib_ol.append((x6, y5, 0))
-  if((ai_c['int_buttress_ext_corner_length']>0)and(ai_c['int_buttress_x_length']>0)):
-    ib_ol.append((x5b, y5, -1*ai_c['bell_cnc_router_bit_radius']))
-  ib_ol.append((x5b, y6, 0))
-  if(ai_c['int_buttress_bump_length']>0):
-    ib_ol.append((x7, y5, ai_c['int_buttress_smoothing_radius']))
-  if(ai_c['int_buttress_arc_height']==0):
-    if(ai_c['int_buttress_bump_length']>0):
-      ib_ol.append((x2, y7, ai_c['int_buttress_smoothing_radius']))
-    ib_ol.append((x1, y2b, 0))
-  else:
-    if(ai_c['int_buttress_bump_length']>0):
-      ib_ol.append((x9, y9, x2, y7, ai_c['int_buttress_smoothing_radius']))
-      ib_ol.append((x1, y2b, 0))
-    else:
-      ib_ol.append((x9, y9, x1, y2b, 0))
+  b_p = {}
+  b_p['vertical_crenel_length']       = ai_c['int_buttress_x_length']
+  b_p['vertical_thickness']           = ai_c['side_thickness']
+  b_p['vertical_position']            = ai_c['int_buttress_x_position']
+  b_p['horizontal_crenel_length']     = ai_c['int_buttress_x_length']
+  b_p['horizontal_thickness']         = ai_c['face_thickness']
+  b_p['horizontal_position']          = ai_c['int_buttress_x_position']
+  b_p['vertical_int_corner_length']   = ai_c['int_buttress_int_corner_length']
+  b_p['vertical_ext_corner_length']   = ai_c['int_buttress_ext_corner_length']
+  b_p['vertical_bump_length']         = ai_c['int_buttress_bump_length']
+  b_p['horizontal_int_corner_length'] = ai_c['int_buttress_int_corner_length']
+  b_p['horizontal_ext_corner_length'] = ai_c['int_buttress_ext_corner_length']
+  b_p['horizontal_bump_length']       = ai_c['int_buttress_bump_length']
+  b_p['buttress_arc_height']          = ai_c['int_buttress_arc_height']
+  b_p['buttress_smoothing_radius']    = ai_c['int_buttress_smoothing_radius']
+  b_p['buttress_cnc_router_bit_radius'] = ai_c['bell_cnc_router_bit_radius']
+  b_p['buttress_extra_cut_thickness'] = ai_c['bell_extra_cut_thickness']
+  ib_ol = buttress_outline(b_p)
+  ### intermediate parameters
+  wall_thickness = max(ai_c['face_thickness'], ai_c['side_thickness'])
+  x10 = ai_c['int_buttress_ext_corner_length'] + ai_c['int_buttress_x_length'] + ai_c['int_buttress_x_position'] + ai_c['side_thickness'] - wall_thickness - ai_c['z_hole_position_length']*math.sqrt(2)/2
+  y10 = wall_thickness + ai_c['z_hole_position_length']*math.sqrt(2)/2
   ### figure construction
   r_f = []
   r_f.append(ib_ol)
@@ -530,72 +580,25 @@ def bell_external_buttress(ai_c, ai_type):
   else:
     print("ERR527: Error, ai_type {:s} doesn't exist".format(ai_type))
     sys.exit(2)
-  x1 = 0
-  x2 = x1 + ai_c['ext_buttress_base_ext_corner_length']
-  x3 = x2 + ai_c['ext_buttress_y_length']
-  x4 = x3 + ai_c['ext_buttress_base_int_corner_length']
-  x4b = x4 - ai_c['bell_extra_cut_thickness']
-  x5 = x3 + ai_c['ext_buttress_y_position']
-  x5b = x5 - ai_c['bell_extra_cut_thickness']
-  x6 = x5 + wall_thickness
-  x7 = x5 - ai_c['ext_buttress_face_bump_length']
-  if(ai_c['ext_buttress_face_bump_length']>0):
-    x8 = (x2+x7)/2.0
-  else:
-    x8 = (x1+x5)/2.0
-  x9 = x8 - ai_c['ext_buttress_arc_height']*math.sqrt(2)/2
-  y1 = 0
-  y2 = y1 + ai_c['base_thickness']
-  y2b = y2 + ai_c['bell_extra_cut_thickness']
-  y4 = y2 + ai_c['ext_buttress_z_position']
-  y3 = y4 - ai_c['ext_buttress_face_int_corner_length']
-  y3b = y3 + ai_c['bell_extra_cut_thickness']
-  y5 = y4 + ai_c['ext_buttress_z_length']
-  y6 = y5 + ai_c['ext_buttress_face_ext_corner_length']
-  y7 = y2 + ai_c['ext_buttress_base_bump_length']
-  if(ai_c['ext_buttress_base_bump_length']>0):
-    y8 = (y5+y7)/2.0
-  else:
-    y8 = (y2+y6)/2.0
-  y9 = y8 + ai_c['ext_buttress_arc_height']*math.sqrt(2)/2
   ### outline construction
-  eb_ol = []
-  eb_ol.append((x1, y2b, 0))
-  if((ai_c['ext_buttress_base_ext_corner_length']>0)and(ai_c['ext_buttress_y_length']>0)):
-    eb_ol.append((x2, y2b, -1*ai_c['bell_cnc_router_bit_radius']))
-  if(ai_c['ext_buttress_y_length']>0):
-    eb_ol.append((x2, y1, 0))
-    eb_ol.append((x3, y1, 0))
-  if((ai_c['ext_buttress_base_int_corner_length']>0)and(ai_c['ext_buttress_y_length']>0)):
-    eb_ol.append((x3, y2b, -1*ai_c['bell_cnc_router_bit_radius']))
-  if((ai_c['ext_buttress_y_length']>0)and(ai_c['ext_buttress_base_int_corner_length']==0)): # two branch because of the router_bit_radius
-    eb_ol.append((x4b, y2b, -1*ai_c['bell_cnc_router_bit_radius']))
-  else:
-    eb_ol.append((x4b, y2b, 0))
-  if((ai_c['ext_buttress_z_length']>0)and(ai_c['ext_buttress_face_int_corner_length']==0)): # two branch because of the router_bit_radius
-    eb_ol.append((x5b, y3b, -1*ai_c['bell_cnc_router_bit_radius']))
-  else:
-    eb_ol.append((x5b, y3b, 0))
-  if((ai_c['ext_buttress_face_int_corner_length']>0)and(ai_c['ext_buttress_z_length']>0)):
-    eb_ol.append((x5b, y4, -1*ai_c['bell_cnc_router_bit_radius']))
-  if(ai_c['ext_buttress_z_length']>0):
-    eb_ol.append((x6, y4, 0))
-    eb_ol.append((x6, y5, 0))
-  if((ai_c['ext_buttress_face_ext_corner_length']>0)and(ai_c['ext_buttress_z_length']>0)):
-    eb_ol.append((x5b, y5, -1*ai_c['bell_cnc_router_bit_radius']))
-  eb_ol.append((x5b, y6, 0))
-  if(ai_c['ext_buttress_face_bump_length']>0):
-    eb_ol.append((x7, y5, ai_c['ext_buttress_smoothing_radius']))
-  if(ai_c['ext_buttress_arc_height']==0):
-    if(ai_c['ext_buttress_base_bump_length']>0):
-      eb_ol.append((x2, y7, ai_c['ext_buttress_smoothing_radius']))
-    eb_ol.append((x1, y2b, 0))
-  else:
-    if(ai_c['ext_buttress_base_bump_length']>0):
-      eb_ol.append((x9, y9, x2, y7, ai_c['ext_buttress_smoothing_radius']))
-      eb_ol.append((x1, y2b, 0))
-    else:
-      eb_ol.append((x9, y9, x1, y2b, 0))
+  b_p = {}
+  b_p['vertical_crenel_length']       = ai_c['ext_buttress_z_length']
+  b_p['vertical_thickness']           = wall_thickness
+  b_p['vertical_position']            = ai_c['ext_buttress_z_position']
+  b_p['horizontal_crenel_length']     = ai_c['ext_buttress_y_length']
+  b_p['horizontal_thickness']         = ai_c['base_thickness']
+  b_p['horizontal_position']          = ai_c['ext_buttress_y_position']
+  b_p['vertical_int_corner_length']   = ai_c['ext_buttress_face_int_corner_length']
+  b_p['vertical_ext_corner_length']   = ai_c['ext_buttress_face_ext_corner_length']
+  b_p['vertical_bump_length']         = ai_c['ext_buttress_face_bump_length']
+  b_p['horizontal_int_corner_length'] = ai_c['ext_buttress_base_int_corner_length']
+  b_p['horizontal_ext_corner_length'] = ai_c['ext_buttress_base_ext_corner_length']
+  b_p['horizontal_bump_length']       = ai_c['ext_buttress_base_bump_length']
+  b_p['buttress_arc_height']          = ai_c['ext_buttress_arc_height']
+  b_p['buttress_smoothing_radius']    = ai_c['ext_buttress_smoothing_radius']
+  b_p['buttress_cnc_router_bit_radius'] = ai_c['bell_cnc_router_bit_radius']
+  b_p['buttress_extra_cut_thickness'] = ai_c['bell_extra_cut_thickness']
+  eb_ol = buttress_outline(b_p)
   ### figure construction
   r_f = []
   r_f.append(eb_ol)

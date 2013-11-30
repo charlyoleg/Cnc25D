@@ -72,9 +72,9 @@ def bell_dictionary_init():
   ### bell_base_disc
   r_bd['base_diameter']                   = 160.0
   ## wall_thickness
-  r_bd['face_thickness']                  = 5.0
-  r_bd['side_thickness']                  = 5.0
-  r_bd['base_thickness']                  = 5.0
+  r_bd['face_thickness']                  = 6.0
+  r_bd['side_thickness']                  = 4.0
+  r_bd['base_thickness']                  = 8.0
   ## axle_hole
   r_bd['axle_hole_nb']                    = 6
   r_bd['axle_hole_diameter']              = 4.0
@@ -128,11 +128,11 @@ def bell_dictionary_init():
   ## y_hole
   r_bd['y_hole_diameter']                 = 4.0
   r_bd['y_hole_z_position']               = 10.0
-  r_bd['y_hole_x_position']               = 10.0
+  r_bd['y_hole_x_position']               = 6.0
   ## x_hole
   r_bd['x_hole_diameter']                 = 4.0
   r_bd['x_hole_z_position']               = -6.0
-  r_bd['x_hole_y_position']               = 10.0
+  r_bd['x_hole_y_position']               = 6.0
   ## z_hole
   r_bd['z_hole_diameter']                 = 4.0
   r_bd['z_hole_external_diameter']        = 0.0
@@ -174,12 +174,12 @@ def bell_add_argument(ai_parser):
   r_parser.add_argument('--base_diameter','--bd', action='store', type=float, default=160.0, dest='sw_base_diameter',
     help="Set the diameter of the base-disc. Default: 160.0")
   ## wall_thickness
-  r_parser.add_argument('--face_thickness','--ft', action='store', type=float, default=5.0, dest='sw_face_thickness',
-    help="Set the thickness of the bell-face. Default: 5.0")
-  r_parser.add_argument('--side_thickness','--st', action='store', type=float, default=5.0, dest='sw_side_thickness',
-    help="Set the thickness of the bell-side. If equal to 0.0, set to face_thickness. Default: 5.0")
-  r_parser.add_argument('--base_thickness','--bt', action='store', type=float, default=5.0, dest='sw_base_thickness',
-    help="Set the thickness of the bell-base. If equal to 0.0, set to face_thickness. Default: 5.0")
+  r_parser.add_argument('--face_thickness','--ft', action='store', type=float, default=6.0, dest='sw_face_thickness',
+    help="Set the thickness of the bell-face. Default: 6.0")
+  r_parser.add_argument('--side_thickness','--st', action='store', type=float, default=4.0, dest='sw_side_thickness',
+    help="Set the thickness of the bell-side. If equal to 0.0, set to face_thickness. Default: 4.0")
+  r_parser.add_argument('--base_thickness','--bt', action='store', type=float, default=8.0, dest='sw_base_thickness',
+    help="Set the thickness of the bell-base. If equal to 0.0, set to face_thickness. Default: 8.0")
   ## axle_hole
   r_parser.add_argument('--axle_hole_nb','--ahn', action='store', type=int, default=6, dest='sw_axle_hole_nb',
     help="Set the number of the axle-holes. If equal to 0, no axle-hole is created. Default: 6")
@@ -276,15 +276,15 @@ def bell_add_argument(ai_parser):
     help="Set the diameter of the y-holes. If equal to 0.0, no y-hole is created. Default: 4.0")
   r_parser.add_argument('--y_hole_z_position','--yhzp', action='store', type=float, default=10.0, dest='sw_y_hole_z_position',
     help="Set the z-position of the y-holes. Default: 10.0")
-  r_parser.add_argument('--y_hole_x_position','--yhxp', action='store', type=float, default=10.0, dest='sw_y_hole_x_position',
-    help="Set the x-position of the y-holes. Default: 10.0")
+  r_parser.add_argument('--y_hole_x_position','--yhxp', action='store', type=float, default=6.0, dest='sw_y_hole_x_position',
+    help="Set the x-position of the y-holes. Default: 6.0")
   ## x_hole
   r_parser.add_argument('--x_hole_diameter','--xhd', action='store', type=float, default=4.0, dest='sw_x_hole_diameter',
     help="Set the diameter of the x-holes. If equal to 0.0, no x-hole is created. Default: 4.0")
   r_parser.add_argument('--x_hole_z_position','--xhzp', action='store', type=float, default=-6.0, dest='sw_x_hole_z_position',
     help="Set the z-position of the y-holes. Default: -6.0")
-  r_parser.add_argument('--x_hole_y_position','--xhyp', action='store', type=float, default=10.0, dest='sw_x_hole_y_position',
-    help="Set the y-position of the x-holes. Default: 10.0")
+  r_parser.add_argument('--x_hole_y_position','--xhyp', action='store', type=float, default=6.0, dest='sw_x_hole_y_position',
+    help="Set the y-position of the x-holes. Default: 6.0")
   ## z_hole
   r_parser.add_argument('--z_hole_diameter','--zhd', action='store', type=float, default=4.0, dest='sw_z_hole_diameter',
     help="Set the diameter of the z-holes. If equal to 0.0, no z-hole is created. Default: 4.0")
@@ -834,6 +834,18 @@ bell_extra_cut_thickness:    {:0.3f}
   int_butt_y_size = b_c['face_thickness']
   int_butt_z_size = b_c['int_buttress_z_width']
   f_w2b = f_w2 - b_c['face_thickness']
+  ext_butt_x_zero = b_c['ext_buttress_base_ext_corner_length']
+  ext_butt_x_size = b_c['ext_buttress_y_length']
+  ext_butt_y_size = b_c['base_thickness']
+  ext_butt_z_size = b_c['ext_buttress_x_width']
+  ext_side_butt_abs_x1_position = -1*(f_w2 + b_c['ext_buttress_y_position'] + 1*b_c['ext_buttress_y_length'])
+  ext_side_butt_abs_x2_position =  1*(f_w2 + b_c['ext_buttress_y_position'] + 0*b_c['ext_buttress_y_length'])
+  ext_side_butt_abs_y1_position = -1*(b_c['ext_buttress_x_distance']/2.0 + 1*b_c['ext_buttress_x_width'])
+  ext_side_butt_abs_y2_position =  1*(b_c['ext_buttress_x_distance']/2.0 + 0*b_c['ext_buttress_x_width'])
+  ext_face_butt_abs_x1_position = ext_side_butt_abs_y1_position
+  ext_face_butt_abs_x2_position = ext_side_butt_abs_y2_position
+  ext_face_butt_abs_y1_position = ext_side_butt_abs_x1_position
+  ext_face_butt_abs_y2_position = ext_side_butt_abs_x2_position
   # conf1
   bell_assembly_conf1 = []
   bell_assembly_conf1.append((bell_base, 0, 0, b_c['base_radius'], b_c['base_radius'], b_c['base_thickness'], 'i', 'xy', 0, 0, 0))
@@ -849,6 +861,36 @@ bell_extra_cut_thickness:    {:0.3f}
   bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'i', 'xy', int_buttress_absolute_x2_position, -f_w2, int_buttress_absolute_z1_position))
   bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'z', 'xy', int_buttress_absolute_x1_position, f_w2b, int_buttress_absolute_z1_position))
   bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'x', 'xy', int_buttress_absolute_x2_position, f_w2b, int_buttress_absolute_z1_position))
+  bell_assembly_conf1.append((bell_external_side_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'i', 'xz', ext_side_butt_abs_x1_position, ext_side_butt_abs_y1_position, 0))
+  bell_assembly_conf1.append((bell_external_side_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'i', 'xz', ext_side_butt_abs_x1_position, ext_side_butt_abs_y2_position, 0))
+  bell_assembly_conf1.append((bell_external_side_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'y', 'xz', ext_side_butt_abs_x2_position, ext_side_butt_abs_y1_position, 0))
+  bell_assembly_conf1.append((bell_external_side_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'y', 'xz', ext_side_butt_abs_x2_position, ext_side_butt_abs_y2_position, 0))
+  bell_assembly_conf1.append((bell_external_face_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'i', 'yz', ext_face_butt_abs_x1_position, ext_face_butt_abs_y1_position, 0))
+  bell_assembly_conf1.append((bell_external_face_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'i', 'yz', ext_face_butt_abs_x2_position, ext_face_butt_abs_y1_position, 0))
+  bell_assembly_conf1.append((bell_external_face_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'y', 'yz', ext_face_butt_abs_x1_position, ext_face_butt_abs_y2_position, 0))
+  bell_assembly_conf1.append((bell_external_face_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'y', 'yz', ext_face_butt_abs_x2_position, ext_face_butt_abs_y2_position, 0))
+  # conf2
+  z_hole_abs_position = f_w2 - max(b_c['face_thickness'], b_c['side_thickness']) - b_c['z_hole_position_length']*math.sqrt(2)/2
+  x_hole_abs_y_position = f_w2 - b_c['face_thickness'] - b_c['x_hole_y_position']
+  x_hole_abs_z1_position = int_buttress_absolute_z1_position + b_c['x_hole_z_position']
+  x_hole_abs_z2_position = int_buttress_absolute_z2_position + b_c['x_hole_z_position']
+  y_hole_abs_x_position = f_w2 - b_c['side_thickness'] - b_c['y_hole_x_position']
+  y_hole_abs_z1_position = int_buttress_absolute_z1_position + b_c['y_hole_z_position']
+  y_hole_abs_z2_position = int_buttress_absolute_z2_position + b_c['y_hole_z_position']
+  bell_assembly_conf2 = []
+  bell_assembly_conf2.extend(bell_assembly_conf1)
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['z_hole_radius'])], 0, 0, 0, 0, b_c['base_thickness']+b_c['bell_face_height'], 'i', 'xy',  1*z_hole_abs_position,  1*z_hole_abs_position, -1*b_c['z_hole_radius']))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['z_hole_radius'])], 0, 0, 0, 0, b_c['base_thickness']+b_c['bell_face_height'], 'i', 'xy', -1*z_hole_abs_position,  1*z_hole_abs_position, -1*b_c['z_hole_radius']))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['z_hole_radius'])], 0, 0, 0, 0, b_c['base_thickness']+b_c['bell_face_height'], 'i', 'xy', -1*z_hole_abs_position, -1*z_hole_abs_position, -1*b_c['z_hole_radius']))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['z_hole_radius'])], 0, 0, 0, 0, b_c['base_thickness']+b_c['bell_face_height'], 'i', 'xy',  1*z_hole_abs_position, -1*z_hole_abs_position, -1*b_c['z_hole_radius']))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['x_hole_radius'])], 0, 0, 0, 0, b_c['bell_face_height']+2*b_c['x_hole_radius'], 'i', 'yz', -1*f_w2-b_c['x_hole_radius'],  1*x_hole_abs_y_position, x_hole_abs_z1_position))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['x_hole_radius'])], 0, 0, 0, 0, b_c['bell_face_height']+2*b_c['x_hole_radius'], 'i', 'yz', -1*f_w2-b_c['x_hole_radius'], -1*x_hole_abs_y_position, x_hole_abs_z1_position))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['x_hole_radius'])], 0, 0, 0, 0, b_c['bell_face_height']+2*b_c['x_hole_radius'], 'i', 'yz', -1*f_w2-b_c['x_hole_radius'],  1*x_hole_abs_y_position, x_hole_abs_z2_position))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['x_hole_radius'])], 0, 0, 0, 0, b_c['bell_face_height']+2*b_c['x_hole_radius'], 'i', 'yz', -1*f_w2-b_c['x_hole_radius'], -1*x_hole_abs_y_position, x_hole_abs_z2_position))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['y_hole_radius'])], 0, 0, 0, 0, b_c['bell_face_height']+2*b_c['x_hole_radius'], 'i', 'xz',  1*y_hole_abs_x_position, -1*f_w2-b_c['y_hole_radius'], y_hole_abs_z1_position))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['y_hole_radius'])], 0, 0, 0, 0, b_c['bell_face_height']+2*b_c['x_hole_radius'], 'i', 'xz', -1*y_hole_abs_x_position, -1*f_w2-b_c['y_hole_radius'], y_hole_abs_z1_position))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['y_hole_radius'])], 0, 0, 0, 0, b_c['bell_face_height']+2*b_c['x_hole_radius'], 'i', 'xz',  1*y_hole_abs_x_position, -1*f_w2-b_c['y_hole_radius'], y_hole_abs_z2_position))
+  bell_assembly_conf2.append(([(0, 0, 0.9*b_c['y_hole_radius'])], 0, 0, 0, 0, b_c['bell_face_height']+2*b_c['x_hole_radius'], 'i', 'xz', -1*y_hole_abs_x_position, -1*f_w2-b_c['y_hole_radius'], y_hole_abs_z2_position))
 
 
   ### display with Tkinter
@@ -866,7 +908,7 @@ bell_extra_cut_thickness:    {:0.3f}
   elif(b_c['return_type']=='cnc25d_figure'):
     r_b = part_list
   elif(b_c['return_type']=='freecad_object'):
-    r_b = cnc25d_api.figures_to_freecad_assembly(bell_assembly_conf1)
+    r_b = cnc25d_api.figures_to_freecad_assembly(bell_assembly_conf2)
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(b_c['return_type']))
     sys.exit(2)
