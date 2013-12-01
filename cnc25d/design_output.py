@@ -164,16 +164,16 @@ def generate_3d_assembly_output_file(ai_3d_conf, ai_output_filename, ai_brep=Tru
     export_2d.export_xyz_to_dxf(fc_assembly, size_x, size_y, size_z, slice_x, slice_y, slice_z, dxf_output_filename)
   return(0)
 
-def flip_rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_center_y, ai_x_flip, ai_y_flip, ai_rotation_angle, ai_translate_x, ai_translate_y):
+def flip_rotate_and_translate_figure(ai_figure, ai_zero_x, ai_zero_y, ai_size_x, ai_size_y, ai_x_flip, ai_y_flip, ai_rotation_angle, ai_translate_x, ai_translate_y):
   """ flip, rotate and translate a figure (list of outlines). Usually used to agglomerate figures to create a cut-set.
   """
   r_figure = []
   for i in range(len(ai_figure)):
-    centered_ol = cnc_outline.outline_shift_xy(ai_figure[i], -1*ai_rotation_center_x, 1, -1*ai_rotation_center_y, 1)
-    flipped_ol = cnc_outline.outline_shift_xy(centered_ol, ai_rotation_center_x, ai_x_flip, ai_rotation_center_y, ai_y_flip)
+    centered_ol = cnc_outline.outline_shift_xy(ai_figure[i], -1*(ai_zero_x+ai_size_x/2.0), 1, -1*(ai_zero_y+ai_size_y/2.0), 1)
+    flipped_ol = cnc_outline.outline_shift_xy(centered_ol, 0.0, ai_x_flip, 0.0, ai_y_flip)
     #flipped_ol = cnc_outline.outline_shift_xy(centered_ol, 0, ai_x_flip, 0, ai_y_flip) # what makes the most sense? re-shift or not?
-    rotated_ol = cnc_outline.outline_rotate(flipped_ol, ai_rotation_center_x, ai_rotation_center_y, ai_rotation_angle)
-    translated_ol = cnc_outline.outline_shift_xy(rotated_ol, ai_translate_x, 1, ai_translate_y, 1)
+    rotated_ol = cnc_outline.outline_rotate(flipped_ol, 0.0, 0.0, ai_rotation_angle)
+    translated_ol = cnc_outline.outline_shift_xy(rotated_ol, ai_size_x/2.0+ai_translate_x, 1, ai_size_y/2.0+ai_translate_y, 1)
     r_figure.append(translated_ol[:])
   return(r_figure)
 
@@ -183,7 +183,7 @@ def rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_cen
   #r_figure = []
   #for i in range(len(ai_figure)):
   #  r_figure.append(cnc_outline.outline_shift_xy(cnc_outline.outline_rotate(ai_figure[i], ai_rotation_center_x, ai_rotation_center_y, ai_rotation_angle), ai_translate_x, 1, ai_translate_y, 1))
-  r_figure = flip_rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_center_y, 1, 1, ai_rotation_angle, ai_translate_x, ai_translate_y)
+  r_figure = flip_rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_center_y, 0.0, 0.0, 1, 1, ai_rotation_angle, ai_rotation_center_x+ai_translate_x, ai_rotation_center_y+ai_translate_y)
   return(r_figure)
 
 def cnc_cut_figure(ai_figure, ai_error_msg_id):

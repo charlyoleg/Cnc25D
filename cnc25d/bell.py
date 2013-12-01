@@ -792,26 +792,29 @@ bell_extra_cut_thickness:    {:0.3f}
     part_list_figure.extend(cnc25d_api.rotate_and_translate_figure(part_list[i], 0.0, 0.0, 0.0, i*x_space, 0.0))
   ## intermediate parameters
   f_w2 = b_c['bell_face_width']/2.0
-  int_buttress_absolute_x1_position = -1*b_c['bell_face_width']/2.0 + b_c['side_thickness'] + b_c['int_buttress_x_position'] + b_c['int_buttress_x_length']
-  int_buttress_absolute_x2_position = b_c['bell_face_width']/2.0 - b_c['side_thickness'] - b_c['int_buttress_x_position'] - b_c['int_buttress_x_length']
-  ext_buttress_absolute_x1_position = -1*f_w2 - b_c['ext_buttress_y_position'] - b_c['ext_buttress_y_length'] - b_c['ext_buttress_base_ext_corner_length']
-  ext_buttress_absolute_x2_position = f_w2 + b_c['ext_buttress_y_position'] + b_c['ext_buttress_y_length'] - b_c['ext_buttress_base_ext_corner_length']
-  int_butt_x_zero = b_c['int_buttress_ext_corner_length']
-  ext_butt_x_zero = b_c['ext_buttress_base_ext_corner_length']
-  centered_bell_internal_buttress = cnc25d_api.rotate_and_translate_figure(bell_internal_buttress, 0, 0, 0, -1*int_butt_x_zero, 0)
+  ib_x_zero = b_c['int_buttress_ext_corner_length']
+  ib_x_size = b_c['int_buttress_x_length']
+  ib_y_size = b_c['face_thickness']
+  eb_x_zero = b_c['ext_buttress_base_ext_corner_length']
+  eb_x_size = b_c['ext_buttress_y_length']
+  eb_y_size = b_c['base_thickness']
+  ib_abs_x1_position = -1*b_c['bell_face_width']/2.0 + b_c['side_thickness'] + b_c['int_buttress_x_position']
+  ib_abs_x2_position = b_c['bell_face_width']/2.0 - b_c['side_thickness'] - b_c['int_buttress_x_position'] - b_c['int_buttress_x_length']
+  eb_abs_x1_position = -1*f_w2 - b_c['ext_buttress_y_position'] - b_c['ext_buttress_y_length']
+  eb_abs_x2_position = f_w2 + b_c['ext_buttress_y_position']
   ## sub-assembly
   # internal_buttress_assembly
   internal_buttress_assembly = []
   internal_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_base, 0.0, 0.0, 0.0, 0.0, 0.0))
-  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(centered_bell_internal_buttress, 0, 0, -1,  1, 0.0, int_buttress_absolute_x1_position, -1*f_w2))
-  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(centered_bell_internal_buttress, 0, 0, -1, -1, 0.0, int_buttress_absolute_x1_position,  1*f_w2))
-  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(centered_bell_internal_buttress, 0, 0,  1,  1, 0.0, int_buttress_absolute_x2_position, -1*f_w2))
-  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(centered_bell_internal_buttress, 0, 0,  1, -1, 0.0, int_buttress_absolute_x2_position,  1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, -1,  1, 0.0, ib_abs_x1_position, -1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, -1, -1, 0.0, ib_abs_x1_position,  1*f_w2-ib_y_size))
+  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size,  1,  1, 0.0, ib_abs_x2_position, -1*f_w2))
+  internal_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size,  1, -1, 0.0, ib_abs_x2_position,  1*f_w2-ib_y_size))
   # external_buttress_assembly
   external_buttress_assembly = []
   external_buttress_assembly.extend(cnc25d_api.rotate_and_translate_figure(bell_face, 0.0, 0.0, 0.0, 0.0, 0.0))
-  external_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_external_side_buttress, ext_butt_x_zero, 0.0,  1, 1, 0.0, ext_buttress_absolute_x1_position, 0.0))
-  external_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_external_side_buttress, ext_butt_x_zero, 0.0, -1, 1, 0.0, ext_buttress_absolute_x2_position, 0.0))
+  external_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_external_side_buttress, eb_x_zero, 0.0, eb_x_size, eb_y_size,  1, 1, 0.0, eb_abs_x1_position, 0.0))
+  external_buttress_assembly.extend(cnc25d_api.flip_rotate_and_translate_figure(bell_external_side_buttress, eb_x_zero, 0.0, eb_x_size, eb_y_size, -1, 1, 0.0, eb_abs_x2_position, 0.0))
   ## bell_part_overview
   bell_part_overview_figure = []
   bell_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(bell_face, 0.0, 0.0, 0.0, 0*x_space, 1*y_space))
@@ -831,21 +834,19 @@ bell_extra_cut_thickness:    {:0.3f}
   ### freecad-object assembly configuration
   # intermediate parameters
   #int_buttress_y_size = b_c['face_thickness'] + b_c['int_buttress_x_position'] + b_c['int_buttress_int_corner_length'] + b_c['int_buttress_x_length'] + b_c['int_buttress_ext_corner_length']
-  int_butt_abs_x1_position = int_buttress_absolute_x1_position - b_c['int_buttress_x_length']
-  int_butt_abs_x2_position = int_buttress_absolute_x2_position
   int_butt_abs_z1_position = b_c['base_thickness'] + b_c['int_buttress_z_position']
   int_butt_abs_z2_position = int_butt_abs_z1_position + b_c['int_buttress_z_distance']
-  #int_butt_x_zero =  b_c['int_buttress_ext_corner_length']
-  int_butt_x_size = b_c['int_buttress_x_length']
-  int_butt_y_size = b_c['face_thickness']
-  int_butt_z_size = b_c['int_buttress_z_width']
+  #ib_x_zero =  b_c['int_buttress_ext_corner_length']
+  #ib_x_size = b_c['int_buttress_x_length']
+  #ib_y_size = b_c['face_thickness']
+  ib_z_size = b_c['int_buttress_z_width']
   f_w2b = f_w2 - b_c['face_thickness']
-  ext_butt_x_zero = b_c['ext_buttress_base_ext_corner_length']
-  ext_butt_x_size = b_c['ext_buttress_y_length']
-  ext_butt_y_size = b_c['base_thickness']
-  ext_butt_z_size = b_c['ext_buttress_x_width']
-  ext_side_butt_abs_x1_position = -1*(f_w2 + b_c['ext_buttress_y_position'] + 1*b_c['ext_buttress_y_length'])
-  ext_side_butt_abs_x2_position =  1*(f_w2 + b_c['ext_buttress_y_position'] + 0*b_c['ext_buttress_y_length'])
+  #eb_x_zero = b_c['ext_buttress_base_ext_corner_length']
+  #eb_x_size = b_c['ext_buttress_y_length']
+  #eb_y_size = b_c['base_thickness']
+  eb_z_size = b_c['ext_buttress_x_width']
+  ext_side_butt_abs_x1_position = eb_abs_x1_position
+  ext_side_butt_abs_x2_position = eb_abs_x2_position
   ext_side_butt_abs_y1_position = -1*(b_c['ext_buttress_x_distance']/2.0 + 1*b_c['ext_buttress_x_width'])
   ext_side_butt_abs_y2_position =  1*(b_c['ext_buttress_x_distance']/2.0 + 0*b_c['ext_buttress_x_width'])
   ext_face_butt_abs_x1_position = ext_side_butt_abs_y1_position
@@ -859,22 +860,22 @@ bell_extra_cut_thickness:    {:0.3f}
   bell_assembly_conf1.append((bell_face, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['face_thickness'], 'i', 'xz', -f_w2, -f_w2, 0))
   bell_assembly_conf1.append((bell_side, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['side_thickness'], 'i', 'yz', f_w2-b_c['side_thickness'], -f_w2, 0))
   bell_assembly_conf1.append((bell_side, -f_w2, 0, 2*f_w2, b_c['bell_face_height'], b_c['side_thickness'], 'i', 'yz', -f_w2, -f_w2, 0))
-  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'y', 'xy', int_butt_abs_x1_position, -f_w2, int_butt_abs_z2_position))
-  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'i', 'xy', int_butt_abs_x2_position, -f_w2, int_butt_abs_z2_position))
-  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'z', 'xy', int_butt_abs_x1_position, f_w2b, int_butt_abs_z2_position))
-  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'x', 'xy', int_butt_abs_x2_position, f_w2b, int_butt_abs_z2_position))
-  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'y', 'xy', int_butt_abs_x1_position, -f_w2, int_butt_abs_z1_position))
-  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'i', 'xy', int_butt_abs_x2_position, -f_w2, int_butt_abs_z1_position))
-  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'z', 'xy', int_butt_abs_x1_position, f_w2b, int_butt_abs_z1_position))
-  bell_assembly_conf1.append((bell_internal_buttress, int_butt_x_zero, 0, int_butt_x_size, int_butt_y_size, int_butt_z_size, 'x', 'xy', int_butt_abs_x2_position, f_w2b, int_butt_abs_z1_position))
-  bell_assembly_conf1.append((bell_external_side_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'i', 'xz', ext_side_butt_abs_x1_position, ext_side_butt_abs_y1_position, 0))
-  bell_assembly_conf1.append((bell_external_side_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'i', 'xz', ext_side_butt_abs_x1_position, ext_side_butt_abs_y2_position, 0))
-  bell_assembly_conf1.append((bell_external_side_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'y', 'xz', ext_side_butt_abs_x2_position, ext_side_butt_abs_y1_position, 0))
-  bell_assembly_conf1.append((bell_external_side_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'y', 'xz', ext_side_butt_abs_x2_position, ext_side_butt_abs_y2_position, 0))
-  bell_assembly_conf1.append((bell_external_face_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'i', 'yz', ext_face_butt_abs_x1_position, ext_face_butt_abs_y1_position, 0))
-  bell_assembly_conf1.append((bell_external_face_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'i', 'yz', ext_face_butt_abs_x2_position, ext_face_butt_abs_y1_position, 0))
-  bell_assembly_conf1.append((bell_external_face_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'y', 'yz', ext_face_butt_abs_x1_position, ext_face_butt_abs_y2_position, 0))
-  bell_assembly_conf1.append((bell_external_face_buttress, ext_butt_x_zero, 0, ext_butt_x_size, ext_butt_y_size, ext_butt_z_size, 'y', 'yz', ext_face_butt_abs_x2_position, ext_face_butt_abs_y2_position, 0))
+  bell_assembly_conf1.append((bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, ib_z_size, 'y', 'xy', ib_abs_x1_position, -f_w2, int_butt_abs_z2_position))
+  bell_assembly_conf1.append((bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, ib_z_size, 'i', 'xy', ib_abs_x2_position, -f_w2, int_butt_abs_z2_position))
+  bell_assembly_conf1.append((bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, ib_z_size, 'z', 'xy', ib_abs_x1_position, f_w2b, int_butt_abs_z2_position))
+  bell_assembly_conf1.append((bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, ib_z_size, 'x', 'xy', ib_abs_x2_position, f_w2b, int_butt_abs_z2_position))
+  bell_assembly_conf1.append((bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, ib_z_size, 'y', 'xy', ib_abs_x1_position, -f_w2, int_butt_abs_z1_position))
+  bell_assembly_conf1.append((bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, ib_z_size, 'i', 'xy', ib_abs_x2_position, -f_w2, int_butt_abs_z1_position))
+  bell_assembly_conf1.append((bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, ib_z_size, 'z', 'xy', ib_abs_x1_position, f_w2b, int_butt_abs_z1_position))
+  bell_assembly_conf1.append((bell_internal_buttress, ib_x_zero, 0, ib_x_size, ib_y_size, ib_z_size, 'x', 'xy', ib_abs_x2_position, f_w2b, int_butt_abs_z1_position))
+  bell_assembly_conf1.append((bell_external_side_buttress, eb_x_zero, 0, eb_x_size, eb_y_size, eb_z_size, 'i', 'xz', ext_side_butt_abs_x1_position, ext_side_butt_abs_y1_position, 0))
+  bell_assembly_conf1.append((bell_external_side_buttress, eb_x_zero, 0, eb_x_size, eb_y_size, eb_z_size, 'i', 'xz', ext_side_butt_abs_x1_position, ext_side_butt_abs_y2_position, 0))
+  bell_assembly_conf1.append((bell_external_side_buttress, eb_x_zero, 0, eb_x_size, eb_y_size, eb_z_size, 'y', 'xz', ext_side_butt_abs_x2_position, ext_side_butt_abs_y1_position, 0))
+  bell_assembly_conf1.append((bell_external_side_buttress, eb_x_zero, 0, eb_x_size, eb_y_size, eb_z_size, 'y', 'xz', ext_side_butt_abs_x2_position, ext_side_butt_abs_y2_position, 0))
+  bell_assembly_conf1.append((bell_external_face_buttress, eb_x_zero, 0, eb_x_size, eb_y_size, eb_z_size, 'i', 'yz', ext_face_butt_abs_x1_position, ext_face_butt_abs_y1_position, 0))
+  bell_assembly_conf1.append((bell_external_face_buttress, eb_x_zero, 0, eb_x_size, eb_y_size, eb_z_size, 'i', 'yz', ext_face_butt_abs_x2_position, ext_face_butt_abs_y1_position, 0))
+  bell_assembly_conf1.append((bell_external_face_buttress, eb_x_zero, 0, eb_x_size, eb_y_size, eb_z_size, 'y', 'yz', ext_face_butt_abs_x1_position, ext_face_butt_abs_y2_position, 0))
+  bell_assembly_conf1.append((bell_external_face_buttress, eb_x_zero, 0, eb_x_size, eb_y_size, eb_z_size, 'y', 'yz', ext_face_butt_abs_x2_position, ext_face_butt_abs_y2_position, 0))
   # conf2
   z_hole_abs_position = f_w2 - max(b_c['face_thickness'], b_c['side_thickness']) - b_c['z_hole_position_length']*math.sqrt(2)/2
   x_hole_abs_y_position = f_w2 - b_c['face_thickness'] - b_c['x_hole_y_position']
@@ -1115,8 +1116,8 @@ def bell_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
-  my_b = bell_cli()
-  #my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
+  #my_b = bell_cli()
+  my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")
