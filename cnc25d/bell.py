@@ -186,7 +186,7 @@ def bell_add_argument(ai_parser):
   r_parser.add_argument('--axle_hole_diameter','--ahd', action='store', type=float, default=4.0, dest='sw_axle_hole_diameter',
     help="Set the diameter of the axle-holes. Default: 4.0")
   r_parser.add_argument('--axle_hole_position_diameter','--ahpd', action='store', type=float, default=0.0, dest='sw_axle_hole_position_diameter',
-    help="Set the diameter of the axle-hole position circle. If equal to 0.0, set to (axle_internal_diameter+axle_external_diameter)/2.Default: 4.0")
+    help="Set the diameter of the axle-hole position circle. If equal to 0.0, set to (axle_internal_diameter+axle_external_diameter)/2. Default: 0.0")
   r_parser.add_argument('--axle_hole_angle','--aha', action='store', type=float, default=0.0, dest='sw_axle_hole_angle',
     help="Set the position angle of the first axle-hole. Default: 0.0")
   ## leg
