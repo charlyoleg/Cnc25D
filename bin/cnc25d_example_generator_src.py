@@ -221,6 +221,16 @@ ml_script_content='''#!/usr/bin/env python
 #include "../cnc25d/tests/motor_lid_macro.py"
 '''
 
+### bell script example
+bell_script_name="eg12_bell_example.py"
+# copy from ../cnc25d/tests/bell_macro.py
+bell_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/bell_macro.py
+#
+#include "../cnc25d/tests/bell_macro.py"
+'''
+
 ### Generating the script examples
 
 ceg_example_list={
@@ -234,7 +244,8 @@ ceg_example_list={
   sgw_script_name : sgw_script_content,
   eg_script_name : eg_script_content,
   al_script_name : al_script_content,
-  ml_script_name : ml_script_content}
+  ml_script_name : ml_script_content,
+  bell_script_name : bell_script_content}
 
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")
