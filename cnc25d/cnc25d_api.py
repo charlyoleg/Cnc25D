@@ -79,7 +79,9 @@ get_effective_args = design_help.get_effective_args
 
 # from design_output
 generate_output_file_add_argument = design_output.generate_output_file_add_argument
+get_output_file_suffix = design_output.get_output_file_suffix
 generate_output_file = design_output.generate_output_file
+generate_3d_assembly_output_file = design_output.generate_3d_assembly_output_file
 rotate_and_translate_figure = design_output.rotate_and_translate_figure
 flip_rotate_and_translate_figure = design_output.flip_rotate_and_translate_figure
 cnc_cut_figure =  design_output.cnc_cut_figure

@@ -81,8 +81,22 @@ def generate_output_file_add_argument(ai_parser, ai_variant=0):
   # return
   return(r_parser)
   
+def get_output_file_suffix(ai_output_file_basename):
+  """ detect the output-file-suffix .dxf and .svg and return the basename and suffix
+  """
+  output_file_suffix = '' # .brep
+  output_file_basename = ai_output_file_basename
+  if(re.search('\.dxf$', ai_output_file_basename)):
+    output_file_suffix = '.dxf'
+    output_file_basename = re.sub('\.dxf$', '', ai_output_file_basename)
+  elif(re.search('\.svg$', ai_output_file_basename)):
+    output_file_suffix = '.svg'
+    output_file_basename = re.sub('\.svg$', '', ai_output_file_basename)
+  r_bs = (output_file_basename, output_file_suffix)
+  return(r_bs)
+
 def generate_output_file(ai_figure, ai_output_filename, ai_height, ai_info_txt=''):
-  """ implement the swith --output_file_basename
+  """ implement the swith --output_file_basename for 2D figure
   """
   if(ai_output_filename!=''):
     # create the output directory if needed
@@ -116,6 +130,38 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height, ai_info_txt='
       ofh.write(ai_info_txt)
       ofh.close()
   # return
+  return(0)
+
+def generate_3d_assembly_output_file(ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[]):
+  """ implement the swith --output_file_basename for 3D assembly
+  """
+  print("Compute with FreeCAD the 3D assembly {:s}".format(ai_output_filename))
+  fc_assembly = figures_to_freecad_assembly(ai_3d_conf)
+  if(ai_brep):
+    brep_output_filename = "{:s}.brep".format(ai_output_filename)
+    print("Generate with FreeCAD the BRep file {:s}".format(brep_output_filename))
+    fc_assembly.exportBrep(brep_output_filename)
+  if(ai_stl):
+    stl_output_filename = "{:s}.stl".format(ai_output_filename)
+    print("Generate with FreeCAD the STL file {:s}".format(stl_output_filename))
+    fc_assembly.exportStl(stl_output_filename)
+  if(len(ai_slice_xyz)>0):
+    if(len(ai_slice_xyz)!=9):
+      print("ERR150: Error, len(ai_slice_xyz) {:d} must be 9".format(len(ai_slice_xyz)))
+      sys.exit(2)
+    size_x = ai_slice_xyz[0]
+    size_y = ai_slice_xyz[1]
+    size_z = ai_slice_xyz[2]
+    zero_x = ai_slice_xyz[3]
+    zero_y = ai_slice_xyz[4]
+    zero_z = ai_slice_xyz[5]
+    slice_x = ai_slice_xyz[6]
+    slice_y = ai_slice_xyz[7]
+    slice_z = ai_slice_xyz[8]
+    dxf_output_filename = "{:s}_xyz_slices.dxf".format(ai_output_filename)
+    print("Slice with FreeCAD the 3D into the DXF file {:s}".format(dxf_output_filename))
+    fc_assembly.translate(Base.Vector(-1*zero_x, -1*zero_y, -1*zero_z))
+    export_2d.export_xyz_to_dxf(fc_assembly, size_x, size_y, size_z, slice_x, slice_y, slice_z, dxf_output_filename)
   return(0)
 
 def flip_rotate_and_translate_figure(ai_figure, ai_rotation_center_x, ai_rotation_center_y, ai_x_flip, ai_y_flip, ai_rotation_angle, ai_translate_x, ai_translate_y):
