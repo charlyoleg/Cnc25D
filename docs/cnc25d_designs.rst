@@ -10,6 +10,20 @@ In addition to the Cnc25D API functions, the *Cnc25D Python package* includes al
 Cnc25D design list
 ==================
 
+* :doc:`box_wood_frame_design`
+* :doc:`gear_profile_function`
+* :doc:`gearwheel_design`
+* :doc:`gearring_design`
+* :doc:`gearbar_design`
+* :doc:`split_gearwheel_design`
+* :doc:`epicyclic_gearing_design`
+* :doc:`axle_lid_design`
+* :doc:`motor_lid_design`
+* :doc:`bell_design`
+
+Cnc25D design overview
+======================
+
 Box_wood_frame
 --------------
 
@@ -73,6 +87,13 @@ Motor_lid
 The :doc:`motor_lid_design` is an extension of the axle-lid design kit to mount an electrical motor. You can use it to complete the epicyclic_gearing design.
 
 .. image:: images/motor_lid_3d.png
+
+Bell
+----
+
+The :doc:`bell_design` is the extremity of a *gimbal* system. You can complete is with a *axle_guidance* and a *cross_cube* to get a complete *gimbal* system.
+
+.. image:: images/bell_3d.png
 
 
 
