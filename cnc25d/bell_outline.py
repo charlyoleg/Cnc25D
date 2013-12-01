@@ -554,6 +554,7 @@ def bell_internal_buttress(ai_c):
   b_p['buttress_cnc_router_bit_radius'] = ai_c['bell_cnc_router_bit_radius']
   b_p['buttress_extra_cut_thickness'] = ai_c['bell_extra_cut_thickness']
   ib_ol = buttress_outline(b_p)
+  #print("dbg557: ib_ol:", ib_ol)
   ### intermediate parameters
   wall_thickness = max(ai_c['face_thickness'], ai_c['side_thickness'])
   x10 = ai_c['int_buttress_ext_corner_length'] + ai_c['int_buttress_x_length'] + ai_c['int_buttress_x_position'] + ai_c['side_thickness'] - wall_thickness - ai_c['z_hole_position_length']*math.sqrt(2)/2

@@ -1070,7 +1070,17 @@ def bell_self_test():
   """
   test_case_switch = [
     ["simplest test"        , ""],
-    ["last test"            , ""]]
+    ["no internal buttress" , "--int_buttress_x_length 0.0 --int_buttress_ext_corner_length 25.0 --int_buttress_bump_length 0.0"],
+    ["no external buttress" , "--ext_buttress_z_length 0.0 --ext_buttress_y_length 0.0 --ext_buttress_base_ext_corner_length 25.0 --ext_buttress_face_ext_corner_length 25.0 --ext_buttress_face_bump_length 0.0 --ext_buttress_base_bump_length 0.0"],
+    ["straight leg"         , "--leg_spare_width 0.0"],
+    ["no side hollow"       , "--hollow_z_height 0.0"],
+    ["external_buttress without int_corner" , "--ext_buttress_base_int_corner_length 0.0 --ext_buttress_smoothing_radius 0.0"],
+    ["external_buttress without bump" , "--ext_buttress_base_bump_length 0.0"],
+    ["external_buttress without arc" , "--ext_buttress_arc_height 0.0"],
+    ["no xyz holes"         , "--x_hole_diameter 0.0 --y_hole_diameter 0.0 --z_hole_diameter 0.0"],
+    ["compute 3d assembly"  , "--bell_extra_cut_thickness 1.0 --return_type freecad_object"],
+    ["output files"         , "--output_file_basename test_output/bell_self_test.dxf"],
+    ["last test"            , "--motor_hole_diameter 0.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   bell_parser = argparse.ArgumentParser(description='Command line interface for the function bell().')
   bell_parser = bell_add_argument(bell_parser)
@@ -1116,8 +1126,8 @@ def bell_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
-  #my_b = bell_cli()
-  my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
+  my_b = bell_cli()
+  #my_b = bell_cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")
