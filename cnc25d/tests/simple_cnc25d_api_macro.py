@@ -49,11 +49,19 @@ This script focus on the figure-level API functions
 #   cnc25d_api.figure_to_freecad_25d_part(figure, extrusion_height) => freecad_part_object
 #   cnc25d_api.place_plank(freecad_part_object, x-size, y-size, z-size, flip, orientation, x-position, y-position, z-position) => freecad_part_object
 #   cnc25d_api.export_to_dxf(freecad_part_object, direction_vector, depth, filename) => 0
+#   cnc25d_api.export_to_svg(freecad_part_object, direction_vector, depth, filename) => 0
 #   cnc25d_api.export_xyz_to_dxf(freecad_part_object, x-size, y-size, z-size, x-depth-list, y-depth-list, z-depth-list, filename) => 0
 #   cnc25d_api.mkdir_p(directory) => 0
 #   cnc25d_api.get_effective_args(default_args) => [args]
 #   cnc25d_api.generate_output_file_add_argument(argparse_parser) => argparse_parser
+#   cnc25d_api.get_output_file_suffix(filename) => (basename, suffix)
 #   cnc25d_api.generate_output_file(figure, filename, extrusion_height, info_txt) => 0
+#   cnc25d_api.generate_3d_assembly_output_file(3D_conf, filename, brep, stl, slice_xyz) => 0
+#   cnc25d_api.rotate_and_translate_figure(figure, x-center, y-center, angle, x-translate, y-translate) => figure
+#   cnc25d_api.flip_rotate_and_translate_figure(figure, x-zero, y-zero, x-size, y-size, x-flip, y-flip, angle, x-translate, y-translate) => figure
+#   cnc25d_api.cnc_cut_figure(A-figure, error_msg_id) => B-figure
+#   cnc25d_api.ideal_figure(A-figure, error_msg_id) => B-figure
+#   cnc25d_api.figures_to_freecad_assembly(3D_conf) => freecad_part_object
 
 
 ################################################################
