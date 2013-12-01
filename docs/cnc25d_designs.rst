@@ -91,7 +91,7 @@ The :doc:`motor_lid_design` is an extension of the axle-lid design kit to mount 
 Bell
 ----
 
-The :doc:`bell_design` is the extremity of a *gimbal* system. You can complete is with a *axle_guidance* and a *cross_cube* to get a complete *gimbal* system.
+The :doc:`bell_design` is the extremity of a *gimbal* system. You can complete is with a *bagel* and a *cross_cube* to get a complete *gimbal* system.
 
 .. image:: images/bell_3d.png
 

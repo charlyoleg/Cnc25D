@@ -42,6 +42,7 @@ Contents:
    motor_lid_design
    bell_design
    bell_details
+   bagel_design
 
 Indices and tables
 ==================
