@@ -40,6 +40,7 @@ import axle_lid
 import motor_lid
 import bell
 import bagel
+import bell_bagel_assembly
 
 ################################################################
 # Cnc25d Designs
@@ -68,5 +69,6 @@ motor_lid = motor_lid.motor_lid
 ## gimbal
 bell = bell.bell
 bagel = bagel.bagel
+bba = bell_bagel_assembly.bba
 
 
