@@ -20,6 +20,7 @@ Cnc25D design list
 * :doc:`axle_lid_design`
 * :doc:`motor_lid_design`
 * :doc:`bell_design`
+* :doc:`bagel_design`
 
 Cnc25D design overview
 ======================
@@ -94,6 +95,13 @@ Bell
 The :doc:`bell_design` is the extremity of a *gimbal* system. You can complete is with a *bagel* and a *cross_cube* to get a complete *gimbal* system.
 
 .. image:: images/bell_3d.png
+
+Bagel
+-----
+
+The :doc:`bagel_design` is the axle-guidance of the *bell* piece.
+
+.. image:: images/bagel_3d.png
 
 
 
