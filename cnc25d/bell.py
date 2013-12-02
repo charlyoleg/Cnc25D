@@ -58,7 +58,7 @@ import bell_outline
 # bell dictionary-arguments default values
 ################################################################
 
-def bell_dictionary_init():
+def bell_dictionary_init(ai_variant=0):
   """ create and initiate a bell_dictionary with the default value
   """
   r_bd = {}
@@ -141,10 +141,11 @@ def bell_dictionary_init():
   r_bd['bell_cnc_router_bit_radius']      = 1.0
   r_bd['bell_extra_cut_thickness']        = 0.0
   ### output
-  r_bd['tkinter_view']           = False
-  r_bd['output_file_basename']   = ''
-  r_bd['args_in_txt'] = ""
-  r_bd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+  if(ai_variant!=1):
+    r_bd['tkinter_view']           = False
+    r_bd['output_file_basename']   = ''
+    r_bd['args_in_txt'] = ""
+    r_bd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
   #### return
   return(r_bd)
 
@@ -152,7 +153,7 @@ def bell_dictionary_init():
 # bell argparse
 ################################################################
 
-def bell_add_argument(ai_parser):
+def bell_add_argument(ai_parser, ai_variant=0):
   """
   Add arguments relative to the bell
   This function intends to be used by the bell_cli and bell_self_test
@@ -954,7 +955,7 @@ bell_extra_cut_thickness:    {:0.3f}
 # bell wrapper dance
 ################################################################
 
-def bell_argparse_to_dictionary(ai_b_args):
+def bell_argparse_to_dictionary(ai_b_args, ai_variant=0):
   """ convert a bell_argparse into a bell_dictionary
   """
   r_bd = {}
@@ -1037,10 +1038,11 @@ def bell_argparse_to_dictionary(ai_b_args):
   r_bd['bell_cnc_router_bit_radius']           = ai_b_args.sw_bell_cnc_router_bit_radius
   r_bd['bell_extra_cut_thickness']             = ai_b_args.sw_bell_extra_cut_thickness
   ### output
-  #r_bd['tkinter_view']           = False
-  r_bd['output_file_basename']   = ai_b_args.sw_output_file_basename
-  #r_bd['args_in_txt'] = ""
-  r_bd['return_type'] = ai_b_args.sw_return_type
+  if(ai_variant!=1):
+    #r_bd['tkinter_view']           = False
+    r_bd['output_file_basename']   = ai_b_args.sw_output_file_basename
+    #r_bd['args_in_txt'] = ""
+    r_bd['return_type'] = ai_b_args.sw_return_type
   #### return
   return(r_bd)
   

@@ -2639,9 +2639,9 @@ import Part
 bagel_constraint = {} # This python-dictionary contains all the constraint-parameters to build the bagel piece (part of a gimbal)
 ### bagel_face
 ## bulk
-bagel_constraint['axle_diameter']                   = 10.0
-bagel_constraint['axle_internal_diameter']          = 0.0
-bagel_constraint['axle_external_diameter']          = 0.0
+bagel_constraint['bagel_axle_diameter']                   = 10.0
+bagel_constraint['bagel_axle_internal_diameter']          = 0.0
+bagel_constraint['bagel_axle_external_diameter']          = 0.0
 ## axle_hole
 bagel_constraint['axle_hole_nb']                    = 6
 bagel_constraint['axle_hole_diameter']              = 4.0
