@@ -374,6 +374,8 @@ def bell(ai_constraints):
   if(b_c['base_thickness']==0.0):
     b_c['base_thickness'] = b_c['face_thickness']
   # axle_hole_nb
+  b_c['axle_hole_radius'] = 0.0
+  b_c['axle_hole_position_radius'] = 0.0
   if(b_c['axle_hole_nb']>0):
     # axle_hole_diameter
     b_c['axle_hole_radius'] = b_c['axle_hole_diameter']/2.0
