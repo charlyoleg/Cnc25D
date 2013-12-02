@@ -179,6 +179,10 @@ def bba(ai_constraints):
   bagel_ci = bagel.bagel_dictionary_init(1)
   bagel_c = dict([ (k, bba_c[k]) for k in bagel_ci.keys() ]) # extract only the entries of bagel
   bagel_c['middle_bagel_thickness'] = bba_c['face_thickness']
+  bagel_c['axle_hole_nb'] = bba_c['axle_hole_nb']
+  bagel_c['axle_hole_diameter'] = bba_c['axle_hole_diameter']
+  bagel_c['axle_hole_position_diameter'] = bba_c['axle_hole_position_diameter']
+  bagel_c['axle_hole_angle'] = bba_c['axle_hole_angle']
   bagel_c['tkinter_view']         = False #bba_c['tkinter_view']
   bagel_c['output_file_basename'] = bba_c['output_file_basename']
   bagel_c['args_in_txt']          = bba_c['args_in_txt']
@@ -208,26 +212,37 @@ def bba(ai_constraints):
 
   ### freecad-object assembly configuration
   # sub function
-  def conf3d_shift_xyz(ai_conf_line, ai_tx, ai_ty, ai_tz):
+  def re_conf3d(ai_conf_line, ai_flip, ai_orientation, ai_tx, ai_ty, ai_tz):
     """ translate a figure of a 3D configuration
     """
     (figure, zero_x, zero_y, size_x, size_y, size_z, flip, orientation, tx, ty, tz) = ai_conf_line
-    tx += ai_tx
-    ty += ai_ty
-    tz += ai_tz
-    r_conf_line = (figure, zero_x, zero_y, size_x, size_y, size_z, flip, orientation, tx, ty, tx)
+    r_conf_line = (figure, zero_x, zero_y, size_x, size_y, size_z, ai_flip, ai_orientation, ai_tx, ai_ty, ai_tz)
     return(r_conf_line)
   # intermediate parameters
-  #bagel_z = bba_c['base_thickness'] + bba_c['bell_face_height'] + bba_c['leg_length']
+  bger = bba_c['bagel_axle_external_radius']
+  bgir = bba_c['bagel_axle_internal_radius']
   bagel_y1 = bba_c['bell_face_width']/2.0
   bagel_y2 = -1*bba_c['bell_face_width']/2.0
+  bget = bba_c['external_bagel_thickness']
+  bgmt = bba_c['face_thickness']
+  bgit = bba_c['internal_bagel_thickness']
+  re_conf_bagel_1 = []
+  re_conf_bagel_1.append(('i', 'xz', -1*bger, bagel_y1, bagel_z-bger))
+  re_conf_bagel_1.append(('i', 'xz', -1*bgir, bagel_y1-bgmt, bagel_z-bgir))
+  re_conf_bagel_1.append(('i', 'xz', -1*bger, bagel_y1-bgmt-bgit, bagel_z-bger))
+  re_conf_bagel_1.append(('i', 'xz', -1*bger, bagel_y1-bgmt-bgit, bagel_z-bger))
+  re_conf_bagel_2 = []
+  re_conf_bagel_2.append(('i', 'xz', -1*bger, bagel_y2-bget, bagel_z-bger))
+  re_conf_bagel_2.append(('i', 'xz', -1*bgir, bagel_y2, bagel_z-bgir))
+  re_conf_bagel_2.append(('i', 'xz', -1*bger, bagel_y2+bgmt, bagel_z-bger))
+  re_conf_bagel_2.append(('i', 'xz', -1*bger, bagel_y2+bgmt, bagel_z-bger))
   # conf1
   bell_bagel_assembly_conf1 = []
   bell_bagel_assembly_conf1.extend(bell_3d_conf)
   for i in range(len(bagel_3d_conf)):
-    bell_bagel_assembly_conf1.append(conf3d_shift_xyz(bagel_3d_conf[i], 0.0, bagel_y1, bagel_z))
+    bell_bagel_assembly_conf1.append(re_conf3d(bagel_3d_conf[i], re_conf_bagel_1[i][0], re_conf_bagel_1[i][1], re_conf_bagel_1[i][2], re_conf_bagel_1[i][3], re_conf_bagel_1[i][4]))
   for i in range(len(bagel_3d_conf)):
-    bell_bagel_assembly_conf1.append(conf3d_shift_xyz(bagel_3d_conf[i], 0.0, bagel_y2, bagel_z))
+    bell_bagel_assembly_conf1.append(re_conf3d(bagel_3d_conf[i], re_conf_bagel_2[i][0], re_conf_bagel_2[i][1], re_conf_bagel_2[i][2], re_conf_bagel_2[i][3], re_conf_bagel_2[i][4]))
 
   ### display with Tkinter
   if(bba_c['tkinter_view']):
@@ -246,7 +261,7 @@ def bba(ai_constraints):
       cnc25d_api.generate_output_file(bell_bagel_assembly_figure, output_file_basename + "_bell_bagel_assembly" + output_file_suffix, 1.0, bba_parameter_info)
     else:
       #cnc25d_api.generate_3d_assembly_output_file(bell_bagel_assembly_conf1, output_file_basename + "_assembly", True, False, [])
-      cnc25d_api.generate_3d_assembly_output_file(bell_bagel_assembly_conf1, output_file_basename + "_assembly")
+      cnc25d_api.generate_3d_assembly_output_file(bell_bagel_assembly_conf1, output_file_basename + "_bell_bagel_assembly")
 
 
   #### return
@@ -311,10 +326,8 @@ def bba_self_test():
     ["simplest test"        , ""],
     ["no axle_holes"        , "--axle_hole_nb 0"],
     ["odd number of axle_holes" , "--axle_hole_nb 5"],
-    ["extra cut" , "--bagel_extra_cut_thickness 1.0"],
-    ["extra cut negative" , "--bagel_extra_cut_thickness -2.0"],
     ["outputfile" , "--output_file_basename test_output/bba_self_test.dxf"],
-    ["last test"            , "--bba_axle_internal_diameter 25.0"]]
+    ["last test"            , "--bagel_axle_internal_diameter 25.0 --bagel_axle_external_diameter 40.0 --axle_hole_position_diameter 35.0 --axle_internal_diameter 28.0 --axle_external_diameter 42.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
   bba_parser = argparse.ArgumentParser(description='Command line interface for the function bba().')
   bba_parser = bba_add_argument(bba_parser)
@@ -360,8 +373,8 @@ def bba_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell_bagel_assembly.py says hello!\n")
-  #my_bba = bba_cli()
-  my_bba = bba_cli("--bell_extra_cut_thickness 1.0 --bagel_extra_cut_thickness 1.0 --return_type freecad_object")
+  my_bba = bba_cli()
+  #my_bba = bba_cli("--bell_extra_cut_thickness 1.0 --bagel_extra_cut_thickness 1.0 --return_type freecad_object")
   try: # depending on bba_c['return_type'] it might be or not a freecad_object
     Part.show(my_bba)
     print("freecad_object returned")

@@ -215,6 +215,9 @@ def figures_to_freecad_assembly(ai_figure_assembly):
   """
   fc_obj = []
   for i in range(len(ai_figure_assembly)):
+    if(len(ai_figure_assembly[i])!=11):
+      print("ERR219: Error len of ai_figure_assembly {:d} must be 11".format(len(ai_figure_assembly[i])))
+      sys.exit(2)
     (part_figure, zero_x, zero_y, size_x, size_y, size_z, flip, orientation, translate_x, translate_y, translate_z) = ai_figure_assembly[i]
     part_figure_zero = rotate_and_translate_figure(part_figure, 0, 0, 0, -1*zero_x, -1*zero_y)
     part_extruded = outline_backends.figure_to_freecad_25d_part(part_figure_zero, size_z)
