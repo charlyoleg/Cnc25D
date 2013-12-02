@@ -946,6 +946,8 @@ bell_extra_cut_thickness:    {:0.3f}
     r_b = part_list
   elif(b_c['return_type']=='freecad_object'):
     r_b = cnc25d_api.figures_to_freecad_assembly(bell_assembly_conf2)
+  elif(b_c['return_type']=='figures_3dconf_info'):
+    r_b = (part_list, bell_assembly_conf1, b_parameter_info)
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(b_c['return_type']))
     sys.exit(2)

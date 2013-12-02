@@ -98,11 +98,11 @@ def bagel_add_argument(ai_parser, ai_variant=0):
   """
   r_parser = ai_parser
   ## diameters
-  r_parser.add_argument('--bagel_axle_diameter','--ad', action='store', type=float, default=10.0, dest='sw_bagel_axle_diameter',
+  r_parser.add_argument('--bagel_axle_diameter','--bgad', action='store', type=float, default=10.0, dest='sw_bagel_axle_diameter',
     help="Set the axle_diameter. Default: 10.0")
-  r_parser.add_argument('--bagel_axle_internal_diameter','--aid', action='store', type=float, default=20.0, dest='sw_bagel_axle_internal_diameter',
+  r_parser.add_argument('--bagel_axle_internal_diameter','--bgaid', action='store', type=float, default=20.0, dest='sw_bagel_axle_internal_diameter',
     help="Set the axle_internal_diameter. If equal to 0.0, set to 2*bagel_axle_diameter. Default: 0.0")
-  r_parser.add_argument('--bagel_axle_external_diameter','--aed', action='store', type=float, default=0.0, dest='sw_bagel_axle_external_diameter',
+  r_parser.add_argument('--bagel_axle_external_diameter','--bgaed', action='store', type=float, default=0.0, dest='sw_bagel_axle_external_diameter',
     help="Set the axle_external_diameter. If equal to 0.0, set to 2*bagel_axle_internal_diameter. Default: 0.0")
   ## axle_holes
   if(ai_variant!=1):
@@ -145,7 +145,7 @@ def bagel(ai_constraints):
   b_c.update(ai_constraints)
   #print("dbg155: b_c:", b_c)
   if(len(b_c.viewkeys() & bdi.viewkeys()) != len(b_c.viewkeys() | bdi.viewkeys())): # check if the dictionary b_c has exactly all the keys compare to bagel_dictionary_init()
-    print("ERR157: Error, b_c has too much entries as {:s} or missing entries as {:s}".format(b_c.viewkeys() - bdi.viewkeys(), bdi.viewkeys() - b_c.viewkeys()))
+    print("ERR148: Error, b_c has too much entries as {:s} or missing entries as {:s}".format(b_c.viewkeys() - bdi.viewkeys(), bdi.viewkeys() - b_c.viewkeys()))
     sys.exit(2)
   #print("dbg164: bagel constraints:")
   #for k in b_c.viewkeys():
@@ -206,6 +206,10 @@ def bagel(ai_constraints):
   # internal_bagel_thickness
   if(b_c['internal_bagel_thickness']<radian_epsilon):
     print("ERR196: Error, internal_bagel_thickness {:0.3f} is too small".format(b_c['internal_bagel_thickness']))
+    sys.exit(2)
+  # bagel_extra_cut_thickness
+  if(abs(b_c['bagel_extra_cut_thickness'])>b_c['bagel_axle_radius']/2.0):
+    print("ERR212: Error, bagel_extra_cut_thickness {:0.3f} is too big compare to bagel_axle_radius {:0.3f}".format(b_c['bagel_extra_cut_thickness'], b_c['bagel_axle_radius']))
     sys.exit(2)
 
   ################################################################
@@ -330,16 +334,16 @@ bagel_extra_cut_thickness:  {:0.3f}
   if(b_c['output_file_basename']!=''):
     (output_file_basename, output_file_suffix) = cnc25d_api.get_output_file_suffix(b_c['output_file_basename'])
     # parts
-    cnc25d_api.generate_output_file(external_bagel, output_file_basename + "_external" + output_file_suffix, b_c['external_bagel_thickness'], b_parameter_info)
-    cnc25d_api.generate_output_file(middle_bagel, output_file_basename + "_middle" + output_file_suffix, b_c['middle_bagel_thickness'], b_parameter_info)
-    cnc25d_api.generate_output_file(internal_bagel, output_file_basename + "_internal" + output_file_suffix, b_c['internal_bagel_thickness'], b_parameter_info)
+    cnc25d_api.generate_output_file(external_bagel, output_file_basename + "_bagel_external" + output_file_suffix, b_c['external_bagel_thickness'], b_parameter_info)
+    cnc25d_api.generate_output_file(middle_bagel, output_file_basename + "_bagel_middle" + output_file_suffix, b_c['middle_bagel_thickness'], b_parameter_info)
+    cnc25d_api.generate_output_file(internal_bagel, output_file_basename + "_bagel_internal" + output_file_suffix, b_c['internal_bagel_thickness'], b_parameter_info)
     # assembly
     if((output_file_suffix=='.svg')or(output_file_suffix=='.dxf')):
-      cnc25d_api.generate_output_file(part_list_figure, output_file_basename + "_part_list" + output_file_suffix, 1.0, b_parameter_info)
-      cnc25d_api.generate_output_file(bagel_assembly_figure, output_file_basename + "_part_overview" + output_file_suffix, 1.0, b_parameter_info)
+      cnc25d_api.generate_output_file(part_list_figure, output_file_basename + "_bagel_part_list" + output_file_suffix, 1.0, b_parameter_info)
+      cnc25d_api.generate_output_file(bagel_assembly_figure, output_file_basename + "_bagel_part_overview" + output_file_suffix, 1.0, b_parameter_info)
     else:
       #cnc25d_api.generate_3d_assembly_output_file(bagel_assembly_conf1, output_file_basename + "_assembly", True, False, [])
-      cnc25d_api.generate_3d_assembly_output_file(bagel_assembly_conf1, output_file_basename + "_assembly")
+      cnc25d_api.generate_3d_assembly_output_file(bagel_assembly_conf1, output_file_basename + "_bagel_assembly")
 
 
   #### return
@@ -349,6 +353,8 @@ bagel_extra_cut_thickness:  {:0.3f}
     r_b = part_list
   elif(b_c['return_type']=='freecad_object'):
     r_b = cnc25d_api.figures_to_freecad_assembly(bagel_assembly_conf1)
+  elif(b_c['return_type']=='figures_3dconf_info'):
+    r_b = (part_list, bagel_assembly_conf1, b_parameter_info)
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(b_c['return_type']))
     sys.exit(2)
