@@ -43,6 +43,7 @@ Contents:
    bell_design
    bell_details
    bagel_design
+   bell_bagel_assembly
 
 Indices and tables
 ==================

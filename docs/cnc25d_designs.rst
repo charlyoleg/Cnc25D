@@ -21,6 +21,7 @@ Cnc25D design list
 * :doc:`motor_lid_design`
 * :doc:`bell_design`
 * :doc:`bagel_design`
+* :doc:`bell_bagel_assembly`
 
 Cnc25D design overview
 ======================
@@ -102,6 +103,13 @@ Bagel
 The :doc:`bagel_design` is the axle-guidance of the *bell* piece.
 
 .. image:: images/bagel_3d.png
+
+Bell_bagel_assembly
+-------------------
+
+The :doc:`bell_bagel_assembly` is the assembly of a *bell* piece and two *bagels*.
+
+.. image:: images/bell_bagel_assembly_3d.png
 
 
 
