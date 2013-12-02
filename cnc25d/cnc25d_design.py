@@ -39,6 +39,7 @@ import epicyclic_gearing
 import axle_lid
 import motor_lid
 import bell
+import bagel
 
 ################################################################
 # Cnc25d Designs
@@ -66,5 +67,6 @@ motor_lid = motor_lid.motor_lid
 
 ## gimbal
 bell = bell.bell
+bagel = bagel.bagel
 
 

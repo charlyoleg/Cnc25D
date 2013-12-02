@@ -2541,6 +2541,142 @@ except:
 
 '''
 
+### bagel script example
+bagel_script_name="eg13_bagel_example.py"
+# copy from ../cnc25d/tests/bagel_macro.py
+bagel_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/bagel_macro.py
+#
+# bagel_macro.py
+# the macro to generate a bagel, the axle-guidance of the bell piece
+# created by charlyoleg on 2013/12/02
+#
+# (C) Copyright 2013 charlyoleg
+#
+# This file is part of the Cnc25D Python package.
+# 
+# Cnc25D is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Cnc25D is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Cnc25D.  If not, see <http://www.gnu.org/licenses/>.
+
+
+################################################################
+# this file intends being included in the file bin/cnc25d_example_generator.py
+# for this purpose, there is some syntaxe restrictions
+# don't use triple single-quotes (') and return character ('\'.'n') in this file
+# but you can still use triple double-quote (")
+################################################################
+
+"""
+this piece of code is an example of how to use the parametric design bagel
+You can also use this file as a FreeCAD macro from the GUI
+You can also copy-paste this code in your own design files
+If you don't know which value to set to a constraint-parameter, just comment it.  Default value is used, if you don't set a constraint explicitly.
+"""
+
+################################################################
+# Installation pre-request
+################################################################
+# This script needs freecad and Cnc25D installed on your system
+# visit those sites for more information:
+# http://www.freecadweb.org/
+# https://pypi.python.org/pypi/Cnc25D
+#
+# To install FreeCAD on Ubuntu, run the following command:
+# > sudo apt-get install freecad
+# or to get the newest version:
+# > sudo add-apt-repository ppa:freecad-maintainers/freecad-stable
+# > sudo apt-get update
+# > sudo apt-get install freecad
+# and optionally:
+# >  sudo apt-get install freecad-doc freecad-dev
+# To install the python package cnc25d, run the following command:
+# > sudo pip install Cnc25D
+# or
+# > sudo pip install Cnc25D -U
+
+
+################################################################
+# header for Python / FreeCAD compatibility
+################################################################
+
+try: # when working with an installed Cnc25D package
+  from cnc25d import cnc25d_api
+except:    # when working on the source files
+  import importing_cnc25d # give access to the cnc25d package
+  from cnc25d import cnc25d_api
+cnc25d_api.importing_freecad()
+
+#print("FreeCAD.Version:", FreeCAD.Version())
+
+################################################################
+# import
+################################################################
+
+#
+from cnc25d import cnc25d_design
+#
+import Part
+
+    
+################################################################
+# parameters value
+################################################################
+#
+# choose the values of the parameters by editing this file
+# feature request : create a GUI with PyQt4 to edit those parameter values
+
+bagel_constraint = {} # This python-dictionary contains all the constraint-parameters to build the bagel piece (part of a gimbal)
+### bagel_face
+## bulk
+bagel_constraint['axle_diameter']                   = 10.0
+bagel_constraint['axle_internal_diameter']          = 0.0
+bagel_constraint['axle_external_diameter']          = 0.0
+## axle_hole
+bagel_constraint['axle_hole_nb']                    = 6
+bagel_constraint['axle_hole_diameter']              = 4.0
+bagel_constraint['axle_hole_position_diameter']     = 0.0
+bagel_constraint['axle_hole_angle']                 = 0.0
+## wall_thickness
+bagel_constraint['external_bagel_thickness']        = 2.0
+bagel_constraint['middle_bagel_thickness']          = 6.0
+bagel_constraint['internal_bagel_thickness']        = 2.0
+### manufacturing
+bagel_constraint['bagel_extra_cut_thickness']       = 0.0
+### output
+bagel_constraint['tkinter_view']           = True
+bagel_constraint['output_file_basename']   = ''
+bagel_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
+#bagel_constraint['output_file_basename'] = "test_output/bagel_macro.svg"  # to generate the SVG file with mozman svgwrite
+#bagel_constraint['output_file_basename'] = "test_output/bagel_macro.dxf"  # to generate the DXF file with mozman svgwrite
+#bagel_constraint['output_file_basename'] = "test_output/bagel_macro"      # to generate the Brep and DXF file with FreeCAD
+bagel_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+
+################################################################
+# action
+################################################################
+
+my_bagel = cnc25d_design.bagel(bagel_constraint)
+
+try: # display if a freecad object
+  Part.show(my_bagel)
+except:
+  pass
+
+
+
+'''
+
 ### Generating the script examples
 
 ceg_example_list={
@@ -2555,7 +2691,8 @@ ceg_example_list={
   eg_script_name : eg_script_content,
   al_script_name : al_script_content,
   ml_script_name : ml_script_content,
-  bell_script_name : bell_script_content}
+  bell_script_name : bell_script_content,
+  bagel_script_name : bagel_script_content}
 
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")

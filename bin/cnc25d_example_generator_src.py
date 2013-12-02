@@ -231,6 +231,16 @@ bell_script_content='''#!/usr/bin/env python
 #include "../cnc25d/tests/bell_macro.py"
 '''
 
+### bagel script example
+bagel_script_name="eg13_bagel_example.py"
+# copy from ../cnc25d/tests/bagel_macro.py
+bagel_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/bagel_macro.py
+#
+#include "../cnc25d/tests/bagel_macro.py"
+'''
+
 ### Generating the script examples
 
 ceg_example_list={
@@ -245,7 +255,8 @@ ceg_example_list={
   eg_script_name : eg_script_content,
   al_script_name : al_script_content,
   ml_script_name : ml_script_content,
-  bell_script_name : bell_script_content}
+  bell_script_name : bell_script_content,
+  bagel_script_name : bagel_script_content}
 
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")

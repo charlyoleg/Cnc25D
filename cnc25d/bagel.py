@@ -74,6 +74,8 @@ def bagel_dictionary_init():
   r_bd['external_bagel_thickness']        = 2.0
   r_bd['middle_bagel_thickness']          = 6.0
   r_bd['internal_bagel_thickness']        = 2.0
+  ### manufacturing
+  r_bd['bagel_extra_cut_thickness']        = 0.0
   ### output
   r_bd['tkinter_view']           = False
   r_bd['output_file_basename']   = ''
@@ -115,6 +117,9 @@ def bagel_add_argument(ai_parser):
     help="Set the thickness (z-size) of the middle_bagel part. Default: 6.0")
   r_parser.add_argument('--internal_bagel_thickness','--ibt', action='store', type=float, default=2.0, dest='sw_internal_bagel_thickness',
     help="Set the thickness (z-size) of the internal_bagel part. Default: 2.0")
+  ### manufacturing
+  r_parser.add_argument('--bagel_extra_cut_thickness','--bgect', action='store', type=float, default=0.0, dest='sw_bagel_extra_cut_thickness',
+    help="Set the extra-cut-thickness for the internal-bagel cut. It can be used to compensate the manufacturing process or to check the 3D assembly with FreeCAD. Default: 0.0")
   ### output
   # return
   return(r_parser)
@@ -216,13 +221,19 @@ def bagel(ai_constraints):
   middle_bagel.append((0.0, 0.0, b_c['axle_radius']))
 
   ### internal_bagel
+  # intermediate parameters
+  cut_y = b_c['bagel_extra_cut_thickness']
+  cut_x1 = math.sqrt(b_c['axle_radius']**2+cut_y**2)
+  cut_x2 = math.sqrt(b_c['axle_external_radius']**2+cut_y**2)
+  # outline construction
   ib_ol_A = []
-  ib_ol_A.append((b_c['axle_external_radius'], 0.0, 0))
-  ib_ol_A.append((0.0, b_c['axle_external_radius'], -1*b_c['axle_external_radius'], 0.0, 0))
-  ib_ol_A.append((-1*b_c['axle_radius'], 0.0, 0))
-  ib_ol_A.append((0.0, b_c['axle_radius'], b_c['axle_radius'], 0.0, 0))
-  ib_ol_A.append((b_c['axle_external_radius'], 0.0, 0))
+  ib_ol_A.append((cut_x2, cut_y, 0))
+  ib_ol_A.append((0.0, b_c['axle_external_radius'], -1*cut_x2, cut_y, 0))
+  ib_ol_A.append((-1*cut_x1, cut_y, 0))
+  ib_ol_A.append((0.0, b_c['axle_radius'], cut_x1, cut_y, 0))
+  ib_ol_A.append((cut_x2, cut_y, 0))
   ib_ol = cnc25d_api.cnc_cut_outline(ib_ol_A, "internal_bagel_ol")
+  # figure construction
   ib_figure = []
   ib_figure.append(ib_ol)
   ib_figure_2 = []
@@ -266,6 +277,10 @@ external_bagel_thickness: {:0.3f}
 middle_bagel_thickness:   {:0.3f}
 internal_bagel_thickness: {:0.3f}
 """.format(b_c['external_bagel_thickness'], b_c['middle_bagel_thickness'], b_c['internal_bagel_thickness'])
+  b_parameter_info += """
+manufacturing:
+bagel_extra_cut_thickness:  {:0.3f}
+""".format(b_c['bagel_extra_cut_thickness'])
   #print(b_parameter_info)
 
   ### figures output
@@ -355,6 +370,8 @@ def bagel_argparse_to_dictionary(ai_b_args):
   r_bd['external_bagel_thickness']        = ai_b_args.sw_external_bagel_thickness
   r_bd['middle_bagel_thickness']          = ai_b_args.sw_middle_bagel_thickness
   r_bd['internal_bagel_thickness']        = ai_b_args.sw_internal_bagel_thickness
+  ### manufacturing
+  r_bd['bagel_extra_cut_thickness']       = ai_b_args.sw_bagel_extra_cut_thickness
   ### output
   #r_bd['tkinter_view']           = False
   r_bd['output_file_basename']   = ai_b_args.sw_output_file_basename
@@ -393,6 +410,8 @@ def bagel_self_test():
     ["simplest test"        , ""],
     ["no axle_holes"        , "--axle_hole_nb 0"],
     ["odd number of axle_holes" , "--axle_hole_nb 5"],
+    ["extra cut" , "--bagel_extra_cut_thickness 1.0"],
+    ["extra cut negative" , "--bagel_extra_cut_thickness -2.0"],
     ["outputfile" , "--output_file_basename test_output/bagel_self_test.dxf"],
     ["last test"            , "--axle_internal_diameter 25.0"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
@@ -441,7 +460,7 @@ def bagel_cli(ai_args=""):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bagel.py says hello!\n")
   my_b = bagel_cli()
-  #my_b = bagel_cli("--return_type freecad_object")
+  #my_b = bagel_cli("--bagel_extra_cut_thickness 1.0 --return_type freecad_object")
   try: # depending on b_c['return_type'] it might be or not a freecad_object
     Part.show(my_b)
     print("freecad_object returned")
