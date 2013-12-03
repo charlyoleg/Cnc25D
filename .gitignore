@@ -37,6 +37,9 @@ nosetests.xml
 # sphynx build
 docs/_build
 
+# setup.py sdist
+MANIFEST
+
 # added for this project
 #cnc25d/outline_arc_line_test1_00.svg
 #cnc25d/outline_arc_line_test1_00.dxf
