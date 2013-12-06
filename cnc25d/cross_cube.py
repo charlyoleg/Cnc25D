@@ -65,10 +65,10 @@ def cross_cube_dictionary_init(ai_variant=0):
   # height
   r_cc['axle_diameter']       = 10.0
   r_cc['inter_axle_length']   = 15.0
-  r_cc['height_margin']       = 6.0
+  r_cc['height_margin']       = 10.0
   r_cc['top_thickness']       = 5.0
   # width
-  r_cc['cube_width']          = 50.0
+  r_cc['cube_width']          = 60.0
   r_cc['face_A1_thickness']   = 9.0
   r_cc['face_A2_thickness']   = 7.0
   r_cc['face_B1_thickness']   = 8.0
@@ -76,28 +76,29 @@ def cross_cube_dictionary_init(ai_variant=0):
   ### threaded rod
   # face
   r_cc['face_rod_hole_diameter']    = 4.0
-  r_cc['face_rod_hole_h_distance']  = 3.0
-  r_cc['face_rod_hole_v_distance']  = 3.0
+  r_cc['face_rod_hole_h_distance']  = 5.0
+  r_cc['face_rod_hole_v_distance']  = 5.0
   # top
   r_cc['top_rod_hole_diameter']     = 4.0
-  r_cc['top_rod_hole_h_distance']   = 8.0
+  r_cc['top_rod_hole_h_distance']   = 10.0
   ### hollow
   # face hollow
   r_cc['face_hollow_leg_nb']            = 1 # possible values: 1 (filled), 4, 8
-  r_cc['face_hollow_border_width']      = 5.0
-  r_cc['face_hollow_axle_width']     = 5.0
-  r_cc['face_hollow_leg_width']         = 5.0
-  r_cc['face_hollow_smoothing_radius']  = 5.0
+  r_cc['face_hollow_border_width']      = 0.0
+  r_cc['face_hollow_axle_width']        = 0.0
+  r_cc['face_hollow_leg_width']         = 0.0
+  r_cc['face_hollow_smoothing_radius']  = 0.0
   # top hollow
   r_cc['top_hollow_leg_nb']             = 0 # possible values: 0 (empty), 1 (filled), 4, 8
-  r_cc['top_hollow_border_width']       = 5.0
-  r_cc['top_hollow_leg_width']          = 5.0
-  r_cc['top_hollow_smoothing_radius']   = 5.0
+  r_cc['top_hollow_border_width']       = 0.0
+  r_cc['top_hollow_leg_width']          = 0.0
+  r_cc['top_hollow_smoothing_radius']   = 0.0
   ### axle
-  r_cc['axle_length']                   = 30.0
-  r_cc['spacer_diameter']               = 14.0
-  r_cc['spacer_length']                 = 20.0
+  r_cc['axle_length']                   = 0.0
+  r_cc['spacer_diameter']               = 0.0
+  r_cc['spacer_length']                 = 0.0
   ### manufacturing
+  r_cc['cross_cube_cnc_router_bit_radius']  = 1.0
   r_cc['cross_cube_extra_cut_thickness']  = 0.0
   ### output
   if(ai_variant!=1):
@@ -124,63 +125,65 @@ def cross_cube_add_argument(ai_parser, ai_variant=0):
     help="Set the diameter of the two axles. Default: 10.0")
   r_parser.add_argument('--inter_axle_length','--ial', action='store', type=float, default=15.0, dest='sw_inter_axle_length',
     help="Set the length length betwen the two axle centers. Default: 15.0")
-  r_parser.add_argument('--height_margin','--hm', action='store', type=float, default=6.0, dest='sw_height_margin',
-    help="Set the length betwen the axle peripheral and the inner edge of the top. Default: 6.0")
+  r_parser.add_argument('--height_margin','--hm', action='store', type=float, default=10.0, dest='sw_height_margin',
+    help="Set the length betwen the axle peripheral and the inner edge of the top. Default: 10.0")
   r_parser.add_argument('--top_thickness','--tt', action='store', type=float, default=5.0, dest='sw_top_thickness',
     help="Set the thickness of the top part. Default: 5.0")
   # width
-  r_parser.add_argument('--cube_width','--cw', action='store', type=float, default=50.0, dest='sw_cube_width',
-    help="Set the outer width of the cube (for x and y). Default: 50.0")
+  r_parser.add_argument('--cube_width','--cw', action='store', type=float, default=60.0, dest='sw_cube_width',
+    help="Set the outer width of the cube (for x and y). Default: 60.0")
   r_parser.add_argument('--face_A1_thickness','--fa1t', action='store', type=float, default=9.0, dest='sw_face_A1_thickness',
-    help="Set the thickness of the face_A1 part. Default: 9.0")
+    help="Set the thickness of the face_A1 part. If equal to 0.0, set to top_thickness. Default: 9.0")
   r_parser.add_argument('--face_A2_thickness','--fa2t', action='store', type=float, default=7.0, dest='sw_face_A2_thickness',
-    help="Set the thickness of the face_A2 part. Default: 7.0")
+    help="Set the thickness of the face_A2 part. If equal to 0.0, set to top_thickness. Default: 7.0")
   r_parser.add_argument('--face_B1_thickness','--fb1t', action='store', type=float, default=8.0, dest='sw_face_B1_thickness',
-    help="Set the thickness of the face_B1 part. Default: 8.0")
+    help="Set the thickness of the face_B1 part. If equal to 0.0, set to top_thickness. Default: 8.0")
   r_parser.add_argument('--face_B2_thickness','--fb2t', action='store', type=float, default=6.0, dest='sw_face_B2_thickness',
-    help="Set the thickness of the face_B2 part. Default: 6.0")
+    help="Set the thickness of the face_B2 part. If equal to 0.0, set to top_thickness. Default: 6.0")
   ### threaded rod
   # face
   r_parser.add_argument('--face_rod_hole_diameter','--frhd', action='store', type=float, default=4.0, dest='sw_face_rod_hole_diameter',
     help="Set the diameter of the holes for threaded rod on the faces. Default: 4.0")
-  r_parser.add_argument('--face_rod_hole_h_distance','--frhhd', action='store', type=float, default=3.0, dest='sw_face_rod_hole_h_distance',
-    help="Set the horizontal position of the threaded rod center from the inner edge. Default: 3.0")
-  r_parser.add_argument('--face_rod_hole_v_distance','--frhvd', action='store', type=float, default=3.0, dest='sw_face_rod_hole_v_distance',
-    help="Set the vertical position of the threaded rod center from the inner edge. Default: 3.0")
+  r_parser.add_argument('--face_rod_hole_h_distance','--frhhd', action='store', type=float, default=5.0, dest='sw_face_rod_hole_h_distance',
+    help="Set the horizontal position of the threaded rod center from the inner edge. Default: 5.0")
+  r_parser.add_argument('--face_rod_hole_v_distance','--frhvd', action='store', type=float, default=5.0, dest='sw_face_rod_hole_v_distance',
+    help="Set the vertical position of the threaded rod center from the inner edge. Default: 5.0")
   # top
   r_parser.add_argument('--top_rod_hole_diameter','--trhd', action='store', type=float, default=4.0, dest='sw_top_rod_hole_diameter',
     help="Set the diameter of the holes for the vertical threaded rods. Default: 4.0")
-  r_parser.add_argument('--top_rod_hole_h_distance','--trhhd', action='store', type=float, default=8.0, dest='sw_top_rod_hole_h_distance',
-    help="Set the horizontal position of the vertical threaded rod center from the inner edge. Default: 8.0")
+  r_parser.add_argument('--top_rod_hole_h_distance','--trhhd', action='store', type=float, default=10.0, dest='sw_top_rod_hole_h_distance',
+    help="Set the horizontal position of the vertical threaded rod center from the inner edge. Default: 10.0")
   ### hollow
   # face hollow
   r_parser.add_argument('--face_hollow_leg_nb','--fhln', action='store', type=int, default=1, dest='sw_face_hollow_leg_nb',
     help="Set the number of legs (equivalent number of hollows) on the faces. Possible values: 1 (filled), 4, 8. Default: 1")
-  r_parser.add_argument('--face_hollow_border_width','--fhbw', action='store', type=float, default=5.0, dest='sw_face_hollow_border_width',
-    help="Set the width around the face-inner-border. Default: 5.0")
-  r_parser.add_argument('--face_hollow_axle_width','--fhaw', action='store', type=float, default=5.0, dest='sw_face_hollow_axle_width',
-    help="Set the width around the axle. Default: 5.0")
-  r_parser.add_argument('--face_hollow_leg_width','--fhlw', action='store', type=float, default=5.0, dest='sw_face_hollow_leg_width',
-    help="Set the width of the legs. Default: 5.0")
-  r_parser.add_argument('--face_hollow_smoothing_radius','--fhsr', action='store', type=float, default=5.0, dest='sw_face_hollow_smoothing_radius',
-    help="Set the radius for smoothing the face-hollow corners. Default: 5.0")
+  r_parser.add_argument('--face_hollow_border_width','--fhbw', action='store', type=float, default=0.0, dest='sw_face_hollow_border_width',
+    help="Set the width around the face-inner-border. If equal to 0.0, set to max_face_top_thickness. Default: 0.0")
+  r_parser.add_argument('--face_hollow_axle_width','--fhaw', action='store', type=float, default=0.0, dest='sw_face_hollow_axle_width',
+    help="Set the width around the axle. If equal to 0.0, set to axle_radius. Default: 0.0")
+  r_parser.add_argument('--face_hollow_leg_width','--fhlw', action='store', type=float, default=0.0, dest='sw_face_hollow_leg_width',
+    help="Set the width of the legs. If equal to 0.0, set to max(max_face_top_thickness, axle_radius). Default: 0.0")
+  r_parser.add_argument('--face_hollow_smoothing_radius','--fhsr', action='store', type=float, default=0.0, dest='sw_face_hollow_smoothing_radius',
+    help="Set the radius for smoothing the face-hollow corners. If equal to 0.0, set to cube_width/10. Default: 0.0")
   # top hollow
   r_parser.add_argument('--top_hollow_leg_nb','--thln', action='store', type=int, default=0, dest='sw_top_hollow_leg_nb',
     help="Set the number of legs (equivalent number of hollows) on the top. Possible values: 0 (empty), 1 (filled), 4, 8. Default: 0")
-  r_parser.add_argument('--top_hollow_border_width','--thbw', action='store', type=float, default=5.0, dest='sw_top_hollow_border_width',
-    help="Set the width around the top-inner-border. Default: 5.0")
-  r_parser.add_argument('--top_hollow_leg_width','--thlw', action='store', type=float, default=5.0, dest='sw_top_hollow_leg_width',
-    help="Set the width of the legs. Default: 5.0")
-  r_parser.add_argument('--top_hollow_smoothing_radius','--thsr', action='store', type=float, default=5.0, dest='sw_top_hollow_smoothing_radius',
-    help="Set the radius for smoothing the top-hollow corners. Default: 5.0")
+  r_parser.add_argument('--top_hollow_border_width','--thbw', action='store', type=float, default=0.0, dest='sw_top_hollow_border_width',
+    help="Set the width around the top-inner-border. If equal to 0.0, set to max_face_thickness. Default: 0.0")
+  r_parser.add_argument('--top_hollow_leg_width','--thlw', action='store', type=float, default=0.0, dest='sw_top_hollow_leg_width',
+    help="Set the width of the legs. If equal to 0.0, set to max_face_thickness. Default: 0.0")
+  r_parser.add_argument('--top_hollow_smoothing_radius','--thsr', action='store', type=float, default=0.0, dest='sw_top_hollow_smoothing_radius',
+    help="Set the radius for smoothing the top-hollow corners. If equal to 0.0, set to cube_width/10. Default: 0.0")
   ### axle
-  r_parser.add_argument('--axle_length','--al', action='store', type=float, default=30.0, dest='sw_axle_length',
-    help="Set the external length of the axles for the left and right sides. Default: 30.0")
-  r_parser.add_argument('--spacer_diameter','--sd', action='store', type=float, default=14.0, dest='sw_spacer_diameter',
-    help="Set the external diameter of the spacer. Default: 14.0")
-  r_parser.add_argument('--spacer_length','--sl', action='store', type=float, default=20.0, dest='sw_spacer_length',
-    help="Set the length of the spacers. Default: 20.0")
+  r_parser.add_argument('--axle_length','--al', action='store', type=float, default=0.0, dest='sw_axle_length',
+    help="Set the total length of the axles. If equal to 0.0, set to 2*cube_width. Default: 0.0")
+  r_parser.add_argument('--spacer_diameter','--sd', action='store', type=float, default=0.0, dest='sw_spacer_diameter',
+    help="Set the external diameter of the spacer. If equal to 0.0, set to 1.2*axle_diameter. Default: 0.0")
+  r_parser.add_argument('--spacer_length','--sl', action='store', type=float, default=0.0, dest='sw_spacer_length',
+    help="Set the length of the spacers. If equal to 0.0, set to (axle_length-cube_width)/4. Default: 0.0")
   ### manufacturing
+  r_parser.add_argument('--cross_cube_cnc_router_bit_radius','--cccrbr', action='store', type=float, default=1.0, dest='sw_cross_cube_cnc_router_bit_radius',
+    help="Set the minimal cnc_router_bit radius of the design. Default: 1.0")
   r_parser.add_argument('--cross_cube_extra_cut_thickness','--ccect', action='store', type=float, default=0.0, dest='sw_cross_cube_extra_cut_thickness',
     help="Set the extra-cut-thickness for the internal cross_cube cuts. It can be used to compensate the manufacturing process or to check the 3D assembly with FreeCAD. Default: 0.0")
   ### output
@@ -214,7 +217,164 @@ def cross_cube(ai_constraints):
   ################################################################
   # parameter check and dynamic-default values
   ################################################################
-
+  ### face A1, A2, B1 and B2
+  ## height
+  # axle_diameter
+  cc_c['axle_radius'] = cc_c['axle_diameter']/2.0
+  if(cc_c['axle_radius']<radian_epsilon):
+    print("ERR220: Error, axle_radius {:0.3f} must be strictly positive".format(cc_c['axle_radius']))
+    sys.exit(2)
+  # inter_axle_length
+  if(cc_c['inter_axle_length']<0):
+    print("ERR224: Error, inter_axle_length {:0.3f} must be positive".format(cc_c['inter_axle_length']))
+    sys.exit(2)
+  if(cc_c['inter_axle_length']<2*cc_c['axle_radius']):
+    print("WARN227: Warning, inter_axle_length {:0.3f} is smaller than the axle_diameter {:0.3f}".format(cc_c['inter_axle_length'], 2*cc_c['axle_radius']))
+  # height_margin
+  if(cc_c['height_margin']<radian_epsilon):
+    print("ERR229: Error, height_margin {:0.3f} must be strictly positive".format(cc_c['height_margin']))
+    sys.exit(2)
+  # top_thickness
+  if(cc_c['top_thickness']<2*cc_c['cross_cube_cnc_router_bit_radius']):
+    print("ERR232: Error, top_thickness {:0.3f} is too small compare to cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['top_thickness'], cc_c['cross_cube_cnc_router_bit_radius']))
+    sys.exit(2)
+  if(cc_c['top_thickness']>(cc_c['inter_axle_length']+2*cc_c['axle_radius']+2*cc_c['height_margin'])/4.0):
+    print("ERR235: top_thickness {:0.3f} is too small compare to inter_axle_length {:0.3}, axle_radius {:0.3}, height_margin {:0.3}".format(cc_c['top_thickness'], cc_c['inter_axle_length'], cc_c['axle_radius'], cc_c['height_margin']))
+    sys.exit(2)
+  cube_height = cc_c['inter_axle_length'] + 2*cc_c['axle_radius'] + 2*cc_c['top_thickness']
+  ## width
+  # cube_width
+  if(cc_c['cube_width']<3*cc_c['axle_radius']):
+    print("ERR239: Error, cube_width {:0.3f} is too small compare to axle_radius {:0.3f}".format(cc_c['cube_width'], cc_c['axle_radius']))
+    sys.exit(2)
+  # face_A1_thickness, face_A2_thickness, face_B1_thickness, face_B2_thickness
+  face_thickness = [cc_c['face_A1_thickness'], cc_c['face_A2_thickness'], cc_c['face_B1_thickness'], cc_c['face_B2_thickness']]
+  max_face_thickness = max(face_thickness)
+  max_face_top_thickness = max(max_face_thickness, cc_c['top_thickness'])
+  for i in range(len(face_thickness)):
+    if(face_thickness[i]==0):
+      face_thickness[i] = cc_c['top_thickness']
+    if(face_thickness[i]<2*cc_c['cross_cube_cnc_router_bit_radius']):
+      print("ERR244: Error, face_thickness[{:d}] {:0.3f} is too small compare to cross_cube_cnc_router_bit_radius {:0.3f}".format(i, face_thickness[i], cc_c['cross_cube_cnc_router_bit_radius']))
+      sys.exit(2)
+    if(face_thickness[i]>cc_c['cube_width']/2.0-cc_c['axle_radius']):
+      print("ERR247: Error, face_thickness[{:d}] {:0.3f} is too big compare to cube_width {:0.3f} and axle_radius {:0.3f}".format(i, face_thickness[i], cc_c['cube_width'], cc_c['axle_radius']))
+      sys.exit(2)
+    if(face_thickness[i]>cc_c['cube_width']/6.0):
+      print("ERR250: Error, face_thickness[{:d}] {:0.3f} is too big compare to cube_width {:0.3f}".format(i, face_thickness[i], cc_c['cube_width']))
+      sys.exit(2)
+  ### threaded rod
+  ## face
+  # face_rod_hole_diameter
+  cc_c['face_rod_hole_radius'] = cc_c['face_rod_hole_diameter']/2.0
+  if(cc_c['face_rod_hole_radius']>0):
+    # face_rod_hole_h_distance
+    if(cc_c['face_rod_hole_h_distance']<cc_c['face_rod_hole_radius']):
+      print("ERR257: Error, face_rod_hole_h_distance {:0.3f} must be biggert than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_h_distance'], cc_c['face_rod_hole_radius']))
+      sys.exit(2)
+    if(max_face_thickness+cc_c['face_rod_hole_h_distance']+cc_c['face_rod_hole_radius']>cc_c['cube_width']/2.0-cc_c['axle_radius']):
+      print("ERR261: Error, face_rod_hole_h_distance {:0.3f} is too big compare to max_face_thickness {:0.3f}, face_rod_hole_radius {:0.3f}, cube_width {:0.3f}, axle_radius {:0.3f}".format(cc_c['face_rod_hole_h_distance'], max_face_thickness, cc_c['face_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius']))
+      sys.exit(2)
+    # face_rod_hole_v_distance
+    if(cc_c['face_rod_hole_v_distance']<cc_c['face_rod_hole_radius']):
+      print("ERR264: Error, face_rod_hole_v_distance {:0.3f} must be bigger than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius']))
+      sys.exit(2)
+    if(cc_c['face_rod_hole_v_distance']+cc_c['face_rod_hole_radius']>cc_c['height_margin']):
+      print("ERR267: Error, face_rod_hole_v_distance {:0.3f} is too big compare to face_rod_hole_radius {:0.3f} and height_margin {:0.3f}".format(cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius'], cc_c['height_margin']))
+      sys.exit(2)
+  ## top
+  # top_rod_hole_diameter
+  cc_c['top_rod_hole_radius'] = cc_c['top_rod_hole_diameter']/2.0
+  if(cc_c['top_rod_hole_radius']>0):
+    # top_rod_hole_h_distance
+    if(cc_c['top_rod_hole_h_distance']<cc_c['face_rod_hole_h_distance']+cc_c['face_rod_hole_radius']+cc_c['top_rod_hole_radius']):
+      print("ERR273: Error, top_rod_hole_h_distance {:0.3f} is too small compare to face_rod_hole_h_distance {:0.3f}, face_rod_hole_radius {:0.3f} and top_rod_hole_radius {:0.3f}".format(cc_c['top_rod_hole_h_distance'], cc_c['face_rod_hole_h_distance'], cc_c['face_rod_hole_radius'], cc_c['top_rod_hole_radius']))
+      sys.exit(2)
+    if(max_face_thickness+cc_c['top_rod_hole_h_distance']+cc_c['top_rod_hole_radius']>cc_c['cube_width']/2.0-cc_c['axle_radius']):
+      print("ERR276: Error, top_rod_hole_h_distance {:0.3f} is too big compare to max_face_thickness {:0.3f}, top_rod_hole_radius {:0.3f}, cube_width {:0.3f} and axle_radius {:0.3f}".format(cc_c['top_rod_hole_h_distance'], max_face_thickness, cc_c['top_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius']))
+      sys.exit(2)
+  ### hollow
+  ## face hollow
+  # face_hollow_leg_nb
+  if(not(cc_c['face_hollow_leg_nb'] in [1, 4, 8])):
+    print("ERR281: Error, face_hollow_leg_nb {:d} accepts only the values: 1, 4 or 8".format(cc_c['face_hollow_leg_nb']))
+    sys.exit(2)
+  # face_hollow_border_width
+  if(cc_c['face_hollow_border_width']==0):
+    cc_c['face_hollow_border_width'] = max_face_top_thickness
+  if(cc_c['face_hollow_border_width']<radian_epsilon):
+    print("ERR283: Error, face_hollow_border_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_border_width']))
+    sys.exit(2)
+  # face_hollow_axle_width
+  if(cc_c['face_hollow_axle_width']==0):
+    cc_c['face_hollow_axle_width'] = cc_c['axle_radius']
+  if(cc_c['face_hollow_axle_width']<radian_epsilon):
+    print("ERR292: Error, face_hollow_axle_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_axle_width']))
+    sys.exit(2)
+  # face_hollow_leg_width
+  if(cc_c['face_hollow_leg_width']==0):
+    cc_c['face_hollow_leg_width'] = max(cc_c['face_hollow_border_width'], cc_c['face_hollow_axle_width'])
+  if(cc_c['face_hollow_leg_width']<radian_epsilon):
+    print("ERR297: Error, face_hollow_leg_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_leg_width']))
+    sys.exit(2)
+  # face_hollow_smoothing_radius
+  if(cc_c['face_hollow_smoothing_radius']==0):
+    cc_c['face_hollow_smoothing_radius'] = cc_c['cube_width']/10.0
+  if(cc_c['face_hollow_smoothing_radius']<cc_c['cross_cube_cnc_router_bit_radius']):
+    print("ERR302: Error, face_hollow_smoothing_radius {:0.3f} must be bigger than cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['face_hollow_smoothing_radius'], cc_c['cross_cube_cnc_router_bit_radius']))
+    sys.exit(2)
+  ## top hollow
+  # top_hollow_leg_nb
+  if(not(cc_c['top_hollow_leg_nb'] in [0, 1, 4, 8])):
+    print("ERR325: Error, top_hollow_leg_nb {:d} accepts only the values: 0, 1, 4, 8".format(cc_c['top_hollow_leg_nb']))
+    sys.exit(2)
+  # top_hollow_border_width
+  if(cc_c['top_hollow_border_width']==0):
+    cc_c['top_hollow_border_width'] = max_face_thickness
+  if(cc_c['top_hollow_border_width']<radian_epsilon):
+    print("ERR332: Error, top_hollow_border_width {:0.3f} must be strictly positive".format(cc_c['top_hollow_border_width']))
+    sys.exit(2)
+  # top_hollow_leg_width
+  if(cc_c['top_hollow_leg_width']==0):
+    cc_c['top_hollow_leg_width'] = cc_c['top_hollow_border_width']
+  if(cc_c['top_hollow_leg_width']<radian_epsilon):
+    print("ERR338: Error, top_hollow_leg_width {:0.3f} must be strictly positive".format(cc_c['top_hollow_leg_width']))
+    sys.exit(2)
+  # top_hollow_smoothing_radius
+  if(cc_c['top_hollow_smoothing_radius']==0):
+    cc_c['top_hollow_smoothing_radius'] = cc_c['cube_width']/10.0
+  if(cc_c['top_hollow_smoothing_radius']<cc_c['cross_cube_cnc_router_bit_radius']):
+    print("ERR344: Error, top_hollow_smoothing_radius {:0.3f} must be bigger than cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['top_hollow_smoothing_radius'], cc_c['cross_cube_cnc_router_bit_radius']))
+    sys.exit(2)
+  ### axle
+  # axle_length
+  if(cc_c['axle_length']==0):
+    cc_c['axle_length'] = 2*cc_c['cube_width']
+  if(cc_c['axle_length']<cc_c['cube_width']):
+    print("ERR349: Error, axle_length {:0.3f} must be bigger than cube_width {:0.3f}".format(cc_c['axle_length'], cc_c['cube_width']))
+    sys.exit(2)
+  # spacer_diameter
+  cc_c['spacer_radius'] = cc_c['spacer_diameter']/2.0
+  if(cc_c['spacer_radius']>0):
+    if(cc_c['spacer_radius']==0):
+      cc_c['spacer_radius'] = 2.4*cc_c['axle_radius']
+    if(cc_c['spacer_radius']<cc_c['axle_radius']+radian_epsilon):
+      print("ERR357: Error, spacer_radius {:0.3f} must be bigger than axle_radius {:0.3f}".format(cc_c['spacer_radius'], cc_c['axle_radius']))
+      sys.exit(2)
+    if(cc_c['spacer_length']==0):
+      cc_c['spacer_length'] = (cc_c['axle_length']-cc_c['cube_width'])/4.0
+    if(cc_c['spacer_length']<radian_epsilon):
+      print("ERR360: Error, spacer_length {:0.3f} must be strictly positive".format(cc_c['spacer_length']))
+      sys.exit(2)
+    if(cc_c['spacer_length']>(cc_c['axle_length']-cc_c['cube_width'])/2.0):
+      print("ERR363: Error, spacer_length {:0.3f} is too big compare to axle_length {:0.3f} and cube_width {:0.3f}".format(cc_c['spacer_length'], cc_c['axle_length'], cc_c['cube_width']))
+      sys.exit(2)
+  ### manufacturing
+  # cross_cube_cnc_router_bit_radius
+  # cross_cube_extra_cut_thickness
+  if(abs(cc_c['cross_cube_extra_cut_thickness'])>min(cc_c['cube_width']/5.0, cube_height/4.0)/3.0):
+    print("ERR369: Error, cross_cube_extra_cut_thickness {:0.3} absolute value is too big compare to cube_width {:0.3f} and cube_height {:0.3f}".format(cc_c['cross_cube_extra_cut_thickness'], cc_c['cube_width'], cube_height))
+    sys.exit(2)
   ################################################################
   # outline construction
   ################################################################
