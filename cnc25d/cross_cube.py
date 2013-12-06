@@ -241,7 +241,7 @@ def cross_cube(ai_constraints):
   if(cc_c['top_thickness']>(cc_c['inter_axle_length']+2*cc_c['axle_radius']+2*cc_c['height_margin'])/4.0):
     print("ERR235: top_thickness {:0.3f} is too small compare to inter_axle_length {:0.3}, axle_radius {:0.3}, height_margin {:0.3}".format(cc_c['top_thickness'], cc_c['inter_axle_length'], cc_c['axle_radius'], cc_c['height_margin']))
     sys.exit(2)
-  cube_height = cc_c['inter_axle_length'] + 2*cc_c['axle_radius'] + 2*cc_c['top_thickness']
+  cube_height = cc_c['inter_axle_length'] + 2*cc_c['axle_radius'] + 2*cc_c['height_margin'] + 2*cc_c['top_thickness']
   ## width
   # cube_width
   if(cc_c['cube_width']<3*cc_c['axle_radius']):
@@ -263,6 +263,10 @@ def cross_cube(ai_constraints):
     if(face_thickness[i]>cc_c['cube_width']/6.0):
       print("ERR250: Error, face_thickness[{:d}] {:0.3f} is too big compare to cube_width {:0.3f}".format(i, face_thickness[i], cc_c['cube_width']))
       sys.exit(2)
+  cc_c['face_A1_thickness'] = face_thickness[0]
+  cc_c['face_A2_thickness'] = face_thickness[1]
+  cc_c['face_B1_thickness'] = face_thickness[2]
+  cc_c['face_B2_thickness'] = face_thickness[3]
   ### threaded rod
   ## face
   # face_rod_hole_diameter
@@ -375,10 +379,130 @@ def cross_cube(ai_constraints):
   if(abs(cc_c['cross_cube_extra_cut_thickness'])>min(cc_c['cube_width']/5.0, cube_height/4.0)/3.0):
     print("ERR369: Error, cross_cube_extra_cut_thickness {:0.3} absolute value is too big compare to cube_width {:0.3f} and cube_height {:0.3f}".format(cc_c['cross_cube_extra_cut_thickness'], cc_c['cube_width'], cube_height))
     sys.exit(2)
+
   ################################################################
   # outline construction
   ################################################################
-  
+  # intermediate parameters
+  cccrbr = cc_c['cross_cube_cnc_router_bit_radius']
+  ccect = cc_c['cross_cube_extra_cut_thickness']
+  cw5 = cc_c['cube_width']/5.0
+  ch4 = cube_height/4.0
+  tt = cc_c['top_thickness']
+  fa1t = cc_c['face_A1_thickness']
+  fa2t = cc_c['face_A2_thickness']
+  fb1t = cc_c['face_B1_thickness']
+  fb2t = cc_c['face_B2_thickness']
+  ## face figure
+  def face_figure(ai_left_thickness, ai_right_thickness):
+    """ generate the face-figure for face_A and face_B
+    """
+    r_face_figure = []
+    # alias
+    lt = ai_left_thickness
+    rt = ai_right_thickness
+    #mlrt = max(lt, rt)
+    # face_outline
+    face_ol = []
+    face_ol.append((0*cw5, 0, 0)) # bottom side
+    face_ol.append((1*cw5-ccect, 0, 0))
+    face_ol.append((1*cw5-ccect, tt+ccect, -1*cccrbr))
+    face_ol.append((2*cw5+ccect, tt+ccect, -1*cccrbr))
+    face_ol.append((2*cw5+ccect, 0, 0))
+    face_ol.append((3*cw5-ccect, 0, 0))
+    face_ol.append((3*cw5-ccect, tt+ccect, -1*cccrbr))
+    face_ol.append((4*cw5+ccect, tt+ccect, -1*cccrbr))
+    face_ol.append((4*cw5+ccect, 0, 0))
+    face_ol.append((5*cw5, 0, 0)) # face A1 right side
+    face_ol.append((5*cw5, 1*ch4-ccect/2.0, 0))
+    face_ol.append((5*cw5-rt-ccect, 1*ch4-ccect/2.0, -1*cccrbr))
+    face_ol.append((5*cw5-rt-ccect, 2*ch4+ccect/2.0, -1*cccrbr))
+    face_ol.append((5*cw5, 2*ch4+ccect/2.0, 0))
+    face_ol.append((5*cw5, 3*ch4-ccect/2.0, 0))
+    face_ol.append((5*cw5-rt-ccect, 3*ch4-ccect/2.0, -1*cccrbr))
+    face_ol.append((5*cw5-rt-ccect, 4*ch4, 0)) # top side
+    face_ol.append((4*cw5+ccect, 4*ch4, 0))
+    face_ol.append((4*cw5+ccect, 4*ch4-tt-ccect, -1*cccrbr))
+    face_ol.append((3*cw5-ccect, 4*ch4-tt-ccect, -1*cccrbr))
+    face_ol.append((3*cw5-ccect, 4*ch4, 0))
+    face_ol.append((2*cw5+ccect, 4*ch4, 0))
+    face_ol.append((2*cw5+ccect, 4*ch4-tt-ccect, -1*cccrbr))
+    face_ol.append((1*cw5-ccect, 4*ch4-tt-ccect, -1*cccrbr))
+    face_ol.append((1*cw5-ccect, 4*ch4, 0))
+    face_ol.append((0*cw5+lt+ccect, 4*ch4, 0)) # left side
+    face_ol.append((0*cw5+lt+ccect, 3*ch4-ccect/2.0, -1*cccrbr))
+    face_ol.append((0*cw5, 3*ch4-ccect/2.0, 0))
+    face_ol.append((0*cw5, 2*ch4+ccect/2.0, 0))
+    face_ol.append((0*cw5+lt+ccect, 2*ch4+ccect/2.0, -1*cccrbr))
+    face_ol.append((0*cw5+lt+ccect, 1*ch4-ccect/2.0, -1*cccrbr))
+    face_ol.append((0*cw5, 1*ch4-ccect/2.0, 0))
+    face_ol.append((0*cw5, 0*ch4, 0))
+    r_face_figure.append(face_ol)
+    # holes
+    if(cc_c['axle_radius']>0):
+      r_face_figure.append((cc_c['cube_width']/2.0, tt+cc_c['height_margin']+cc_c['axle_radius'], cc_c['axle_radius']))
+    if(cc_c['face_rod_hole_radius']>0):
+      r_face_figure.append((lt+cc_c['face_rod_hole_h_distance'], tt+2*cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius']))
+      r_face_figure.append((cc_c['cube_width']-(rt+cc_c['face_rod_hole_h_distance']), tt+2*cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius']))
+      r_face_figure.append((lt+cc_c['face_rod_hole_h_distance'], cube_height-(tt+cc_c['face_rod_hole_v_distance']), cc_c['face_rod_hole_radius']))
+      r_face_figure.append((cc_c['cube_width']-(rt+cc_c['face_rod_hole_h_distance']), cube_height-(tt+cc_c['face_rod_hole_v_distance']), cc_c['face_rod_hole_radius']))
+    # face-hollow
+
+    # return
+    return(r_face_figure)
+  # face_A
+  face_A_rotated = cnc25d_api.rotate_and_translate_figure(face_figure(fb1t, fb2t), cc_c['cube_width']/2.0, cube_height/2.0, 0.0, 0.0, 0.0)
+  face_A = cnc25d_api.cnc_cut_figure(face_A_rotated, "face_A")
+  face_A_overlay = cnc25d_api.ideal_figure(face_A_rotated, "face_A")
+  # face_B
+  face_B_rotated = cnc25d_api.rotate_and_translate_figure(face_figure(fa2t, fa1t), cc_c['cube_width']/2.0, cube_height/2.0, math.pi, 0.0, 0.0)
+  face_B = cnc25d_api.cnc_cut_figure(face_B_rotated, "face_B")
+  face_B_overlay = cnc25d_api.ideal_figure(face_B_rotated, "face_B")
+
+  ## top_figure
+  top_A = []
+  # top_sub_outline
+  def top_sub_outline(ai_previous_face_thickness, ai_current_face_thickness, ai_post_face_thickness):
+    """ Generate a sub-outline of the top_outline
+    """
+    #
+    pre_ft = ai_previous_face_thickness
+    cur_ft = ai_current_face_thickness
+    post_ft = ai_post_face_thickness
+    #
+    r_top_sub_ol = []
+    r_top_sub_ol.append((pre_ft+ccect, cur_ft+ccect, 0))
+    r_top_sub_ol.append((1*cw5, cur_ft+ccect, -1*cccrbr))
+    r_top_sub_ol.append((1*cw5, 0, 0))
+    r_top_sub_ol.append((2*cw5, 0, 0))
+    r_top_sub_ol.append((2*cw5, cur_ft+ccect, -1*cccrbr))
+    r_top_sub_ol.append((3*cw5, cur_ft+ccect, -1*cccrbr))
+    r_top_sub_ol.append((3*cw5, 0, 0))
+    r_top_sub_ol.append((4*cw5, 0, 0))
+    r_top_sub_ol.append((4*cw5, cur_ft+ccect, -1*cccrbr))
+    r_top_sub_ol.append((5*cw5-post_ft-ccect, cur_ft+ccect, 0))
+    #
+    return(r_top_sub_ol)
+  # top_outline
+  top_ol = []
+  top_ol.extend(cnc25d_api.outline_rotate(top_sub_outline(fb1t, fa1t, fb2t)[:-1], cc_c['cube_width']/2.0, cc_c['cube_width']/2.0, 0*math.pi/2))
+  top_ol.extend(cnc25d_api.outline_rotate(top_sub_outline(fa1t, fb2t, fa2t)[:-1], cc_c['cube_width']/2.0, cc_c['cube_width']/2.0, 1*math.pi/2))
+  top_ol.extend(cnc25d_api.outline_rotate(top_sub_outline(fb2t, fa2t, fb1t)[:-1], cc_c['cube_width']/2.0, cc_c['cube_width']/2.0, 2*math.pi/2))
+  top_ol.extend(cnc25d_api.outline_rotate(top_sub_outline(fa2t, fb1t, fa1t)[:-1], cc_c['cube_width']/2.0, cc_c['cube_width']/2.0, 3*math.pi/2))
+  top_ol = cnc25d_api.outline_close(top_ol)
+  top_A.append(top_ol)
+  # holes
+  if(cc_c['top_rod_hole_radius']>0):
+    top_A.append((fb1t+cc_c['top_rod_hole_h_distance'], fa1t+cc_c['top_rod_hole_h_distance'], cc_c['top_rod_hole_radius']))
+    top_A.append((cc_c['cube_width']-(fb2t+cc_c['top_rod_hole_h_distance']), fa1t+cc_c['top_rod_hole_h_distance'], cc_c['top_rod_hole_radius']))
+    top_A.append((cc_c['cube_width']-(fb2t+cc_c['top_rod_hole_h_distance']), cc_c['cube_width']-(fa2t+cc_c['top_rod_hole_h_distance']), cc_c['top_rod_hole_radius']))
+    top_A.append((fb1t+cc_c['top_rod_hole_h_distance'], cc_c['cube_width']-(fa2t+cc_c['top_rod_hole_h_distance']), cc_c['top_rod_hole_radius']))
+  # top-hollow
+
+  # top_figure
+  top_figure = cnc25d_api.cnc_cut_figure(top_A, "top_figure")
+  top_figure_overlay = cnc25d_api.ideal_figure(top_A, "top_figure")
+
 
   ################################################################
   # output
@@ -387,18 +511,184 @@ def cross_cube(ai_constraints):
   # cc_parameter_info
   cc_parameter_info = "\ncross_cube parameter info:\n"
   cc_parameter_info += "\n" + cc_c['args_in_txt'] + "\n"
+  cc_parameter_info += """
+cube height:
+axle_radius:        {:0.3f}    diameter: {:0.3f}
+inter_axle_length:  {:0.3f}
+height_margin:      {:0.3f}
+top_thickness:      {:0.3f}
+cube_height:        {:0.3f}
+""".format(cc_c['axle_radius'], 2*cc_c['axle_radius'], cc_c['inter_axle_length'], cc_c['height_margin'], cc_c['top_thickness'], cube_height)
+  cc_parameter_info += """
+cube width:
+cube_width:         {:0.3f}
+face_A1_thickness:  {:0.3f}
+face_A1_thickness:  {:0.3f}
+face_B1_thickness:  {:0.3f}
+face_B2_thickness:  {:0.3f}
+""".format(cc_c['cube_width'], cc_c['face_A1_thickness'], cc_c['face_A2_thickness'], cc_c['face_B1_thickness'], cc_c['face_B2_thickness'])
+  cc_parameter_info += """
+threaded rod holes:
+face_rod_hole_radius:     {:0.3f}   diameter: {:0.3f}
+face_rod_hole_h_distance: {:0.3f}
+face_rod_hole_v_distance: {:0.3f}
+top_rod_hole_radius:      {:0.3f}   diameter: {:0.3f}
+top_rod_hole_h_distance:  {:0.3f}
+""".format(cc_c['face_rod_hole_radius'], 2*cc_c['face_rod_hole_radius'], cc_c['face_rod_hole_h_distance'], cc_c['face_rod_hole_v_distance'], cc_c['top_rod_hole_radius'], 2*cc_c['top_rod_hole_radius'], cc_c['top_rod_hole_h_distance'])
+  cc_parameter_info += """
+face-hollow:
+face_hollow_leg_nb:             {:d}
+face_hollow_border_width:       {:0.3f}
+face_hollow_axle_width:         {:0.3f}
+face_hollow_leg_width:          {:0.3f}
+face_hollow_smoothing_radius:   {:0.3f}
+""".format(cc_c['face_hollow_leg_nb'], cc_c['face_hollow_border_width'], cc_c['face_hollow_axle_width'], cc_c['face_hollow_leg_width'], cc_c['face_hollow_smoothing_radius'])
+  cc_parameter_info += """
+top-hollow:
+top_hollow_leg_nb:            {:d}
+top_hollow_border_width:      {:0.3f}
+top_hollow_leg_width:         {:0.3f}
+top_hollow_smoothing_radius:  {:0.3f}
+""".format(cc_c['top_hollow_leg_nb'], cc_c['top_hollow_border_width'], cc_c['top_hollow_leg_width'], cc_c['top_hollow_smoothing_radius'])
+  cc_parameter_info += """
+axles:
+axle_length:    {:0.3f}
+spacer_radius:  {:0.3f}    spacer_diameter: {:0.3f}
+spacer_length:  {:0.3f}
+""".format(cc_c['axle_length'], cc_c['spacer_radius'], 2*cc_c['spacer_radius'], cc_c['spacer_length'])
+  cc_parameter_info += """
+manufacturing:
+cross_cube_cnc_router_bit_radius: {:0.3f}
+cross_cube_extra_cut_thickness:   {:0.3f}
+""".format(cc_c['cross_cube_cnc_router_bit_radius'], cc_c['cross_cube_extra_cut_thickness'])
+  #print("dbg552: cc_parameter_info: {:s}".format(cc_parameter_info))
+
+  ### figures output
+  # part_list
+  part_list = []
+  part_list.append(face_A)
+  part_list.append(face_B)
+  part_list.append(top_figure)
+  # part_list_figure
+  x_space = 1.2*cc_c['cube_width'] 
+  y_space = 1.2*max(cube_height, cc_c['cube_width'])
+  part_list_figure = []
+  for i in range(len(part_list)):
+    part_list_figure.extend(cnc25d_api.rotate_and_translate_figure(part_list[i], 0.0, 0.0, 0.0, i*x_space, 0.0))
+  ## intermediate parameters
+  ## sub-assembly
+  ## cross_cube_part_overview
+  cross_cube_part_overview_figure = []
+  cross_cube_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(face_A, 0.0, 0.0, 0.0, 1*x_space, 1*y_space))
+  cross_cube_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(face_B, 0.0, 0.0, 0.0, 0*x_space, 1*y_space))
+  cross_cube_part_overview_figure.extend(cnc25d_api.rotate_and_translate_figure(top_figure, 0.0, 0.0, 0.0, 1*x_space, 0*y_space))
+  cross_cube_part_overview_figure_overlay = []
+  cross_cube_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(face_A_overlay, 0.0, 0.0, 0.0, 1*x_space, 1*y_space))
+  cross_cube_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(face_B_overlay, 0.0, 0.0, 0.0, 0*x_space, 1*y_space))
+  cross_cube_part_overview_figure_overlay.extend(cnc25d_api.rotate_and_translate_figure(top_figure_overlay, 0.0, 0.0, 0.0, 1*x_space, 0*y_space))
+
+  ### freecad-object assembly configuration
+  # intermediate parameters
+  x1 = 0
+  x2 = cc_c['cube_width'] - cc_c['face_B2_thickness']
+  y1 = 0
+  y2 = cc_c['cube_width'] - cc_c['face_A2_thickness']
+  z1 = 0
+  z2 = cube_height - cc_c['top_thickness']
+  # conf1a
+  cross_cube_assembly_conf1a = []
+  cross_cube_assembly_conf1a.append((face_A, 0, 0, cc_c['cube_width'], cube_height, cc_c['face_A1_thickness'], 'i', 'xz', x1, y1, z1))
+  cross_cube_assembly_conf1a.append((face_B, 0, 0, cc_c['cube_width'], cube_height, cc_c['face_B1_thickness'], 'i', 'yz', x1, y1, z1))
+  cross_cube_assembly_conf1a.append((top_figure, 0, 0, cc_c['cube_width'], cc_c['cube_width'], cc_c['top_thickness'], 'i', 'xy', x1, y1, z1))
+  # conf1b
+  cross_cube_assembly_conf1b = []
+  cross_cube_assembly_conf1b.append((face_A, 0, 0, cc_c['cube_width'], cube_height, cc_c['face_A2_thickness'], 'i', 'xz', x1, y2, z1))
+  cross_cube_assembly_conf1b.append((face_B, 0, 0, cc_c['cube_width'], cube_height, cc_c['face_B2_thickness'], 'i', 'yz', x2, y1, z1))
+  cross_cube_assembly_conf1b.append((top_figure, 0, 0, cc_c['cube_width'], cc_c['cube_width'], cc_c['top_thickness'], 'i', 'xy', x1, y1, z2))
+  # conf1
+  cross_cube_assembly_conf1 = []
+  cross_cube_assembly_conf1.extend(cross_cube_assembly_conf1a)
+  cross_cube_assembly_conf1.extend(cross_cube_assembly_conf1b)
+  # conf2a : threaded rod
+  ftrr = 0.9*cc_c['face_rod_hole_radius']
+  face_threaded_rod = (ftrr, ftrr, ftrr)
+  ttrr = 0.9*cc_c['top_rod_hole_radius']
+  top_threaded_rod = (ttrr, ttrr, ttrr)
+  fatrx = (cc_c['face_B1_thickness']+cc_c['face_rod_hole_h_distance'], cc_c['cube_width']-(cc_c['face_B2_thickness']+cc_c['face_rod_hole_h_distance']))
+  fatry = -0.1*cc_c['cube_width']
+  fatrz = (cc_c['top_thickness']+2*cc_c['face_rod_hole_v_distance'], cc_c['cube_width']-(cc_c['top_thickness']+cc_c['face_rod_hole_v_distance']))
+  fbtrx = -0.1*cc_c['cube_width']
+  fbtry = (cc_c['face_A1_thickness']+cc_c['face_rod_hole_h_distance'], cc_c['cube_width']-(cc_c['face_A2_thickness']+cc_c['face_rod_hole_h_distance']))
+  fbtrz = (cc_c['top_thickness']+1*cc_c['face_rod_hole_v_distance'], cc_c['cube_width']-(cc_c['top_thickness']+2*cc_c['face_rod_hole_v_distance']))
+  ttrx = (max_face_thickness+cc_c['top_rod_hole_h_distance'], cc_c['cube_width']-(max_face_thickness+cc_c['top_rod_hole_h_distance']))
+  ttry = ttrx
+  ttrz = -0.1*cube_height
+  cross_cube_assembly_conf2a = []
+  if(cc_c['face_rod_hole_radius']>0):
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[0], fatry, fatrz[0])) # threaded rod on face_A
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[1], fatry, fatrz[0]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[1], fatry, fatrz[1]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[0], fatry, fatrz[1]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[0], fbtrz[0])) # threaded rod on face_B
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[1], fbtrz[0]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[1], fbtrz[1]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[0], fbtrz[1]))
+  if(cc_c['top_rod_hole_radius']>0):
+    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, ttrr, ttrr, 1.2*cube_height, 'i', 'xy', ttrx[0], ttry[0], ttrz)) # threaded rod on top
+    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, ttrr, ttrr, 1.2*cube_height, 'i', 'xy', ttrx[1], ttry[0], ttrz))
+    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, ttrr, ttrr, 1.2*cube_height, 'i', 'xy', ttrx[1], ttry[1], ttrz))
+    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, ttrr, ttrr, 1.2*cube_height, 'i', 'xy', ttrx[0], ttry[1], ttrz))
+  # conf2b : axles
+  cross_cube_assembly_conf2b = []
+
+  # conf2
+  cross_cube_assembly_conf2 = []
+  cross_cube_assembly_conf2.extend(cross_cube_assembly_conf1a)
+  cross_cube_assembly_conf2.extend(cross_cube_assembly_conf2a)
+  cross_cube_assembly_conf2.extend(cross_cube_assembly_conf2b)
+  # conf3
+  cross_cube_assembly_conf3 = []
+  cross_cube_assembly_conf3.extend(cross_cube_assembly_conf2)
+  cross_cube_assembly_conf3.extend(cross_cube_assembly_conf1b)
+
+  ### display with Tkinter
+  if(cc_c['tkinter_view']):
+    print(cc_parameter_info)
+    cnc25d_api.figure_simple_display(cross_cube_part_overview_figure, cross_cube_part_overview_figure_overlay, cc_parameter_info)
+
+  ### generate output file
+  if(cc_c['output_file_basename']!=''):
+    (output_file_basename, output_file_suffix) = cnc25d_api.get_output_file_suffix(cc_c['output_file_basename'])
+    # parts
+    cnc25d_api.generate_output_file(face_A, output_file_basename + "_face_A" + output_file_suffix, cc_c['face_A1_thickness'], cc_parameter_info)
+    cnc25d_api.generate_output_file(face_B, output_file_basename + "_face_B" + output_file_suffix, cc_c['face_B1_thickness'], cc_parameter_info)
+    cnc25d_api.generate_output_file(top_figure, output_file_basename + "_top" + output_file_suffix, cc_c['top_thickness'], cc_parameter_info)
+    # assembly
+    if((output_file_suffix=='.svg')or(output_file_suffix=='.dxf')):
+      cnc25d_api.generate_output_file(part_list_figure, output_file_basename + "_part_list" + output_file_suffix, 1.0, cc_parameter_info)
+      cnc25d_api.generate_output_file(cross_cube_part_overview_figure, output_file_basename + "_part_overview" + output_file_suffix, 1.0, cc_parameter_info)
+    else:
+      size_xyz = (cc_c['axle_length'], cc_c['axle_length'], cube_height)
+      zero_xyz = ((cc_c['axle_length']-cc_c['cube_width'])/2.0, (cc_c['axle_length']-cc_c['cube_width'])/2.0, 0)
+      slice_x = [ (i+1)/12.0*size_xyz[0] for i in range(10) ]
+      slice_y = [ (i+1)/12.0*size_xyz[1] for i in range(10) ]
+      slice_z = [ (i+0.1)/12.0*size_xyz[2] for i in range(10) ]
+      slice_xyz = (size_xyz[0], size_xyz[1], size_xyz[2], zero_xyz[0], zero_xyz[1], zero_xyz[2], slice_z, slice_y, slice_x)
+      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf1, output_file_basename + "_bare_assembly", True, False, slice_xyz)
+      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf2, output_file_basename + "_open_assembly_with_rods_and_axles", True, True, [])
+      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf3, output_file_basename + "_assembly_with_rods_and_axles", True, True, [])
 
   #### return
   if(cc_c['return_type']=='int_status'):
     r_cc = 1
   elif(cc_c['return_type']=='cnc25d_figure'):
-    r_cc = 1
+    r_cc = part_list
   elif(cc_c['return_type']=='freecad_object'):
-    r_cc = 1
+    r_cc = cnc25d_api.figures_to_freecad_assembly(cross_cube_assembly_conf2)
   elif(cc_c['return_type']=='figures_3dconf_info'):
-    r_cc = 1
+    r_cc = (part_list, cross_cube_assembly_conf3, cc_parameter_info)
   else:
-    print("ERR508: Error the return_type {:s} is unknown".format(b_c['return_type']))
+    print("ERR508: Error the return_type {:s} is unknown".format(cc_c['return_type']))
     sys.exit(2)
   return(r_cc)
 
@@ -534,9 +824,9 @@ def cross_cube_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("cross_cube.py says hello!\n")
-  my_cc = cross_cube_cli()
-  #my_cc = cross_cube_cli("--cross_cube_extra_cut_thickness 1.0 --return_type freecad_object")
-  try: # depending on b_c['return_type'] it might be or not a freecad_object
+  #my_cc = cross_cube_cli()
+  my_cc = cross_cube_cli("--cross_cube_extra_cut_thickness 1.0 --return_type freecad_object")
+  try: # depending on cc_c['return_type'] it might be or not a freecad_object
     Part.show(my_cc)
     print("freecad_object returned")
   except:
