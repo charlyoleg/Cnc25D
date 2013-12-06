@@ -447,6 +447,7 @@ def cross_cube(ai_constraints):
       r_face_figure.append((lt+cc_c['face_rod_hole_h_distance'], cube_height-(tt+cc_c['face_rod_hole_v_distance']), cc_c['face_rod_hole_radius']))
       r_face_figure.append((cc_c['cube_width']-(rt+cc_c['face_rod_hole_h_distance']), cube_height-(tt+cc_c['face_rod_hole_v_distance']), cc_c['face_rod_hole_radius']))
     # face-hollow
+    # [todo]
 
     # return
     return(r_face_figure)
@@ -498,6 +499,7 @@ def cross_cube(ai_constraints):
     top_A.append((cc_c['cube_width']-(fb2t+cc_c['top_rod_hole_h_distance']), cc_c['cube_width']-(fa2t+cc_c['top_rod_hole_h_distance']), cc_c['top_rod_hole_radius']))
     top_A.append((fb1t+cc_c['top_rod_hole_h_distance'], cc_c['cube_width']-(fa2t+cc_c['top_rod_hole_h_distance']), cc_c['top_rod_hole_radius']))
   # top-hollow
+  # [todo]
 
   # top_figure
   top_figure = cnc25d_api.cnc_cut_figure(top_A, "top_figure")
@@ -611,36 +613,53 @@ cross_cube_extra_cut_thickness:   {:0.3f}
   cross_cube_assembly_conf1.extend(cross_cube_assembly_conf1b)
   # conf2a : threaded rod
   ftrr = 0.9*cc_c['face_rod_hole_radius']
-  face_threaded_rod = (ftrr, ftrr, ftrr)
+  face_threaded_rod = [(ftrr, ftrr, ftrr)]
   ttrr = 0.9*cc_c['top_rod_hole_radius']
-  top_threaded_rod = (ttrr, ttrr, ttrr)
-  fatrx = (cc_c['face_B1_thickness']+cc_c['face_rod_hole_h_distance'], cc_c['cube_width']-(cc_c['face_B2_thickness']+cc_c['face_rod_hole_h_distance']))
+  top_threaded_rod = [(ttrr, ttrr, ttrr)]
+  fatrx = (cc_c['face_B1_thickness']+cc_c['face_rod_hole_h_distance']-ftrr, cc_c['cube_width']-(cc_c['face_B2_thickness']+cc_c['face_rod_hole_h_distance'])-ftrr)
   fatry = -0.1*cc_c['cube_width']
-  fatrz = (cc_c['top_thickness']+2*cc_c['face_rod_hole_v_distance'], cc_c['cube_width']-(cc_c['top_thickness']+cc_c['face_rod_hole_v_distance']))
+  fatrz = (cc_c['top_thickness']+2*cc_c['face_rod_hole_v_distance']-ftrr, cube_height-(cc_c['top_thickness']+cc_c['face_rod_hole_v_distance'])-ftrr)
   fbtrx = -0.1*cc_c['cube_width']
-  fbtry = (cc_c['face_A1_thickness']+cc_c['face_rod_hole_h_distance'], cc_c['cube_width']-(cc_c['face_A2_thickness']+cc_c['face_rod_hole_h_distance']))
-  fbtrz = (cc_c['top_thickness']+1*cc_c['face_rod_hole_v_distance'], cc_c['cube_width']-(cc_c['top_thickness']+2*cc_c['face_rod_hole_v_distance']))
-  ttrx = (max_face_thickness+cc_c['top_rod_hole_h_distance'], cc_c['cube_width']-(max_face_thickness+cc_c['top_rod_hole_h_distance']))
-  ttry = ttrx
+  fbtry = (cc_c['face_A1_thickness']+cc_c['face_rod_hole_h_distance']-ftrr, cc_c['cube_width']-(cc_c['face_A2_thickness']+cc_c['face_rod_hole_h_distance'])-ftrr)
+  fbtrz = (cc_c['top_thickness']+1*cc_c['face_rod_hole_v_distance']-ftrr, cube_height-(cc_c['top_thickness']+2*cc_c['face_rod_hole_v_distance'])-ftrr)
+  ttrx = (cc_c['face_B1_thickness']+cc_c['top_rod_hole_h_distance']-ttrr, cc_c['cube_width']-(cc_c['face_B2_thickness']+cc_c['top_rod_hole_h_distance'])-ttrr)
+  ttry = (cc_c['face_A1_thickness']+cc_c['top_rod_hole_h_distance']-ttrr, cc_c['cube_width']-(cc_c['face_A2_thickness']+cc_c['top_rod_hole_h_distance'])-ttrr)
   ttrz = -0.1*cube_height
   cross_cube_assembly_conf2a = []
   if(cc_c['face_rod_hole_radius']>0):
-    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[0], fatry, fatrz[0])) # threaded rod on face_A
-    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[1], fatry, fatrz[0]))
-    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[1], fatry, fatrz[1]))
-    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[0], fatry, fatrz[1]))
-    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[0], fbtrz[0])) # threaded rod on face_B
-    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[1], fbtrz[0]))
-    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[1], fbtrz[1]))
-    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, ftrr, ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[0], fbtrz[1]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, 2*ftrr, 2*ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[0], fatry, fatrz[0])) # threaded rod on face_A
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, 2*ftrr, 2*ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[1], fatry, fatrz[0]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, 2*ftrr, 2*ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[1], fatry, fatrz[1]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, 2*ftrr, 2*ftrr, 1.2*cc_c['cube_width'], 'i', 'xz', fatrx[0], fatry, fatrz[1]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, 2*ftrr, 2*ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[0], fbtrz[0])) # threaded rod on face_B
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, 2*ftrr, 2*ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[1], fbtrz[0]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, 2*ftrr, 2*ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[1], fbtrz[1]))
+    cross_cube_assembly_conf2a.append((face_threaded_rod, 0, 0, 2*ftrr, 2*ftrr, 1.2*cc_c['cube_width'], 'i', 'yz', fbtrx, fbtry[0], fbtrz[1]))
   if(cc_c['top_rod_hole_radius']>0):
-    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, ttrr, ttrr, 1.2*cube_height, 'i', 'xy', ttrx[0], ttry[0], ttrz)) # threaded rod on top
-    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, ttrr, ttrr, 1.2*cube_height, 'i', 'xy', ttrx[1], ttry[0], ttrz))
-    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, ttrr, ttrr, 1.2*cube_height, 'i', 'xy', ttrx[1], ttry[1], ttrz))
-    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, ttrr, ttrr, 1.2*cube_height, 'i', 'xy', ttrx[0], ttry[1], ttrz))
+    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, 2*ttrr, 2*ttrr, 1.2*cube_height, 'i', 'xy', ttrx[0], ttry[0], ttrz)) # threaded rod on top
+    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, 2*ttrr, 2*ttrr, 1.2*cube_height, 'i', 'xy', ttrx[1], ttry[0], ttrz))
+    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, 2*ttrr, 2*ttrr, 1.2*cube_height, 'i', 'xy', ttrx[1], ttry[1], ttrz))
+    cross_cube_assembly_conf2a.append((top_threaded_rod, 0, 0, 2*ttrr, 2*ttrr, 1.2*cube_height, 'i', 'xy', ttrx[0], ttry[1], ttrz))
   # conf2b : axles
   cross_cube_assembly_conf2b = []
-
+  ar = 0.9*cc_c['axle_radius']
+  axle = [(ar, ar, ar)]
+  sr = cc_c['spacer_radius']
+  spacer = [(sr, sr, sr)]
+  ax = cc_c['cube_width']/2.0-ar
+  ay = -1*(cc_c['axle_length']-cc_c['cube_width'])/2.0
+  az1 = cc_c['top_thickness'] + cc_c['height_margin'] + cc_c['axle_radius']-ar
+  az2 = cube_height-(cc_c['top_thickness'] + cc_c['height_margin'] + cc_c['axle_radius'])-ar
+  sy1 = -1*cc_c['spacer_length']
+  sy2 = cc_c['cube_width']
+  if(cc_c['axle_radius']>0):
+    cross_cube_assembly_conf2b.append((axle, 0, 0, 2*ar, 2*ar, cc_c['axle_length'], 'i', 'xz', ax, ay, az1))
+    cross_cube_assembly_conf2b.append((axle, 0, 0, 2*ar, 2*ar, cc_c['axle_length'], 'i', 'yz', ay, ax, az2))
+  if(cc_c['spacer_radius']>0):
+    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'xz', ax, sy1, az1))
+    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'xz', ax, sy2, az1))
+    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'yz', sy1, ax, az2))
+    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'yz', sy2, ax, az2))
   # conf2
   cross_cube_assembly_conf2 = []
   cross_cube_assembly_conf2.extend(cross_cube_assembly_conf1a)
@@ -650,6 +669,7 @@ cross_cube_extra_cut_thickness:   {:0.3f}
   cross_cube_assembly_conf3 = []
   cross_cube_assembly_conf3.extend(cross_cube_assembly_conf2)
   cross_cube_assembly_conf3.extend(cross_cube_assembly_conf1b)
+  #print("dbg635: cross_cube_assembly_conf3:", cross_cube_assembly_conf3)
 
   ### display with Tkinter
   if(cc_c['tkinter_view']):
@@ -669,14 +689,14 @@ cross_cube_extra_cut_thickness:   {:0.3f}
       cnc25d_api.generate_output_file(cross_cube_part_overview_figure, output_file_basename + "_part_overview" + output_file_suffix, 1.0, cc_parameter_info)
     else:
       size_xyz = (cc_c['axle_length'], cc_c['axle_length'], cube_height)
-      zero_xyz = ((cc_c['axle_length']-cc_c['cube_width'])/2.0, (cc_c['axle_length']-cc_c['cube_width'])/2.0, 0)
+      zero_xyz = (-1*(cc_c['axle_length']-cc_c['cube_width'])/2.0, -1*(cc_c['axle_length']-cc_c['cube_width'])/2.0, 0)
       slice_x = [ (i+1)/12.0*size_xyz[0] for i in range(10) ]
       slice_y = [ (i+1)/12.0*size_xyz[1] for i in range(10) ]
       slice_z = [ (i+0.1)/12.0*size_xyz[2] for i in range(10) ]
       slice_xyz = (size_xyz[0], size_xyz[1], size_xyz[2], zero_xyz[0], zero_xyz[1], zero_xyz[2], slice_z, slice_y, slice_x)
-      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf1, output_file_basename + "_bare_assembly", True, False, slice_xyz)
-      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf2, output_file_basename + "_open_assembly_with_rods_and_axles", True, True, [])
-      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf3, output_file_basename + "_assembly_with_rods_and_axles", True, True, [])
+      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf1, output_file_basename + "_bare_assembly", True, False, [])
+      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf2, output_file_basename + "_open_assembly_with_rods_and_axles", True, False, [])
+      cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf3, output_file_basename + "_assembly_with_rods_and_axles", True, False, slice_xyz)
 
   #### return
   if(cc_c['return_type']=='int_status'):
