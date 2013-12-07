@@ -359,20 +359,19 @@ def cross_cube(ai_constraints):
     sys.exit(2)
   # spacer_diameter
   cc_c['spacer_radius'] = cc_c['spacer_diameter']/2.0
-  if(cc_c['spacer_radius']>0):
-    if(cc_c['spacer_radius']==0):
-      cc_c['spacer_radius'] = 2.4*cc_c['axle_radius']
-    if(cc_c['spacer_radius']<cc_c['axle_radius']+radian_epsilon):
-      print("ERR357: Error, spacer_radius {:0.3f} must be bigger than axle_radius {:0.3f}".format(cc_c['spacer_radius'], cc_c['axle_radius']))
-      sys.exit(2)
-    if(cc_c['spacer_length']==0):
-      cc_c['spacer_length'] = (cc_c['axle_length']-cc_c['cube_width'])/4.0
-    if(cc_c['spacer_length']<radian_epsilon):
-      print("ERR360: Error, spacer_length {:0.3f} must be strictly positive".format(cc_c['spacer_length']))
-      sys.exit(2)
-    if(cc_c['spacer_length']>(cc_c['axle_length']-cc_c['cube_width'])/2.0):
-      print("ERR363: Error, spacer_length {:0.3f} is too big compare to axle_length {:0.3f} and cube_width {:0.3f}".format(cc_c['spacer_length'], cc_c['axle_length'], cc_c['cube_width']))
-      sys.exit(2)
+  if(cc_c['spacer_radius']==0):
+    cc_c['spacer_radius'] = 1.2*cc_c['axle_radius']
+  if(cc_c['spacer_radius']<cc_c['axle_radius']+radian_epsilon):
+    print("ERR357: Error, spacer_radius {:0.3f} must be bigger than axle_radius {:0.3f}".format(cc_c['spacer_radius'], cc_c['axle_radius']))
+    sys.exit(2)
+  if(cc_c['spacer_length']==0):
+    cc_c['spacer_length'] = (cc_c['axle_length']-cc_c['cube_width'])/4.0
+  if(cc_c['spacer_length']<radian_epsilon):
+    print("ERR360: Error, spacer_length {:0.3f} must be strictly positive".format(cc_c['spacer_length']))
+    sys.exit(2)
+  if(cc_c['spacer_length']>(cc_c['axle_length']-cc_c['cube_width'])/2.0):
+    print("ERR363: Error, spacer_length {:0.3f} is too big compare to axle_length {:0.3f} and cube_width {:0.3f}".format(cc_c['spacer_length'], cc_c['axle_length'], cc_c['cube_width']))
+    sys.exit(2)
   ### manufacturing
   # cross_cube_cnc_router_bit_radius
   # cross_cube_extra_cut_thickness
@@ -650,16 +649,19 @@ cross_cube_extra_cut_thickness:   {:0.3f}
   ay = -1*(cc_c['axle_length']-cc_c['cube_width'])/2.0
   az1 = cc_c['top_thickness'] + cc_c['height_margin'] + cc_c['axle_radius']-ar
   az2 = cube_height-(cc_c['top_thickness'] + cc_c['height_margin'] + cc_c['axle_radius'])-ar
+  sx = cc_c['cube_width']/2.0-sr
   sy1 = -1*cc_c['spacer_length']
   sy2 = cc_c['cube_width']
+  sz1 = cc_c['top_thickness'] + cc_c['height_margin'] + cc_c['axle_radius']-sr
+  sz2 = cube_height-(cc_c['top_thickness'] + cc_c['height_margin'] + cc_c['axle_radius'])-sr
   if(cc_c['axle_radius']>0):
     cross_cube_assembly_conf2b.append((axle, 0, 0, 2*ar, 2*ar, cc_c['axle_length'], 'i', 'xz', ax, ay, az1))
     cross_cube_assembly_conf2b.append((axle, 0, 0, 2*ar, 2*ar, cc_c['axle_length'], 'i', 'yz', ay, ax, az2))
   if(cc_c['spacer_radius']>0):
-    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'xz', ax, sy1, az1))
-    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'xz', ax, sy2, az1))
-    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'yz', sy1, ax, az2))
-    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'yz', sy2, ax, az2))
+    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'xz', sx, sy1, sz1))
+    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'xz', sx, sy2, sz1))
+    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'yz', sy1, sx, sz2))
+    cross_cube_assembly_conf2b.append((spacer, 0, 0, 2*sr, 2*sr, cc_c['spacer_length'], 'i', 'yz', sy2, sx, sz2))
   # conf2
   cross_cube_assembly_conf2 = []
   cross_cube_assembly_conf2.extend(cross_cube_assembly_conf1a)
@@ -690,9 +692,9 @@ cross_cube_extra_cut_thickness:   {:0.3f}
     else:
       size_xyz = (cc_c['axle_length'], cc_c['axle_length'], cube_height)
       zero_xyz = (-1*(cc_c['axle_length']-cc_c['cube_width'])/2.0, -1*(cc_c['axle_length']-cc_c['cube_width'])/2.0, 0)
-      slice_x = [ (i+1)/12.0*size_xyz[0] for i in range(10) ]
-      slice_y = [ (i+1)/12.0*size_xyz[1] for i in range(10) ]
-      slice_z = [ (i+0.1)/12.0*size_xyz[2] for i in range(10) ]
+      slice_x = [ (i+1)/11.0*size_xyz[0] for i in range(10) ]
+      slice_y = [ (i+1)/11.0*size_xyz[1] for i in range(10) ]
+      slice_z = [ (i+1)/11.0*size_xyz[2] for i in range(10) ]
       slice_xyz = (size_xyz[0], size_xyz[1], size_xyz[2], zero_xyz[0], zero_xyz[1], zero_xyz[2], slice_z, slice_y, slice_x)
       cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf1, output_file_basename + "_bare_assembly", True, False, [])
       cnc25d_api.generate_3d_assembly_output_file(cross_cube_assembly_conf2, output_file_basename + "_open_assembly_with_rods_and_axles", True, False, [])
@@ -844,8 +846,8 @@ def cross_cube_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("cross_cube.py says hello!\n")
-  #my_cc = cross_cube_cli()
-  my_cc = cross_cube_cli("--cross_cube_extra_cut_thickness 1.0 --return_type freecad_object")
+  my_cc = cross_cube_cli()
+  #my_cc = cross_cube_cli("--cross_cube_extra_cut_thickness 1.0 --return_type freecad_object")
   try: # depending on cc_c['return_type'] it might be or not a freecad_object
     Part.show(my_cc)
     print("freecad_object returned")
