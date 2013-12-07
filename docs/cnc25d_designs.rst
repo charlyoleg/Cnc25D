@@ -22,6 +22,7 @@ Cnc25D design list
 * :doc:`bell_design`
 * :doc:`bagel_design`
 * :doc:`bell_bagel_assembly`
+* :doc:`cross_cube_design`
 
 Cnc25D design overview
 ======================
@@ -110,6 +111,13 @@ Bell_bagel_assembly
 The :doc:`bell_bagel_assembly` is the assembly of a *bell* piece and two *bagels*.
 
 .. image:: images/bell_bagel_assembly_3d.png
+
+Cross_cube
+----------
+
+The :doc:`cross_cube_design` is the *two-axle-join* of a *gimbal* system.
+
+.. image:: images/cross_cube_3d.png
 
 
 
