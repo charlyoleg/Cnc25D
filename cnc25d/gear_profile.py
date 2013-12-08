@@ -68,7 +68,7 @@ speed_scale = 0.2 #1
 # gear_profile dictionary-constraint-arguments default values
 ################################################################
 
-def gear_profile_dictionary_init():
+def gear_profile_dictionary_init(ai_variant=0):
   """ create and initiate a gear_profile_dictionary with the default value
   """
   r_gpd = {}
@@ -152,17 +152,19 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
       1:restriction for gearwheel
       2:restriction for gearring
       3:restriction for gearbar
+      4:restriction for gearlever
   """
   r_parser = ai_parser
   ### first gear
   # general
-  if((ai_variant!=1)and(ai_variant!=2)and(ai_variant!=3)):
+  if((ai_variant!=1)and(ai_variant!=2)and(ai_variant!=3)and(ai_variant!=4)):
     r_parser.add_argument('--gear_type','--gt', action='store', default='e', dest='sw_gear_type',
       help="Select the type of gear. Possible values: 'e', 'i', 'l'. Default: 'e'")
-  r_parser.add_argument('--gear_tooth_nb','--gtn', action='store', type=int, default=0, dest='sw_gear_tooth_nb',
-    help="Set the number of teeth of the first gear_profile.")
-  r_parser.add_argument('--gear_module','--gm', action='store', type=float, default=0.0, dest='sw_gear_module',
-    help="Set the module of the gear. It influences the gear_profile diameters.")
+  if(ai_variant!=4):
+    r_parser.add_argument('--gear_tooth_nb','--gtn', action='store', type=int, default=0, dest='sw_gear_tooth_nb',
+      help="Set the number of teeth of the first gear_profile.")
+    r_parser.add_argument('--gear_module','--gm', action='store', type=float, default=0.0, dest='sw_gear_module',
+      help="Set the module of the gear. It influences the gear_profile diameters.")
   r_parser.add_argument('--gear_primitive_diameter','--gpd', action='store', type=float, default=0.0, dest='sw_gear_primitive_diameter',
     help="If not zero, redefine the gear module to get this primitive diameter of the first gear_profile. Default: 0. If gearbar, it redefines the length.")
   r_parser.add_argument('--gear_addendum_dedendum_parity','--gadp', action='store', type=float, default=50.0, dest='sw_gear_addendum_dedendum_parity',
@@ -198,7 +200,7 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
     help="If not zero, add or remove radial thickness on the gear negative involute. Default: 0.0")
   ### second gear
   # general
-  if((ai_variant!=2)and(ai_variant!=3)):
+  if((ai_variant!=2)and(ai_variant!=3)and(ai_variant!=4)):
     r_parser.add_argument('--second_gear_type','--sgt', action='store', default='e', dest='sw_second_gear_type',
       help="Select the type of gear. Possible values: 'e', 'i', 'l'. Default: 'e'")
   r_parser.add_argument('--second_gear_tooth_nb','--sgtn', action='store', type=int, default=0, dest='sw_second_gear_tooth_nb',
@@ -240,25 +242,27 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
       help="if not zero, set the tooth negative slope angle for the gearbar. Default 0.0")
   ### position
   # first gear position
-  r_parser.add_argument('--center_position_x','--cpx', action='store', type=float, default=0.0, dest='sw_center_position_x',
-    help="Set the x-position of the first gear_profile center. Default: 0.0")
-  r_parser.add_argument('--center_position_y','--cpy', action='store', type=float, default=0.0, dest='sw_center_position_y',
-    help="Set the y-position of the first gear_profile center. Default: 0.0")
-  r_parser.add_argument('--gear_initial_angle','--gia', action='store', type=float, default=0.0, dest='sw_gear_initial_angle',
-    help="Set the gear reference angle (in Radian). Default: 0.0")
+  if(ai_variant!=4):
+    r_parser.add_argument('--center_position_x','--cpx', action='store', type=float, default=0.0, dest='sw_center_position_x',
+      help="Set the x-position of the first gear_profile center. Default: 0.0")
+    r_parser.add_argument('--center_position_y','--cpy', action='store', type=float, default=0.0, dest='sw_center_position_y',
+      help="Set the y-position of the first gear_profile center. Default: 0.0")
+    r_parser.add_argument('--gear_initial_angle','--gia', action='store', type=float, default=0.0, dest='sw_gear_initial_angle',
+      help="Set the gear reference angle (in Radian). Default: 0.0")
   # second gear position
   r_parser.add_argument('--second_gear_position_angle','--sgpa', action='store', type=float, default=0.0, dest='sw_second_gear_position_angle',
     help="Angle in Radian that sets the postion on the second gear_profile. Default: 0.0")
   r_parser.add_argument('--second_gear_additional_axis_length','--sgaal', action='store', type=float, default=0.0, dest='sw_second_gear_additional_axis_length',
     help="Set an additional value for the inter-axis length between the first and the second gear_profiles. Default: 0.0")
   ### portion
-  if((ai_variant!=1)and(ai_variant!=2)):
+  if((ai_variant!=1)and(ai_variant!=2)and(ai_variant!=4)):
     r_parser.add_argument('--cut_portion','--cp', action='store', nargs=3, type=int, default=(0, 0, 0), dest='sw_cut_portion',
       help="(N, first_end, last_end) If N>1, cut a portion of N tooth ofthe gear_profile. first_end and last_end defines in details where the profile stop (0: slope-top, 1: top-middle, 2: slope-bottom, 3: hollow-middle). Default: (0,0,0)")
   ### output
   # gear_profile extrusion (currently only linear extrusion is possible)
-  r_parser.add_argument('--gear_profile_height','--gwh', action='store', type=float, default=10.0, dest='sw_gear_profile_height',
-    help="Set the height of the linear extrusion of the first gear_profile. Default: 10.0")
+  if(ai_variant!=4):
+    r_parser.add_argument('--gear_profile_height','--gwh', action='store', type=float, default=10.0, dest='sw_gear_profile_height',
+      help="Set the height of the linear extrusion of the first gear_profile. Default: 10.0")
   # simulation
   r_parser.add_argument('--simulation_enable','--se', action='store_true', default=False, dest='sw_simulation_enable',
     help='It display a Tk window where you can observe the gear running. Check with your eyes if the geometry is working.')
@@ -1024,10 +1028,11 @@ def gear_profile_argparse_to_dictionary(ai_gp_args, ai_variant=0):
   r_gpd = {}
   ### first gear
   # general
-  if((ai_variant!=1)and(ai_variant!=2)and(ai_variant!=3)):
+  if((ai_variant!=1)and(ai_variant!=2)and(ai_variant!=3)and(ai_variant!=4)):
     r_gpd['gear_type'] = ai_gp_args.sw_gear_type
-  r_gpd['gear_tooth_nb'] = ai_gp_args.sw_gear_tooth_nb
-  r_gpd['gear_module'] = ai_gp_args.sw_gear_module
+  if(ai_variant!=4):
+    r_gpd['gear_tooth_nb'] = ai_gp_args.sw_gear_tooth_nb
+    r_gpd['gear_module'] = ai_gp_args.sw_gear_module
   r_gpd['gear_primitive_diameter'] = ai_gp_args.sw_gear_primitive_diameter
   r_gpd['gear_addendum_dedendum_parity'] = ai_gp_args.sw_gear_addendum_dedendum_parity
   # tooth height
@@ -1048,7 +1053,7 @@ def gear_profile_argparse_to_dictionary(ai_gp_args, ai_variant=0):
   r_gpd['gear_skin_thickness_n'] = ai_gp_args.sw_gear_skin_thickness_n
   ### second gear
   # general
-  if((ai_variant!=2)and(ai_variant!=3)):
+  if((ai_variant!=2)and(ai_variant!=3)and(ai_variant!=4)):
     r_gpd['second_gear_type'] = ai_gp_args.sw_second_gear_type
   r_gpd['second_gear_tooth_nb'] = ai_gp_args.sw_second_gear_tooth_nb
   r_gpd['second_gear_primitive_diameter'] = ai_gp_args.sw_second_gear_primitive_diameter
@@ -1073,19 +1078,21 @@ def gear_profile_argparse_to_dictionary(ai_gp_args, ai_variant=0):
     r_gpd['gearbar_slope_n'] = ai_gp_args.sw_gearbar_slope_n
   ### position
   # first gear position
-  r_gpd['center_position_x'] = ai_gp_args.sw_center_position_x
-  r_gpd['center_position_y'] = ai_gp_args.sw_center_position_y
-  r_gpd['gear_initial_angle'] = ai_gp_args.sw_gear_initial_angle
+  if(ai_variant!=4):
+    r_gpd['center_position_x'] = ai_gp_args.sw_center_position_x
+    r_gpd['center_position_y'] = ai_gp_args.sw_center_position_y
+    r_gpd['gear_initial_angle'] = ai_gp_args.sw_gear_initial_angle
   # second gear position
   r_gpd['second_gear_position_angle'] = ai_gp_args.sw_second_gear_position_angle
   r_gpd['second_gear_additional_axis_length'] = ai_gp_args.sw_second_gear_additional_axis_length
   ### portion
-  if((ai_variant!=1)and(ai_variant!=2)):
+  if((ai_variant!=1)and(ai_variant!=2)and(ai_variant!=4)):
     r_gpd['portion_tooth_nb'] = ai_gp_args.sw_cut_portion[0]
     r_gpd['portion_first_end'] = ai_gp_args.sw_cut_portion[1]
     r_gpd['portion_last_end'] = ai_gp_args.sw_cut_portion[2]
   ### output
-  r_gpd['gear_profile_height'] = ai_gp_args.sw_gear_profile_height
+  if(ai_variant!=4):
+    r_gpd['gear_profile_height'] = ai_gp_args.sw_gear_profile_height
   r_gpd['simulation_enable'] = ai_gp_args.sw_simulation_enable
   r_gpd['output_file_basename'] = ai_gp_args.sw_output_file_basename
   r_gpd['return_type'] = ai_gp_args.sw_return_type
