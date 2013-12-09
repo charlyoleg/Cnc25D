@@ -85,7 +85,7 @@ def crest_dictionary_init(ai_variant=0):
   r_cd['fastening_hole_position']           = 0.0
   r_cd['centring_hole_diameter']            = 1.0
   r_cd['centring_hole_distance']            = 8.0
-  r_cd['centring_hole_position']            = 4.0
+  r_cd['centring_hole_position']            = 0.0
   ## part thickness
   r_cd['crest_thickness']                   = 5.0
   ### manufacturing
@@ -146,8 +146,8 @@ def crest_add_argument(ai_parser, ai_variant=0):
     help="Set the diameter of the crest-gear-centring-holes. Default: 1.0")
   r_parser.add_argument('--centring_hole_distance','--chdi', action='store', type=float, default=8.0, dest='sw_centring_hole_distance',
     help="Set the distance between a pair of crest-gear-centring-holes. Default: 8.0")
-  r_parser.add_argument('--centring_hole_position','--chp', action='store', type=float, default=4.0, dest='sw_centring_hole_position',
-    help="Set the position relative to the gear-hollow-external circle of the crest-gear-centring-holes. Default: 4.0")
+  r_parser.add_argument('--centring_hole_position','--chp', action='store', type=float, default=0.0, dest='sw_centring_hole_position',
+    help="Set the position relative to the gear-hollow-external circle of the crest-gear-centring-holes. Default: 0.0")
   ## part thickness
   r_parser.add_argument('--crest_thickness','--ct', action='store', type=float, default=5.0, dest='sw_crest_thickness',
     help="Set the thickness (z-size) of the crest. Default: 5.0")
@@ -201,7 +201,7 @@ def crest(ai_constraints):
   minimal_gear_portion_angle = 2*math.asin(c_c['cube_width']/(2.0*gear_hollow_radius))
   maximal_gear_portion_angle = 2*(math.pi-math.asin((c_c['cube_width']/2.0+c_c['free_mounting_width'])/gear_hollow_radius))
   #portion_tooth_nb
-  gear_portion_angle = 2*math.pi*c_c['portion_tooth_nb']/c_c['virtual_tooth_nb']
+  gear_portion_angle = 2*math.pi*(c_c['portion_tooth_nb']+1)/c_c['virtual_tooth_nb']
   if(gear_portion_angle<minimal_gear_portion_angle):
     print("ERR205: Error, portion_tooth_nb {:d} is too small compare to gear_module {:0.3f}, virtual_tooth_nb {:d} and cube_width {:0.3f}".format(c_c['portion_tooth_nb'], c_c['gear_module'], c_c['virtual_tooth_nb'], c_c['cube_width']))
     sys.exit(2)
@@ -245,7 +245,7 @@ def crest(ai_constraints):
     sys.exit(2)
   #crest_hollow_internal_diameter
   c_c['crest_hollow_internal_radius'] = c_c['crest_hollow_internal_diameter']/2.0
-  minimal_crest_hollow_internal_radius = math.sqrt((c_c['cube_width'])**2+(c_c['top_thickness']+c_c['height_margin']+c_c['axle_diameter']/2.0)**2)
+  minimal_crest_hollow_internal_radius = math.sqrt((c_c['cube_width']/2.0)**2+(c_c['top_thickness']+c_c['height_margin']+c_c['axle_diameter']/2.0)**2)
   if(c_c['crest_hollow_internal_radius']==0):
     c_c['crest_hollow_internal_radius'] = minimal_crest_hollow_internal_radius
   if(c_c['crest_hollow_internal_radius']<minimal_crest_hollow_internal_radius):
@@ -264,7 +264,7 @@ def crest(ai_constraints):
   max_leg_width = max(c_c['end_leg_width'], c_c['middle_leg_width'])
   maximal_crest_hollow_smoothing_radius = (c_c['crest_hollow_external_radius']*float(gear_portion_angle)/c_c['crest_hollow_leg_nb'] - max_leg_width)/3.0
   if(c_c['crest_hollow_smoothing_radius']==0):
-    c_c['crest_hollow_smoothing_radius'] = min(0.5*maximal_crest_hollow_smoothing_radius, abs(c_c['crest_hollow_external_radius']-c_c['crest_hollow_internal_radius'])/3.0)
+    c_c['crest_hollow_smoothing_radius'] = min(0.5*maximal_crest_hollow_smoothing_radius, 0.2*abs(c_c['crest_hollow_external_radius']-c_c['crest_hollow_internal_radius']))
   if(c_c['crest_hollow_smoothing_radius']<c_c['crest_cnc_router_bit_radius']):
     print("ERR267: Error, crest_hollow_smoothing_radius {:0.3f} must be bigger than crest_cnc_router_bit_radius {:0.3f}".format(c_c['crest_hollow_smoothing_radius'], c_c['crest_cnc_router_bit_radius']))
     sys.exit(2)
@@ -300,11 +300,16 @@ def crest(ai_constraints):
   #crest_cnc_router_bit_radius
   if(c_c['gear_router_bit_radius']<c_c['crest_cnc_router_bit_radius']):
     c_c['gear_router_bit_radius'] = c_c['crest_cnc_router_bit_radius']
+  if(c_c['cross_cube_cnc_router_bit_radius']<c_c['crest_cnc_router_bit_radius']):
+    c_c['cross_cube_cnc_router_bit_radius'] = c_c['crest_cnc_router_bit_radius']
 
   ################################################################
   # outline construction
   ################################################################
   
+  cx = c_c['cube_width']/2.0
+  cy = c_c['top_thickness']+c_c['height_margin']+c_c['axle_diameter']/2.0+c_c['inter_axle_length']
+
   # inheritance from cross_cube
   cc_ci = cross_cube.cross_cube_dictionary_init()
   cc_c = dict([ (k, c_c[k]) for k in cc_ci.viewkeys() & cdi.viewkeys() ]) # extract only the entries of the intersection of cross_cube and crest
@@ -323,17 +328,129 @@ def crest(ai_constraints):
   gp_c['portion_tooth_nb'] = c_c['portion_tooth_nb']
   gp_c['portion_first_end'] = 2 # slope-bottom
   gp_c['portion_last_end'] = 2 # slope-bottom
-  gp_c['center_position_x'] = c_c['cube_width']/2.0
-  gp_c['center_position_y'] = c_c['top_thickness']+c_c['axle_diameter']/2.0+c_c['inter_axle_length']
+  gp_c['center_position_x'] = cx
+  gp_c['center_position_y'] = cy
   gp_c['gear_initial_angle'] = math.pi/2-math.pi*(c_c['portion_tooth_nb']-0)/c_c['virtual_tooth_nb']
   gp_c['output_file_basename'] = ''
   gp_c['args_in_txt'] = "gear_profile for crest"
   gp_c['return_type'] = 'figure_param_info' # 'int_status', 'cnc25d_figure', 'freecad_object', 'figure_param_info'
   (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(gp_c)
+  # gear_profile check
+  if(abs(gear_profile_B[0][1]-gear_profile_B[-1][-1])>radian_epsilon):
+    print("ERR335: Error, extremities of the gear_profile_B have different y-coordiante {:0.3f} {:0.3f}".format(gear_profile_B[0][1], gear_profile_B[-1][-1]))
+    sys.exit(2)
+  # gear_profile extremity angle
+  crest_gear_angle = math.atan2(gear_profile_B[0][1]-cy, gear_profile_B[0][0]-cx)
+ 
+  ## crest outline
+  cube_height = 2*c_c['top_thickness']+2*c_c['height_margin']+c_c['axle_diameter']+c_c['inter_axle_length']
+  crest_long_nshort = True
+  free_mounting_width = c_c['free_mounting_width']
+  if(gear_profile_B[0][1]>3*cube_height/4.0+radian_epsilon):
+    crest_long_nshort = False
+    free_mounting_width = c_c['crest_cnc_router_bit_radius']
+  crest_outline_A = []
+  crest_outline_A.append((gear_profile_B[-1][-2], gear_profile_B[-1][-1], 0))
+  crest_outline_A.append((cx+c_c['crest_hollow_external_radius']*math.cos(math.pi-crest_gear_angle), cy+c_c['crest_hollow_external_radius']*math.sin(math.pi-crest_gear_angle), c_c['crest_cnc_router_bit_radius']))
+  crest_outline_A.append((bottom_outline_A[0][0]-free_mounting_width, bottom_outline_A[0][1], c_c['crest_cnc_router_bit_radius']))
+  crest_outline_A.extend(bottom_outline_A[1:-1])
+  crest_outline_A.append((bottom_outline_A[-1][0]+free_mounting_width, bottom_outline_A[-1][1], c_c['crest_cnc_router_bit_radius']))
+  crest_outline_A.append((cx+c_c['crest_hollow_external_radius']*math.cos(crest_gear_angle), cy+c_c['crest_hollow_external_radius']*math.sin(crest_gear_angle), c_c['crest_cnc_router_bit_radius']))
+  crest_outline_A.append((gear_profile_B[0][0], gear_profile_B[0][1], 0))
+  crest_outline_B = cnc25d_api.cnc_cut_outline(crest_outline_A, "crest_outline_A")
+  crest_outline_B.extend(gear_profile_B[1:])
+  ## crest holes
+  crest_hole_A = []
+  crest_hole_A.extend(cross_cube_hole_figure_A) 
+  # cross_cube top holes
+  ccthy = cy + c_c['axle_diameter']/2.0+c_c['height_margin']
+  cw5 = c_c['cube_width']/5
+  tt = c_c['top_thickness']
+  ccect = c_c['cross_cube_extra_cut_thickness']
+  cccrbr = c_c['cross_cube_cnc_router_bit_radius']
+  cc_top_hole = []
+  cc_top_hole.append((-1*ccect, -1*ccect, -1*cccrbr))
+  cc_top_hole.append((cw5+1*ccect, -1*ccect, -1*cccrbr))
+  cc_top_hole.append((cw5+1*ccect, tt+1*ccect, -1*cccrbr))
+  cc_top_hole.append((-1*ccect, tt+1*ccect, -1*cccrbr))
+  cc_top_hole.append((-1*ccect, -1*ccect, 0))
+  crest_hole_A.append(cnc25d_api.outline_shift_xy(cc_top_hole, 1*cw5, 1, ccthy, 1))
+  crest_hole_A.append(cnc25d_api.outline_shift_xy(cc_top_hole, 3*cw5, 1, ccthy, 1))
+  # crest hollow
+  cher = c_c['crest_hollow_external_radius']
+  chir = c_c['crest_hollow_internal_radius']
+  chln = c_c['crest_hollow_leg_nb']
+  chsr = c_c['crest_hollow_smoothing_radius']
+  if(crest_long_nshort):
+    first_leg_ex_angle = math.asin((c_c['end_leg_width']+3*cube_height/4.0-cy)/cher)
+    first_leg_in_angle = math.asin((c_c['end_leg_width']+3*cube_height/4.0-cy)/chir)
+    first_leg_hole_angle = math.asin((c_c['end_leg_width']/2.0+3*cube_height/4.0-cy)/cher)
+  else:
+    first_leg_ex_angle = crest_gear_angle + 2*math.atan(c_c['end_leg_width']/(2.0*cher))
+    first_leg_in_angle = crest_gear_angle + 2*math.atan(c_c['end_leg_width']/(2.0*chir))
+    first_leg_hole_angle = crest_gear_angle + math.atan(c_c['end_leg_width']/(2.0*cher))
+  if(c_c['crest_hollow_leg_nb']>1):
+    leg_step_angle = 0
+    if(chln>2):
+      leg_step_angle = (math.pi-2*first_leg_ex_angle)/(chln-1)
+    middle_leg_ex_half_angle = math.atan(c_c['middle_leg_width']/(2.0*cher))
+    middle_leg_in_half_angle = math.atan(c_c['middle_leg_width']/(2.0*chir))
+    smoothing_ex_half_angle = math.atan(float(chsr)/(cher-chsr))
+    smoothing_in_half_angle = math.atan(float(chsr)/(chir+chsr))
+    ex1_angles = []
+    ex2_angles = []
+    ex1_angles.append(first_leg_ex_angle)
+    for i in range(chln-2):
+      ex1_angles.append(first_leg_ex_angle + (i+1)*leg_step_angle + middle_leg_ex_half_angle)
+      ex2_angles.append(first_leg_ex_angle + (i+1)*leg_step_angle - middle_leg_ex_half_angle)
+    ex2_angles.append(math.pi-first_leg_ex_angle)
+    in1_angles = []
+    in2_angles = []
+    in1_angles.append(first_leg_in_angle)
+    for i in range(chln-2):
+      in1_angles.append(first_leg_ex_angle + (i+1)*leg_step_angle + middle_leg_in_half_angle)
+      in2_angles.append(first_leg_ex_angle + (i+1)*leg_step_angle - middle_leg_in_half_angle)
+    in2_angles.append(math.pi-first_leg_in_angle)
+    for i in range(chln-1):
+      ea1 = ex1_angles[i]
+      ea2 = ex2_angles[i]
+      ma = (ex1_angles[i]+ex2_angles[i])/2.0
+      ia1 = in1_angles[i]
+      ia2 = in2_angles[i]
+      if((ea2-ea1)<2.1*smoothing_ex_half_angle):
+        print("ERR419: Error, crest_hollow_smoothing_radius {:0.3f} or crest_hollow_leg_nb {:d} are too big".format(chsr, chln))
+        sys.exit(2)
+      hollow = []
+      hollow.append((cx+cher*math.cos(ea1), cy+cher*math.sin(ea1), chsr))
+      hollow.append((cx+cher*math.cos(ma), cy+cher*math.sin(ma), cx+cher*math.cos(ea2), cy+cher*math.sin(ea2), chsr))
+      if((ia2-ia1)<2.1*smoothing_in_half_angle):
+        hollow.append((cx+chir*math.cos(ma), cy+chir*math.sin(ma), chsr))
+      else:
+        hollow.append((cx+chir*math.cos(ia2), cy+chir*math.sin(ia2), chsr))
+        hollow.append((cx+chir*math.cos(ma), cy+chir*math.sin(ma), cx+chir*math.cos(ia1), cy+chir*math.sin(ia1), chsr))
+      hollow.append((cx+cher*math.cos(ea1), cy+cher*math.sin(ea1), 0))
+      crest_hole_A.append(hollow[:])
+      #[todo] optimization with floor_width
+  # crest gear holes
+  hole_half_angle = math.atan(c_c['centring_hole_distance']/(2.0*(cher+c_c['centring_hole_position'])))
+  hole_step_angle = 0
+  if(chln>2):
+    hole_step_angle = (math.pi-2*first_leg_hole_angle)/(chln-1)
+  hole_angles = []
+  hole_angles.append(first_leg_hole_angle)
+  for i in range(chln-2):
+    #hole_angles.append(first_leg_hole_angle + (i+1)*hole_step_angle)
+    hole_angles.append(first_leg_ex_angle + (i+1)*leg_step_angle)
+  hole_angles.append(math.pi-first_leg_hole_angle)
+  for a in hole_angles:
+    crest_hole_A.append((cx+(cher+c_c['fastening_hole_position'])*math.cos(a), cy+(cher+c_c['fastening_hole_position'])*math.sin(a), c_c['fastening_hole_radius']))
+    crest_hole_A.append((cx+(cher+c_c['centring_hole_position'])*math.cos(a-hole_half_angle), cy+(cher+c_c['centring_hole_position'])*math.sin(a-hole_half_angle), c_c['centring_hole_radius']))
+    crest_hole_A.append((cx+(cher+c_c['centring_hole_position'])*math.cos(a+hole_half_angle), cy+(cher+c_c['centring_hole_position'])*math.sin(a+hole_half_angle), c_c['centring_hole_radius']))
+  ## crest figure
+  crest_figure = []
+  crest_figure.append(crest_outline_B)
+  crest_figure.extend(cnc25d_api.cnc_cut_figure(crest_hole_A, "crest_hole_A"))
 
-  #
-  bottom_outline_B = cnc25d_api.cnc_cut_outline(bottom_outline_A, "bottom_outline_A")
-  cross_cube_hole_figure_B = cnc25d_api.cnc_cut_figure(cross_cube_hole_figure_A, "cross_cube_hole_figure_A")
 
   ################################################################
   # output
@@ -345,9 +462,7 @@ def crest(ai_constraints):
 
   ### figures output
   crest_part_overview_figure = []
-  crest_part_overview_figure.append(bottom_outline_B)
-  crest_part_overview_figure.append(gear_profile_B)
-  crest_part_overview_figure.extend(cross_cube_hole_figure_B)
+  crest_part_overview_figure.extend(crest_figure)
 
   crest_part_overview_figure_overlay = []
 
@@ -442,8 +557,15 @@ def crest_self_test():
   """
   test_case_switch = [
     ["simplest test"        , ""],
+    ["short and no leg"  , "--portion_tooth_nb 20 --crest_hollow_leg_nb 1"],
+    ["short and end-legs"  , "--portion_tooth_nb 20 --crest_hollow_leg_nb 2"],
+    ["short and 3 legs"  , "--portion_tooth_nb 20 --crest_hollow_leg_nb 3"],
+    ["short and 4 legs"  , "--portion_tooth_nb 20 --crest_hollow_leg_nb 4"],
+    ["long and no leg"  , "--portion_tooth_nb 35 --crest_hollow_leg_nb 1"],
+    ["long and end-legs"  , "--portion_tooth_nb 35 --crest_hollow_leg_nb 2"],
+    ["long and 5 legs"  , "--portion_tooth_nb 35 --crest_hollow_leg_nb 5"],
     ["extra cut" , "--cross_cube_extra_cut_thickness 1.0"],
-    ["extra cut negative" , "--cross_cube_extra_cut_thickness -2.0"],
+    ["extra cut negative" , "--cross_cube_extra_cut_thickness -0.5"],
     ["outputfile" , "--output_file_basename test_output/crest_self_test.dxf"],
     ["last test"            , ""]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))
