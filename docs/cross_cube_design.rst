@@ -22,6 +22,7 @@ The *cross_cube* piece is composed out of the following flat parts:
 * top
 
 .. image:: images/cross_cube_main_parameters.png
+.. image:: images/crest_cross_cube_assembly.png
 .. image:: images/cross_cube_face_A_parameters.png
 .. image:: images/cross_cube_face_B_parameters.png
 .. image:: images/cross_cube_top_parameters.png
