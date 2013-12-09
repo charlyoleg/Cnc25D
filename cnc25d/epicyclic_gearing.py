@@ -1066,21 +1066,21 @@ def epicyclic_gearing(ai_constraints):
    
   ### design output
   part_figure_list = []
-  part_figure_list.append(annulus_figure)
+  part_figure_list.append(annulus_figure) # 0
   part_figure_list.append(sun_figure)
-  part_figure_list.extend(planet_figures)
+  part_figure_list.extend(planet_figures) # +planet_nb
   part_figure_list.append(front_planet_carrier_figure)
   part_figure_list.append(rear_planet_carrier_figure)
-  part_figure_list.extend(middle_planet_carrier_figures)
+  part_figure_list.extend(middle_planet_carrier_figures) # +planet_nb
   part_figure_list.append(input_gearwheel_figure)
-  part_figure_list.append(input_axle_shaft_figure)
+  part_figure_list.append(input_axle_shaft_figure) # 5+2*planet_nb
   part_figure_list.append(input_cover_figure)
   part_figure_list.append(output_gearwheel_figure)
   part_figure_list.append(output_axle_shaft_figure)
   part_figure_list.append(output_cover_figure)
-  part_figure_list.append(inout_in_axle_shaft_figure)
+  part_figure_list.append(inout_in_axle_shaft_figure) # 10+2*planet_nb
   part_figure_list.append(inout_out_axle_shaft_figure)
-  part_figure_list.append(top_lid_arc_1_figure)
+  part_figure_list.append(top_lid_arc_1_figure) # 12+2*planet_nb
   part_figure_list.append(top_lid_arc_2_figure)
   part_figure_list.append(top_lid_plate_figure)
   # eg_assembly_figure: assembly flatted in one figure
