@@ -73,7 +73,7 @@ def crest_dictionary_init(ai_variant=0):
   r_cd['portion_tooth_nb']    = 30
   r_cd['free_mounting_width'] = 15.0
   ### crest_hollow
-  r_cd['crest_hollow_leg_nb']  = 1 # possible values: 1(filled), 2(end-legs only), 3, 4 ...
+  r_cd['crest_hollow_leg_nb']  = 4 # possible values: 1(filled), 2(end-legs only), 3, 4 ...
   r_cd['end_leg_width']                     = 10.0
   r_cd['middle_leg_width']                  = 0.0
   r_cd['crest_hollow_external_diameter']    = 0.0
@@ -123,8 +123,8 @@ def crest_add_argument(ai_parser, ai_variant=0):
   r_parser.add_argument('--free_mounting_width','--fmw', action='store', type=float, default=15.0, dest='sw_free_mounting_width',
     help="Set the width that must be kept free to mount the crest in a cross_cube (minimum: face_B1_thickness + cnc_router_bit_radius). Default: 15.0")
   ### crest_hollow
-  r_parser.add_argument('--crest_hollow_leg_nb','--chln', action='store', type=int, default=1, dest='sw_crest_hollow_leg_nb',
-    help="Set the number of crest-hollow_legs. Possible values: 1(filled), 2(end-legs only), 3, 4, etc. Default: 1")
+  r_parser.add_argument('--crest_hollow_leg_nb','--chln', action='store', type=int, default=4, dest='sw_crest_hollow_leg_nb',
+    help="Set the number of crest-hollow_legs. Possible values: 1(filled), 2(end-legs only), 3, 4, etc. Default: 4")
   r_parser.add_argument('--end_leg_width','--elw', action='store', type=float, default=10.0, dest='sw_end_leg_width',
     help="Set the width of the two end-legs of the crest. Default: 10.0")
   r_parser.add_argument('--middle_leg_width','--mlw', action='store', type=float, default=0.0, dest='sw_middle_leg_width',
@@ -359,6 +359,8 @@ def crest(ai_constraints):
   crest_outline_A.append((gear_profile_B[0][0], gear_profile_B[0][1], 0))
   crest_outline_B = cnc25d_api.cnc_cut_outline(crest_outline_A, "crest_outline_A")
   crest_outline_B.extend(gear_profile_B[1:])
+  crest_outline_B_overlay = cnc25d_api.ideal_outline(crest_outline_A, "crest_outline_A") # overlay
+  crest_outline_B_overlay.extend(gear_profile_B[1:])
   ## crest holes
   crest_hole_A = []
   crest_hole_A.extend(cross_cube_hole_figure_A) 
@@ -450,6 +452,9 @@ def crest(ai_constraints):
   crest_figure = []
   crest_figure.append(crest_outline_B)
   crest_figure.extend(cnc25d_api.cnc_cut_figure(crest_hole_A, "crest_hole_A"))
+  crest_figure_overlay = []
+  crest_figure_overlay.append(crest_outline_B_overlay)
+  crest_figure_overlay.extend(cnc25d_api.ideal_figure(crest_hole_A, "crest_hole_A"))
 
 
   ################################################################
@@ -459,27 +464,60 @@ def crest(ai_constraints):
   # c_parameter_info
   c_parameter_info = "\ncrest parameter info:\n"
   c_parameter_info += "\n" + c_c['args_in_txt'] + "\n"
+  c_parameter_info += """
+crest gear:
+gear_module:          {:0.3f}
+virtual_tooth_nb:     {:d}
+portion_tooth_nb:     {:d}
+free_mounting_width:  {:0.3f}
+""".format(c_c['gear_module'], c_c['virtual_tooth_nb'], c_c['portion_tooth_nb'], c_c['free_mounting_width'])
+  c_parameter_info += """
+crest hollow:
+crest_hollow_leg_nb:            {:d}
+end_leg_width:                  {:0.3f}
+middle_leg_width:               {:0.3f}
+crest_hollow_external_radius:   {:0.3f}   diameter: {:0.3f}
+crest_hollow_internal_radius:   {:0.3f}   diameter: {:0.3f}
+floor_width:                    {:0.3f}
+crest_hollow_smoothing_radius:  {:0.3f}
+""".format(c_c['crest_hollow_leg_nb'], c_c['end_leg_width'], c_c['middle_leg_width'], c_c['crest_hollow_external_radius'], 2*c_c['crest_hollow_external_radius'], c_c['crest_hollow_internal_radius'], 2*c_c['crest_hollow_internal_radius'], c_c['floor_width'], c_c['crest_hollow_smoothing_radius'])
+  c_parameter_info += """
+gear holes:
+fastening_hole_radius:    {:0.3f}   diameter: {:0.3f}
+fastening_hole_position:  {:0.3f}
+centring_hole_radius:     {:0.3f}   diameter: {:0.3f}
+centring_hole_distance:   {:0.3f}
+centring_hole_position:   {:0.3f}
+""".format(c_c['fastening_hole_radius'], 2*c_c['fastening_hole_radius'], c_c['fastening_hole_position'], c_c['centring_hole_radius'], 2*c_c['centring_hole_radius'], c_c['centring_hole_distance'], c_c['centring_hole_position'])
+  c_parameter_info += """
+crest manufacturing:
+crest_cnc_router_bit_radius: {:0.3f}
+""".format(c_c['crest_cnc_router_bit_radius'])
 
   ### figures output
-  crest_part_overview_figure = []
-  crest_part_overview_figure.extend(crest_figure)
-
-  crest_part_overview_figure_overlay = []
+  # crest_figure
+  # crest_figure_overlay
 
   ### display with Tkinter
   if(c_c['tkinter_view']):
     print(c_parameter_info)
-    cnc25d_api.figure_simple_display(crest_part_overview_figure, crest_part_overview_figure_overlay, c_parameter_info)
+    cnc25d_api.figure_simple_display(crest_figure, crest_figure_overlay, c_parameter_info)
+
+  ### generate output file
+  if(c_c['output_file_basename']!=''):
+    (output_file_basename, output_file_suffix) = cnc25d_api.get_output_file_suffix(c_c['output_file_basename'])
+    # parts
+    cnc25d_api.generate_output_file(crest_figure, output_file_basename + "_crest" + output_file_suffix, c_c['crest_thickness'], c_parameter_info)
 
   #### return
   if(c_c['return_type']=='int_status'):
     r_c = 1
   elif(c_c['return_type']=='cnc25d_figure'):
-    r_c = 1
+    r_c = crest_figure
   elif(c_c['return_type']=='freecad_object'):
-    r_c = 1
+    r_c = cnc25d_api.figure_to_freecad_25d_part(crest_figure, c_c['crest_thickness'])
   elif(c_c['return_type']=='figures_3dconf_info'):
-    r_c = 1
+    r_c = ([crest_figure], [], c_parameter_info)
   else:
     print("ERR508: Error the return_type {:s} is unknown".format(c_c['return_type']))
     sys.exit(2)

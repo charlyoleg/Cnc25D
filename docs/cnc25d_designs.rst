@@ -22,6 +22,7 @@ Cnc25D design list
 * :doc:`bell_design`
 * :doc:`bagel_design`
 * :doc:`bell_bagel_assembly`
+* :doc:`crest_design`
 * :doc:`cross_cube_design`
 
 Cnc25D design overview
@@ -111,6 +112,13 @@ Bell_bagel_assembly
 The :doc:`bell_bagel_assembly` is the assembly of a *bell* piece and two *bagels*.
 
 .. image:: images/bell_bagel_assembly_3d.png
+
+Crest
+-----
+
+The :doc:`crest_design` is an optional part for the *cross_cube* piece.
+
+.. image:: images/crest_3d.png
 
 Cross_cube
 ----------
