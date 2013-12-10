@@ -20,6 +20,7 @@ The *gimbal* parameters are inherited from :doc:`cross_cube_design` and :doc:`be
 In addition to the *cross_cube* parameters and *bell_bagel* parameters, you have the two *roll-pitch* angles.
 
 .. image:: images/roll_pitch_angles.png
+.. image:: images/gimbal_orientation.png
 
 Gimbal Construction
 ===================
