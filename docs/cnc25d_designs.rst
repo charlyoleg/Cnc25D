@@ -24,6 +24,7 @@ Cnc25D design list
 * :doc:`bell_bagel_assembly`
 * :doc:`crest_design`
 * :doc:`cross_cube_design`
+* :doc:`gimbal_design`
 
 Cnc25D design overview
 ======================
@@ -126,6 +127,13 @@ Cross_cube
 The :doc:`cross_cube_design` is the *two-axle-join* of a *gimbal* system.
 
 .. image:: images/cross_cube_3d.png
+
+Gimbal
+------
+
+The :doc:`gimbal_design` is a mechanism with two angles as degree of freedom.
+
+.. .. image:: images/gimbal_3d.png
 
 
 

@@ -46,6 +46,7 @@ Contents:
    bell_bagel_assembly
    crest_design
    cross_cube_design
+   gimbal_design
 
 Indices and tables
 ==================
