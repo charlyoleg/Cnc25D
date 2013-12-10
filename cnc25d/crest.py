@@ -52,7 +52,7 @@ import Part
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import cross_cube
+import cross_cube_sub
 import gear_profile
 
 ################################################################
@@ -63,8 +63,8 @@ def crest_dictionary_init(ai_variant=0):
   """ create and initiate a crest_dictionary with the default value
   """
   r_cd = {}
-  # parameter inheritance from cross_cube
-  r_cd.update(cross_cube.cross_cube_dictionary_init(2))
+  # parameter inheritance from cross_cube_sub
+  r_cd.update(cross_cube_sub.cross_cube_sub_dictionary_init(2))
   # parameter inheritance from gear_profile
   r_cd.update(gear_profile.gear_profile_dictionary_init(4))
   ### outline
@@ -109,8 +109,8 @@ def crest_add_argument(ai_parser, ai_variant=0):
   This function intends to be used by the crest_cli and crest_self_test
   """
   r_parser = ai_parser
-  # parameter inheritance from cross_cube
-  r_parser = cross_cube.cross_cube_add_argument(r_parser, 2)
+  # parameter inheritance from cross_cube_sub
+  r_parser = cross_cube_sub.cross_cube_sub_add_argument(r_parser, 2)
   # parameter inheritance from gear_profile
   r_parser = gear_profile.gear_profile_add_argument(r_parser, 4)
   ### outline
@@ -309,15 +309,19 @@ def crest(ai_constraints):
   
   cx = c_c['cube_width']/2.0
   cy = c_c['top_thickness']+c_c['height_margin']+c_c['axle_diameter']/2.0+c_c['inter_axle_length']
+  cube_height = 2*c_c['top_thickness']+2*c_c['height_margin']+c_c['axle_diameter']+c_c['inter_axle_length']
 
-  # inheritance from cross_cube
-  cc_ci = cross_cube.cross_cube_dictionary_init()
+  # inheritance from cross_cube_sub
+  cc_ci = cross_cube_sub.cross_cube_sub_dictionary_init(2)
   cc_c = dict([ (k, c_c[k]) for k in cc_ci.viewkeys() & cdi.viewkeys() ]) # extract only the entries of the intersection of cross_cube and crest
-  cc_c['tkinter_view'] = False
-  cc_c['output_file_basename'] = ''
-  cc_c['args_in_txt'] = "cross_cube for crest"
-  cc_c['return_type'] = 'outlines_for_crest' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object', 'outlines_for_crest'
-  (bottom_outline_A, cross_cube_hole_figure_A, cross_cube_info) = cross_cube.cross_cube(cc_c)
+  #cc_c['tkinter_view'] = False
+  #cc_c['output_file_basename'] = ''
+  #cc_c['args_in_txt'] = "cross_cube for crest"
+  #cc_c['return_type'] = 'outlines_for_crest' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object', 'outlines_for_crest'
+  #(bottom_outline_A, cross_cube_hole_figure_A, cross_cube_info) = cross_cube.cross_cube(cc_c)
+  bottom_outline_A = cnc25d_api.rotate_and_translate_figure(cross_cube_sub.cross_cube_face_top_outline(cc_c, cc_c['face_B1_thickness'], cc_c['face_B2_thickness']), cc_c['cube_width']/2.0, cube_height/2.0, math.pi, 0.0, 0.0)
+  cross_cube_hole_figure_A = cnc25d_api.rotate_and_translate_figure(cross_cube_sub.cross_cube_face_holes(cc_c, cc_c['face_B1_thickness'], cc_c['face_B2_thickness']), cc_c['cube_width']/2.0, cube_height/2.0, math.pi, 0.0, 0.0)
+  cross_cube_info = cross_cube_sub.cross_cube_face_parameter_info(cc_c)
 
   # inheritance from gear_profile
   gp_ci = gear_profile.gear_profile_dictionary_init()
@@ -343,7 +347,6 @@ def crest(ai_constraints):
   crest_gear_angle = math.atan2(gear_profile_B[0][1]-cy, gear_profile_B[0][0]-cx)
  
   ## crest outline
-  cube_height = 2*c_c['top_thickness']+2*c_c['height_margin']+c_c['axle_diameter']+c_c['inter_axle_length']
   crest_long_nshort = True
   free_mounting_width = c_c['free_mounting_width']
   if(gear_profile_B[0][1]>3*cube_height/4.0+radian_epsilon):
@@ -493,6 +496,7 @@ centring_hole_position:   {:0.3f}
 crest manufacturing:
 crest_cnc_router_bit_radius: {:0.3f}
 """.format(c_c['crest_cnc_router_bit_radius'])
+  c_parameter_info += cross_cube_info
 
   ### figures output
   # crest_figure
@@ -531,8 +535,8 @@ def crest_argparse_to_dictionary(ai_c_args, ai_variant=0):
   """ convert a crest_argparse into a crest_dictionary
   """
   r_cd = {}
-  # parameter inheritance from cross_cube
-  r_cd.update(cross_cube.cross_cube_argparse_to_dictionary(ai_c_args, 2))
+  # parameter inheritance from cross_cube_sub
+  r_cd.update(cross_cube_sub.cross_cube_sub_argparse_to_dictionary(ai_c_args, 2))
   # parameter inheritance from gear_profile
   r_cd.update(gear_profile.gear_profile_argparse_to_dictionary(ai_c_args, 4))
   ### outline
