@@ -154,9 +154,6 @@ def crest_add_argument(ai_parser, ai_variant=0):
   ### manufacturing
   r_parser.add_argument('--crest_cnc_router_bit_radius','--ccrbr', action='store', type=float, default=0.5, dest='sw_crest_cnc_router_bit_radius',
     help="Set the minimal router_bit radius for the crest part. Default: 0.5")
-  ### manufacturing
-  r_parser.add_argument('--bagel_extra_cut_thickness','--bgect', action='store', type=float, default=0.0, dest='sw_bagel_extra_cut_thickness',
-    help="Set the extra-cut-thickness for the internal-bagel cut. It can be used to compensate the manufacturing process or to check the 3D assembly with FreeCAD. Default: 0.0")
   ### output
   # return
   return(r_parser)

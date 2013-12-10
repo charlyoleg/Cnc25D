@@ -55,6 +55,7 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 #   cnc25d_api.generate_output_file_add_argument(argparse_parser) => argparse_parser
 #   cnc25d_api.get_output_file_suffix(filename) => (basename, suffix)
 #   cnc25d_api.generate_output_file(figure, filename, extrusion_height, info_txt) => 0
+#   cnc25d_api.freecad_object_output_file(freecad_object, filename, brep, stl, slice_xyz) => 0
 #   cnc25d_api.generate_3d_assembly_output_file(3D_conf, filename, brep, stl, slice_xyz) => 0
 #   cnc25d_api.rotate_and_translate_figure(figure, x-center, y-center, angle, x-translate, y-translate) => figure
 #   cnc25d_api.flip_rotate_and_translate_figure(figure, x-zero, y-zero, x-size, y-size, x-flip, y-flip, angle, x-translate, y-translate) => figure

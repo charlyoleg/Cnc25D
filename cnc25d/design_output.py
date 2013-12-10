@@ -132,19 +132,17 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height, ai_info_txt='
   # return
   return(0)
 
-def generate_3d_assembly_output_file(ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[]):
-  """ implement the swith --output_file_basename for 3D assembly
+def freecad_object_output_file(ai_freecad_object, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[]):
+  """ Write 3D and 2D slices files
   """
-  print("Compute with FreeCAD the 3D assembly {:s}".format(ai_output_filename))
-  fc_assembly = figures_to_freecad_assembly(ai_3d_conf)
   if(ai_brep):
     brep_output_filename = "{:s}.brep".format(ai_output_filename)
     print("Generate with FreeCAD the BRep file {:s}".format(brep_output_filename))
-    fc_assembly.exportBrep(brep_output_filename)
+    ai_freecad_object.exportBrep(brep_output_filename)
   if(ai_stl):
     stl_output_filename = "{:s}.stl".format(ai_output_filename)
     print("Generate with FreeCAD the STL file {:s}".format(stl_output_filename))
-    fc_assembly.exportStl(stl_output_filename)
+    ai_freecad_object.exportStl(stl_output_filename)
   if(len(ai_slice_xyz)>0):
     if(len(ai_slice_xyz)!=9):
       print("ERR150: Error, len(ai_slice_xyz) {:d} must be 9".format(len(ai_slice_xyz)))
@@ -160,8 +158,16 @@ def generate_3d_assembly_output_file(ai_3d_conf, ai_output_filename, ai_brep=Tru
     slice_z = ai_slice_xyz[8]
     dxf_output_filename = "{:s}_xyz_slices.dxf".format(ai_output_filename)
     print("Slice with FreeCAD the 3D into the DXF file {:s}".format(dxf_output_filename))
-    fc_assembly.translate(Base.Vector(-1*zero_x, -1*zero_y, -1*zero_z))
-    export_2d.export_xyz_to_dxf(fc_assembly, size_x, size_y, size_z, slice_x, slice_y, slice_z, dxf_output_filename)
+    ai_freecad_object.translate(Base.Vector(-1*zero_x, -1*zero_y, -1*zero_z))
+    export_2d.export_xyz_to_dxf(ai_freecad_object, size_x, size_y, size_z, slice_x, slice_y, slice_z, dxf_output_filename)
+  return(0)
+
+def generate_3d_assembly_output_file(ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[]):
+  """ implement the swith --output_file_basename for 3D assembly
+  """
+  print("Compute with FreeCAD the 3D assembly {:s}".format(ai_output_filename))
+  fc_assembly = figures_to_freecad_assembly(ai_3d_conf)
+  freecad_object_output_file(fc_assembly, ai_output_filename, ai_brep, ai_stl, ai_slice_xyz)
   return(0)
 
 def flip_rotate_and_translate_figure(ai_figure, ai_zero_x, ai_zero_y, ai_size_x, ai_size_y, ai_x_flip, ai_y_flip, ai_rotation_angle, ai_translate_x, ai_translate_y):

@@ -271,8 +271,10 @@ def bba(ai_constraints):
     r_b = part_list
   elif(bba_c['return_type']=='freecad_object'):
     r_b = cnc25d_api.figures_to_freecad_assembly(bell_bagel_assembly_conf1)
+  elif(bba_c['return_type']=='figures_3dconf_info'):
+    r_b = (part_list, bell_bagel_assembly_conf1, bba_parameter_info)
   else:
-    print("ERR508: Error the return_type {:s} is unknown".format(bba_c['return_type']))
+    print("ERR277: Error the return_type {:s} is unknown".format(bba_c['return_type']))
     sys.exit(2)
   return(r_b)
 
@@ -280,7 +282,7 @@ def bba(ai_constraints):
 # bell_bagel_assembly wrapper dance
 ################################################################
 
-def bba_argparse_to_dictionary(ai_b_args):
+def bba_argparse_to_dictionary(ai_b_args, ai_variant=0):
   """ convert a bba_argparse into a bba_dictionary
   """
   r_bd = {}
