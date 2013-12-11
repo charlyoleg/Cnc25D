@@ -178,7 +178,6 @@ bba_constraint['internal_bagel_thickness']        = 2.0
 bba_constraint['bagel_extra_cut_thickness']       = 0.0
 ###### output
 bba_constraint['tkinter_view']           = True
-bba_constraint['output_file_basename']   = ''
 bba_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
 #bba_constraint['output_file_basename'] = "test_output/bba_macro.svg"  # to generate the SVG file with mozman svgwrite
 #bba_constraint['output_file_basename'] = "test_output/bba_macro.dxf"  # to generate the DXF file with mozman svgwrite

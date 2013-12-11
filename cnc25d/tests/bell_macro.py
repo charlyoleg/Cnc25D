@@ -167,7 +167,6 @@ bell_constraint['bell_cnc_router_bit_radius']      = 1.0
 bell_constraint['bell_extra_cut_thickness']        = 0.0
 ### output
 bell_constraint['tkinter_view']           = True
-bell_constraint['output_file_basename']   = ''
 bell_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
 #bell_constraint['output_file_basename'] = "test_output/bell_macro.svg"  # to generate the SVG file with mozman svgwrite
 #bell_constraint['output_file_basename'] = "test_output/bell_macro.dxf"  # to generate the DXF file with mozman svgwrite

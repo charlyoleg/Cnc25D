@@ -105,7 +105,6 @@ bagel_constraint['internal_bagel_thickness']        = 2.0
 bagel_constraint['bagel_extra_cut_thickness']       = 0.0
 ### output
 bagel_constraint['tkinter_view']           = True
-bagel_constraint['output_file_basename']   = ''
 bagel_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
 #bagel_constraint['output_file_basename'] = "test_output/bagel_macro.svg"  # to generate the SVG file with mozman svgwrite
 #bagel_constraint['output_file_basename'] = "test_output/bagel_macro.dxf"  # to generate the DXF file with mozman svgwrite

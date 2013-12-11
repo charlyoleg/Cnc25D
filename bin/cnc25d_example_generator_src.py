@@ -251,6 +251,36 @@ bba_script_content='''#!/usr/bin/env python
 #include "../cnc25d/tests/bell_bagel_assembly_macro.py"
 '''
 
+### crest script example
+crest_script_name="eg15_crest_example.py"
+# copy from ../cnc25d/tests/crest_macro.py
+crest_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/crest_macro.py
+#
+#include "../cnc25d/tests/crest_macro.py"
+'''
+
+### cross_cube script example
+cross_cube_script_name="eg16_cross_cube_example.py"
+# copy from ../cnc25d/tests/cross_cube_macro.py
+cross_cube_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/cross_cube_macro.py
+#
+#include "../cnc25d/tests/cross_cube_macro.py"
+'''
+
+### gimbal script example
+gimbal_script_name="eg17_gimbal_example.py"
+# copy from ../cnc25d/tests/gimbal_macro.py
+gimbal_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/gimbal_macro.py
+#
+#include "../cnc25d/tests/gimbal_macro.py"
+'''
+
 
 ### Generating the script examples
 
@@ -268,7 +298,10 @@ ceg_example_list={
   ml_script_name : ml_script_content,
   bell_script_name : bell_script_content,
   bagel_script_name : bagel_script_content,
-  bba_script_name : bba_script_content}
+  bba_script_name : bba_script_content,
+  crest_script_name : crest_script_content,
+  cross_cube_script_name : cross_cube_script_content,
+  gimbal_script_name : gimbal_script_content}
 
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")

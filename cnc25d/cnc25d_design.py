@@ -41,6 +41,9 @@ import motor_lid
 import bell
 import bagel
 import bell_bagel_assembly
+import crest
+import cross_cube
+import gimbal
 
 ################################################################
 # Cnc25d Designs
@@ -70,5 +73,8 @@ motor_lid = motor_lid.motor_lid
 bell = bell.bell
 bagel = bagel.bagel
 bba = bell_bagel_assembly.bba
+crest = crest.crest
+cross_cube = cross_cube.cross_cube
+gimbal = gimbal.gimbal
 
 

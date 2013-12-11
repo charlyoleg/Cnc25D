@@ -200,7 +200,7 @@ def gear_profile_add_argument(ai_parser, ai_variant=0):
     help="If not zero, add or remove radial thickness on the gear negative involute. Default: 0.0")
   ### second gear
   # general
-  if((ai_variant!=2)and(ai_variant!=3)and(ai_variant!=4)):
+  if((ai_variant!=2)and(ai_variant!=3)):
     r_parser.add_argument('--second_gear_type','--sgt', action='store', default='e', dest='sw_second_gear_type',
       help="Select the type of gear. Possible values: 'e', 'i', 'l'. Default: 'e'")
   r_parser.add_argument('--second_gear_tooth_nb','--sgtn', action='store', type=int, default=0, dest='sw_second_gear_tooth_nb',
