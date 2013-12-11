@@ -162,12 +162,12 @@ def cross_cube(ai_constraints):
   c_c['output_file_basename'] = ''
   c_c['args_in_txt'] = "crest for cross_cube"
   c_c['return_type'] = 'figures_3dconf_info' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
-  c_c['face_B1_thickness'] = cc_c['face_B1_thickness']
-  c_c['face_B2_thickness'] = cc_c['face_B2_thickness']
+  c_c['face_B1_thickness'] = fb1t
+  c_c['face_B2_thickness'] = fb2t
   (crest_parts, crest_3d_conf,  crest_parameter_info1) = crest.crest(c_c)
   crest_A = cnc25d_api.rotate_and_translate_figure(crest_parts[0], cc_c['cube_width']/2.0, cc_c['cube_height']/2.0, math.pi, 0.0, 0.0)
-  c_c['face_A1_thickness'] = cc_c['face_B1_thickness']
-  c_c['face_A2_thickness'] = cc_c['face_B2_thickness']
+  c_c['face_B1_thickness'] = fa2t
+  c_c['face_B2_thickness'] = fa1t
   (crest_parts, crest_3d_conf,  crest_parameter_info2) = crest.crest(c_c)
   crest_B = cnc25d_api.rotate_and_translate_figure(crest_parts[0], cc_c['cube_width']/2.0, cc_c['cube_height']/2.0, 0.0, 0.0, 0.0)
 
@@ -364,9 +364,9 @@ face_B2_crest:      {:d}
   elif(cc_c['return_type']=='cnc25d_figure'):
     r_cc = part_list
   elif(cc_c['return_type']=='freecad_object'):
-    r_cc = cnc25d_api.figures_to_freecad_assembly(cross_cube_assembly_conf2)
-  elif(cc_c['return_type']=='freecad_object2'):
     r_cc = cnc25d_api.figures_to_freecad_assembly(cross_cube_assembly_conf3)
+  elif(cc_c['return_type']=='freecad_object2'):
+    r_cc = cnc25d_api.figures_to_freecad_assembly(cross_cube_assembly_conf2)
   elif(cc_c['return_type']=='figures_3dconf_info'):
     r_cc = (part_list, cross_cube_assembly_conf3, cc_parameter_info)
   #elif(cc_c['return_type']=='outlines_for_crest'): # vestige of before cross_cube_sub
@@ -483,8 +483,8 @@ def cross_cube_cli(ai_args=""):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("cross_cube.py says hello!\n")
   my_cc = cross_cube_cli()
-  #my_cc = cross_cube_cli("--cross_cube_extra_cut_thickness 1.0 --return_type freecad_object")
-  #my_cc = cross_cube_cli("--cross_cube_extra_cut_thickness 1.0 --return_type freecad_object2 --face_A1_crest --face_B1_crest")
+  #my_cc = cross_cube_cli("--cross_cube_extra_cut_thickness 1.0 --return_type freecad_object2")
+  #my_cc = cross_cube_cli("--cross_cube_extra_cut_thickness 1.0 --return_type freecad_object --face_A1_crest --face_B1_crest")
   try: # depending on cc_c['return_type'] it might be or not a freecad_object
     Part.show(my_cc)
     print("freecad_object returned")

@@ -127,7 +127,7 @@ cc_constraint['spacer_diameter']               = 0.0
 cc_constraint['spacer_length']                 = 0.0
 ### manufacturing
 cc_constraint['cross_cube_cnc_router_bit_radius']  = 1.0
-cc_constraint['cross_cube_extra_cut_thickness']  = 0.0
+cc_constraint['cross_cube_extra_cut_thickness']  = 0.0 #0.0 1.0 for freecad gui inspection
 
 ### select crest on face
 cc_constraint['face_A1_crest'] = True
