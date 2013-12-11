@@ -54,6 +54,7 @@ import Part
 # cnc25d
 import bell_bagel_assembly
 import cross_cube
+import angles
 
 ################################################################
 # gimbal dictionary-arguments default values
@@ -70,6 +71,9 @@ def gimbal_dictionary_init(ai_variant=0):
   ### roll-pitch angles
   r_gd['bottom_angle']    = 0.0
   r_gd['top_angle']       = 0.0
+  ### pan_tilt angles # can be set only if roll-pitch angles are left to 0.0
+  r_gd['pan_angle']    = 0.0
+  r_gd['tilt_angle']       = 0.0
   ### output
   if(ai_variant==0):
     r_gd['tkinter_view']           = False
@@ -98,6 +102,11 @@ def gimbal_add_argument(ai_parser, ai_variant=0):
     help="Set the bottom angle. Default: 0.0")
   r_parser.add_argument('--top_angle','--ta', action='store', type=float, default=0.0, dest='sw_top_angle',
     help="Set the top angle. Default: 0.0")
+  ### pan_tilt angles # can be set only if roll-pitch angles are left to 0.0
+  r_parser.add_argument('--pan_angle','--pan', action='store', type=float, default=0.0, dest='sw_pan_angle',
+    help="Set the pan angle. Use the pan-tilt angles only if roll-pitch angles are left to 0.0. Default: 0.0")
+  r_parser.add_argument('--tilt_angle','--tilt', action='store', type=float, default=0.0, dest='sw_tilt_angle',
+    help="Set the tilt angle. Default: 0.0")
   ### output
   # return
   return(r_parser)
@@ -131,6 +140,21 @@ def gimbal(ai_constraints):
   ################################################################
   # parameter check and dynamic-default values
   ################################################################
+  if((g_c['bottom_angle']!=0)or(g_c['top_angle']!=0)):
+    if((g_c['pan_angle']!=0)or(g_c['tilt_angle']!=0)):
+      print("ERR145: Error, roll-pitch angles {:0.3f} {:0.3f} and pan-tilt angles {:0.3f} {:0.3f} are set together".format(g_c['bottom_angle'], g_c['top_angle'], g_c['pan_angle'], g_c['tilt_angle']))
+      sys.exit(2)
+  if((g_c['pan_angle']!=0)or(g_c['tilt_angle']!=0)):
+    (a1, a2) = angles.pan_tilt_to_roll_pitch(g_c['pan_angle'], g_c['tilt_angle'])
+    g_c['bottom_angle'] = a1
+    g_c['top_angle'] = a2
+  (b1, b2) = angles.roll_pitch_to_pan_tilt(g_c['bottom_angle'], g_c['top_angle'])
+  (a1, a2) = angles.pan_tilt_to_roll_pitch(b1, b2)
+  if((abs(g_c['bottom_angle']-a1)>radian_epsilon)or(abs(g_c['top_angle']-a2)>radian_epsilon)):
+    print("ERR154: Internal error in angle conversion: a1 {:0.3f} {:0.3f}  a2 {:0.3f} {:0.3f}".format(g_c['bottom_angle'], a1, g_c['top_angle'], a2))
+    sys.exit(2)
+  b3 = angles.roll_pitch_pan_tilt_drift_angle(g_c['bottom_angle'], g_c['top_angle'])
+  #
   if(abs(g_c['bottom_angle'])>0.7*math.pi):
     print("ERR133: Error, bottom_angle {:0.3f} absolute value is too big".format(g_c['bottom_angle']))
     sys.exit(2)
@@ -140,9 +164,9 @@ def gimbal(ai_constraints):
   if(abs(g_c['bottom_angle'])+abs(g_c['top_angle'])>1.1*math.pi):
     print("ERR139: Error, bottom_angle {:0.3f} and top_angle {:0.3f} absolute values can not be so large at the same time".format(g_c['bottom_angle'], g_c['top_angle']))
     sys.exit(2)
-  # pan-tilt conversion
-  g_c['pan_angle'] = 0.0 #todo
-  g_c['tilt_angle'] = 0.0
+  # pan-tilt
+  g_c['pan_angle'] = b1
+  g_c['tilt_angle'] = b2
   if(g_c['tilt_angle']>0.6*math.pi):
     print("ERR147: Error, tilt_angle {:0.3f} is to big".format(g_c['tilt_angle']))
     sys.exit(2)
@@ -199,7 +223,8 @@ top_angle:      {:0.3f} (radian)    {:0.3f} (degree)
 pan-tilt conversion:
 pan_angle:      {:0.3f} (radian)    {:0.3f} (degree)
 tilt_angle:     {:0.3f} (radian)    {:0.3f} (degree)
-""".format(g_c['bottom_angle'], g_c['bottom_angle']*180/math.pi, g_c['top_angle'], g_c['top_angle']*180/math.pi, g_c['pan_angle'], g_c['pan_angle']*180/math.pi, g_c['tilt_angle'], g_c['tilt_angle']*180/math.pi)
+roll-pitch pan-tilt drit angle: {:0.3f} (radian)    {:0.3f} (degree)
+""".format(g_c['bottom_angle'], g_c['bottom_angle']*180/math.pi, g_c['top_angle'], g_c['top_angle']*180/math.pi, g_c['pan_angle'], g_c['pan_angle']*180/math.pi, g_c['tilt_angle'], g_c['tilt_angle']*180/math.pi, b3, b3*180/math.pi)
   #print(g_parameter_info)
 
   ### figures output
@@ -285,6 +310,8 @@ def gimbal_argparse_to_dictionary(ai_g_args, ai_variant=0):
   ### roll-pitch angles
   r_gd['bottom_angle']    = ai_g_args.sw_bottom_angle
   r_gd['top_angle']       = ai_g_args.sw_top_angle
+  r_gd['pan_angle']       = ai_g_args.sw_pan_angle
+  r_gd['tilt_angle']      = ai_g_args.sw_tilt_angle
   ### output
   if(ai_variant==0):
     #r_gd['tkinter_view']           = False
@@ -325,6 +352,7 @@ def gimbal_self_test():
     ["bottom angle"        , "--bottom_angle 0.3"],
     ["top angle"        , "--top_angle -0.4"],
     ["both angle"        , "--bottom_angle -0.2 --top_angle 0.3"],
+    ["pan-tilt"        , "--pan_angle 2.1 --tilt_angle 0.4"],
     ["outputfile" , "--output_file_basename test_output/gimbal_self_test.dxf"],
     ["last test"            , "--bottom_angle 0.1 --top_angle 0.2"]]
   #print("dbg741: len(test_case_switch):", len(test_case_switch))

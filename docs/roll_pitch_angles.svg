@@ -2757,15 +2757,15 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="252.50331"
-     inkscape:cy="327.12268"
+     inkscape:cy="984.67305"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
-     inkscape:window-x="0"
-     inkscape:window-y="24"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1113"
+     inkscape:window-height="973"
+     inkscape:window-x="37"
+     inkscape:window-y="52"
+     inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -2783,7 +2783,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -4024,7 +4024,10 @@
        width="339.28571"
        height="325"
        x="136.67653"
-       y="846.85175" />
+       y="846.85175"
+       inkscape:export-filename="images/angle_roll_pitch_z3_plane.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#marker8921);marker-end:url(#marker8925);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 273.33055,903.09785 16.54298,80.30815 -91.77019,65.8778"
@@ -4430,7 +4433,10 @@
        width="339.28571"
        height="325"
        x="149.85268"
-       y="1300.375" />
+       y="1300.375"
+       inkscape:export-filename="images/angle_pan_tilt_b1b2.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#marker14438);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 286.5067,1356.6211 16.54298,80.3081"
@@ -4723,7 +4729,10 @@
        width="339.28571"
        height="325"
        x="138.42412"
-       y="333.23215" />
+       y="333.23215"
+       inkscape:export-filename="images/angle_roll_pitch_a1a2.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#marker8921);marker-end:url(#marker8925);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 275.07813,389.47824 16.54298,80.30815 -91.77019,65.8778"
@@ -4974,7 +4983,10 @@
        width="339.28571"
        height="325"
        x="124.1384"
-       y="-38.910717" />
+       y="-38.910717"
+       inkscape:export-filename="images/angle_roll_pitch_a1.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#c6e9af;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 324.73673,11.929676 c 0,0 5.52953,5.42482 8.08122,8.33376 3.75387,4.27943 7.47264,8.63233 10.6066,13.38449 3.21414,4.8738 5.95892,10.0715 8.33376,15.4049 2.14444,4.8159 3.77832,9.8533 5.3033,14.8997 1.506,4.9836 2.77127,10.0464 3.78807,15.1523 1.11373,5.5927 2.06329,11.2363 2.52538,16.9201 0.48436,5.957604 0.54634,11.960104 0.25254,17.930204 -0.25816,5.2459 -1.10168,10.4475 -1.76777,15.6573 -0.30195,2.3618 -1.01015,7.0711 -1.01015,7.0711"
@@ -5148,7 +5160,10 @@
        width="339.28571"
        height="325"
        x="143.7476"
-       y="1750.9382" />
+       y="1750.9382"
+       inkscape:export-filename="images/angle_pan_tilt_x5_plane.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#marker14438);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 280.40162,1807.1843 16.54298,80.3081"
@@ -5389,7 +5404,10 @@
        width="339.28571"
        height="375.35715"
        x="136.28125"
-       y="2183.2322" />
+       y="2183.2322"
+       inkscape:export-filename="images/angle_roll_pitch_versus_pan_tilt.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#marker8921);marker-end:url(#marker8925);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 272.93527,2239.4782 16.54298,80.3082 -91.77019,65.8778"
@@ -5944,7 +5962,10 @@
        width="339.28571"
        height="640.35718"
        x="147.78821"
-       y="2675.3022" />
+       y="2675.3022"
+       inkscape:export-filename="images/angle_conversion_roll_pitch_to_pan_tilt.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#marker8921);marker-end:url(#marker8925);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 284.44223,2731.5486 16.54298,80.3082 -91.77019,65.8778"
@@ -6268,9 +6289,12 @@
        style="fill:none;stroke:#cccccc;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect9060-1-09-3-6-6"
        width="339.28571"
-       height="485.80383"
+       height="511.05768"
        x="158.89989"
-       y="3465.064" />
+       y="3465.0642"
+       inkscape:export-filename="images/angle_roll_pitch_pan_tilt_drift_angle.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#marker8921);marker-end:url(#marker8925);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 295.55391,3521.3104 16.54298,80.3082 -91.77019,65.8778"
@@ -6467,8 +6491,8 @@
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"><flowRegion
          id="flowRegion20139-9"><rect
            id="rect20141-0"
-           width="278.57144"
-           height="314.28586"
+           width="267.45975"
+           height="155.69194"
            x="116.42857"
            y="3071.741" /></flowRegion><flowPara
          id="flowPara20143-3">By construction:</flowPara><flowPara
@@ -6484,7 +6508,7 @@
        xml:space="preserve"
        id="flowRoot20181-5"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(67.92339,521.68165)"><flowRegion
+       transform="translate(77.014763,518.65119)"><flowRegion
          id="flowRegion20183-0"><rect
            id="rect20185-6"
            width="238.57143"
@@ -6575,7 +6599,7 @@
        sodipodi:cy="1105.1116"
        sodipodi:rx="95.535713"
        sodipodi:ry="29.464285"
-       d="m 330.71429,1105.1116 a 95.535713,29.464285 0 1 1 -191.07143,0 95.535713,29.464285 0 1 1 191.07143,0 z"
+       d="m 330.71429,1105.1116 c 0,16.2726 -42.7728,29.4643 -95.53572,29.4643 -52.76291,0 -95.53571,-13.1917 -95.53571,-29.4643 0,-16.2727 42.7728,-29.4643 95.53571,-29.4643 52.76292,0 95.53572,13.1916 95.53572,29.4643 z"
        transform="matrix(1.1654339,-0.08149533,0.09233224,1.3296971,-119.1483,2699.7395)" />
     <path
        sodipodi:type="arc"
@@ -6585,7 +6609,7 @@
        sodipodi:cy="1107.6116"
        sodipodi:rx="50.357143"
        sodipodi:ry="112.67857"
-       d="m 437.5,1107.6116 a 50.357143,112.67857 0 1 1 -100.71429,0 50.357143,112.67857 0 1 1 100.71429,0 z"
+       d="m 437.5,1107.6116 c 0,62.2306 -22.54566,112.6785 -50.35715,112.6785 -27.81148,0 -50.35714,-50.4479 -50.35714,-112.6785 0,-62.2307 22.54566,-112.6786 50.35714,-112.6786 27.81149,0 50.35715,50.4479 50.35715,112.6786 z"
        transform="matrix(0.5602837,0,0,1.0047544,38.635814,3029.3027)" />
     <path
        sodipodi:type="arc"
@@ -6595,7 +6619,7 @@
        sodipodi:cy="1256.7881"
        sodipodi:rx="96.469566"
        sodipodi:ry="22.98097"
-       d="m 499.52044,1256.7881 a 96.469566,22.98097 0 1 1 -192.93913,0 96.469566,22.98097 0 1 1 192.93913,0 z"
+       d="m 499.52044,1256.7881 c 0,12.692 -43.1909,22.981 -96.46957,22.981 -53.27867,0 -96.46956,-10.289 -96.46956,-22.981 0,-12.6921 43.19089,-22.981 96.46956,-22.981 53.27867,0 96.46957,10.2889 96.46957,22.981 z"
        transform="matrix(1.1329428,-0.11931858,0.00795544,2.8320568,-208.36035,645.88666)" />
     <path
        style="color:#000000;fill:none;stroke:#003380;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -6611,7 +6635,7 @@
        sodipodi:cy="286.05347"
        sodipodi:rx="116.67262"
        sodipodi:ry="149.50258"
-       d="m 311.63206,286.05347 a 116.67262,149.50258 0 1 1 -233.345241,0 116.67262,149.50258 0 1 1 233.345241,0 z"
+       d="m 311.63206,286.05347 c 0,82.56799 -52.23611,149.50258 -116.67262,149.50258 -64.43651,0 -116.672621,-66.93459 -116.672621,-149.50258 0,-82.568 52.236111,-149.50258 116.672621,-149.50258 64.43651,0 116.67262,66.93458 116.67262,149.50258 z"
        transform="matrix(0.74664381,0.29775278,-0.36249987,0.64092289,217.24616,3903.2923)" />
     <path
        sodipodi:type="arc"
@@ -6621,7 +6645,7 @@
        sodipodi:cy="286.05347"
        sodipodi:rx="116.67262"
        sodipodi:ry="149.50258"
-       d="m 311.63206,286.05347 a 116.67262,149.50258 0 1 1 -233.345241,0 116.67262,149.50258 0 1 1 233.345241,0 z"
+       d="m 311.63206,286.05347 c 0,82.56799 -52.23611,149.50258 -116.67262,149.50258 -64.43651,0 -116.672621,-66.93459 -116.672621,-149.50258 0,-82.568 52.236111,-149.50258 116.672621,-149.50258 64.43651,0 116.67262,66.93458 116.67262,149.50258 z"
        transform="matrix(0.74025975,0,0,0.75675676,111.20773,3924.5672)" />
     <path
        style="color:#000000;fill:none;stroke:#003380;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -6637,7 +6661,7 @@
        sodipodi:cy="286.05347"
        sodipodi:rx="116.67262"
        sodipodi:ry="149.50258"
-       d="m 311.63206,286.05347 a 116.67262,149.50258 0 1 1 -233.345241,0 116.67262,149.50258 0 1 1 233.345241,0 z"
+       d="m 311.63206,286.05347 c 0,82.56799 -52.23611,149.50258 -116.67262,149.50258 -64.43651,0 -116.672621,-66.93459 -116.672621,-149.50258 0,-82.568 52.236111,-149.50258 116.672621,-149.50258 64.43651,0 116.67262,66.93458 116.67262,149.50258 z"
        transform="matrix(0.96103896,0,0,0.75675676,68.669814,3925.0723)" />
     <path
        style="color:#000000;fill:none;stroke:#5aa02c;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
@@ -6658,12 +6682,15 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cac" />
     <rect
-       style="fill:none;stroke:#cccccc;stroke-width:0.99999994;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:none;stroke:#cccccc;stroke-width:0.99999988;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect9060-1-09-3-6-67"
        width="521.11316"
-       height="640.35718"
+       height="716.11859"
        x="102.33135"
-       y="3995.394" />
+       y="3995.3938"
+       inkscape:export-filename="images/angle_conversion_pan_tilt_to_roll_pitch.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="color:#000000;fill:none;stroke:#ff6600;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;marker-start:url(#marker8921);marker-end:url(#marker8925);visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 238.98536,4051.6404 16.54298,80.3082 -91.77019,65.8778"
@@ -6881,6 +6908,9 @@
          id="flowPara20179-0">So,</flowPara><flowPara
          id="flowPara4681">cos C = - cos A cos B + sin A sin B cos a cos b + sin A sin B sin a sin b cos C</flowPara><flowPara
          id="flowPara4683">cos C = (sin A sin B cos a cos b - cos A cos B)/(1 - sin A sin B sin a sin b)</flowPara><flowPara
+         id="flowPara4370">cos C = (sin A cos a cos b)/(1 - sin A sin a sin b)</flowPara><flowPara
+         id="flowPara4372">cos C = (cos b1 cos a cos b)/(1 - cos b1 cos b2 cos b1 cos b2)</flowPara><flowPara
+         id="flowPara4374">cos C = (cos b1 cos a sin b2)/cos²a = cos b1 sin b2 / cos a</flowPara><flowPara
          id="flowPara4685">and then cos c</flowPara><flowPara
          id="flowPara4687" /><flowPara
          id="flowPara4689">a1 = c</flowPara><flowPara
@@ -6888,12 +6918,23 @@
        xml:space="preserve"
        id="flowRoot20181-0"
        style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       transform="translate(8.3243892,1217.6767)"><flowRegion
+       transform="translate(5.2939316,1295.4584)"><flowRegion
          id="flowRegion20183-6"><rect
            id="rect20185-8"
            width="238.57143"
            height="32.142822"
            x="103.57143"
            y="3392.4553" /></flowRegion><flowPara
-         id="flowPara20187-5">pan-tilt to roll-pitch conversion</flowPara></flowRoot>  </g>
+         id="flowPara20187-5">pan-tilt to roll-pitch conversion</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4373"
+       style="line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       transform="translate(53.78125,-113.84375)"><flowRegion
+         id="flowRegion4375"><rect
+           id="rect4377"
+           width="194.95944"
+           height="26.263966"
+           x="117.1777"
+           y="4060.7107" /></flowRegion><flowPara
+         id="flowPara4379">roll-pitch pan-tilt drift angle</flowPara></flowRoot>  </g>
 </svg>

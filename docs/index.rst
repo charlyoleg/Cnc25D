@@ -47,6 +47,7 @@ Contents:
    crest_design
    cross_cube_design
    gimbal_design
+   gimbal_details
 
 Indices and tables
 ==================
