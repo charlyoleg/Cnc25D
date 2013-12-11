@@ -10,6 +10,7 @@ Ready-to-use parametric *epicyclic-gearing* design. The *epicyclic gearing* is a
   - planet-carrier (rear, middle and front)
 
 .. image:: images/epicyclic_gearing_parts.png
+.. image:: images/epicyclic_gearing_3d.png
 
 You can generate several configuration of *epicyclic gearing system*:
 

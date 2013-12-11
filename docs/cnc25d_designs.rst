@@ -133,7 +133,7 @@ Gimbal
 
 The :doc:`gimbal_design` is a mechanism with two angles as degree of freedom.
 
-.. .. image:: images/gimbal_3d.png
+.. image:: images/gimbal_3d.png
 
 
 

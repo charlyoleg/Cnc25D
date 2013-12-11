@@ -47,7 +47,7 @@ import sys, argparse
 #import Tkinter # to display the outline in a small GUI
 #
 import Part
-#from FreeCAD import Base
+from FreeCAD import Base
 # 3rd parties
 #import svgwrite
 #from dxfwrite import DXFEngine
@@ -248,9 +248,25 @@ roll-pitch pan-tilt drit angle: {:0.3f} (radian)    {:0.3f} (degree)
   def gimbal_freecad_construction(ai_bell_bagel_3d_conf, ai_cross_cube_3d_conf, ai_bottom_angle, ai_top_angle):
     """ generate the the freecad-object gimbal
     """
-    # todo
-    return(1)
-
+    # intermediate parameters
+    z1 = g_c['base_thickness'] + g_c['bell_face_height'] + g_c['leg_length']
+    z2 = g_c['inter_axle_length']
+    # make the freecad-objects
+    fc_bb_bottom = cnc25d_api.figures_to_freecad_assembly(ai_bell_bagel_3d_conf)
+    fc_bb_top = fc_bb_bottom.copy()
+    fc_cc = cnc25d_api.figures_to_freecad_assembly(ai_cross_cube_3d_conf)
+    # place
+    fc_bb_bottom.rotate(Base.Vector(0,0,0),Base.Vector(0,0,1),90)
+    fc_bb_top.rotate(Base.Vector(0,0,z1),Base.Vector(0,1,0),180)
+    fc_bb_top.translate(Base.Vector(0,0,z2))
+    fc_cc.translate(Base.Vector(-1*g_c['cube_width']/2.0, -1*g_c['cube_width']/2.0, z1-(g_c['top_thickness'] + g_c['height_margin'] + g_c['axle_diameter']/2.0)))
+    fc_cc.rotate(Base.Vector(0,0,0),Base.Vector(0,0,1),90)
+    # apply the rotation
+    fc_bb_top.rotate(Base.Vector(0,0,z1+z2),Base.Vector(0,1,0),ai_top_angle*180/math.pi)
+    fc_top = Part.makeCompound([fc_bb_top, fc_cc])
+    fc_top.rotate(Base.Vector(0,0,z1),Base.Vector(1,0,0),ai_bottom_angle*180/math.pi)
+    r_fc_gimbal = Part.makeCompound([fc_bb_bottom, fc_top])
+    return(r_fc_gimbal)
 
   ### display with Tkinter
   if(g_c['tkinter_view']):
@@ -402,6 +418,7 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gimbal.py says hello!\n")
   my_g = gimbal_cli()
   #my_g = gimbal_cli("--bagel_extra_cut_thickness 1.0 --return_type freecad_object")
+  #my_g = gimbal_cli("--bottom_angle 0.1 --top_angle 0.2 --return_type freecad_object")
   try: # depending on g_c['return_type'] it might be or not a freecad_object
     Part.show(my_g)
     print("freecad_object returned")
