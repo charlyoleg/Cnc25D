@@ -4,14 +4,17 @@ Cnc25D Release Notes
 
 Release 0.1.9
 -------------
-Released on 2014-02-01
+Released on 2013-12-20
 
 * complete the Cnc25D API with generic functions for figures
 * motor_lid
 * bell
+* bagel
+* bell_bagel
+* crest
+* cross_cube
+* gimbal
 * gearlever
-* gear_train  
-* hexa_bone
 
 Release 0.1.8
 -------------

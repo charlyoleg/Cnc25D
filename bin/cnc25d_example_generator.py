@@ -3245,7 +3245,7 @@ cc_constraint['spacer_diameter']               = 0.0
 cc_constraint['spacer_length']                 = 0.0
 ### manufacturing
 cc_constraint['cross_cube_cnc_router_bit_radius']  = 1.0
-cc_constraint['cross_cube_extra_cut_thickness']  = 0.0
+cc_constraint['cross_cube_extra_cut_thickness']  = 0.0 #0.0 1.0 for freecad gui inspection
 
 ### select crest on face
 cc_constraint['face_A1_crest'] = True
@@ -3438,6 +3438,8 @@ cnc25d_api.importing_freecad()
 from cnc25d import cnc25d_design
 #
 import Part
+#
+import math
 
     
 ################################################################
@@ -3455,7 +3457,7 @@ gimbal_constraint = {} # This python-dictionary contains all the constraint-para
 ## bulk
 gimbal_constraint['axle_internal_diameter']          = 20.0
 gimbal_constraint['axle_external_diameter']          = 0.0
-gimbal_constraint['leg_length']                      = 40.0
+gimbal_constraint['leg_length']                      = 60.0
 gimbal_constraint['bell_face_height']                = 80.0
 gimbal_constraint['bell_face_width']                 = 80.0
 ### bell_base_disc
@@ -3528,7 +3530,7 @@ gimbal_constraint['z_hole_external_diameter']        = 0.0
 gimbal_constraint['z_hole_position_length']          = 15.0
 ### bell manufacturing
 gimbal_constraint['bell_cnc_router_bit_radius']      = 1.0
-gimbal_constraint['bell_extra_cut_thickness']        = 0.0
+gimbal_constraint['bell_extra_cut_thickness']        = 0.0 #0.0, 1.0
 ###### bagel
 ## bagel diameter
 gimbal_constraint['bagel_axle_diameter']                   = 10.0
@@ -3538,7 +3540,7 @@ gimbal_constraint['bagel_axle_external_diameter']          = 0.0
 gimbal_constraint['external_bagel_thickness']        = 2.0
 gimbal_constraint['internal_bagel_thickness']        = 2.0
 ### bagel manufacturing
-gimbal_constraint['bagel_extra_cut_thickness']       = 0.0
+gimbal_constraint['bagel_extra_cut_thickness']       = 0.0 #0.0, 1.0
 
 ####### cross_cube
 ##### cross_cube bare
@@ -3580,13 +3582,13 @@ gimbal_constraint['spacer_diameter']               = 0.0
 gimbal_constraint['spacer_length']                 = 0.0
 ### manufacturing
 gimbal_constraint['cross_cube_cnc_router_bit_radius']  = 1.0
-gimbal_constraint['cross_cube_extra_cut_thickness']  = 0.0
+gimbal_constraint['cross_cube_extra_cut_thickness']  = 0.0 #0.0, 1.0
 
-### select crest on face
+### select crest on face: (True, False, False, True) is the combination for the gimbal angle convention
 gimbal_constraint['face_A1_crest'] = True
 gimbal_constraint['face_A2_crest'] = False
-gimbal_constraint['face_B1_crest'] = True
-gimbal_constraint['face_B2_crest'] = False
+gimbal_constraint['face_B1_crest'] = False
+gimbal_constraint['face_B2_crest'] = True
 
 ####### crest option
 ##### parameter inheritance from gear_profile
@@ -3642,8 +3644,8 @@ gimbal_constraint['simulation_enable'] = False
 ##### crest specific
 ### outline
 gimbal_constraint['gear_module']         = 3.0
-gimbal_constraint['virtual_tooth_nb']    = 60
-gimbal_constraint['portion_tooth_nb']    = 30
+gimbal_constraint['virtual_tooth_nb']    = 40
+gimbal_constraint['portion_tooth_nb']    = 20
 gimbal_constraint['free_mounting_width'] = 15.0
 ### crest_hollow
 gimbal_constraint['crest_hollow_leg_nb']  = 4 # possible values: 1(filled), 2(end-legs only), 3, 4 ...
@@ -3664,13 +3666,21 @@ gimbal_constraint['crest_thickness']                   = 5.0
 ### manufacturing
 gimbal_constraint['crest_cnc_router_bit_radius']       = 0.5
 
+##### gimbal angles
+### roll-pitch angles
+gimbal_constraint['bottom_angle']    = 0.0
+gimbal_constraint['top_angle']       = 0.0
+### pan_tilt angles # can be set only if roll-pitch angles are left to 0.0
+gimbal_constraint['pan_angle']       = -30*math.pi/180 #0.0
+gimbal_constraint['tilt_angle']      = 45*math.pi/180 #0.0
+
 ### output
 gimbal_constraint['tkinter_view']           = True
 gimbal_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
 #gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro.svg"  # to generate the SVG file with mozman svgwrite
 #gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro.dxf"  # to generate the DXF file with mozman svgwrite
 #gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro"      # to generate the Brep and DXF file with FreeCAD
-gimbal_constraint['return_type'] = 'freecad_object' #'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+gimbal_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action

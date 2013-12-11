@@ -3,13 +3,18 @@ Release History
 ###############
 
 
-0.1.9 (2013-12-01)
+0.1.9 (2013-12-20)
 ==================
 
+* complete the Cnc25D API with generic functions for figures
 * motor_lid
+* bell
+* bagel
+* bell_bagel
+* crest
+* cross_cube
+* gimbal
 * gearlever
-* gear_train  
-* hexa_bone
 
 0.1.8 (2013-11-07)
 ==================
