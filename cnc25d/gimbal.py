@@ -188,6 +188,7 @@ def gimbal(ai_constraints):
   # cross_cube
   cc_ci = cross_cube.cross_cube_dictionary_init(1)
   cc_c = dict([ (k, g_c[k]) for k in cc_ci.viewkeys() & gdi.viewkeys() ]) # extract only the entries of the intersection of cross_cube and gimbal
+  cc_c['crest_cnc_router_bit_radius'] = cc_c['cross_cube_cnc_router_bit_radius'] # crest_cnc_router_bit_radius must be removed because to similar to cross_cube_cnc_router_bit_radius
   cc_c['tkinter_view'] = False
   cc_c['output_file_basename'] = ''
   cc_c['args_in_txt'] = "cross_cube for gimbal"

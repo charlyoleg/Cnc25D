@@ -285,7 +285,7 @@ gimbal_constraint['simulation_enable'] = False
 gimbal_constraint['gear_module']         = 3.0
 gimbal_constraint['virtual_tooth_nb']    = 40
 gimbal_constraint['portion_tooth_nb']    = 20
-gimbal_constraint['free_mounting_width'] = 15.0
+gimbal_constraint['free_mounting_width'] = 15.0 # minimal recommended value: max(face_thickness) + cross_cube_cnc_router_bit_radius
 ### crest_hollow
 gimbal_constraint['crest_hollow_leg_nb']  = 4 # possible values: 1(filled), 2(end-legs only), 3, 4 ...
 gimbal_constraint['end_leg_width']                     = 10.0
@@ -300,10 +300,6 @@ gimbal_constraint['fastening_hole_position']           = 0.0
 gimbal_constraint['centring_hole_diameter']            = 1.0
 gimbal_constraint['centring_hole_distance']            = 8.0
 gimbal_constraint['centring_hole_position']            = 0.0
-## part thickness
-gimbal_constraint['crest_thickness']                   = 5.0
-### manufacturing
-gimbal_constraint['crest_cnc_router_bit_radius']       = 0.5
 
 ##### gimbal angles
 ### roll-pitch angles

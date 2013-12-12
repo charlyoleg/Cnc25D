@@ -74,7 +74,7 @@ def pan_tilt_to_roll_pitch(ai_b1, ai_b2):
   a = math.asin(sin_a)
   cos_a = math.cos(a)
   a1_sign = math.copysign(1, math.sin(ai_b1)*math.cos(ai_b2))
-  print("dbg070: ai_b1 {:0.3f}  ai_b2 {:0.3f}".format(ai_b1, ai_b2))
+  #print("dbg070: ai_b1 {:0.3f}  ai_b2 {:0.3f}".format(ai_b1, ai_b2))
   if(abs(cos_a)<radian_epsilon):
     print("WARN070: Warning, a2 (tilt) is pi/2, a1 can not be calculated")
     a1 = 0
