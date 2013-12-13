@@ -2,8 +2,13 @@
 Release History
 ###############
 
+0.1.10 (2014-01-31)
+===================
 
-0.1.9 (2013-12-20)
+* gearlever
+* epicyclic-gearing optimization for 3D printer
+
+0.1.9 (2013-12-13)
 ==================
 
 * complete the Cnc25D API with generic functions for figures
@@ -14,7 +19,6 @@ Release History
 * crest
 * cross_cube
 * gimbal
-* gearlever
 
 0.1.8 (2013-11-07)
 ==================

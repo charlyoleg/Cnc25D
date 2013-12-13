@@ -2,9 +2,16 @@
 Cnc25D Release Notes
 ====================
 
+Release 0.1.10
+--------------
+Released on 2014-01-31
+
+* gearlever
+* epicyclic-gearing optimization for 3D printer
+
 Release 0.1.9
 -------------
-Released on 2013-12-20
+Released on 2013-12-13
 
 * complete the Cnc25D API with generic functions for figures
 * motor_lid
@@ -14,7 +21,6 @@ Released on 2013-12-20
 * crest
 * cross_cube
 * gimbal
-* gearlever
 
 Release 0.1.8
 -------------
