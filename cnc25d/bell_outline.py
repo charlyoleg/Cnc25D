@@ -63,12 +63,14 @@ def bell_face_side_holes(ai_c, ai_type):
   if(ai_type=='face'):
     wall_thickness = ai_c['side_thickness']
     axle_hole_radius = ai_c['y_hole_radius']
-    axle_hole_y_position = ai_c['y_hole_z_position']
+    axle_hole_y_top_position = ai_c['y_hole_z_top_position']
+    axle_hole_y_bottom_position = ai_c['y_hole_z_bottom_position']
     axle_hole_x_position = ai_c['y_hole_x_position']
   elif(ai_type=='side'):
     wall_thickness = ai_c['face_thickness']
     axle_hole_radius = ai_c['x_hole_radius']
-    axle_hole_y_position = ai_c['x_hole_z_position']
+    axle_hole_y_top_position = ai_c['x_hole_z_top_position']
+    axle_hole_y_bottom_position = ai_c['x_hole_z_bottom_position']
     axle_hole_x_position = ai_c['x_hole_y_position']
   else:
     print("ERR065: Error, ")
@@ -79,8 +81,8 @@ def bell_face_side_holes(ai_c, ai_type):
   int_buttress_y1 = ai_c['base_thickness'] + ai_c['int_buttress_z_position']
   int_buttress_y2 = int_buttress_y1 + ai_c['int_buttress_z_distance']
   axle_hole_x = -1*ai_c['bell_face_width']/2.0 + wall_thickness + axle_hole_x_position
-  axle_hole_y1 = int_buttress_y1 + axle_hole_y_position
-  axle_hole_y2 = int_buttress_y2 + axle_hole_y_position
+  axle_hole_y1 = int_buttress_y1 + axle_hole_y_bottom_position
+  axle_hole_y2 = int_buttress_y2 + axle_hole_y_top_position
   ext_buttress_x1 = -1*ai_c['ext_buttress_x_distance']/2.0 - ai_c['ext_buttress_x_width']
   ext_buttress_x2 = ai_c['ext_buttress_x_distance']/2.0
   ext_buttress_y = ai_c['base_thickness'] + ai_c['ext_buttress_z_position']

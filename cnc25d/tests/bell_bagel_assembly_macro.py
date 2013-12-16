@@ -153,11 +153,13 @@ bba_constraint['base_hole_angle']                 = 0.0
 ### xyz-axles
 ## y_hole
 bba_constraint['y_hole_diameter']                 = 4.0
-bba_constraint['y_hole_z_position']               = 10.0
+bba_constraint['y_hole_z_top_position']           = 10.0
+bba_constraint['y_hole_z_bottom_position']        = 10.0
 bba_constraint['y_hole_x_position']               = 6.0
 ## x_hole
 bba_constraint['x_hole_diameter']                 = 4.0
-bba_constraint['x_hole_z_position']               = -6.0
+bba_constraint['x_hole_z_top_position']           = -6.0
+bba_constraint['x_hole_z_bottom_position']        = -6.0
 bba_constraint['x_hole_y_position']               = 6.0
 ## z_hole
 bba_constraint['z_hole_diameter']                 = 4.0

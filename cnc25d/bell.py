@@ -127,11 +127,13 @@ def bell_dictionary_init(ai_variant=0):
   ### xyz-axles
   ## y_hole
   r_bd['y_hole_diameter']                 = 4.0
-  r_bd['y_hole_z_position']               = 10.0
+  r_bd['y_hole_z_top_position']           = 10.0
+  r_bd['y_hole_z_bottom_position']        = 10.0
   r_bd['y_hole_x_position']               = 6.0
   ## x_hole
   r_bd['x_hole_diameter']                 = 4.0
-  r_bd['x_hole_z_position']               = -6.0
+  r_bd['x_hole_z_top_position']           = -6.0
+  r_bd['x_hole_z_bottom_position']        = -6.0
   r_bd['x_hole_y_position']               = 6.0
   ## z_hole
   r_bd['z_hole_diameter']                 = 4.0
@@ -275,15 +277,19 @@ def bell_add_argument(ai_parser, ai_variant=0):
   ## y_hole
   r_parser.add_argument('--y_hole_diameter','--yhd', action='store', type=float, default=4.0, dest='sw_y_hole_diameter',
     help="Set the diameter of the y-holes. If equal to 0.0, no y-hole is created. Default: 4.0")
-  r_parser.add_argument('--y_hole_z_position','--yhzp', action='store', type=float, default=10.0, dest='sw_y_hole_z_position',
-    help="Set the z-position of the y-holes. Default: 10.0")
+  r_parser.add_argument('--y_hole_z_top_position','--yhztp', action='store', type=float, default=10.0, dest='sw_y_hole_z_top_position',
+    help="Set the z-position of the top y-holes. Default: 10.0")
+  r_parser.add_argument('--y_hole_z_bottom_position','--yhzbp', action='store', type=float, default=10.0, dest='sw_y_hole_z_bottom_position',
+    help="Set the z-position of the bottom y-holes. Default: 10.0")
   r_parser.add_argument('--y_hole_x_position','--yhxp', action='store', type=float, default=6.0, dest='sw_y_hole_x_position',
     help="Set the x-position of the y-holes. Default: 6.0")
   ## x_hole
   r_parser.add_argument('--x_hole_diameter','--xhd', action='store', type=float, default=4.0, dest='sw_x_hole_diameter',
     help="Set the diameter of the x-holes. If equal to 0.0, no x-hole is created. Default: 4.0")
-  r_parser.add_argument('--x_hole_z_position','--xhzp', action='store', type=float, default=-6.0, dest='sw_x_hole_z_position',
-    help="Set the z-position of the y-holes. Default: -6.0")
+  r_parser.add_argument('--x_hole_z_top_position','--xhztp', action='store', type=float, default=-6.0, dest='sw_x_hole_z_top_position',
+    help="Set the z-position of the top y-holes. Default: -6.0")
+  r_parser.add_argument('--x_hole_z_bottom_position','--xhzbp', action='store', type=float, default=-6.0, dest='sw_x_hole_z_bottom_position',
+    help="Set the z-position of the bottom y-holes. Default: -6.0")
   r_parser.add_argument('--x_hole_y_position','--xhyp', action='store', type=float, default=6.0, dest='sw_x_hole_y_position',
     help="Set the y-position of the x-holes. Default: 6.0")
   ## z_hole
@@ -578,17 +584,29 @@ def bell(ai_constraints):
   # y_hole_diameter
   b_c['y_hole_radius'] = b_c['y_hole_diameter']/2.0
   if(b_c['y_hole_radius']>0):
-    # y_hole_z_position
-    if(abs(b_c['y_hole_z_position'])>b_c['bell_face_height']):
-      print("ERR575: Error, y_hole_z_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(b_c['y_hole_z_position'], b_c['bell_face_height']))
+    # y_hole_z_top_position
+    if(abs(b_c['y_hole_z_top_position'])>b_c['bell_face_height']):
+      print("ERR575: Error, y_hole_z_top_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(b_c['y_hole_z_top_position'], b_c['bell_face_height']))
       sys.exit(2)
-    if(b_c['y_hole_z_position']>0):
-      if(b_c['y_hole_z_position']<b_c['int_buttress_z_width']+b_c['y_hole_radius']):
-        print("ERR580: Error, positive y_hole_z_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and y_hole_radius {:0.3f}".format(b_c['y_hole_z_position'], b_c['int_buttress_z_width'], b_c['y_hole_radius']))
+    if(b_c['y_hole_z_top_position']>0):
+      if(b_c['y_hole_z_top_position']<b_c['int_buttress_z_width']+b_c['y_hole_radius']):
+        print("ERR580: Error, positive y_hole_z_top_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and y_hole_radius {:0.3f}".format(b_c['y_hole_z_top_position'], b_c['int_buttress_z_width'], b_c['y_hole_radius']))
         sys.exit(2)
     else:
-      if(b_c['y_hole_z_position']>-1*b_c['y_hole_radius']):
-        print("ERR584: Error, negative y_hole_z_position {:0.3f} must be smaller than y_hole_radius {:0.3f}".format(b_c['y_hole_z_position'], -1*b_c['y_hole_radius']))
+      if(b_c['y_hole_z_top_position']>-1*b_c['y_hole_radius']):
+        print("ERR584: Error, negative y_hole_z_top_position {:0.3f} must be smaller than y_hole_radius {:0.3f}".format(b_c['y_hole_z_top_position'], -1*b_c['y_hole_radius']))
+        sys.exit(2)
+    # y_hole_z_bottom_position
+    if(abs(b_c['y_hole_z_bottom_position'])>b_c['bell_face_height']):
+      print("ERR575: Error, y_hole_z_bottom_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(b_c['y_hole_z_bottom_position'], b_c['bell_face_height']))
+      sys.exit(2)
+    if(b_c['y_hole_z_bottom_position']>0):
+      if(b_c['y_hole_z_bottom_position']<b_c['int_buttress_z_width']+b_c['y_hole_radius']):
+        print("ERR580: Error, positive y_hole_z_bottom_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and y_hole_radius {:0.3f}".format(b_c['y_hole_z_bottom_position'], b_c['int_buttress_z_width'], b_c['y_hole_radius']))
+        sys.exit(2)
+    else:
+      if(b_c['y_hole_z_bottom_position']>-1*b_c['y_hole_radius']):
+        print("ERR584: Error, negative y_hole_z_bottom_position {:0.3f} must be smaller than y_hole_radius {:0.3f}".format(b_c['y_hole_z_bottom_position'], -1*b_c['y_hole_radius']))
         sys.exit(2)
     # y_hole_x_position
     if(b_c['y_hole_x_position']<b_c['y_hole_radius']):
@@ -600,17 +618,29 @@ def bell(ai_constraints):
   # x_hole_diameter
   b_c['x_hole_radius'] = b_c['x_hole_diameter']/2.0
   if(b_c['x_hole_radius']>0):
-    # x_hole_z_position
-    if(abs(b_c['x_hole_z_position'])>b_c['bell_face_height']):
-      print("ERR598: Error, x_hole_z_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(b_c['x_hole_z_position'], b_c['bell_face_height']))
+    # x_hole_z_top_position
+    if(abs(b_c['x_hole_z_top_position'])>b_c['bell_face_height']):
+      print("ERR598: Error, x_hole_z_top_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(b_c['x_hole_z_top_position'], b_c['bell_face_height']))
       sys.exit(2)
-    if(b_c['x_hole_z_position']>0):
-      if(b_c['x_hole_z_position']<b_c['int_buttress_z_width']+b_c['x_hole_radius']):
-        print("ERR580: Error, positive x_hole_z_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and x_hole_radius {:0.3f}".format(b_c['x_hole_z_position'], b_c['int_buttress_z_width'], b_c['x_hole_radius']))
+    if(b_c['x_hole_z_top_position']>0):
+      if(b_c['x_hole_z_top_position']<b_c['int_buttress_z_width']+b_c['x_hole_radius']):
+        print("ERR580: Error, positive x_hole_z_top_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and x_hole_radius {:0.3f}".format(b_c['x_hole_z_top_position'], b_c['int_buttress_z_width'], b_c['x_hole_radius']))
         sys.exit(2)
     else:
-      if(b_c['x_hole_z_position']>-1*b_c['x_hole_radius']):
-        print("ERR584: Error, negative x_hole_z_position {:0.3f} must be smaller than x_hole_radius {:0.3f}".format(b_c['x_hole_z_position'], -1*b_c['x_hole_radius']))
+      if(b_c['x_hole_z_top_position']>-1*b_c['x_hole_radius']):
+        print("ERR584: Error, negative x_hole_z_top_position {:0.3f} must be smaller than x_hole_radius {:0.3f}".format(b_c['x_hole_z_top_position'], -1*b_c['x_hole_radius']))
+        sys.exit(2)
+    # x_hole_z_bottom_position
+    if(abs(b_c['x_hole_z_bottom_position'])>b_c['bell_face_height']):
+      print("ERR598: Error, x_hole_z_bottom_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(b_c['x_hole_z_bottom_position'], b_c['bell_face_height']))
+      sys.exit(2)
+    if(b_c['x_hole_z_bottom_position']>0):
+      if(b_c['x_hole_z_bottom_position']<b_c['int_buttress_z_width']+b_c['x_hole_radius']):
+        print("ERR580: Error, positive x_hole_z_bottom_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and x_hole_radius {:0.3f}".format(b_c['x_hole_z_bottom_position'], b_c['int_buttress_z_width'], b_c['x_hole_radius']))
+        sys.exit(2)
+    else:
+      if(b_c['x_hole_z_bottom_position']>-1*b_c['x_hole_radius']):
+        print("ERR584: Error, negative x_hole_z_bottom_position {:0.3f} must be smaller than x_hole_radius {:0.3f}".format(b_c['x_hole_z_bottom_position'], -1*b_c['x_hole_radius']))
         sys.exit(2)
     # x_hole_y_position
     if(b_c['x_hole_y_position']<b_c['x_hole_radius']):
@@ -755,16 +785,18 @@ base_hole_angle:            {:0.3f} (radian)    {:0.3f} (degree)
 """.format(b_c['base_hole_nb'], b_c['base_hole_radius'], 2*b_c['base_hole_radius'], b_c['base_hole_position_radius'], 2*b_c['base_hole_position_radius'], b_c['base_hole_angle'], b_c['base_hole_angle']*180/math.pi)
   b_parameter_info += """
 y_fastening_holes:
-y_hole_radius:      {:0.3f}    diameter: {:0.3f}
-y_hole_z_position:  {:0.3f}
-y_hole_x_position:  {:0.3f}
-""".format(b_c['y_hole_radius'], 2*b_c['y_hole_radius'], b_c['y_hole_z_position'], b_c['y_hole_x_position'])
+y_hole_radius:              {:0.3f}    diameter: {:0.3f}
+y_hole_z_top_position:      {:0.3f}
+y_hole_z_bottom_position:   {:0.3f}
+y_hole_x_position:          {:0.3f}
+""".format(b_c['y_hole_radius'], 2*b_c['y_hole_radius'], b_c['y_hole_z_top_position'], b_c['y_hole_z_bottom_position'], b_c['y_hole_x_position'])
   b_parameter_info += """
 x_fastening_holes:
-x_hole_radius:      {:0.3f}   diameter: {:0.3f}
-x_hole_z_position:  {:0.3f}
-x_hole_y_position:  {:0.3f}
-""".format(b_c['x_hole_radius'], 2*b_c['x_hole_radius'], b_c['x_hole_z_position'], b_c['x_hole_y_position'])
+x_hole_radius:              {:0.3f}   diameter: {:0.3f}
+x_hole_z_top_position:      {:0.3f}
+x_hole_z_bottom_position:   {:0.3f}
+x_hole_y_position:          {:0.3f}
+""".format(b_c['x_hole_radius'], 2*b_c['x_hole_radius'], b_c['x_hole_z_top_position'], b_c['x_hole_z_bottom_position'], b_c['x_hole_y_position'])
   b_parameter_info += """
 z_fastening_holes:
 z_hole_radius:          {:0.3f}   diameter: {:0.3f}
@@ -882,11 +914,11 @@ bell_extra_cut_thickness:    {:0.3f}
   # conf2
   z_hole_abs_position = f_w2 - max(b_c['face_thickness'], b_c['side_thickness']) - b_c['z_hole_position_length']*math.sqrt(2)/2
   x_hole_abs_y_position = f_w2 - b_c['face_thickness'] - b_c['x_hole_y_position']
-  x_hole_abs_z1_position = int_butt_abs_z1_position + b_c['x_hole_z_position']
-  x_hole_abs_z2_position = int_butt_abs_z2_position + b_c['x_hole_z_position']
+  x_hole_abs_z1_position = int_butt_abs_z1_position + b_c['x_hole_z_bottom_position']
+  x_hole_abs_z2_position = int_butt_abs_z2_position + b_c['x_hole_z_top_position']
   y_hole_abs_x_position = f_w2 - b_c['side_thickness'] - b_c['y_hole_x_position']
-  y_hole_abs_z1_position = int_butt_abs_z1_position + b_c['y_hole_z_position']
-  y_hole_abs_z2_position = int_butt_abs_z2_position + b_c['y_hole_z_position']
+  y_hole_abs_z1_position = int_butt_abs_z1_position + b_c['y_hole_z_bottom_position']
+  y_hole_abs_z2_position = int_butt_abs_z2_position + b_c['y_hole_z_top_position']
   bell_assembly_conf2 = []
   bell_assembly_conf2.extend(bell_assembly_conf1)
   if(b_c['z_hole_radius']>0):
@@ -1026,11 +1058,13 @@ def bell_argparse_to_dictionary(ai_b_args, ai_variant=0):
   ### xyz-axles
   ## y_hole
   r_bd['y_hole_diameter']                 = ai_b_args.sw_y_hole_diameter
-  r_bd['y_hole_z_position']               = ai_b_args.sw_y_hole_z_position
+  r_bd['y_hole_z_top_position']           = ai_b_args.sw_y_hole_z_top_position
+  r_bd['y_hole_z_bottom_position']        = ai_b_args.sw_y_hole_z_bottom_position
   r_bd['y_hole_x_position']               = ai_b_args.sw_y_hole_x_position
   ## x_hole
   r_bd['x_hole_diameter']                 = ai_b_args.sw_x_hole_diameter
-  r_bd['x_hole_z_position']               = ai_b_args.sw_x_hole_z_position
+  r_bd['x_hole_z_top_position']           = ai_b_args.sw_x_hole_z_top_position
+  r_bd['x_hole_z_bottom_position']        = ai_b_args.sw_x_hole_z_bottom_position
   r_bd['x_hole_y_position']               = ai_b_args.sw_x_hole_y_position
   ## z_hole
   r_bd['z_hole_diameter']                 = ai_b_args.sw_z_hole_diameter
