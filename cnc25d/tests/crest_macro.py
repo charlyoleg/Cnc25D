@@ -104,8 +104,9 @@ crest_constraint['face_A2_thickness']   = crest_constraint['face_B2_thickness'] 
 ### threaded rod
 # face
 crest_constraint['face_rod_hole_diameter']    = 4.0
-crest_constraint['face_rod_hole_h_distance']  = 5.0
+crest_constraint['face_rod_hole_h_position']  = 5.0
 crest_constraint['face_rod_hole_v_distance']  = 5.0
+crest_constraint['face_rod_hole_v_position']  = 5.0
 ### hollow
 # face hollow
 crest_constraint['face_hollow_leg_nb']            = 1 # possible values: 1 (filled), 4, 8

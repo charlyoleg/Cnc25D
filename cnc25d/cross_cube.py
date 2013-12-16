@@ -269,14 +269,14 @@ face_B2_crest:      {:d}
   face_threaded_rod = [(ftrr, ftrr, ftrr)]
   ttrr = 0.9*cc_c['top_rod_hole_radius']
   top_threaded_rod = [(ttrr, ttrr, ttrr)]
-  fatrx = (cc_c['face_B1_thickness']+cc_c['face_rod_hole_h_distance']-ftrr, cc_c['cube_width']-(cc_c['face_B2_thickness']+cc_c['face_rod_hole_h_distance'])-ftrr)
+  fatrx = (cc_c['face_B1_thickness']+cc_c['face_rod_hole_h_position']-ftrr, cc_c['cube_width']-(cc_c['face_B2_thickness']+cc_c['face_rod_hole_h_position'])-ftrr)
   fatry = -0.1*cc_c['cube_width']
-  fatrz = (cc_c['top_thickness']+2*cc_c['face_rod_hole_v_distance']-ftrr, cc_c['cube_height']-(cc_c['top_thickness']+cc_c['face_rod_hole_v_distance'])-ftrr)
+  fatrz = (cc_c['top_thickness']+cc_c['face_rod_hole_v_position']+cc_c['face_rod_hole_v_distance']-ftrr, cc_c['cube_height']-(cc_c['top_thickness']+cc_c['face_rod_hole_v_position'])-ftrr)
   fbtrx = -0.1*cc_c['cube_width']
-  fbtry = (cc_c['face_A1_thickness']+cc_c['face_rod_hole_h_distance']-ftrr, cc_c['cube_width']-(cc_c['face_A2_thickness']+cc_c['face_rod_hole_h_distance'])-ftrr)
-  fbtrz = (cc_c['top_thickness']+1*cc_c['face_rod_hole_v_distance']-ftrr, cc_c['cube_height']-(cc_c['top_thickness']+2*cc_c['face_rod_hole_v_distance'])-ftrr)
-  ttrx = (cc_c['face_B1_thickness']+cc_c['top_rod_hole_h_distance']-ttrr, cc_c['cube_width']-(cc_c['face_B2_thickness']+cc_c['top_rod_hole_h_distance'])-ttrr)
-  ttry = (cc_c['face_A1_thickness']+cc_c['top_rod_hole_h_distance']-ttrr, cc_c['cube_width']-(cc_c['face_A2_thickness']+cc_c['top_rod_hole_h_distance'])-ttrr)
+  fbtry = (cc_c['face_A1_thickness']+cc_c['face_rod_hole_h_position']-ftrr, cc_c['cube_width']-(cc_c['face_A2_thickness']+cc_c['face_rod_hole_h_position'])-ftrr)
+  fbtrz = (cc_c['top_thickness']+1*cc_c['face_rod_hole_v_position']-ftrr, cc_c['cube_height']-(cc_c['top_thickness']+cc_c['face_rod_hole_v_position']+cc_c['face_rod_hole_v_distance'])-ftrr)
+  ttrx = (cc_c['face_B1_thickness']+cc_c['top_rod_hole_h_position']-ttrr, cc_c['cube_width']-(cc_c['face_B2_thickness']+cc_c['top_rod_hole_h_position'])-ttrr)
+  ttry = (cc_c['face_A1_thickness']+cc_c['top_rod_hole_h_position']-ttrr, cc_c['cube_width']-(cc_c['face_A2_thickness']+cc_c['top_rod_hole_h_position'])-ttrr)
   ttrz = -0.1*cc_c['cube_height']
   cross_cube_assembly_conf2a = []
   if(cc_c['face_rod_hole_radius']>0):

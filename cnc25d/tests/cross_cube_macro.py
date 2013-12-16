@@ -104,11 +104,12 @@ cc_constraint['face_B2_thickness']   = 6.0
 ### threaded rod
 # face
 cc_constraint['face_rod_hole_diameter']    = 4.0
-cc_constraint['face_rod_hole_h_distance']  = 5.0
+cc_constraint['face_rod_hole_h_position']  = 5.0
 cc_constraint['face_rod_hole_v_distance']  = 5.0
+cc_constraint['face_rod_hole_v_position']  = 5.0
 # top
 cc_constraint['top_rod_hole_diameter']     = 4.0
-cc_constraint['top_rod_hole_h_distance']   = 10.0
+cc_constraint['top_rod_hole_h_position']   = 10.0
 ### hollow
 # face hollow
 cc_constraint['face_hollow_leg_nb']            = 1 # possible values: 1 (filled), 4, 8

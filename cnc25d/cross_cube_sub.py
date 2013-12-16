@@ -84,12 +84,13 @@ def cross_cube_sub_dictionary_init(ai_variant=0):
   # face
   if(ai_variant==2):
     r_cc['face_rod_hole_diameter']    = 4.0
-    r_cc['face_rod_hole_h_distance']  = 5.0
+    r_cc['face_rod_hole_h_position']  = 5.0
     r_cc['face_rod_hole_v_distance']  = 5.0
+    r_cc['face_rod_hole_v_position']  = 5.0
   # top
   if(ai_variant==1):
     r_cc['top_rod_hole_diameter']     = 4.0
-    r_cc['top_rod_hole_h_distance']   = 10.0
+    r_cc['top_rod_hole_h_position']   = 10.0
   ### hollow
   # face hollow
   if(ai_variant==2):
@@ -159,15 +160,17 @@ def cross_cube_sub_add_argument(ai_parser, ai_variant=0):
   if(ai_variant==2):
     r_parser.add_argument('--face_rod_hole_diameter','--frhd', action='store', type=float, default=4.0, dest='sw_face_rod_hole_diameter',
       help="Set the diameter of the holes for threaded rod on the faces. Default: 4.0")
-    r_parser.add_argument('--face_rod_hole_h_distance','--frhhd', action='store', type=float, default=5.0, dest='sw_face_rod_hole_h_distance',
+    r_parser.add_argument('--face_rod_hole_h_position','--frhhp', action='store', type=float, default=5.0, dest='sw_face_rod_hole_h_position',
       help="Set the horizontal position of the threaded rod center from the inner edge. Default: 5.0")
     r_parser.add_argument('--face_rod_hole_v_distance','--frhvd', action='store', type=float, default=5.0, dest='sw_face_rod_hole_v_distance',
+      help="Set the vertical distance between the axis of the x-face-rod and the y-face-rod. Default: 5.0")
+    r_parser.add_argument('--face_rod_hole_v_position','--frhvp', action='store', type=float, default=5.0, dest='sw_face_rod_hole_v_position',
       help="Set the vertical position of the threaded rod center from the inner edge. Default: 5.0")
   # top
   if(ai_variant==1):
     r_parser.add_argument('--top_rod_hole_diameter','--trhd', action='store', type=float, default=4.0, dest='sw_top_rod_hole_diameter',
       help="Set the diameter of the holes for the vertical threaded rods. Default: 4.0")
-    r_parser.add_argument('--top_rod_hole_h_distance','--trhhd', action='store', type=float, default=10.0, dest='sw_top_rod_hole_h_distance',
+    r_parser.add_argument('--top_rod_hole_h_position','--trhhp', action='store', type=float, default=10.0, dest='sw_top_rod_hole_h_position',
       help="Set the horizontal position of the vertical threaded rod center from the inner edge. Default: 10.0")
   ### hollow
   # face hollow
@@ -278,19 +281,26 @@ def check_cross_cube_face_parameters(ai_constraints):
   # face_rod_hole_diameter
   cc_c['face_rod_hole_radius'] = cc_c['face_rod_hole_diameter']/2.0
   if(cc_c['face_rod_hole_radius']>0):
-    # face_rod_hole_h_distance
-    if(cc_c['face_rod_hole_h_distance']<cc_c['face_rod_hole_radius']):
-      print("ERR257: Error, face_rod_hole_h_distance {:0.3f} must be biggert than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_h_distance'], cc_c['face_rod_hole_radius']))
+    # face_rod_hole_h_position
+    if(cc_c['face_rod_hole_h_position']<cc_c['face_rod_hole_radius']):
+      print("ERR257: Error, face_rod_hole_h_position {:0.3f} must be biggert than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_h_position'], cc_c['face_rod_hole_radius']))
       sys.exit(2)
-    if(cc_c['max_face_thickness']+cc_c['face_rod_hole_h_distance']+cc_c['face_rod_hole_radius']>cc_c['cube_width']/2.0-cc_c['axle_radius']):
-      print("ERR261: Error, face_rod_hole_h_distance {:0.3f} is too big compare to max_face_thickness {:0.3f}, face_rod_hole_radius {:0.3f}, cube_width {:0.3f}, axle_radius {:0.3f}".format(cc_c['face_rod_hole_h_distance'], cc_c['max_face_thickness'], cc_c['face_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius']))
+    if(cc_c['max_face_thickness']+cc_c['face_rod_hole_h_position']+cc_c['face_rod_hole_radius']>cc_c['cube_width']/2.0-cc_c['axle_radius']):
+      print("ERR261: Error, face_rod_hole_h_position {:0.3f} is too big compare to max_face_thickness {:0.3f}, face_rod_hole_radius {:0.3f}, cube_width {:0.3f}, axle_radius {:0.3f}".format(cc_c['face_rod_hole_h_position'], cc_c['max_face_thickness'], cc_c['face_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius']))
       sys.exit(2)
     # face_rod_hole_v_distance
-    if(cc_c['face_rod_hole_v_distance']<cc_c['face_rod_hole_radius']):
-      print("ERR264: Error, face_rod_hole_v_distance {:0.3f} must be bigger than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius']))
+    if(cc_c['face_rod_hole_v_distance']<2*cc_c['face_rod_hole_radius']):
+      print("ERR264: Error, face_rod_hole_v_distance {:0.3f} must be bigger than face_rod_hole_diameter {:0.3f}".format(cc_c['face_rod_hole_v_distance'], 2*cc_c['face_rod_hole_radius']))
       sys.exit(2)
-    if(cc_c['face_rod_hole_v_distance']+cc_c['face_rod_hole_radius']>cc_c['height_margin']):
-      print("ERR267: Error, face_rod_hole_v_distance {:0.3f} is too big compare to face_rod_hole_radius {:0.3f} and height_margin {:0.3f}".format(cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius'], cc_c['height_margin']))
+    if(cc_c['face_rod_hole_v_position']+cc_c['face_rod_hole_v_distance']+cc_c['face_rod_hole_radius']>cc_c['height_margin']+cc_c['inter_axle_length']):
+      print("ERR296: Error, face_rod_hole_v_distance {:0.3f} is too big compare to face_rod_hole_v_position {:0.3f}, face_rod_hole_radius {:0.3f}, height_margin {:0.3f} and inter_axle_length {:0.3f}".format(cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius'], cc_c['height_margin'], cc_c['inter_axle_length']))
+      sys.exit(2)
+    # face_rod_hole_v_position
+    if(cc_c['face_rod_hole_v_position']<cc_c['face_rod_hole_radius']):
+      print("ERR297: Error, face_rod_hole_v_position {:0.3f} must be bigger than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius']))
+      sys.exit(2)
+    if(cc_c['face_rod_hole_v_position']+cc_c['face_rod_hole_radius']>cc_c['height_margin']):
+      print("ERR267: Error, face_rod_hole_v_position {:0.3f} is too big compare to face_rod_hole_radius {:0.3f} and height_margin {:0.3f}".format(cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius'], cc_c['height_margin']))
       sys.exit(2)
   ## top
   ### hollow
@@ -346,12 +356,12 @@ def check_cross_cube_top_parameters(ai_constraints):
   # top_rod_hole_diameter
   cc_c['top_rod_hole_radius'] = cc_c['top_rod_hole_diameter']/2.0
   if(cc_c['top_rod_hole_radius']>0):
-    # top_rod_hole_h_distance
-    if(cc_c['top_rod_hole_h_distance']<cc_c['face_rod_hole_h_distance']+cc_c['face_rod_hole_radius']+cc_c['top_rod_hole_radius']):
-      print("ERR273: Error, top_rod_hole_h_distance {:0.3f} is too small compare to face_rod_hole_h_distance {:0.3f}, face_rod_hole_radius {:0.3f} and top_rod_hole_radius {:0.3f}".format(cc_c['top_rod_hole_h_distance'], cc_c['face_rod_hole_h_distance'], cc_c['face_rod_hole_radius'], cc_c['top_rod_hole_radius']))
+    # top_rod_hole_h_position
+    if(cc_c['top_rod_hole_h_position']<cc_c['face_rod_hole_h_position']+cc_c['face_rod_hole_radius']+cc_c['top_rod_hole_radius']):
+      print("ERR273: Error, top_rod_hole_h_position {:0.3f} is too small compare to face_rod_hole_h_position {:0.3f}, face_rod_hole_radius {:0.3f} and top_rod_hole_radius {:0.3f}".format(cc_c['top_rod_hole_h_position'], cc_c['face_rod_hole_h_position'], cc_c['face_rod_hole_radius'], cc_c['top_rod_hole_radius']))
       sys.exit(2)
-    if(cc_c['max_face_thickness']+cc_c['top_rod_hole_h_distance']+cc_c['top_rod_hole_radius']>cc_c['cube_width']/2.0-cc_c['axle_radius']):
-      print("ERR276: Error, top_rod_hole_h_distance {:0.3f} is too big compare to max_face_thickness {:0.3f}, top_rod_hole_radius {:0.3f}, cube_width {:0.3f} and axle_radius {:0.3f}".format(cc_c['top_rod_hole_h_distance'], cc_c['max_face_thickness'], cc_c['top_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius']))
+    if(cc_c['max_face_thickness']+cc_c['top_rod_hole_h_position']+cc_c['top_rod_hole_radius']>cc_c['cube_width']/2.0-cc_c['axle_radius']):
+      print("ERR276: Error, top_rod_hole_h_position {:0.3f} is too big compare to max_face_thickness {:0.3f}, top_rod_hole_radius {:0.3f}, cube_width {:0.3f} and axle_radius {:0.3f}".format(cc_c['top_rod_hole_h_position'], cc_c['max_face_thickness'], cc_c['top_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius']))
       sys.exit(2)
   ## top hollow
   # top_hollow_leg_nb
@@ -488,10 +498,10 @@ def cross_cube_face_holes(ai_constraints, ai_left_thickness, ai_right_thickness)
   if(cc_c['axle_radius']>0):
     r_face_hole_figure.append((cc_c['cube_width']/2.0, tt+cc_c['height_margin']+cc_c['axle_radius'], cc_c['axle_radius']))
   if(cc_c['face_rod_hole_radius']>0):
-    r_face_hole_figure.append((lt+cc_c['face_rod_hole_h_distance'], tt+2*cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius']))
-    r_face_hole_figure.append((cc_c['cube_width']-(rt+cc_c['face_rod_hole_h_distance']), tt+2*cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius']))
-    r_face_hole_figure.append((lt+cc_c['face_rod_hole_h_distance'], cc_c['cube_height']-(tt+cc_c['face_rod_hole_v_distance']), cc_c['face_rod_hole_radius']))
-    r_face_hole_figure.append((cc_c['cube_width']-(rt+cc_c['face_rod_hole_h_distance']), cc_c['cube_height']-(tt+cc_c['face_rod_hole_v_distance']), cc_c['face_rod_hole_radius']))
+    r_face_hole_figure.append((lt+cc_c['face_rod_hole_h_position'], tt+cc_c['face_rod_hole_v_position']+cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius']))
+    r_face_hole_figure.append((cc_c['cube_width']-(rt+cc_c['face_rod_hole_h_position']), tt+cc_c['face_rod_hole_v_position']+cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_radius']))
+    r_face_hole_figure.append((lt+cc_c['face_rod_hole_h_position'], cc_c['cube_height']-(tt+cc_c['face_rod_hole_v_position']), cc_c['face_rod_hole_radius']))
+    r_face_hole_figure.append((cc_c['cube_width']-(rt+cc_c['face_rod_hole_h_position']), cc_c['cube_height']-(tt+cc_c['face_rod_hole_v_position']), cc_c['face_rod_hole_radius']))
   # face-hollow
   # [todo]
 
@@ -557,10 +567,10 @@ def cross_cube_top(ai_constraints):
   top_A.append(top_ol)
   # holes
   if(cc_c['top_rod_hole_radius']>0):
-    top_A.append((fb1t+cc_c['top_rod_hole_h_distance'], fa1t+cc_c['top_rod_hole_h_distance'], cc_c['top_rod_hole_radius']))
-    top_A.append((cc_c['cube_width']-(fb2t+cc_c['top_rod_hole_h_distance']), fa1t+cc_c['top_rod_hole_h_distance'], cc_c['top_rod_hole_radius']))
-    top_A.append((cc_c['cube_width']-(fb2t+cc_c['top_rod_hole_h_distance']), cc_c['cube_width']-(fa2t+cc_c['top_rod_hole_h_distance']), cc_c['top_rod_hole_radius']))
-    top_A.append((fb1t+cc_c['top_rod_hole_h_distance'], cc_c['cube_width']-(fa2t+cc_c['top_rod_hole_h_distance']), cc_c['top_rod_hole_radius']))
+    top_A.append((fb1t+cc_c['top_rod_hole_h_position'], fa1t+cc_c['top_rod_hole_h_position'], cc_c['top_rod_hole_radius']))
+    top_A.append((cc_c['cube_width']-(fb2t+cc_c['top_rod_hole_h_position']), fa1t+cc_c['top_rod_hole_h_position'], cc_c['top_rod_hole_radius']))
+    top_A.append((cc_c['cube_width']-(fb2t+cc_c['top_rod_hole_h_position']), cc_c['cube_width']-(fa2t+cc_c['top_rod_hole_h_position']), cc_c['top_rod_hole_radius']))
+    top_A.append((fb1t+cc_c['top_rod_hole_h_position'], cc_c['cube_width']-(fa2t+cc_c['top_rod_hole_h_position']), cc_c['top_rod_hole_radius']))
   # top-hollow
   # [todo]
   # return
@@ -595,9 +605,10 @@ face_B2_thickness:  {:0.3f}
   cc_parameter_info += """
 threaded rod holes:
 face_rod_hole_radius:     {:0.3f}   diameter: {:0.3f}
-face_rod_hole_h_distance: {:0.3f}
+face_rod_hole_h_position: {:0.3f}
 face_rod_hole_v_distance: {:0.3f}
-""".format(cc_c['face_rod_hole_radius'], 2*cc_c['face_rod_hole_radius'], cc_c['face_rod_hole_h_distance'], cc_c['face_rod_hole_v_distance'])
+face_rod_hole_v_position: {:0.3f}
+""".format(cc_c['face_rod_hole_radius'], 2*cc_c['face_rod_hole_radius'], cc_c['face_rod_hole_h_position'], cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_v_position'])
   cc_parameter_info += """
 face-hollow:
 face_hollow_leg_nb:             {:d}
@@ -623,8 +634,8 @@ def cross_cube_top_parameter_info(ai_constraints):
   cc_parameter_info += """
 threaded rod holes:
 top_rod_hole_radius:      {:0.3f}   diameter: {:0.3f}
-top_rod_hole_h_distance:  {:0.3f}
-""".format(cc_c['top_rod_hole_radius'], 2*cc_c['top_rod_hole_radius'], cc_c['top_rod_hole_h_distance'])
+top_rod_hole_h_position:  {:0.3f}
+""".format(cc_c['top_rod_hole_radius'], 2*cc_c['top_rod_hole_radius'], cc_c['top_rod_hole_h_position'])
   cc_parameter_info += """
 top-hollow:
 top_hollow_leg_nb:            {:d}
@@ -669,12 +680,13 @@ def cross_cube_sub_argparse_to_dictionary(ai_cc_args, ai_variant=0):
   # face
   if(ai_variant==2):
     r_ccd['face_rod_hole_diameter']    = ai_cc_args.sw_face_rod_hole_diameter
-    r_ccd['face_rod_hole_h_distance']  = ai_cc_args.sw_face_rod_hole_h_distance
+    r_ccd['face_rod_hole_h_position']  = ai_cc_args.sw_face_rod_hole_h_position
     r_ccd['face_rod_hole_v_distance']  = ai_cc_args.sw_face_rod_hole_v_distance
+    r_ccd['face_rod_hole_v_position']  = ai_cc_args.sw_face_rod_hole_v_position
   # top
   if(ai_variant==1):
     r_ccd['top_rod_hole_diameter']     = ai_cc_args.sw_top_rod_hole_diameter
-    r_ccd['top_rod_hole_h_distance']   = ai_cc_args.sw_top_rod_hole_h_distance
+    r_ccd['top_rod_hole_h_position']   = ai_cc_args.sw_top_rod_hole_h_position
   ### hollow
   # face hollow
   if(ai_variant==2):
