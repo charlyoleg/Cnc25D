@@ -438,7 +438,20 @@ def sub_smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, a
   smooth_status = 0
   if(abs(tangent_angle)<radian_epsilon):
     print("WARN942: Warning in {:s}, the tangent_angle is too flat! the corner doesn't need to be smoothed.".format(ai_error_msg_id))
+    #print("dbg441: ai_pre_point:", ai_pre_point)
+    #print("dbg442: ai_current_point:", ai_current_point)
+    #print("dbg443: ai_post_middle:", ai_post_middle)
+    #print("dbg444: ai_post_point:", ai_post_point)
+    #print("dbg445: ai_router_bit_request:", ai_router_bit_request)
+    #print("dbg446: ai_error_msg_id:", ai_error_msg_id)
     #r_outline = [(ai_current_point[0], ai_current_point[1])]
+    SX = ai_current_point[0]
+    SY = ai_current_point[1]
+    UX = 0
+    UY = 0
+    xSU = 0
+    xSJ = 0
+    router_bit_arc_uw = 0
     smooth_status = 2
   #elif(abs(tangent_angle)>math.pi-radian_epsilon):
   #  print("WARN943: Warning in {:s}, the tangent_angle is too sharp! the corner cannot be smoothed.".format(ai_error_msg_id))

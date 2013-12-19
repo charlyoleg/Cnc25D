@@ -465,7 +465,11 @@ def cnc_cut_corner(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle
     elif((ai_pre_middle==None)and(ai_post_middle!=None)):
       r_outline = smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, error_msg_id)
     elif((ai_pre_middle!=None)and(ai_post_middle==None)):
-      r_outline = reverse_outline(smooth_corner_line_arc(ai_post_point, ai_current_point, ai_pre_middle, ai_pre_point, ai_router_bit_request, error_msg_id))
+      inversed_outline = smooth_corner_line_arc(ai_post_point, ai_current_point, ai_pre_middle, ai_pre_point, ai_router_bit_request, error_msg_id)
+      if(len(inversed_outline)>1):
+        r_outline = reverse_outline(inversed_outline)
+      else:
+        r_outline = inversed_outline
     elif((ai_pre_middle!=None)and(ai_post_middle!=None)):
       r_outline = smooth_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, error_msg_id)
   elif(ai_router_bit_request<0):
@@ -474,7 +478,11 @@ def cnc_cut_corner(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle
     elif((ai_pre_middle==None)and(ai_post_middle!=None)):
       r_outline = enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, abs(ai_router_bit_request), error_msg_id)
     elif((ai_pre_middle!=None)and(ai_post_middle==None)):
-      r_outline = reverse_outline(enlarge_corner_line_arc(ai_post_point, ai_current_point, ai_pre_middle, ai_pre_point, abs(ai_router_bit_request), error_msg_id))
+      inversed_outline = enlarge_corner_line_arc(ai_post_point, ai_current_point, ai_pre_middle, ai_pre_point, abs(ai_router_bit_request), error_msg_id)
+      if(len(inversed_outline)>1):
+        r_outline = reverse_outline(inversed_outline)
+      else:
+        r_outline = inversed_outline
     elif((ai_pre_middle!=None)and(ai_post_middle!=None)):
       r_outline = enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, abs(ai_router_bit_request), error_msg_id)
   #print("dbg578: r_outline:", r_outline)
