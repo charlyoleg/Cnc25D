@@ -1,0 +1,1 @@
+in DXF, top land is negative with python gear_profile.py --gear_tooth_nb 13 --gear_module 0.75 --gear_skin_thickness -0.05 --gear_router_bit_radius 0.05 --gear_addendum_height_pourcentage 100.0 --output_file_basename test_output/ggg.dxf --gear_addendum_dedendum_parity 48.5 but no ERR989 trigger
