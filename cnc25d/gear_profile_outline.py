@@ -293,7 +293,9 @@ def calc_low_level_gear_parameters(ai_param):
     dedendum_positive_involute = g_ks*(ippa-ipda)
     dedendum_negative_involute = -1*g_ks*(inpa-inda)
     #print("dbg646: full_positive_involute: {:0.3f}  full_negative_involute: {:0.3f}  addendum_positive_involute: {:0.3f}  addendum_negative_involute: {:0.3f}  dedendum_positive_involute: {:0.3f}  dedendum_negative_involute: {:0.3f}".format(full_positive_involute, full_negative_involute, addendum_positive_involute, addendum_negative_involute, dedendum_positive_involute, dedendum_negative_involute))
+    #print("dbg296: pi_module_angle {:0.3f}  g_adp {:0.3f}  addendum_positive_involute {:0.3f}  addendum_negative_involute {:0.3f}".format(pi_module_angle, g_adp, addendum_positive_involute, addendum_negative_involute))
     top_land = pi_module_angle*g_adp-(addendum_positive_involute+addendum_negative_involute)
+    #print("dbg298: top_land", top_land) [bug] dxf-top_land is negative whereas this top_land is still positive [todo] fix it
     if(top_land*g_ar<radian_epsilon): # a bit stricter than 0
       print("ERR989: Error, the top_land {:0.2f} is negative or too small!".format(top_land))
       print("dbg553: g_pr {:0.3f}  g_brp {:0.3f}  g_brn {:0.3f}".format(g_pr, g_brp, g_brn))

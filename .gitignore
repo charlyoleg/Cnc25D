@@ -46,3 +46,7 @@ MANIFEST
 cnc25d/tests/test_output
 test_output
 
+# bugs-everywhere
+.be/id-cache
+
+
