@@ -2506,11 +2506,13 @@ bell_constraint['base_hole_angle']                 = 0.0
 ### xyz-axles
 ## y_hole
 bell_constraint['y_hole_diameter']                 = 4.0
-bell_constraint['y_hole_z_position']               = 10.0
+bell_constraint['y_hole_z_top_position']           = 10.0
+bell_constraint['y_hole_z_bottom_position']        = 10.0
 bell_constraint['y_hole_x_position']               = 6.0
 ## x_hole
 bell_constraint['x_hole_diameter']                 = 4.0
-bell_constraint['x_hole_z_position']               = -6.0
+bell_constraint['x_hole_z_top_position']           = -6.0
+bell_constraint['x_hole_z_bottom_position']        = -6.0
 bell_constraint['x_hole_y_position']               = 6.0
 ## z_hole
 bell_constraint['z_hole_diameter']                 = 4.0
@@ -2839,11 +2841,13 @@ bba_constraint['base_hole_angle']                 = 0.0
 ### xyz-axles
 ## y_hole
 bba_constraint['y_hole_diameter']                 = 4.0
-bba_constraint['y_hole_z_position']               = 10.0
+bba_constraint['y_hole_z_top_position']           = 10.0
+bba_constraint['y_hole_z_bottom_position']        = 10.0
 bba_constraint['y_hole_x_position']               = 6.0
 ## x_hole
 bba_constraint['x_hole_diameter']                 = 4.0
-bba_constraint['x_hole_z_position']               = -6.0
+bba_constraint['x_hole_z_top_position']           = -6.0
+bba_constraint['x_hole_z_bottom_position']        = -6.0
 bba_constraint['x_hole_y_position']               = 6.0
 ## z_hole
 bba_constraint['z_hole_diameter']                 = 4.0
@@ -2998,8 +3002,9 @@ crest_constraint['face_A2_thickness']   = crest_constraint['face_B2_thickness'] 
 ### threaded rod
 # face
 crest_constraint['face_rod_hole_diameter']    = 4.0
-crest_constraint['face_rod_hole_h_distance']  = 5.0
+crest_constraint['face_rod_hole_h_position']  = 5.0
 crest_constraint['face_rod_hole_v_distance']  = 5.0
+crest_constraint['face_rod_hole_v_position']  = 5.0
 ### hollow
 # face hollow
 crest_constraint['face_hollow_leg_nb']            = 1 # possible values: 1 (filled), 4, 8
@@ -3222,11 +3227,12 @@ cc_constraint['face_B2_thickness']   = 6.0
 ### threaded rod
 # face
 cc_constraint['face_rod_hole_diameter']    = 4.0
-cc_constraint['face_rod_hole_h_distance']  = 5.0
+cc_constraint['face_rod_hole_h_position']  = 5.0
 cc_constraint['face_rod_hole_v_distance']  = 5.0
+cc_constraint['face_rod_hole_v_position']  = 5.0
 # top
 cc_constraint['top_rod_hole_diameter']     = 4.0
-cc_constraint['top_rod_hole_h_distance']   = 10.0
+cc_constraint['top_rod_hole_h_position']   = 10.0
 ### hollow
 # face hollow
 cc_constraint['face_hollow_leg_nb']            = 1 # possible values: 1 (filled), 4, 8
@@ -3518,11 +3524,13 @@ gimbal_constraint['base_hole_angle']                 = 0.0
 ### xyz-axles
 ## y_hole
 gimbal_constraint['y_hole_diameter']                 = 4.0
-gimbal_constraint['y_hole_z_position']               = 10.0
+gimbal_constraint['y_hole_z_top_position']           = 10.0 # int_buttress_z_width + y_hole_diameter/2 + delta or -1*(y_hole_diameter/2 + delta)
+gimbal_constraint['y_hole_z_bottom_position']        = 10.0 # int_buttress_z_width + y_hole_diameter/2 + delta or -1*(y_hole_diameter/2 + delta)
 gimbal_constraint['y_hole_x_position']               = 6.0
 ## x_hole
 gimbal_constraint['x_hole_diameter']                 = 4.0
-gimbal_constraint['x_hole_z_position']               = -6.0
+gimbal_constraint['x_hole_z_top_position']           = -6.0 # int_buttress_z_width + x_hole_diameter/2 + delta or -1*(x_hole_diameter/2 + delta)
+gimbal_constraint['x_hole_z_bottom_position']        = -6.0 # int_buttress_z_width + x_hole_diameter/2 + delta or -1*(x_hole_diameter/2 + delta)
 gimbal_constraint['x_hole_y_position']               = 6.0
 ## z_hole
 gimbal_constraint['z_hole_diameter']                 = 4.0
@@ -3533,7 +3541,7 @@ gimbal_constraint['bell_cnc_router_bit_radius']      = 1.0
 gimbal_constraint['bell_extra_cut_thickness']        = 0.0 #0.0, 1.0
 ###### bagel
 ## bagel diameter
-gimbal_constraint['bagel_axle_diameter']                   = 10.0
+gimbal_constraint['bagel_axle_diameter']                   = 10.0 # a bit bigger than gimbal_constraint['axle_diameter']
 gimbal_constraint['bagel_axle_internal_diameter']          = 0.0
 gimbal_constraint['bagel_axle_external_diameter']          = 0.0
 ## bagel thickness
@@ -3559,11 +3567,12 @@ gimbal_constraint['face_B2_thickness']   = 6.0
 ### threaded rod
 # face
 gimbal_constraint['face_rod_hole_diameter']    = 4.0
-gimbal_constraint['face_rod_hole_h_distance']  = 5.0
-gimbal_constraint['face_rod_hole_v_distance']  = 5.0
+gimbal_constraint['face_rod_hole_h_position']  = 5.0
+gimbal_constraint['face_rod_hole_v_distance']  = 5.0 # must be bigger than face_rod_hole_diameter
+gimbal_constraint['face_rod_hole_v_position']  = 5.0 # must be bigger than face_rod_hole_radius
 # top
 gimbal_constraint['top_rod_hole_diameter']     = 4.0
-gimbal_constraint['top_rod_hole_h_distance']   = 10.0
+gimbal_constraint['top_rod_hole_h_position']   = 10.0
 ### hollow
 # face hollow
 gimbal_constraint['face_hollow_leg_nb']            = 1 # possible values: 1 (filled), 4, 8
