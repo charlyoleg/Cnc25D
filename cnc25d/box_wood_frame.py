@@ -21,7 +21,7 @@
 
 
 """
-box_wood_frame is a parametric design for piece if furniture.
+box_wood_frame is a parametric design for piece of furniture.
 It's actually a single function with the design parameters as input.
 The function writes STL and DXF files if an output basename is given as argument.
 The function return a FreeCAD Part object of the assembled object.
