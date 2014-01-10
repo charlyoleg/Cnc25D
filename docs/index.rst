@@ -48,6 +48,7 @@ Contents:
    cross_cube_design
    gimbal_design
    gimbal_details
+   low_torque_transmission_design
 
 Indices and tables
 ==================
