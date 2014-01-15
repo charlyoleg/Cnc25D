@@ -63,10 +63,10 @@ def draw_rectangle(ai_position_x, ai_position_y, ai_size_x, ai_size_y):
   return(r_rectangle)
 
 def draw_gauge(ai_drawing_length, ai_drawing_height, ai_representation_max, ai_representation_value, ai_position_x, ai_position_y):
-  l_gauge_value = ai_drawing_length*ai_representation_value/ai_representation_max
+  l_gauge_value = ai_drawing_length*ai_representation_value/float(ai_representation_max)
   r_gauge = []
-  r_gauge.extend(draw_rectangle(ai_position_x-ai_drawing_height/2, ai_position_y, ai_drawing_length+ai_drawing_height, ai_drawing_height))
-  r_gauge.extend(draw_rectangle(ai_position_x, ai_position_y+ai_drawing_height/4, l_gauge_value, ai_drawing_height/2))
+  r_gauge.extend(draw_rectangle(ai_position_x-ai_drawing_height/2.0, ai_position_y, ai_drawing_length+ai_drawing_height, ai_drawing_height))
+  r_gauge.extend(draw_rectangle(ai_position_x, ai_position_y+ai_drawing_height/4.0, l_gauge_value, ai_drawing_height/2.0))
   return(r_gauge)
 
 ################################################################
@@ -121,7 +121,7 @@ def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_lis
   """ Cut a FreeCAD Part Object in many slices in the three directions X, Y and Z and put all those slices in a DXF file
   """
   # calculate the space between two drawings
-  l_space = max(ai_size_x/5, ai_size_y/5, ai_size_z/5)
+  l_space = max(ai_size_x/5.0, ai_size_y/5.0, ai_size_z/5.0)
   #
   vec_z_unit = Base.Vector(0,0,1)
   #
@@ -134,7 +134,7 @@ def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_lis
     l_shift_x = 0
     l_gauge_max = 0
     if(lo=='xy'):
-      l_solid.rotate(Base.Vector(ai_size_x/2, ai_size_y/2, ai_size_z/2), Base.Vector(0,0,1), 0)
+      l_solid.rotate(Base.Vector(ai_size_x/2.0, ai_size_y/2.0, ai_size_z/2.0), Base.Vector(0,0,1), 0)
       l_solid.translate(Base.Vector(0,0,0)) # place the module corner at origin (0,0,0)
       l_solid.translate(Base.Vector(0,2*ai_size_z+7*l_space,0))
       l_pos_y = 2*ai_size_z+6*l_space
@@ -142,17 +142,17 @@ def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_lis
       l_shift_x = ai_size_x
       l_gauge_max = ai_size_z
     elif(lo=='xz'):
-      l_solid.rotate(Base.Vector(ai_size_x/2, ai_size_y/2, ai_size_z/2), Base.Vector(1,0,0), -90)
-      l_solid.translate(Base.Vector((ai_size_x-ai_size_x)/2, (ai_size_z-ai_size_y)/2, (ai_size_y-ai_size_z)/2)) # place the module corner at origin (0,0,0)
+      l_solid.rotate(Base.Vector(ai_size_x/2.0, ai_size_y/2.0, ai_size_z/2.0), Base.Vector(1,0,0), -90)
+      l_solid.translate(Base.Vector((ai_size_x-ai_size_x)/2.0, (ai_size_z-ai_size_y)/2.0, (ai_size_y-ai_size_z)/2.0)) # place the module corner at origin (0,0,0)
       l_solid.translate(Base.Vector(0,1*ai_size_z+4*l_space,0))
       l_pos_y = 1*ai_size_z+3*l_space
       l_depth_list = ai_xz_slice_list
       l_shift_x = ai_size_x
       l_gauge_max = ai_size_y
     elif(lo=='yz'):
-      l_solid.rotate(Base.Vector(ai_size_x/2, ai_size_y/2, ai_size_z/2), Base.Vector(0,0,1), -90)
-      l_solid.rotate(Base.Vector(ai_size_x/2, ai_size_y/2, ai_size_z/2), Base.Vector(1,0,0), -90)
-      l_solid.translate(Base.Vector((ai_size_y-ai_size_x)/2, (ai_size_z-ai_size_y)/2, (ai_size_x-ai_size_z)/2)) # place the module corner at origin (0,0,0)
+      l_solid.rotate(Base.Vector(ai_size_x/2.0, ai_size_y/2.0, ai_size_z/2.0), Base.Vector(0,0,1), -90)
+      l_solid.rotate(Base.Vector(ai_size_x/2.0, ai_size_y/2.0, ai_size_z/2.0), Base.Vector(1,0,0), -90)
+      l_solid.translate(Base.Vector((ai_size_y-ai_size_x)/2.0, (ai_size_z-ai_size_y)/2.0, (ai_size_x-ai_size_z)/2.0)) # place the module corner at origin (0,0,0)
       l_solid.translate(Base.Vector(0,l_space,0))
       l_pos_y = 0*ai_size_z+0*l_space
       l_depth_list = ai_yz_slice_list
@@ -160,7 +160,7 @@ def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_lis
       l_gauge_max = ai_size_x
     l_pos_x = 0
     for l_depth in l_depth_list:
-      l_slice_list.extend(draw_gauge(l_shift_x, l_space/2, l_gauge_max, l_depth, l_pos_x, l_pos_y))
+      l_slice_list.extend(draw_gauge(l_shift_x, l_space/2.0, l_gauge_max, l_depth, l_pos_x, l_pos_y))
       l_pos_x += l_shift_x+2*l_space
       ll_depth = l_depth
       if(lo=='xz'):

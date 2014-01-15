@@ -69,6 +69,7 @@ def check_outline_format(ai_outline):
   # check if it is a format-B circle
   if(not isinstance(ai_outline, (tuple, list))):
     print("ERR937: Error, ai_outline must be a list or a tuple")
+    print("dbg072: ai_outline:", ai_outline)
     sys.exit(2)
   # check if the outline contains at least on element
   if(len(ai_outline)==0):

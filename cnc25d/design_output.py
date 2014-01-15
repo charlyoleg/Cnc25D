@@ -158,6 +158,7 @@ def freecad_object_output_file(ai_freecad_object, ai_output_filename, ai_brep=Tr
     slice_z = ai_slice_xyz[8]
     dxf_output_filename = "{:s}_xyz_slices.dxf".format(ai_output_filename)
     print("Slice with FreeCAD the 3D into the DXF file {:s}".format(dxf_output_filename))
+    #print("dbg161: zero_x {:0.3f}  zero_y {:0.3f}  zero_z {:0.3f}".format(zero_x, zero_y, zero_z))
     ai_freecad_object.translate(Base.Vector(-1*zero_x, -1*zero_y, -1*zero_z))
     export_2d.export_xyz_to_dxf(ai_freecad_object, size_x, size_y, size_z, slice_x, slice_y, slice_z, dxf_output_filename)
   return(0)
