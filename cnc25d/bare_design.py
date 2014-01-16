@@ -58,6 +58,10 @@ class bare_design:
     self.f_simulation_2d = None
     self.f_return_type = None
     self.self_tests = None
+    self.display_2d_figure_list = []
+    self.write_2d_figure_list = []
+    self.write_3d_figure_list = []
+    self.write_3d_conf_list = []
     # self-generated attributes
     self.reference_constraint = None
     self.constraint = None
@@ -100,6 +104,30 @@ class bare_design:
     """
     self.f_info = f_info
 
+  def set_display_figure_list(self, figure_list=[]):
+    """ set the list of figures to be displayed
+        If the list is empty, all 2D-figures will be display in Tk-windows
+    """
+    self.display_2d_figure_list = figure_list
+
+  def set_2d_figure_file_list(self, figure_list=[]):
+    """ set the list of figures to be written in SVG or DXF files
+        If the list is empty, all 2D-figures will be written in files
+    """
+    self.write_2d_figure_list = figure_list
+
+  def set_3d_figure_file_list(self, figure_list=[]):
+    """ set the list of 2d-figures to be written in BREP files
+        If the list is empty, all 2d-figures will be written in files
+    """
+    self.write_3d_figure_list = figure_list
+
+  def set_3d_conf_file_list(self, assembly_conf_list=[]):
+    """ set the list of 3d-assembly-configurations to be written in BREP files
+        If the list is empty, all 3D-assembly-configurations will be written in files
+    """
+    self.write_3d_conf_list = assembly_conf_list
+
   def set_allinone_return_type(self, f_return_type=None):
     """ bind the function f_return_type that generate the return value of the method allinone()
     """
@@ -135,7 +163,7 @@ class bare_design:
     """ set the cli constraint to the design.
         It's an alternative to apply_constraint
     """
-    effective_args = design_help.get_effective_args(cli_str)
+    effective_args = cli_str.split()
     effective_args_in_txt = "{:s} cli string: ".format(self.design_name) + ' '.join(effective_args)
     c = vars(self.parser.parse_args(effective_args))
     self.apply_constraint(c)
@@ -203,7 +231,13 @@ class bare_design:
     """
     self.get_A_figure() # create the A-figures
     print("{:s}".format(self.get_info()))
-    for f in self.A_figures.keys():
+    figs = self.display_2d_figure_list
+    if(len(figs)==0):
+      figs = self.A_figures.keys()
+    for f in figs:
+      if(not f in self.A_figures.keys()):
+        print("ERR232: Error, fig {:s} is not an existing 2d-figures {:s}".format(fig, ' '.join(self.A_figures.keys())))
+        sys.exit(2)
       fig = self.A_figures[f]
       d_info = "display_{:s}".format(f)
       #print("dbg218: fig:", fig)
@@ -256,7 +290,13 @@ class bare_design:
     """
     self.get_A_figure() # create the A-figures
     txt_info = self.get_info()
-    for f in self.A_figures.keys():
+    figs = self.write_2d_figure_list
+    if(len(figs)==0):
+      figs = self.A_figures.keys()
+    for f in figs:
+      if(not f in self.A_figures.keys()):
+        print("ERR291: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
+        sys.exit(2)
       design_output.generate_output_file(design_output.cnc_cut_figure(self.A_figures[f], "generate_svg_{:s}".format(f)), "{:s}_{:s}.svg".format(output_file_basename, f), self.figure_heights[f], txt_info)
 
   def write_figure_dxf(self, output_file_basename):
@@ -265,7 +305,13 @@ class bare_design:
     """
     self.get_A_figure() # create the A-figures
     txt_info = self.get_info()
-    for f in self.A_figures.keys():
+    figs = self.write_2d_figure_list
+    if(len(figs)==0):
+      figs = self.A_figures.keys()
+    for f in figs:
+      if(not f in self.A_figures.keys()):
+        print("ERR306: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
+        sys.exit(2)
       design_output.generate_output_file(design_output.cnc_cut_figure(self.A_figures[f], "generate_dxf_{:s}".format(f)), "{:s}_{:s}.dxf".format(output_file_basename, f), self.figure_heights[f], txt_info)
 
   def write_figure_brep(self, output_file_basename):
@@ -274,7 +320,13 @@ class bare_design:
     """
     self.get_A_figure() # create the A-figures
     txt_info = self.get_info()
-    for f in self.A_figures.keys():
+    figs = self.write_3d_figure_list
+    if(len(figs)==0):
+      figs = self.A_figures.keys()
+    for f in figs:
+      if(not f in self.A_figures.keys()):
+        print("ERR321: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
+        sys.exit(2)
       design_output.generate_output_file(design_output.cnc_cut_figure(self.A_figures[f], "generate_brep_{:s}".format(f)), "{:s}_{:s}".format(output_file_basename, f), self.figure_heights[f], txt_info)
 
   def write_assembly_brep(self, output_file_basename):
@@ -283,7 +335,13 @@ class bare_design:
     """
     self.apply_3d_constructor()
     txt_info = self.get_info()
-    for a in self.assembly_configurations.keys():
+    confs = self.write_3d_conf_list
+    if(len(confs)==0):
+      confs = self.assembly_configurations.keys()
+    for a in confs:
+      if(not a in self.assembly_configurations.keys()):
+        print("ERR336: Error, a {:s} is not an existing 3d-assembly-configurations {:s}".format(f, ' '.join(self.assembly_configurations.keys())))
+        sys.exit(2)
       # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
       design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), True, False, self.slice3d_configurations[a]) 
 
@@ -291,7 +349,7 @@ class bare_design:
     """ check the argument-output-options and then call apply_cli()
         The argument-output-options are: output_file_basename, simulate_2d, display_2d_figures, return_type
     """
-    effective_args = design_help.get_effective_args(cli_str)
+    effective_args = cli_str.split()
     effective_args_in_txt = "{:s} cli_with_output_file_basename string: ".format(self.design_name) + ' '.join(effective_args)
     cwoo_parser = argparse.ArgumentParser(description='Command Line Interface of {:s} with output_file_basename'.format(self.design_name))
     cwoo_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
@@ -302,7 +360,13 @@ class bare_design:
       help="display in Tk-window all the 2D-figures of the design")
     cwoo_parser.add_argument('--return_type', '--rt', action='store', default='', dest='sw_return_type',
       help="select the object to be returned by the function allinone. Depreciated! Use rather the appropriate methods")
-    (oo_args, remaining_args) = cwoo_parser.parse_known_args(effective_args)
+    #print("dbg363: effective_args:", effective_args)
+    if(('-h' in effective_args)or('--help' in effective_args)):
+      cwoo_parser.print_help()
+      (oo_args, remaining_args) = cwoo_parser.parse_known_args([])
+      remaining_args = effective_args
+    else:
+      (oo_args, remaining_args) = cwoo_parser.parse_known_args(effective_args)
     #print("dbg322: remaining_args:", remaining_args)
     self.apply_cli(' '.join(remaining_args))
     self.cli_str = effective_args_in_txt # must be set after apply_constraint()
@@ -334,7 +398,7 @@ class bare_design:
       if(self.f_return_type==None):
         print("ERR277: Error, no return_type function is provided. Can't apply return_type {:s}".format(oo_args.sw_return_type))
         sys.exit(2)
-      r_allinone = self.f_return_type(oo_args.sw_return_type)
+      r_allinone = self.f_return_type(oo_args.sw_return_type, self.constraint)
     return(r_allinone)
 
   def run_self_test(self):
@@ -365,7 +429,7 @@ class bare_design:
     ofh.close()
     return(1)
 
-  def allinone(self, cli_str):
+  def allinone(self, cli_str=""):
     """ it emulates partially the previous behavior of the design functions
         partially depreciated: use it only to run the self-test or dump the constraint-file
     """
@@ -375,7 +439,13 @@ class bare_design:
       help="run the design self-test used usually as non-regression-test")
     aio_parser.add_argument('--dump_constraint_file', '--dcf', action='store', default='', dest='sw_dump_constraint_file',
       help="write a python file containing the list of the design constraint. The file can be used as design constraint example")
-    (aio_args, remaining_args) = aio_parser.parse_known_args(effective_args)
+    if(('-h' in effective_args)or('--help' in effective_args)):
+      aio_parser.print_help()
+      (aio_args, remaining_args) = aio_parser.parse_known_args([])
+      remaining_args = effective_args
+    else:
+      (aio_args, remaining_args) = aio_parser.parse_known_args(effective_args)
+    print("dbg111: start a design")
     r_allinone = 1
     if(aio_args.sw_run_self_test):
       self.run_self_test()
@@ -383,6 +453,7 @@ class bare_design:
       self.dump_constraint_file(aio_args.sw_dump_constraint_file)
     else:
       r_allinone = self.apply_cli_with_output_options(' '.join(remaining_args))
+    print("dbg999: end of design")
     return(r_allinone)
   
 ################################################################
@@ -390,8 +461,10 @@ class bare_design:
 ################################################################
 
 # import for testing bare_design
-import cnc25d_api
-cnc25d_api.importing_freecad()
+#import cnc25d_api # cannot import cnc25d_api because cnc25d_api import bare_design
+import importing_freecad
+importing_freecad.importing_freecad()
+import cnc_outline
 #print("FreeCAD.Version:", FreeCAD.Version())
 #FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n") # avoid using this method because it is not printed in the FreeCAD GUI
 #
@@ -458,7 +531,7 @@ def bare_design_test1():
     cube_external_outline_A.append((0.0+c['length'], 0.0, c['smooth_radius']))
     cube_external_outline_A.append((0.0+c['length'], 0.0+c['width'], c['smooth_radius']))
     cube_external_outline_A.append((0.0, 0.0+c['width'], c['smooth_radius']))
-    cnc25d_api.outline_close(cube_external_outline_A)
+    cnc_outline.outline_close(cube_external_outline_A)
     cube_base_figure.append(cube_external_outline_A)
     #
     r_figures['cube_base'] = cube_base_figure
@@ -501,7 +574,7 @@ cube volume:    \t{:0.3f} (mm3)
 """.format(c['length']*c['width'], c['length']*c['width']*c['height'])
     return(r_txt)
 
-  def cube_sef_test():
+  def cube_self_test():
     """ set the self_tests for the cube design
     """
     r_tests = [
@@ -525,8 +598,12 @@ cube volume:    \t{:0.3f} (mm3)
       self.set_2d_simulation()
       self.set_3d_constructor(cube_3d)
       self.set_info(cube_info)
+      self.set_display_figure_list()
+      self.set_2d_figure_file_list()
+      self.set_3d_figure_file_list()
+      self.set_3d_conf_file_list()
       self.set_allinone_return_type()
-      self.set_self_test(cube_sef_test())
+      self.set_self_test(cube_self_test())
       self.apply_constraint(constraint)
 
   # my_cube_constraint
@@ -547,7 +624,7 @@ cube volume:    \t{:0.3f} (mm3)
   mc_olB = my_cube.get_B_figure(['cube_base']) # get the outline at the B-format
   mc_info = my_cube.get_info() # get the text info
   mc_constraint = my_cube.get_constraint() # get the interenal dictionary
-  cnc25d_api.figure_simple_display(mc_olB, cnc25d_api.ideal_figure(mc_olA,"cube_overlay"), mc_info) # display the outline in a Tk-window
+  outline_backends.figure_simple_display(mc_olB, design_output.ideal_figure(mc_olA,"cube_overlay"), mc_info) # display the outline in a Tk-window
   # 3: get the freecad-object
   mc_3d = my_cube.get_fc_obj()
   Part.show(mc_3d)
@@ -573,13 +650,13 @@ def bare_design_test_cli(ai_args=""):
   bd_parser = argparse.ArgumentParser(description='CLI to test the bare_design class')
   bd_parser.add_argument('--test1','--t1', action='store_true', default=False, dest='sw_test1',
     help='Run bare_design_test1()')
-  effective_args = cnc25d_api.get_effective_args(ai_args)
+  effective_args = design_help.get_effective_args(ai_args)
   bd_args = bd_parser.parse_args(effective_args)
   r_bdtc = 0
-  print("dbg111: start testing bare_design.py")
+  #print("dbg111: start testing bare_design.py")
   if(bd_args.sw_test1):
     r_bdtc = bare_design_test1()
-  print("dbg999: end of script")
+  #print("dbg999: end of script")
   return(r_bdtc)
 
 ################################################################

@@ -36,6 +36,7 @@ import positioning
 import export_2d
 import design_output
 import design_help
+import bare_design
 
 ################################################################
 # api function alias
@@ -88,6 +89,9 @@ flip_rotate_and_translate_figure = design_output.flip_rotate_and_translate_figur
 cnc_cut_figure =  design_output.cnc_cut_figure
 ideal_figure = design_output.ideal_figure
 figures_to_freecad_assembly = design_output.figures_to_freecad_assembly
+
+# from bare_design
+bare_design = bare_design.bare_design
 
 ################################################################
 # function combinations
