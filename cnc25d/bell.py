@@ -62,7 +62,6 @@ import bell_outline
 def bell_constraint_constructor(ai_parser, ai_variant=0):
   """
   Add arguments relative to the bell
-  This function intends to be used by the bell_cli and bell_self_test
   """
   r_parser = ai_parser
   ### bell_face

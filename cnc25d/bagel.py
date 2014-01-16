@@ -53,193 +53,148 @@ import Part
 #from dxfwrite import DXFEngine
 # cnc25d
 
-################################################################
-# bagel dictionary-arguments default values
-################################################################
-
-def bagel_dictionary_init(ai_variant=0):
-  """ create and initiate a bagel_dictionary with the default value
-  """
-  r_bd = {}
-  ## diameters
-  r_bd['bagel_axle_diameter']                   = 10.0
-  r_bd['bagel_axle_internal_diameter']          = 0.0
-  r_bd['bagel_axle_external_diameter']          = 0.0
-  ## axle_holes
-  if(ai_variant!=1):
-    r_bd['axle_hole_nb']                    = 6
-    r_bd['axle_hole_diameter']              = 4.0
-    r_bd['axle_hole_position_diameter']     = 0.0
-    r_bd['axle_hole_angle']                 = 0.0
-  ## part thickness
-  r_bd['external_bagel_thickness']        = 2.0
-  if(ai_variant!=1):
-    r_bd['middle_bagel_thickness']          = 6.0
-  r_bd['internal_bagel_thickness']        = 2.0
-  ### manufacturing
-  r_bd['bagel_extra_cut_thickness']        = 0.0
-  ### output
-  if(ai_variant!=1):
-    r_bd['tkinter_view']           = False
-    r_bd['output_file_basename']   = ''
-    r_bd['args_in_txt'] = ""
-    r_bd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
-  #### return
-  return(r_bd)
 
 ################################################################
-# bagel argparse
+# bagel constraint_constructor
 ################################################################
 
-def bagel_add_argument(ai_parser, ai_variant=0):
+def bagel_constraint_constructor(ai_parser, ai_variant=0):
   """
   Add arguments relative to the bagel
-  This function intends to be used by the bagel_cli and bagel_self_test
   """
   r_parser = ai_parser
   ## diameters
-  r_parser.add_argument('--bagel_axle_diameter','--bgad', action='store', type=float, default=10.0, dest='sw_bagel_axle_diameter',
+  r_parser.add_argument('--bagel_axle_diameter','--bgad', action='store', type=float, default=10.0,
     help="Set the axle_diameter. Default: 10.0")
-  r_parser.add_argument('--bagel_axle_internal_diameter','--bgaid', action='store', type=float, default=20.0, dest='sw_bagel_axle_internal_diameter',
+  r_parser.add_argument('--bagel_axle_internal_diameter','--bgaid', action='store', type=float, default=20.0,
     help="Set the axle_internal_diameter. If equal to 0.0, set to 2*bagel_axle_diameter. Default: 0.0")
-  r_parser.add_argument('--bagel_axle_external_diameter','--bgaed', action='store', type=float, default=0.0, dest='sw_bagel_axle_external_diameter',
+  r_parser.add_argument('--bagel_axle_external_diameter','--bgaed', action='store', type=float, default=0.0,
     help="Set the axle_external_diameter. If equal to 0.0, set to 2*bagel_axle_internal_diameter. Default: 0.0")
   ## axle_holes
   if(ai_variant!=1):
-    r_parser.add_argument('--axle_hole_nb','--ahn', action='store', type=int, default=6, dest='sw_axle_hole_nb',
+    r_parser.add_argument('--axle_hole_nb','--ahn', action='store', type=int, default=6,
       help="Set the number of the axle-holes. If equal to 0, no axle-hole is created. Default: 6")
-    r_parser.add_argument('--axle_hole_diameter','--ahd', action='store', type=float, default=4.0, dest='sw_axle_hole_diameter',
+    r_parser.add_argument('--axle_hole_diameter','--ahd', action='store', type=float, default=4.0,
       help="Set the diameter of the axle-holes. Default: 4.0")
-    r_parser.add_argument('--axle_hole_position_diameter','--ahpd', action='store', type=float, default=0.0, dest='sw_axle_hole_position_diameter',
+    r_parser.add_argument('--axle_hole_position_diameter','--ahpd', action='store', type=float, default=0.0,
       help="Set the diameter of the axle-hole position circle. If equal to 0.0, set to (axle_internal_diameter+axle_external_diameter)/2. Default: 0.0")
-    r_parser.add_argument('--axle_hole_angle','--aha', action='store', type=float, default=0.0, dest='sw_axle_hole_angle',
+    r_parser.add_argument('--axle_hole_angle','--aha', action='store', type=float, default=0.0,
       help="Set the position angle of the first axle-hole. Default: 0.0")
   ## part thickness
-  r_parser.add_argument('--external_bagel_thickness','--ebt', action='store', type=float, default=2.0, dest='sw_external_bagel_thickness',
+  r_parser.add_argument('--external_bagel_thickness','--ebt', action='store', type=float, default=2.0,
     help="Set the thickness (z-size) of the external_bagel part. Default: 2.0")
   if(ai_variant!=1):
-    r_parser.add_argument('--middle_bagel_thickness','--mbt', action='store', type=float, default=6.0, dest='sw_middle_bagel_thickness',
+    r_parser.add_argument('--middle_bagel_thickness','--mbt', action='store', type=float, default=6.0,
       help="Set the thickness (z-size) of the middle_bagel part. Default: 6.0")
-  r_parser.add_argument('--internal_bagel_thickness','--ibt', action='store', type=float, default=2.0, dest='sw_internal_bagel_thickness',
+  r_parser.add_argument('--internal_bagel_thickness','--ibt', action='store', type=float, default=2.0,
     help="Set the thickness (z-size) of the internal_bagel part. Default: 2.0")
   ### manufacturing
-  r_parser.add_argument('--bagel_extra_cut_thickness','--bgect', action='store', type=float, default=0.0, dest='sw_bagel_extra_cut_thickness',
+  r_parser.add_argument('--bagel_extra_cut_thickness','--bgect', action='store', type=float, default=0.0,
     help="Set the extra-cut-thickness for the internal-bagel cut. It can be used to compensate the manufacturing process or to check the 3D assembly with FreeCAD. Default: 0.0")
   ### output
   # return
   return(r_parser)
 
-    
 ################################################################
-# the most important function to be used in other scripts
+# bagel constraint_check
 ################################################################
 
-def bagel(ai_constraints):
+def bagel_constraint_check(c):
+  """ check the bagel constraint c and set the dynamic default values
   """
-  The main function of the script.
-  It generates a bagel assembly according to the constraint-arguments
-  """
-  ### check the dictionary-arguments ai_constraints
-  bdi = bagel_dictionary_init()
-  b_c = bdi.copy()
-  b_c.update(ai_constraints)
-  #print("dbg155: b_c:", b_c)
-  if(len(b_c.viewkeys() & bdi.viewkeys()) != len(b_c.viewkeys() | bdi.viewkeys())): # check if the dictionary b_c has exactly all the keys compare to bagel_dictionary_init()
-    print("ERR148: Error, b_c has too much entries as {:s} or missing entries as {:s}".format(b_c.viewkeys() - bdi.viewkeys(), bdi.viewkeys() - b_c.viewkeys()))
-    sys.exit(2)
-  #print("dbg164: bagel constraints:")
-  #for k in b_c.viewkeys():
-  #  if(b_c[k] != bdi[k]):
-  #    print("dbg166: for k {:s}, b_c[k] {:s} != bdi[k] {:s}".format(k, str(b_c[k]), str(bdi[k])))
   ### precision
   radian_epsilon = math.pi/1000
   ################################################################
   # parameter check and dynamic-default values
   ################################################################
   # bagel_axle_diameter
-  b_c['bagel_axle_radius'] = b_c['bagel_axle_diameter']/2.0
-  if(b_c['bagel_axle_radius']<radian_epsilon):
-    print("ERR152: Error, bagel_axle_radius {:0.3f} is too small".format(b_c['bagel_axle_radius']))
+  c['bagel_axle_radius'] = c['bagel_axle_diameter']/2.0
+  if(c['bagel_axle_radius']<radian_epsilon):
+    print("ERR152: Error, bagel_axle_radius {:0.3f} is too small".format(c['bagel_axle_radius']))
     sys.exit(2)
   # bagel_axle_internal_diameter
-  b_c['bagel_axle_internal_radius'] = b_c['bagel_axle_internal_diameter']/2.0
-  if(b_c['bagel_axle_internal_radius']==0):
-    b_c['bagel_axle_internal_radius'] = 2*b_c['bagel_axle_radius']
-  if(b_c['bagel_axle_internal_radius']<b_c['bagel_axle_radius']):
-    print("ERR159: Error, bagel_axle_internal_radius {:0.3f} must be bigger than bagel_axle_radius {:0.3f}".format(b_c['bagel_axle_internal_radius'], b_c['bagel_axle_radius']))
+  c['bagel_axle_internal_radius'] = c['bagel_axle_internal_diameter']/2.0
+  if(c['bagel_axle_internal_radius']==0):
+    c['bagel_axle_internal_radius'] = 2*c['bagel_axle_radius']
+  if(c['bagel_axle_internal_radius']<c['bagel_axle_radius']):
+    print("ERR159: Error, bagel_axle_internal_radius {:0.3f} must be bigger than bagel_axle_radius {:0.3f}".format(c['bagel_axle_internal_radius'], c['bagel_axle_radius']))
     sys.exit(2)
   # bagel_axle_external_diameter
-  b_c['bagel_axle_external_radius'] = b_c['bagel_axle_external_diameter']/2.0
-  if(b_c['bagel_axle_external_radius']==0):
-    b_c['bagel_axle_external_radius'] = 2*b_c['bagel_axle_internal_radius']
-  if(b_c['bagel_axle_external_radius']<b_c['bagel_axle_internal_radius']+radian_epsilon):
-    print("ERR166: Error, bagel_axle_external_radius {:0.3f} must be bigger than bagel_axle_internal_radius {:0.3f}".format(b_c['bagel_axle_external_radius'], b_c['bagel_axle_internal_radius']))
+  c['bagel_axle_external_radius'] = c['bagel_axle_external_diameter']/2.0
+  if(c['bagel_axle_external_radius']==0):
+    c['bagel_axle_external_radius'] = 2*c['bagel_axle_internal_radius']
+  if(c['bagel_axle_external_radius']<c['bagel_axle_internal_radius']+radian_epsilon):
+    print("ERR166: Error, bagel_axle_external_radius {:0.3f} must be bigger than bagel_axle_internal_radius {:0.3f}".format(c['bagel_axle_external_radius'], c['bagel_axle_internal_radius']))
     sys.exit(2)
   # axle_hole_nb
-  b_c['axle_hole_radius'] = 0.0
-  b_c['axle_hole_position_radius'] = 0.0
-  if(b_c['axle_hole_nb']>0):
+  c['axle_hole_radius'] = 0.0
+  c['axle_hole_position_radius'] = 0.0
+  if(c['axle_hole_nb']>0):
     # axle_hole_diameter
-    b_c['axle_hole_radius'] = b_c['axle_hole_diameter']/2.0
-    if(b_c['axle_hole_radius']<radian_epsilon):
-      print("ERR173: Error, axle_hole_radius {:0.3f} must be strictly positive".format(b_c['axle_hole_radius']))
+    c['axle_hole_radius'] = c['axle_hole_diameter']/2.0
+    if(c['axle_hole_radius']<radian_epsilon):
+      print("ERR173: Error, axle_hole_radius {:0.3f} must be strictly positive".format(c['axle_hole_radius']))
       sys.exit(2)
     # axle_hole_position_diameter
-    b_c['axle_hole_position_radius'] = b_c['axle_hole_position_diameter']/2.0
-    if(b_c['axle_hole_position_radius']==0.0):
-      b_c['axle_hole_position_radius'] = (b_c['bagel_axle_internal_radius']+b_c['bagel_axle_external_radius'])/2.0
-    if(b_c['axle_hole_position_radius'] < b_c['bagel_axle_internal_radius']+b_c['axle_hole_radius']+radian_epsilon):
-      print("ERR180: Error: axle_hole_position_radius {:0.3f} is too small compare to bagel_axle_internal_radius {:0.3f} and axle_hole_radius {:0.3f}".format(b_c['axle_hole_position_radius'], b_c['bagel_axle_internal_radius'], b_c['axle_hole_radius']))
+    c['axle_hole_position_radius'] = c['axle_hole_position_diameter']/2.0
+    if(c['axle_hole_position_radius']==0.0):
+      c['axle_hole_position_radius'] = (c['bagel_axle_internal_radius']+c['bagel_axle_external_radius'])/2.0
+    if(c['axle_hole_position_radius'] < c['bagel_axle_internal_radius']+c['axle_hole_radius']+radian_epsilon):
+      print("ERR180: Error: axle_hole_position_radius {:0.3f} is too small compare to bagel_axle_internal_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['bagel_axle_internal_radius'], c['axle_hole_radius']))
       sys.exit(2)
-    if(b_c['axle_hole_position_radius'] > b_c['bagel_axle_external_radius']-b_c['axle_hole_radius']-radian_epsilon):
-      print("ERR183: Error: axle_hole_position_radius {:0.3f} is too big compare to bagel_axle_external_radius {:0.3f} and axle_hole_radius {:0.3f}".format(b_c['axle_hole_position_radius'], b_c['bagel_axle_external_radius'], b_c['axle_hole_radius']))
+    if(c['axle_hole_position_radius'] > c['bagel_axle_external_radius']-c['axle_hole_radius']-radian_epsilon):
+      print("ERR183: Error: axle_hole_position_radius {:0.3f} is too big compare to bagel_axle_external_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['bagel_axle_external_radius'], c['axle_hole_radius']))
       sys.exit(2)
     # axle_hole_angle
   # external_bagel_thickness
-  if(b_c['external_bagel_thickness']<radian_epsilon):
-    print("ERR188: Error, external_bagel_thickness {:0.3f} is too small".format(b_c['external_bagel_thickness']))
+  if(c['external_bagel_thickness']<radian_epsilon):
+    print("ERR188: Error, external_bagel_thickness {:0.3f} is too small".format(c['external_bagel_thickness']))
     sys.exit(2)
   # middle_bagel_thickness
-  if(b_c['middle_bagel_thickness']<radian_epsilon):
-    print("ERR192: Error, middle_bagel_thickness {:0.3f} is too small".format(b_c['middle_bagel_thickness']))
+  if(c['middle_bagel_thickness']<radian_epsilon):
+    print("ERR192: Error, middle_bagel_thickness {:0.3f} is too small".format(c['middle_bagel_thickness']))
     sys.exit(2)
   # internal_bagel_thickness
-  if(b_c['internal_bagel_thickness']<radian_epsilon):
-    print("ERR196: Error, internal_bagel_thickness {:0.3f} is too small".format(b_c['internal_bagel_thickness']))
+  if(c['internal_bagel_thickness']<radian_epsilon):
+    print("ERR196: Error, internal_bagel_thickness {:0.3f} is too small".format(c['internal_bagel_thickness']))
     sys.exit(2)
   # bagel_extra_cut_thickness
-  if(abs(b_c['bagel_extra_cut_thickness'])>b_c['bagel_axle_radius']/2.0):
-    print("ERR212: Error, bagel_extra_cut_thickness {:0.3f} is too big compare to bagel_axle_radius {:0.3f}".format(b_c['bagel_extra_cut_thickness'], b_c['bagel_axle_radius']))
+  if(abs(c['bagel_extra_cut_thickness'])>c['bagel_axle_radius']/2.0):
+    print("ERR212: Error, bagel_extra_cut_thickness {:0.3f} is too big compare to bagel_axle_radius {:0.3f}".format(c['bagel_extra_cut_thickness'], c['bagel_axle_radius']))
     sys.exit(2)
+  return(c)
 
-  ################################################################
-  # outline construction
-  ################################################################
-  
+################################################################
+# bagel 2D-figures construction
+################################################################
+
+def bagel_2d_construction(c):
+  """ construct the 2D-figures with outlines at the A-format for the bagel design
+  """
   ### external_bagel
   external_bagel = []
-  external_bagel.append((0.0, 0.0, b_c['bagel_axle_external_radius']))
-  external_bagel.append((0.0, 0.0, b_c['bagel_axle_radius']))
-  for i in range(b_c['axle_hole_nb']):
-    a = i*2*math.pi/b_c['axle_hole_nb']+b_c['axle_hole_angle']
-    external_bagel.append((0.0+b_c['axle_hole_position_radius']*math.cos(a), 0.0+b_c['axle_hole_position_radius']*math.sin(a), b_c['axle_hole_radius']))
+  external_bagel.append((0.0, 0.0, c['bagel_axle_external_radius']))
+  external_bagel.append((0.0, 0.0, c['bagel_axle_radius']))
+  for i in range(c['axle_hole_nb']):
+    a = i*2*math.pi/c['axle_hole_nb']+c['axle_hole_angle']
+    external_bagel.append((0.0+c['axle_hole_position_radius']*math.cos(a), 0.0+c['axle_hole_position_radius']*math.sin(a), c['axle_hole_radius']))
 
   ### middle_bagel
   middle_bagel = []
-  middle_bagel.append((0.0, 0.0, b_c['bagel_axle_internal_radius']))
-  middle_bagel.append((0.0, 0.0, b_c['bagel_axle_radius']))
+  middle_bagel.append((0.0, 0.0, c['bagel_axle_internal_radius']))
+  middle_bagel.append((0.0, 0.0, c['bagel_axle_radius']))
 
   ### internal_bagel
   # intermediate parameters
-  cut_y = b_c['bagel_extra_cut_thickness']
-  cut_x1 = math.sqrt(b_c['bagel_axle_radius']**2+cut_y**2)
-  cut_x2 = math.sqrt(b_c['bagel_axle_external_radius']**2+cut_y**2)
+  cut_y = c['bagel_extra_cut_thickness']
+  cut_x1 = math.sqrt(c['bagel_axle_radius']**2+cut_y**2)
+  cut_x2 = math.sqrt(c['bagel_axle_external_radius']**2+cut_y**2)
   # outline construction
   ib_ol_A = []
   ib_ol_A.append((cut_x2, cut_y, 0))
-  ib_ol_A.append((0.0, b_c['bagel_axle_external_radius'], -1*cut_x2, cut_y, 0))
+  ib_ol_A.append((0.0, c['bagel_axle_external_radius'], -1*cut_x2, cut_y, 0))
   ib_ol_A.append((-1*cut_x1, cut_y, 0))
-  ib_ol_A.append((0.0, b_c['bagel_axle_radius'], cut_x1, cut_y, 0))
+  ib_ol_A.append((0.0, c['bagel_axle_radius'], cut_x1, cut_y, 0))
   ib_ol_A.append((cut_x2, cut_y, 0))
   ib_ol = cnc25d_api.cnc_cut_outline(ib_ol_A, "internal_bagel_ol")
   # figure construction
@@ -247,51 +202,18 @@ def bagel(ai_constraints):
   ib_figure.append(ib_ol)
   ib_figure_2 = []
   ib_figure_2.append(ib_ol)
-  if(b_c['axle_hole_nb']>0):
-    a_step = math.pi/b_c['axle_hole_nb']
-    for i in range(b_c['axle_hole_nb']/2):
+  if(c['axle_hole_nb']>0):
+    a_step = math.pi/c['axle_hole_nb']
+    for i in range(c['axle_hole_nb']/2):
       a = (2*i+1)*a_step
-      ib_figure.append((0.0+b_c['axle_hole_position_radius']*math.cos(a), 0.0+b_c['axle_hole_position_radius']*math.sin(a), b_c['axle_hole_radius']))
-    ib_figure = cnc25d_api.rotate_and_translate_figure(ib_figure, 0.0, 0.0, b_c['axle_hole_angle']-a_step, 0.0, 0.0)
-    for i in range(b_c['axle_hole_nb']/2):
-      a = (2*i+1+(b_c['axle_hole_nb']%2))*a_step
-      ib_figure_2.append((0.0+b_c['axle_hole_position_radius']*math.cos(a), 0.0+b_c['axle_hole_position_radius']*math.sin(a), b_c['axle_hole_radius']))
-    ib_figure_2 = cnc25d_api.rotate_and_translate_figure(ib_figure_2, 0.0, 0.0, b_c['axle_hole_angle']-a_step, 0.0, 0.0)
+      ib_figure.append((0.0+c['axle_hole_position_radius']*math.cos(a), 0.0+c['axle_hole_position_radius']*math.sin(a), c['axle_hole_radius']))
+    ib_figure = cnc25d_api.rotate_and_translate_figure(ib_figure, 0.0, 0.0, c['axle_hole_angle']-a_step, 0.0, 0.0)
+    for i in range(c['axle_hole_nb']/2):
+      a = (2*i+1+(c['axle_hole_nb']%2))*a_step
+      ib_figure_2.append((0.0+c['axle_hole_position_radius']*math.cos(a), 0.0+c['axle_hole_position_radius']*math.sin(a), c['axle_hole_radius']))
+    ib_figure_2 = cnc25d_api.rotate_and_translate_figure(ib_figure_2, 0.0, 0.0, c['axle_hole_angle']-a_step, 0.0, 0.0)
   internal_bagel = ib_figure
   internal_bagel_2 = cnc25d_api.rotate_and_translate_figure(ib_figure_2, 0.0, 0.0, math.pi, 0.0, 0.0)
-
-  ################################################################
-  # output
-  ################################################################
-
-  # b_parameter_info
-  b_parameter_info = "\nbagel parameter info:\n"
-  b_parameter_info += "\n" + b_c['args_in_txt'] + "\n"
-  b_parameter_info += """
-bagel diameters:
-bagel_axle_radius:          {:0.3f}   diameter: {:0.3f}
-bagel_axle_internal_radius: {:0.3f}   diameter: {:0.3f}
-bagel_axle_external_radius: {:0.3f}   diameter: {:0.3f}
-""".format(b_c['bagel_axle_radius'], 2*b_c['bagel_axle_radius'], b_c['bagel_axle_internal_radius'], 2*b_c['bagel_axle_internal_radius'], b_c['bagel_axle_external_radius'], 2*b_c['bagel_axle_external_radius'])
-  b_parameter_info += """
-axle_fastening_holes:
-axle_hole_nb:               {:d}
-axle_hole_radius:           {:0.3f}   diameter: {:0.3f}
-axle_hole_position_radius:  {:0.3f}   diameter: {:0.3f}
-axle_hole_angle:            {:0.3f} (radian)    {:0.3f} (degree)
-""".format(b_c['axle_hole_nb'], b_c['axle_hole_radius'], 2*b_c['axle_hole_radius'], b_c['axle_hole_position_radius'], 2*b_c['axle_hole_position_radius'], b_c['axle_hole_angle'], b_c['axle_hole_angle']*180/math.pi)
-  b_parameter_info += """
-bagel tickness:
-external_bagel_thickness: {:0.3f}
-middle_bagel_thickness:   {:0.3f}
-internal_bagel_thickness: {:0.3f}
-""".format(b_c['external_bagel_thickness'], b_c['middle_bagel_thickness'], b_c['internal_bagel_thickness'])
-  b_parameter_info += """
-manufacturing:
-bagel_extra_cut_thickness:  {:0.3f}
-""".format(b_c['bagel_extra_cut_thickness'])
-  #print(b_parameter_info)
-
   ### figures output
   # part_list
   part_list = []
@@ -300,7 +222,7 @@ bagel_extra_cut_thickness:  {:0.3f}
   part_list.append(internal_bagel)
   part_list.append(internal_bagel_2)
   # part_list_figure
-  x_space = 2.2*b_c['bagel_axle_external_radius'] 
+  x_space = 2.2*c['bagel_axle_external_radius'] 
   part_list_figure = []
   for i in range(len(part_list)):
     part_list_figure.extend(cnc25d_api.rotate_and_translate_figure(part_list[i], 0.0, 0.0, 0.0, i*x_space, 0.0))
@@ -310,106 +232,92 @@ bagel_extra_cut_thickness:  {:0.3f}
   bagel_assembly_figure.extend(cnc25d_api.rotate_and_translate_figure(middle_bagel, 0.0, 0.0, 0.0,     0, 0))
   bagel_assembly_figure.extend(cnc25d_api.rotate_and_translate_figure(internal_bagel, 0.0, 0.0, 0.0,   0, 0))
   bagel_assembly_figure.extend(cnc25d_api.rotate_and_translate_figure(internal_bagel_2, 0.0, 0.0, 0.0, 0, 0))
+  ###
+  r_figures = {}
+  r_height = {}
 
+  r_figures['external_bagel'] = external_bagel
+  r_height['external_bagel'] = c['external_bagel_thickness']
+
+  r_figures['middle_bagel'] = middle_bagel
+  r_height['middle_bagel'] = c['middle_bagel_thickness']
+
+  r_figures['internal_bagel'] = internal_bagel
+  r_height['internal_bagel'] = c['internal_bagel_thickness']
+
+  r_figures['internal_bagel_2'] = internal_bagel_2
+  r_height['internal_bagel_2'] = c['internal_bagel_thickness']
+
+  r_figures['part_list'] = part_list_figure
+  r_height['part_list'] = 1.0
+
+  r_figures['bagel_assembly'] = bagel_assembly_figure
+  r_height['bagel_assembly'] = 1.0
+  ###
+  return((r_figures, r_height))
+  
+################################################################
+# bagel 3D assembly-configuration construction
+################################################################
+
+def bagel_3d_construction(c):
+  """ construct the 3D-assembly-configurations of the bagel design
+  """
   ### freecad-object assembly configuration
   # intermediate parameters
-  aer = b_c['bagel_axle_external_radius']
-  air = b_c['bagel_axle_internal_radius']
-  ebt = b_c['external_bagel_thickness']
-  mbt = b_c['middle_bagel_thickness']
-  ibt = b_c['internal_bagel_thickness']
+  aer = c['bagel_axle_external_radius']
+  air = c['bagel_axle_internal_radius']
+  ebt = c['external_bagel_thickness']
+  mbt = c['middle_bagel_thickness']
+  ibt = c['internal_bagel_thickness']
   # conf1
   bagel_assembly_conf1 = []
-  bagel_assembly_conf1.append((external_bagel, -1*aer, -1*aer, 2*aer, 2*aer, ebt, 'i', 'xz', -1*aer, 0,         -1*aer))
-  bagel_assembly_conf1.append((middle_bagel,   -1*air, -1*air, 2*air, 2*air, mbt, 'i', 'xz', -1*air, ebt,       -1*air))
-  bagel_assembly_conf1.append((internal_bagel, -1*aer, -1*aer, 2*aer, 2*aer, ibt, 'i', 'xz', -1*aer, ebt+mbt,   -1*aer))
-  bagel_assembly_conf1.append((internal_bagel_2, -1*aer, -1*aer, 2*aer, 2*aer, ibt, 'i', 'xz', -1*aer, ebt+mbt, -1*aer))
+  bagel_assembly_conf1.append(('external_bagel', -1*aer, -1*aer, 2*aer, 2*aer, ebt, 'i', 'xz', -1*aer, 0,         -1*aer))
+  bagel_assembly_conf1.append(('middle_bagel',   -1*air, -1*air, 2*air, 2*air, mbt, 'i', 'xz', -1*air, ebt,       -1*air))
+  bagel_assembly_conf1.append(('internal_bagel', -1*aer, -1*aer, 2*aer, 2*aer, ibt, 'i', 'xz', -1*aer, ebt+mbt,   -1*aer))
+  bagel_assembly_conf1.append(('internal_bagel_2', -1*aer, -1*aer, 2*aer, 2*aer, ibt, 'i', 'xz', -1*aer, ebt+mbt, -1*aer))
+  ###
+  r_assembly = {}
+  r_slice = {}
 
-  ### display with Tkinter
-  if(b_c['tkinter_view']):
-    print(b_parameter_info)
-    cnc25d_api.figure_simple_display(bagel_assembly_figure, part_list_figure, b_parameter_info)
-
-  ### generate output file
-  if(b_c['output_file_basename']!=''):
-    (output_file_basename, output_file_suffix) = cnc25d_api.get_output_file_suffix(b_c['output_file_basename'])
-    # parts
-    cnc25d_api.generate_output_file(external_bagel, output_file_basename + "_bagel_external" + output_file_suffix, b_c['external_bagel_thickness'], b_parameter_info)
-    cnc25d_api.generate_output_file(middle_bagel, output_file_basename + "_bagel_middle" + output_file_suffix, b_c['middle_bagel_thickness'], b_parameter_info)
-    cnc25d_api.generate_output_file(internal_bagel, output_file_basename + "_bagel_internal" + output_file_suffix, b_c['internal_bagel_thickness'], b_parameter_info)
-    # assembly
-    if((output_file_suffix=='.svg')or(output_file_suffix=='.dxf')):
-      cnc25d_api.generate_output_file(part_list_figure, output_file_basename + "_bagel_part_list" + output_file_suffix, 1.0, b_parameter_info)
-      cnc25d_api.generate_output_file(bagel_assembly_figure, output_file_basename + "_bagel_part_overview" + output_file_suffix, 1.0, b_parameter_info)
-    else:
-      #cnc25d_api.generate_3d_assembly_output_file(bagel_assembly_conf1, output_file_basename + "_assembly", True, False, [])
-      cnc25d_api.generate_3d_assembly_output_file(bagel_assembly_conf1, output_file_basename + "_bagel_assembly")
-
-
-  #### return
-  if(b_c['return_type']=='int_status'):
-    r_b = 1
-  elif(b_c['return_type']=='cnc25d_figure'):
-    r_b = part_list
-  elif(b_c['return_type']=='freecad_object'):
-    r_b = cnc25d_api.figures_to_freecad_assembly(bagel_assembly_conf1)
-  elif(b_c['return_type']=='figures_3dconf_info'):
-    r_b = (part_list, bagel_assembly_conf1, b_parameter_info)
-  else:
-    print("ERR508: Error the return_type {:s} is unknown".format(b_c['return_type']))
-    sys.exit(2)
-  return(r_b)
+  r_assembly['bagel_assembly_conf1'] = bagel_assembly_conf1
+  r_slice['bagel_assembly_conf1'] = ()
+  #
+  return((r_assembly, r_slice))
 
 ################################################################
-# bagel wrapper dance
+# bagel_info
 ################################################################
 
-def bagel_argparse_to_dictionary(ai_b_args, ai_variant=0):
-  """ convert a bagel_argparse into a bagel_dictionary
+def bagel_info(c):
+  """ create the text info related to the bagel design
   """
-  r_bd = {}
-  ## diameters
-  r_bd['bagel_axle_diameter']                   = ai_b_args.sw_bagel_axle_diameter
-  r_bd['bagel_axle_internal_diameter']          = ai_b_args.sw_bagel_axle_internal_diameter
-  r_bd['bagel_axle_external_diameter']          = ai_b_args.sw_bagel_axle_external_diameter
-  ## axle_holes
-  if(ai_variant!=1):
-    r_bd['axle_hole_nb']                    = ai_b_args.sw_axle_hole_nb
-    r_bd['axle_hole_diameter']              = ai_b_args.sw_axle_hole_diameter
-    r_bd['axle_hole_position_diameter']     = ai_b_args.sw_axle_hole_position_diameter
-    r_bd['axle_hole_angle']                 = ai_b_args.sw_axle_hole_angle
-  ## part thickness
-  r_bd['external_bagel_thickness']        = ai_b_args.sw_external_bagel_thickness
-  if(ai_variant!=1):
-    r_bd['middle_bagel_thickness']          = ai_b_args.sw_middle_bagel_thickness
-  r_bd['internal_bagel_thickness']        = ai_b_args.sw_internal_bagel_thickness
-  ### manufacturing
-  r_bd['bagel_extra_cut_thickness']       = ai_b_args.sw_bagel_extra_cut_thickness
-  ### output
-  if(ai_variant!=1):
-    #r_bd['tkinter_view']           = False
-    r_bd['output_file_basename']   = ai_b_args.sw_output_file_basename
-    #r_bd['args_in_txt'] = ""
-    r_bd['return_type'] = ai_b_args.sw_return_type
-  #### return
-  return(r_bd)
-  
-def bagel_argparse_wrapper(ai_b_args, ai_args_in_txt=""):
-  """
-  wrapper function of bagel() to call it using the bagel_parser.
-  bagel_parser is mostly used for debug and non-regression tests.
-  """
-  # view the bagel with Tkinter as default action
-  tkinter_view = True
-  if(ai_b_args.sw_output_file_basename!=''):
-    tkinter_view = False
-  # wrapper
-  bd = bagel_argparse_to_dictionary(ai_b_args)
-  bd['args_in_txt'] = ai_args_in_txt
-  bd['tkinter_view'] = tkinter_view
-  #bd['return_type'] = 'int_status'
-  r_b = bagel(bd)
-  return(r_b)
+  # b_parameter_info
+  b_parameter_info = """
+bagel diameters:
+bagel_axle_radius:          {:0.3f}   diameter: {:0.3f}
+bagel_axle_internal_radius: {:0.3f}   diameter: {:0.3f}
+bagel_axle_external_radius: {:0.3f}   diameter: {:0.3f}
+""".format(c['bagel_axle_radius'], 2*c['bagel_axle_radius'], c['bagel_axle_internal_radius'], 2*c['bagel_axle_internal_radius'], c['bagel_axle_external_radius'], 2*c['bagel_axle_external_radius'])
+  b_parameter_info += """
+axle_fastening_holes:
+axle_hole_nb:               {:d}
+axle_hole_radius:           {:0.3f}   diameter: {:0.3f}
+axle_hole_position_radius:  {:0.3f}   diameter: {:0.3f}
+axle_hole_angle:            {:0.3f} (radian)    {:0.3f} (degree)
+""".format(c['axle_hole_nb'], c['axle_hole_radius'], 2*c['axle_hole_radius'], c['axle_hole_position_radius'], 2*c['axle_hole_position_radius'], c['axle_hole_angle'], c['axle_hole_angle']*180/math.pi)
+  b_parameter_info += """
+bagel tickness:
+external_bagel_thickness: {:0.3f}
+middle_bagel_thickness:   {:0.3f}
+internal_bagel_thickness: {:0.3f}
+""".format(c['external_bagel_thickness'], c['middle_bagel_thickness'], c['internal_bagel_thickness'])
+  b_parameter_info += """
+manufacturing:
+bagel_extra_cut_thickness:  {:0.3f}
+""".format(c['bagel_extra_cut_thickness'])
+  #print(b_parameter_info)
+  return(b_parameter_info)
 
 ################################################################
 # self test
@@ -420,7 +328,7 @@ def bagel_self_test():
   This is the non-regression test of bagel.
   Look at the Tk window to check errors.
   """
-  test_case_switch = [
+  r_tests = [
     ["simplest test"        , ""],
     ["no axle_holes"        , "--axle_hole_nb 0"],
     ["odd number of axle_holes" , "--axle_hole_nb 5"],
@@ -428,43 +336,35 @@ def bagel_self_test():
     ["extra cut negative" , "--bagel_extra_cut_thickness -2.0"],
     ["outputfile" , "--output_file_basename test_output/bagel_self_test.dxf"],
     ["last test"            , "--bagel_axle_internal_diameter 25.0"]]
-  #print("dbg741: len(test_case_switch):", len(test_case_switch))
-  bagel_parser = argparse.ArgumentParser(description='Command line interface for the function bagel().')
-  bagel_parser = bagel_add_argument(bagel_parser)
-  bagel_parser = cnc25d_api.generate_output_file_add_argument(bagel_parser, 1)
-  for i in range(len(test_case_switch)):
-    l_test_switch = test_case_switch[i][1]
-    print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
-    l_args = l_test_switch.split()
-    #print("dbg414: l_args:", l_args)
-    st_args = bagel_parser.parse_args(l_args)
-    r_bst = bagel_argparse_wrapper(st_args)
-  return(r_bst)
+  return(r_tests)
 
 ################################################################
-# bagel command line interface
+# bagel design declaration
 ################################################################
 
-def bagel_cli(ai_args=""):
-  """ command line interface of bagel.py when it is used in standalone
+class bagel(cnc25d_api.bare_design):
+  """ bagel design
   """
-  # bagel parser
-  bagel_parser = argparse.ArgumentParser(description='Command line interface for the function bagel().')
-  bagel_parser = bagel_add_argument(bagel_parser)
-  bagel_parser = cnc25d_api.generate_output_file_add_argument(bagel_parser, 1)
-  # switch for self_test
-  bagel_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
-    help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
-  effective_args = cnc25d_api.get_effective_args(ai_args)
-  effective_args_in_txt = "bagel arguments: " + ' '.join(effective_args)
-  b_args = bagel_parser.parse_args(effective_args)
-  print("dbg111: start making bagel")
-  if(b_args.sw_run_self_test):
-    r_b = bagel_self_test()
-  else:
-    r_b = bagel_argparse_wrapper(b_args, effective_args_in_txt)
-  print("dbg999: end of script")
-  return(r_b)
+  def __init__(self, constraint={}):
+    """ configure the bagel design
+    """
+    self.set_design_name("bagel_design")
+    self.set_constraint_constructor(bagel_constraint_constructor)
+    self.set_constraint_check(bagel_constraint_check)
+    self.set_2d_constructor(bagel_2d_construction)
+    self.set_2d_simulation()
+    self.set_3d_constructor(bagel_3d_construction)
+    self.set_info(bagel_info)
+    self.set_display_figure_list(['bagel_assembly'])
+    figs = []
+    #self.set_2d_figure_file_list()
+    self.set_2d_figure_file_list(figs)
+    self.set_3d_figure_file_list(figs)
+    self.set_3d_conf_file_list(['bagel_assembly_conf1'])
+    self.set_allinone_return_type()
+    self.set_self_test(bagel_self_test())
+    self.apply_constraint(constraint)
+
 
 ################################################################
 # main
@@ -473,13 +373,10 @@ def bagel_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bagel.py says hello!\n")
-  my_b = bagel_cli()
-  #my_b = bagel_cli("--bagel_extra_cut_thickness 1.0 --return_type freecad_object")
-  try: # depending on b_c['return_type'] it might be or not a freecad_object
-    Part.show(my_b)
-    print("freecad_object returned")
-  except:
-    pass
-    #print("return_type is not a freecad-object")
+  my_bagel = bagel()
+  my_bagel.allinone()
+  #my_bagel.apply_cli("--bagel_extra_cut_thickness 1.0")
+  #my_bagel.outline_display()
+  #Part.show(my_bagel.get_fc_obj('bagel_assembly_conf1'))
 
 
