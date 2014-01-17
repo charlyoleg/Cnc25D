@@ -76,6 +76,7 @@ export_xyz_to_dxf = export_2d.export_xyz_to_dxf
 
 # from design_help
 mkdir_p = design_help.mkdir_p
+interpretor_is_freecad = design_help.interpretor_is_freecad
 get_effective_args = design_help.get_effective_args
 
 # from design_output

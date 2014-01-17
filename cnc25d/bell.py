@@ -750,7 +750,7 @@ def bell_3d_construction(c):
   r_slice['bell_assembly_conf1'] = slice_xyz
 
   r_assembly['bell_assembly_conf2'] = bell_assembly_conf2
-  r_slice['bell_assembly_conf2'] = ()
+  r_slice['bell_assembly_conf2'] = slice_xyz
   #
   return((r_assembly, r_slice))
 
@@ -963,12 +963,19 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
   my_b = bell()
   my_b.allinone()
+  if(cnc25d_api.interpretor_is_freecad()):
+    #b_value = my_b.allinone("--bell_extra_cut_thickness 1.0 --return_type freecad_object") # old fashion
+    #Part.show(b_value)
+    my_b.apply_cli("--bell_extra_cut_thickness 1.0")      # new fashion
+    Part.show(my_b.get_fc_obj('bell_assembly_conf2'))
+
+  ### very old fashion
   #b_value = my_b.allinone("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
-  try: # depending on c['return_type'] it might be or not a freecad_object
-    Part.show(b_value)
-    print("freecad_object returned")
-  except:
-    pass
-    #print("return_type is not a freecad-object")
+  #try: # depending on c['return_type'] it might be or not a freecad_object
+  #  Part.show(b_value)
+  #  print("freecad_object returned")
+  #except:
+  #  pass
+  #  #print("return_type is not a freecad-object")
 
 

@@ -50,6 +50,7 @@ class bare_design:
     # mandatory attributes
     self.design_name = design_name
     self.parser = None
+    self.f_design_constraint_constructor = None
     self.f_2d_constructor = None
     self.f_info = None
     # optional attributes
@@ -78,6 +79,7 @@ class bare_design:
     self.parser = f_constraint_constructor(init_parser)
     self.reference_constraint = vars(self.parser.parse_args([]))
     self.constraint = self.reference_constraint.copy()
+    self.f_design_constraint_constructor = f_constraint_constructor # needed for the function get_constraint_constructor()
 
   def set_constraint_check(self, f_constraint_check):
     """ bind the function f_constraint_check that checks the constraint values and set the dynamic default values
@@ -141,12 +143,13 @@ class bare_design:
   def apply_constraint(self, constraint):
     """ set the dictionary constraint to the design
     """
+    #print("dbg146: constraint:", constraint)
     rc = self.reference_constraint
     c = rc.copy()
     c.update(constraint) # apply the new constraint values
     #print("dbg100: constraint:", c)
     if(len(c.viewkeys() & rc.viewkeys()) != len(c.viewkeys() | rc.viewkeys())): # check if the dictionary c has exactly all the keys compare to self.reference_constraint
-      print("ERR104: Error, constraint c has too much entries as {:s} or missing entries as {:s}".format(c.viewkeys() - rc.viewkeys(), rc.viewkeys() - c.viewkeys()))
+      print("ERR104: Error in {:s}, constraint c has too much entries as {:s} or missing entries as {:s}".format(self.design_name, c.viewkeys() - rc.viewkeys(), rc.viewkeys() - c.viewkeys()))
       sys.exit(2)
     #print("dbg106: new constraint:") # some optional debug
     #for k in c.viewkeys():
@@ -157,7 +160,17 @@ class bare_design:
       self.constraint = c
     else:
       self.constraint = self.f_constraint_check(c)
-    self.cli_str = "" # delete the cli_str when caontraint come from dictionary
+    self.cli_str = "" # delete the cli_str when constraint come from dictionary
+    return(self.constraint)
+
+  def apply_external_constraint(self, constraint):
+    """ set the dictionary constraint to the design without generating error on unknow constraint
+    """
+    key_list = self.reference_constraint.viewkeys() & constraint.viewkeys()
+    c =  dict([ (k, constraint[k]) for k in key_list ])
+    #print("dbg170: c:", c)
+    r_constraint = self.apply_constraint(c)
+    return(r_constraint)
 
   def apply_cli(self, cli_str=""):
     """ set the cli constraint to the design.
@@ -166,13 +179,19 @@ class bare_design:
     effective_args = cli_str.split()
     effective_args_in_txt = "{:s} cli string: ".format(self.design_name) + ' '.join(effective_args)
     c = vars(self.parser.parse_args(effective_args))
-    self.apply_constraint(c)
+    r_constraint = self.apply_constraint(c)
     self.cli_str = effective_args_in_txt # must be set after apply_constraint()
+    return(r_constraint)
 
   def __init__(self):
     """ bare_design constructor
     """
     print("dbg163: create a new bare_design") # this should be never seen because the __init__ fonction is overwritten
+
+  def get_constraint_constructor(self):
+    """ return a pointer to the design_constraint_constructor() function
+    """
+    return(self.f_design_constraint_constructor)
 
   def get_constraint(self):
     """ return the current applied constraint in a dictionary
@@ -199,6 +218,7 @@ class bare_design:
     self.A_figures = figs
     self.figure_heights = fig_heights
     #print("dbg191: self.A_figures.keys():", self.A_figures.keys())
+    return((self.A_figures, self.figure_heights))
 
   def get_A_figure(self, figure_names=[]):
     """ generate the figures listed by figure_names and return a merge of these figures
@@ -253,6 +273,7 @@ class bare_design:
     (assembly_conf, slice3d_conf) = self.f_3d_constructor(self.constraint)
     self.assembly_configurations = assembly_conf
     self.slice3d_configurations = slice3d_conf
+    return((self.assembly_configurations, self.slice3d_configurations))
 
   def complete_assembly_conf(self, partial_conf):
     """ prepare an assembly_conf and in particular generate the required outline-figures
@@ -617,11 +638,14 @@ cube volume:    \t{:0.3f} (mm3)
   my_cube = cube(mcc) # create a cube
   my_cube.apply_cli("--length 50") # modify constraint via the cli
   my_cube.apply_constraint(mcc) # modify constraint via a dictionary
+  my_cube.apply_external_constraint(mcc) # modify constraint via a dictionary without error on unknow constraint
   # 1: display the outline
   my_cube.outline_display() # display the outline in a Tk-window
   # 2: alternative to my_cube.outline_display()
   mc_olA = my_cube.get_A_figure([]) # get the outline at the A-format
   mc_olB = my_cube.get_B_figure(['cube_base']) # get the outline at the B-format
+  (mc_figs, mc_heights) = my_cube.apply_2d_constructor() # get dictionaries for 2d-figures and heights
+  (mc_assembly, mc_slice_xyz) = my_cube.apply_3d_constructor() # get dictionaries for 3d-assembly-configuration and slice_xyz
   mc_info = my_cube.get_info() # get the text info
   mc_constraint = my_cube.get_constraint() # get the interenal dictionary
   outline_backends.figure_simple_display(mc_olB, design_output.ideal_figure(mc_olA,"cube_overlay"), mc_info) # display the outline in a Tk-window

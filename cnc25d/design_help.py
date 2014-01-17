@@ -83,6 +83,14 @@ def mkdir_p(ai_directory):
         raise
   return(r_status)
 
+def interpretor_is_freecad():
+  """ check is the script is run within FreeCAD
+  """
+  r = False
+  if(sys.argv[0]=='freecad'):
+    r = True
+  return(r)
+
 def get_effective_args(ai_default_args):
   """ Find the args to be processed by the parser.
       Use sys.argv, but if empty then use ai_default_args
@@ -92,10 +100,10 @@ def get_effective_args(ai_default_args):
   # You can not use argparse and FreeCAD together, so it's actually useless !
   # Running this script, FreeCAD will just use the argparse default values
   arg_index_offset=0
-  if(sys.argv[0]=='freecad'): # check if the script is used by freecad
+  if(interpretor_is_freecad()): # check if the script is run by freecad
     arg_index_offset=1
     if(len(sys.argv)>=2):
-      if(sys.argv[1]=='-c'): # check if the script is used by freecad -c
+      if(sys.argv[1]=='-c'): # check if the script is run by freecad -c
         arg_index_offset=2
   r_effective_args = sys.argv[arg_index_offset+1:]
   if(len(r_effective_args)==0):

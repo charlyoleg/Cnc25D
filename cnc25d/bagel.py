@@ -196,12 +196,12 @@ def bagel_2d_construction(c):
   ib_ol_A.append((-1*cut_x1, cut_y, 0))
   ib_ol_A.append((0.0, c['bagel_axle_radius'], cut_x1, cut_y, 0))
   ib_ol_A.append((cut_x2, cut_y, 0))
-  ib_ol = cnc25d_api.cnc_cut_outline(ib_ol_A, "internal_bagel_ol")
+  #ib_ol = cnc25d_api.cnc_cut_outline(ib_ol_A, "internal_bagel_ol")
   # figure construction
   ib_figure = []
-  ib_figure.append(ib_ol)
+  ib_figure.append(ib_ol_A)
   ib_figure_2 = []
-  ib_figure_2.append(ib_ol)
+  ib_figure_2.append(ib_ol_A)
   if(c['axle_hole_nb']>0):
     a_step = math.pi/c['axle_hole_nb']
     for i in range(c['axle_hole_nb']/2):
@@ -375,8 +375,9 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bagel.py says hello!\n")
   my_bagel = bagel()
   my_bagel.allinone()
-  #my_bagel.apply_cli("--bagel_extra_cut_thickness 1.0")
-  #my_bagel.outline_display()
-  #Part.show(my_bagel.get_fc_obj('bagel_assembly_conf1'))
+  if(cnc25d_api.interpretor_is_freecad()):
+    my_bagel.apply_cli("--bagel_extra_cut_thickness 1.0")
+    #my_bagel.outline_display()
+    Part.show(my_bagel.get_fc_obj('bagel_assembly_conf1'))
 
 
