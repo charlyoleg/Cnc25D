@@ -22,6 +22,7 @@ Contents:
    cnc25d_api_working_with_freecad
    place_plank_details
    cnc25d_internals
+   creating_cnc25d_design
    cnc25d_designs
    cnc25d_design_details
    box_wood_frame_design

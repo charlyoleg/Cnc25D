@@ -93,8 +93,6 @@ The sources of the Sphinx_ documentation are only the *reStructuredText* files (
 .. _Inkscape : http://inkscape.org/
 .. _Sphinx : http://sphinx-doc.org/
 
-Design example recommendations
-==============================
 
 
 
