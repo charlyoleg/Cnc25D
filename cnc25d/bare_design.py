@@ -56,10 +56,11 @@ class bare_design:
     # optional attributes
     self.f_constraint_check = None # highly recommended
     self.f_3d_constructor = None
-    self.f_simulation_2d = None
+    self.simulation_2d_pts = {}
     self.f_return_type = None
-    self.self_tests = None
+    self.self_tests = []
     self.display_2d_figure_list = []
+    self.default_simulation = ''
     self.write_2d_figure_list = []
     self.write_3d_figure_list = []
     self.write_3d_conf_list = []
@@ -91,10 +92,10 @@ class bare_design:
     """
     self.f_2d_constructor = f_2d_constructor
 
-  def set_2d_simulation(self, f_simulation_2d=None):
-    """ bind the function f_simulation_2d that runs 2D-simulation in a Tk-window
+  def set_2d_simulation(self, simulations={}):
+    """ set the dictionary that points to Tk-window-2D-simulation functions
     """
-    self.f_simulation_2d = f_simulation_2d
+    self.simulation_2d_pts = simulations
 
   def set_3d_constructor(self, f_3d_constructor):
     """ bind the function f_3d_constructor that generates the 3D assembly and returns them in a dictionary
@@ -111,6 +112,11 @@ class bare_design:
         If the list is empty, all 2D-figures will be display in Tk-windows
     """
     self.display_2d_figure_list = figure_list
+
+  def set_default_simulation(self, sim_id=''):
+    """ set the default action to the design-2D-simulation sim_id
+    """
+    self.default_simulation = sim_id
 
   def set_2d_figure_file_list(self, figure_list=[]):
     """ set the list of figures to be written in SVG or DXF files
@@ -135,7 +141,7 @@ class bare_design:
     """
     self.f_return_type = f_return_type
 
-  def set_self_test(self, self_tests):
+  def set_self_test(self, self_tests=[]):
     """ set the list of cli_string used as tests
     """
     self.self_tests = self_tests
@@ -256,7 +262,7 @@ class bare_design:
       figs = self.A_figures.keys()
     for f in figs:
       if(not f in self.A_figures.keys()):
-        print("ERR232: Error, fig {:s} is not an existing 2d-figures {:s}".format(fig, ' '.join(self.A_figures.keys())))
+        print("ERR232: Error, fig {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
         sys.exit(2)
       fig = self.A_figures[f]
       d_info = "display_{:s}".format(f)
@@ -361,10 +367,27 @@ class bare_design:
       confs = self.assembly_configurations.keys()
     for a in confs:
       if(not a in self.assembly_configurations.keys()):
-        print("ERR336: Error, a {:s} is not an existing 3d-assembly-configurations {:s}".format(f, ' '.join(self.assembly_configurations.keys())))
+        print("ERR336: Error, a {:s} is not an existing 3d-assembly-configurations {:s}".format(a, ' '.join(self.assembly_configurations.keys())))
         sys.exit(2)
       # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
       design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), True, False, self.slice3d_configurations[a]) 
+
+  def run_simulation(self, sim_id=''):
+    """ run the simulation sim_id
+    """
+    if(self.simulation_2d_pts=={}):
+      print("ERR268: Error, no simulation function is provided. Can't run 2d-simulate {:s}".format(sim_id))
+      sys.exit(2)
+    if(sim_id==''):
+      sim_id = self.simulation_2d_pts.keys()[0]
+    if(not sim_id in self.simulation_2d_pts.keys()):
+      print("ERR382: Error, the simulation id {:s} does not exist in the list {:s}".format(sim_id, ' '.join(self.simulation_2d_pts.keys())))
+      sys.exit(2)
+    #print("dbg386: run simulation:", sim_id)
+    #self.simulation_2d_pts[sim_id](self.constraint) # writing correct but too compact for my eyes ;)
+    f_simulation = self.simulation_2d_pts[sim_id]
+    f_simulation(self.constraint)
+    #print("dbg390: f_simulation:", f_simulation)
 
   def apply_cli_with_output_options(self, cli_str=""):
     """ check the argument-output-options and then call apply_cli()
@@ -406,13 +429,17 @@ class bare_design:
           self.write_assembly_brep(output_file_basename)
     # run simulation
     if(oo_args.sw_simulate_2d!=''):
-      if(self.f_simulation_2d==None):
-        print("ERR268: Error, no simulation function is provided. Can't apply simulate_2d {:s}".format(oo_args.sw_simulate_2d))
-        sys.exit(2)
-      self.f_simulation_2d(oo_args.sw_simulate_2d)
+      self.run_simulation(oo_args.sw_simulate_2d)
     # display 2D-figures (the default action)
-    if(oo_args.sw_display_2d_figures or ((oo_args.sw_output_file_basename=='')and(oo_args.sw_simulate_2d==''))):
+    if(oo_args.sw_display_2d_figures):
       self.outline_display()
+    # default action
+    if((not oo_args.sw_display_2d_figures)and(oo_args.sw_output_file_basename=='')and(oo_args.sw_simulate_2d=='')): # nothing done
+      #print("dbg434: default action. self.default_simulation:", self.default_simulation)
+      if(self.default_simulation!=''):
+        self.run_simulation(self.default_simulation)
+      else:
+        self.outline_display()
     # select the return value of the function allinone
     r_allinone = 1
     if(oo_args.sw_return_type!=''):
@@ -425,7 +452,7 @@ class bare_design:
   def run_self_test(self):
     """ run the design-self-test
     """
-    if(self.self_tests==None):
+    if(self.self_tests==[]):
       print("ERR322: Error, the self_tests list has not been set!")
       sys.exit(2)
     for i in range(len(self.self_tests)):
@@ -595,6 +622,19 @@ cube volume:    \t{:0.3f} (mm3)
 """.format(c['length']*c['width'], c['length']*c['width']*c['height'])
     return(r_txt)
 
+  def cube_simulation_A(c):
+    """ dummy simulation for the cube
+    """
+    print("Hi! This is the dummy cube simulation ...")
+    return(1)
+
+  def cube_simulations():
+    """ provide the dictionary that points to the simulation functions
+    """
+    r_sim = {}
+    r_sim['sim_A'] = cube_simulation_A
+    return(r_sim)
+
   def cube_self_test():
     """ set the self_tests for the cube design
     """
@@ -616,10 +656,11 @@ cube volume:    \t{:0.3f} (mm3)
       self.set_constraint_constructor(cube_constraint_constructor)
       self.set_constraint_check(cube_constraint_check)
       self.set_2d_constructor(cube_figures)
-      self.set_2d_simulation()
+      self.set_2d_simulation(cube_simulations())
       self.set_3d_constructor(cube_3d)
       self.set_info(cube_info)
       self.set_display_figure_list()
+      self.set_default_simulation()
       self.set_2d_figure_file_list()
       self.set_3d_figure_file_list()
       self.set_3d_conf_file_list()
@@ -647,7 +688,6 @@ cube volume:    \t{:0.3f} (mm3)
   (mc_figs, mc_heights) = my_cube.apply_2d_constructor() # get dictionaries for 2d-figures and heights
   (mc_assembly, mc_slice_xyz) = my_cube.apply_3d_constructor() # get dictionaries for 3d-assembly-configuration and slice_xyz
   mc_info = my_cube.get_info() # get the text info
-  mc_constraint = my_cube.get_constraint() # get the interenal dictionary
   outline_backends.figure_simple_display(mc_olB, design_output.ideal_figure(mc_olA,"cube_overlay"), mc_info) # display the outline in a Tk-window
   # 3: get the freecad-object
   mc_3d = my_cube.get_fc_obj()
@@ -657,12 +697,21 @@ cube volume:    \t{:0.3f} (mm3)
   my_cube.write_figure_dxf("test_output/bdt1")
   my_cube.write_figure_brep("test_output/bdt1")
   my_cube.write_assembly_brep("test_output/bdt1")
-  # 5: run the cube self tests
+  # 5: other stuff
+  mc_constraint = my_cube.get_constraint() # get the interenal dictionary
+  my_cube.run_simulation('')
+  # 6: run the cube self tests
   my_cube.run_self_test()
-  # 6: dump constraint-file
+  # 7: dump constraint-file
   my_cube.dump_constraint_file("test_output/bd_constraint.py")
-  # 7: backward compatibility
+  # 8: backward compatibility
   my_old_cube = my_cube.allinone("--length 15.0 --width 10.0 --smooth_radius 3.0 --output_file_basename test_output/bd_allinone.dxf")
+  # 9: convenient for inheritance
+  my_cube.get_constraint_constructor()
+  ic = my_cube.apply_external_constraint(mcc)
+  (mc_figs, mc_heights) = my_cube.apply_2d_constructor()
+  (mc_assembly, mc_slice_xyz) = my_cube.apply_3d_constructor()
+  mc_info = my_cube.get_info()
   
 ################################################################
 # bare_desin test command line interface

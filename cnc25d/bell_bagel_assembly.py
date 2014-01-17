@@ -153,10 +153,10 @@ def bba_constraint_check(c):
     sys.exit(2)
   c['axle_external_diameter'] = 2*c['axle_external_radius']
   ### sub-design check
-  i_bell = inherit_bell(c)
-  c.update(i_bell.apply_external_constraint(c))
-  i_bagel = inherit_bagel(c)
-  c.update(i_bagel.apply_external_constraint(c))
+  #i_bell = inherit_bell(c)
+  #c.update(i_bell.apply_external_constraint(c))
+  #i_bagel = inherit_bagel(c)
+  #c.update(i_bagel.apply_external_constraint(c))
   ### additional internal contraint/parameters
   c['bagel_z'] = c['base_thickness'] + c['bell_face_height'] + c['leg_length']
   return(c)
