@@ -6,6 +6,7 @@ Release 0.1.10
 --------------
 Released on 2014-01-31
 
+* refactoring/standardizing the designs with bare_design
 * gearlever
 * epicyclic-gearing optimization for 3D printer
 
