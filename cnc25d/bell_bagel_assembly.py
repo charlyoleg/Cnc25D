@@ -276,7 +276,7 @@ def bba_info(c):
   r_info += i_bell.get_info()
   # inherit from bagel
   i_bagel = inherit_bagel(c)
-  r_info = i_bagel.get_info()
+  r_info += i_bagel.get_info()
   #
   return(r_info)
 

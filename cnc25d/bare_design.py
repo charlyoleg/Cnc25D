@@ -210,7 +210,7 @@ class bare_design:
     if(self.f_info==None):
       print("ERR160: Error, the function f_info has not been set!")
       sys.exit(2)
-    r_txt = "DESIGN INFO for {:s}\n{:s}\n".format(self.design_name, self.cli_str)
+    r_txt = "\nDESIGN INFO for {:s}\n{:s}\n".format(self.design_name, self.cli_str)
     r_txt += "{:s}".format(self.f_info(self.constraint))
     return(r_txt)
 
