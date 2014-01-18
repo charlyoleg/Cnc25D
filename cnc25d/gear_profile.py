@@ -796,14 +796,16 @@ def gear_profile_3d_construction(c):
   """
   # conf1
   gp_assembly_conf1 = []
-  gp_assembly_conf1.append(('first_gear',  0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xz', 0.0, 0.0, 0.0))
-  gp_assembly_conf1.append(('second_gear', 0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xz', 0.0, 0.0, 0.0))
+  gp_assembly_conf1.append(('first_gear',  0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xy', 0.0, 0.0, 0.0))
+  gp_assembly_conf1.append(('second_gear', 0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xy', 0.0, 0.0, 0.0))
   #
   r_assembly = {}
   r_slice = {}
 
   r_assembly['gp_assembly_conf1'] = gp_assembly_conf1
-  r_slice['gp_assembly_conf1'] = (0,0,0, 0,0,0, [c['gear_profile_height']/2.0], [], [])
+  fgr = c['gear_module']*(c['gear_tooth_nb']+2)/2.0 # first gear radius
+  hh = c['gear_profile_height']/2.0 # half-height
+  r_slice['gp_assembly_conf1'] = (2*fgr,2*fgr,c['gear_profile_height'], c['center_position_x']-fgr,c['center_position_y']-fgr,0.0, [hh], [], [])
   #
   return((r_assembly, r_slice))
 
@@ -1133,6 +1135,6 @@ if __name__ == "__main__":
   #my_gp.allinone("--gear_tooth_nb 17 --cut_portion 7 3 3 --output_file_basename gear_profile_example_2.svg")
   #my_gp.allinone("--gear_tooth_nb 20 --gear_force_angle {:0.3f} --gear_force_angle_n {:0.3f} --output_file_basename gear_profile_example_3.svg".format(25*math.pi/180, 35*math.pi/180,))
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_gp.get_fc_obj('gear_profile_3dconf1'))
+    Part.show(my_gp.get_fc_obj('gp_assembly_conf1'))
 
 

@@ -370,7 +370,7 @@ class bare_design:
         print("ERR336: Error, a {:s} is not an existing 3d-assembly-configurations {:s}".format(a, ' '.join(self.assembly_configurations.keys())))
         sys.exit(2)
       # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
-      design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), True, False, self.slice3d_configurations[a]) 
+      design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=False, ai_slice_xyz=self.slice3d_configurations[a]) 
 
   def run_simulation(self, sim_id=''):
     """ run the simulation sim_id

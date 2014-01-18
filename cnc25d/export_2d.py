@@ -160,11 +160,13 @@ def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_lis
       l_gauge_max = ai_size_x
     l_pos_x = 0
     for l_depth in l_depth_list:
+      #print("dbg163: l_shift_x l_space l_gauge_max l_depth l_pos_x l_pos_y", l_shift_x, l_space, l_gauge_max, l_depth, l_pos_x, l_pos_y)
       l_slice_list.extend(draw_gauge(l_shift_x, l_space/2.0, l_gauge_max, l_depth, l_pos_x, l_pos_y))
       l_pos_x += l_shift_x+2*l_space
       ll_depth = l_depth
       if(lo=='xz'):
         ll_depth = ai_size_y-l_depth
+      #print("dbg168: ll_depth:", ll_depth)
       l_slice_list.extend(l_solid.slice(vec_z_unit, ll_depth))
       l_solid.translate(Base.Vector(l_shift_x+2*l_space,0,0))
   l_slice = Part.makeCompound(l_slice_list)
