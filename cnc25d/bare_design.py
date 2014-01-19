@@ -203,7 +203,7 @@ class bare_design:
     """ return the current applied constraint in a dictionary
     """
     return(self.constraint)
-
+    
   def get_info(self):
     """ generate the design info
     """
@@ -389,21 +389,71 @@ class bare_design:
     f_simulation(self.constraint)
     #print("dbg390: f_simulation:", f_simulation)
 
+  def list_2d_figures(self):
+    """ list the IDs of the 2D-figures
+    """
+    (figs, height) = self.apply_2d_constructor()
+    fig_ids = figs.keys()
+    print("{:s} 2D-figures:".format(self.design_name))
+    if(len(fig_ids)==0):
+      print("No 2D-figures")
+    else:
+      for i in range(len(fig_ids)):
+        print("{:02d} : {:s}".format(i, fig_ids[i]))
+    return(fig_ids)
+
+  def list_2d_simulations(self):
+    """ list the IDs of the 2D-simulations
+    """
+    sim_ids = self.simulation_2d_pts.keys()
+    print("{:s} 2D-simulations:".format(self.design_name))
+    if(len(sim_ids)==0):
+      print("No 2D-simulation")
+    else:
+      for i in range(len(sim_ids)):
+        print("{:02d} : {:s}".format(i, sim_ids[i]))
+    return(sim_ids)
+
+  def list_assembly_3dconf(self):
+    """ list the IDs of the assembly_3dconf
+    """
+    self.apply_3d_constructor()
+    assembly_ids = self.assembly_configurations.keys()
+    print("{:s} assembly_3dconf:".format(self.design_name))
+    if(len(assembly_ids)==0):
+      print("No assembly_3dconf")
+    else:
+      for i in range(len(assembly_ids)):
+        print("{:02d} : {:s}".format(i, assembly_ids[i]))
+    return(assembly_ids)
+
   def apply_cli_with_output_options(self, cli_str=""):
     """ check the argument-output-options and then call apply_cli()
         The argument-output-options are: output_file_basename, simulate_2d, display_2d_figures, return_type
     """
+    # default simulation ID
+    default_sim_id = ''
+    if(len(self.simulation_2d_pts)>0):
+      default_sim_id = self.simulation_2d_pts.keys()[0]
+      #print("dbg438: default_sim_id:", default_sim_id)
+    #
     effective_args = cli_str.split()
     effective_args_in_txt = "{:s} cli_with_output_file_basename string: ".format(self.design_name) + ' '.join(effective_args)
     cwoo_parser = argparse.ArgumentParser(description='Command Line Interface of {:s} with output_file_basename'.format(self.design_name))
     cwoo_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
       help="If not  the empty_string (the default value), it outputs the (first) gear in file(s) depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, no-extension uses FreeCAD and you get .brep and .dxf")
-    cwoo_parser.add_argument('--simulate_2d','--s2d', action='store', default='', dest='sw_simulate_2d',
+    cwoo_parser.add_argument('--simulate_2d','--s2d', action='store', nargs='?', const=default_sim_id, default='', dest='sw_simulate_2d',
       help="run a 2D-simualtion in a Tk-window")
     cwoo_parser.add_argument('--display_2d_figures','--d2f', action='store_true', default=False, dest='sw_display_2d_figures',
       help="display in Tk-window all the 2D-figures of the design")
     cwoo_parser.add_argument('--return_type', '--rt', action='store', default='', dest='sw_return_type',
       help="select the object to be returned by the function allinone. Depreciated! Use rather the appropriate methods")
+    cwoo_parser.add_argument('--list_2d_figures','--l2f', action='store_true', default=False, dest='sw_list_2d_figures',
+      help="List the 2D-figures of the design")
+    cwoo_parser.add_argument('--list_2d_simulation','--l2s', action='store_true', default=False, dest='sw_list_2d_simulations',
+      help="List the 2D-simulations of the design")
+    cwoo_parser.add_argument('--list_assembly_3dconf','--la3c', action='store_true', default=False, dest='sw_list_assembly_3dconf',
+      help="List the assembly_3dconf of the design")
     #print("dbg363: effective_args:", effective_args)
     if(('-h' in effective_args)or('--help' in effective_args)):
       cwoo_parser.print_help()
@@ -429,12 +479,20 @@ class bare_design:
           self.write_assembly_brep(output_file_basename)
     # run simulation
     if(oo_args.sw_simulate_2d!=''):
+      #print("dbg482: oo_args.sw_simulate_2d:", oo_args.sw_simulate_2d)
       self.run_simulation(oo_args.sw_simulate_2d)
     # display 2D-figures (the default action)
     if(oo_args.sw_display_2d_figures):
       self.outline_display()
+    # list IDs
+    if(oo_args.sw_list_2d_figures):
+      self.list_2d_figures()
+    if(oo_args.sw_list_2d_simulations):
+      self.list_2d_simulations()
+    if(oo_args.sw_list_assembly_3dconf):
+      self.list_assembly_3dconf()
     # default action
-    if((not oo_args.sw_display_2d_figures)and(oo_args.sw_output_file_basename=='')and(oo_args.sw_simulate_2d=='')): # nothing done
+    if((not oo_args.sw_display_2d_figures)and(oo_args.sw_output_file_basename=='')and(oo_args.sw_simulate_2d=='')and(not oo_args.sw_list_2d_figures)and(not oo_args.sw_list_2d_simulations)and(not oo_args.sw_list_assembly_3dconf)): # nothing done
       #print("dbg434: default action. self.default_simulation:", self.default_simulation)
       if(self.default_simulation!=''):
         self.run_simulation(self.default_simulation)
