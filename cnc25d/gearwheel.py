@@ -317,7 +317,7 @@ def gearwheel_constraint_check(c):
 ################################################################
 
 def marked_circle_crenel(ai_x, ai_y, ai_radius, ai_orientation, ai_router_bit_radius, ai_mark_type=2):
-  """ generate the B-outline of a marked circle-crenel, centered on (ai_x, ai_y) and with the orientation ai_orientation
+  """ generate the A-outline of a marked circle-crenel, centered on (ai_x, ai_y) and with the orientation ai_orientation
   """
   if(ai_mark_type==0):
     r_mcc = (ai_x, ai_y, ai_radius)
@@ -327,14 +327,16 @@ def marked_circle_crenel(ai_x, ai_y, ai_radius, ai_orientation, ai_router_bit_ra
     A_mcc.append((ai_x+math.sqrt(2)*ai_radius*math.cos(ai_orientation-0*math.pi/4), ai_y+math.sqrt(2)*ai_radius*math.sin(ai_orientation-0*math.pi/4), ai_router_bit_radius))
     A_mcc.append((ai_x+ai_radius*math.cos(ai_orientation+math.pi/4), ai_y+ai_radius*math.sin(ai_orientation+math.pi/4), 0))
     A_mcc.append((ai_x+ai_radius*math.cos(ai_orientation+math.pi), ai_y+ai_radius*math.sin(ai_orientation+math.pi), ai_x+ai_radius*math.cos(ai_orientation-math.pi/4), ai_y+ai_radius*math.sin(ai_orientation-math.pi/4), 0))
-    r_mcc = cnc25d_api.cnc_cut_outline(A_mcc, "marked_circle_crenel")
+    #r_mcc = cnc25d_api.cnc_cut_outline(A_mcc, "marked_circle_crenel")
+    r_mcc = A_mcc
   elif(ai_mark_type==2):
     A_mcc = []
     A_mcc.append((ai_x+ai_radius*math.cos(-math.pi/2), ai_y+ai_radius*math.sin(-math.pi/2), 0))
     A_mcc.append((ai_x+(1+math.sqrt(2))*ai_radius, ai_y-ai_radius, ai_router_bit_radius))
     A_mcc.append((ai_x+ai_radius*math.cos(math.pi/4), ai_y+ai_radius*math.sin(math.pi/4), 0))
     A_mcc.append((ai_x+ai_radius*math.cos(math.pi), ai_y+ai_radius*math.sin(math.pi), A_mcc[0][0], A_mcc[0][1], 0))
-    r_mcc = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_rotate(A_mcc, ai_x, ai_y, ai_orientation), "marked_circle_crenel")
+    #r_mcc = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_rotate(A_mcc, ai_x, ai_y, ai_orientation), "marked_circle_crenel")
+    r_mcc = cnc25d_api.outline_rotate(A_mcc, ai_x, ai_y, ai_orientation)
   else:
     print("ERR182: Error, ai_mark_type {:d} doesn't exist".format(ai_mark_type))
     sys.exit(2)
@@ -352,7 +354,6 @@ def gearwheel_2d_construction(c):
   radian_epsilon = math.pi/1000
   ### axle
   axle_figure = []
-  axle_figure_overlay = []
   if(c['axle_type']=='circle'):
     if(not c['crenel_axle_merge']):
       axle_figure.append([c['g1_ix'], c['g1_iy'], c['axle_radius']])
@@ -388,8 +389,7 @@ def gearwheel_2d_construction(c):
         axle_A.extend(cnc25d_api.outline_rotate(crenel_A_selected, c['g1_ix'], c['g1_iy'], i*c['crenel_portion_angle']))
       axle_A[-1] = (axle_A[-1][0], axle_A[-1][1], axle_A[0][0], axle_A[0][1], 0)
       axle_A_rotated = cnc25d_api.outline_rotate(axle_A, c['g1_ix'], c['g1_iy'], c['crenel_angle'])
-      axle_figure.append(cnc25d_api.cnc_cut_outline(axle_A_rotated, "axle_and_crenel"))
-      axle_figure_overlay.append(cnc25d_api.ideal_outline(axle_A_rotated, "axle_and_crenel"))
+      axle_figure.append(axle_A_rotated)
   elif(c['axle_type']=='rectangle'):
     axle_A = [
       [c['g1_ix']-c['axle_x_width']/2.0, c['g1_iy']-c['axle_y_width']/2.0, -1*c['axle_rbr']],
@@ -397,8 +397,7 @@ def gearwheel_2d_construction(c):
       [c['g1_ix']+c['axle_x_width']/2.0, c['g1_iy']+c['axle_y_width']/2.0, -1*c['axle_rbr']],
       [c['g1_ix']-c['axle_x_width']/2.0, c['g1_iy']+c['axle_y_width']/2.0, -1*c['axle_rbr']]]
     axle_A = cnc25d_api.outline_close(axle_A)
-    axle_figure.append(cnc25d_api.cnc_cut_outline(axle_A, "axle_A"))
-    axle_figure_overlay.append(cnc25d_api.ideal_outline(axle_A, "axle_A"))
+    axle_figure.append(axle_A)
 
   ### crenel
   #crenel_template
@@ -424,8 +423,7 @@ def gearwheel_2d_construction(c):
       template_crenel = cnc25d_api.outline_close(template_crenel)
       for i in range(c['crenel_number']):
         crenel_A = cnc25d_api.outline_rotate(template_crenel, c['g1_ix'], c['g1_iy'], c['crenel_angle']+i*c['crenel_portion_angle'])
-        axle_figure.append(cnc25d_api.cnc_cut_outline(crenel_A, "crenel_A"))
-        axle_figure_overlay.append(cnc25d_api.ideal_outline(crenel_A, "crenel_A"))
+        axle_figure.append(crenel_A)
     elif(c['crenel_type']=='circle'):
       for i in range(c['crenel_number']):
         ta = c['crenel_angle']+i*c['crenel_portion_angle']
@@ -437,7 +435,6 @@ def gearwheel_2d_construction(c):
 
   ### wheel hollow (a.k.a legs)
   wheel_hollow_figure = []
-  wheel_hollow_figure_overlay = []
   if(c['wheel_hollow_leg_number']>0):
     wh_angle = 2*math.pi/c['wheel_hollow_leg_number']
     wh_leg_top_angle1 = math.asin(float(c['wheel_hollow_leg_width']/2.0+c['wheel_hollow_rbr'])/(c['wheel_hollow_external_radius']-c['wheel_hollow_rbr']))
@@ -482,11 +479,8 @@ def gearwheel_2d_construction(c):
         [wh_bottom3_x, wh_bottom3_y, c['wheel_hollow_rbr']],
         [wh_bottom2_x, wh_bottom2_y, wh_bottom1_x, wh_bottom1_y, c['wheel_hollow_rbr']]]
     wh_outline_A = cnc25d_api.outline_close(wh_outline_A)
-    wh_outline_B = cnc25d_api.cnc_cut_outline(wh_outline_A, "wheel_hollow")
-    wh_outline_B_ideal = cnc25d_api.ideal_outline(wh_outline_A, "wheel_hollow")
     for i in range(c['wheel_hollow_leg_number']):
-      wheel_hollow_figure.append(cnc25d_api.outline_rotate(wh_outline_B, c['g1_ix'], c['g1_iy'], i*wh_angle))
-      wheel_hollow_figure_overlay.append(cnc25d_api.outline_rotate(wh_outline_B_ideal, c['g1_ix'], c['g1_iy'], i*wh_angle))
+      wheel_hollow_figure.append(cnc25d_api.outline_rotate(wh_outline_A, c['g1_ix'], c['g1_iy'], i*wh_angle))
 
 
   ### design output
@@ -498,10 +492,6 @@ def gearwheel_2d_construction(c):
     gw_figure.append((c['g1_ix'], c['g1_iy'], float(c['gear_primitive_diameter'])/2))
   gw_figure.extend(axle_figure)
   gw_figure.extend(wheel_hollow_figure)
-  # ideal_outline in overlay
-  gw_figure_overlay = []
-  gw_figure_overlay.extend(axle_figure_overlay)
-  gw_figure_overlay.extend(wheel_hollow_figure_overlay)
   ###
   r_figures = {}
   r_height = {}

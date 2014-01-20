@@ -333,7 +333,6 @@ def gearring_2d_construction(c):
   ### precision
   radian_epsilon = math.pi/1000
   ### holder outline
-  holder_figure_overlay = []
   if(c['holder_crenel_number']==0):
     holder_outline = (c['g1_ix'], c['g1_iy'], c['holder_radius'])
   elif(c['holder_crenel_number']>0):
@@ -356,8 +355,7 @@ def gearring_2d_construction(c):
       holder_A.append([c['g1_ix']+c['holder_radius']*math.cos(middle_angle), c['g1_iy']+c['holder_radius']*math.sin(middle_angle),
                         c['g1_ix']+c['holder_radius']*math.cos(end_angle), c['g1_iy']+c['holder_radius']*math.sin(end_angle), c['holder_smoothing_radius_list'][i+1]])
     holder_A[-1] = [holder_A[-1][0], holder_A[-1][1], holder_A[0][0], holder_A[0][1], 0]
-    holder_outline = cnc25d_api.cnc_cut_outline(holder_A, "holder_A")
-    holder_figure_overlay.append(cnc25d_api.ideal_outline(holder_A, "holder_A"))
+    holder_outline = holder_A
   ### holder-hole outline
   holder_hole_figure = []
   for i in range(c['holder_crenel_number']):
@@ -387,9 +385,6 @@ def gearring_2d_construction(c):
   else:
     gr_figure.append((c['g1_ix'], c['g1_iy'], float(c['gear_primitive_diameter'])/2))
   gr_figure.extend(holder_hole_figure)
-  # ideal_outline in overlay
-  gr_figure_overlay = []
-  gr_figure_overlay.extend(holder_figure_overlay)
   ###
   r_figures = {}
   r_height = {}
@@ -505,7 +500,7 @@ def gearring_self_test():
     ["no tooth"         , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --holder_diameter 120.0 --cnc_router_bit_radius 2.0 --holder_crenel_number 7"],
     ["no holder-hole"   , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 20.0 --cnc_router_bit_radius 2.0 --holder_hole_diameter 0.0"],
     ["no crenel"        , "--gear_tooth_nb 29 --gear_module 10 --holder_diameter 340.0 --holder_crenel_width 20.0 --holder_crenel_number 0"],
-    ["marked holder-hole" , "--gear_tooth_nb 33 --gear_module 10 --holder_crenel_number 8 --holder_hole_mark_nb 1 --holder_hole_diameter 14"],
+    ["marked holder-hole" , "--gear_tooth_nb 33 --gear_module 10 --holder_crenel_number 8 --holder_hole_mark_nb 1 --holder_hole_diameter 14.0 --holder_crenel_position 10.0"],
     ["double hole only" , "--gear_tooth_nb 37 --gear_module 10 --holder_crenel_number 8 --holder_double_hole_mark_nb 2 --holder_double_hole_diameter 6.0 --holder_double_hole_length 12.0 --holder_hole_diameter 0.0"],
     ["single and double hole" , "--gear_tooth_nb 37 --gear_module 10 --holder_crenel_number 8 --holder_double_hole_mark_nb 3 --holder_double_hole_diameter 4.0 --holder_double_hole_length 20.0 --holder_hole_diameter 8.0 --holder_double_hole_position 4.0"],
     ["small crenel"     , "--gear_tooth_nb 30 --gear_module 10 --holder_diameter 360.0 --holder_crenel_width 20.0 --holder_crenel_number 1 --holder_hole_diameter 0.0 --holder_crenel_position 0.0 --holder_crenel_height 5.0"],
