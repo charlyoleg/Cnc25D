@@ -70,9 +70,10 @@ def inherit_gear_profile(c={}):
   #gp_c['gear_router_bit_radius'] = c['gear_router_bit_radius']
   gp_c['gearbar_slope'] = 0
   gp_c['gearbar_slope_n'] = 0
-  gp_c['portion_tooth_nb'] = 0
-  gp_c['portion_first_end'] = 0
-  gp_c['portion_last_end'] = 0
+  #gp_c['portion_tooth_nb'] = 0
+  #gp_c['portion_first_end'] = 0
+  #gp_c['portion_last_end'] = 0
+  gp_c['cut_portion'] = [0, 0, 0]
   r_obj = gear_profile.gear_profile()
   r_obj.apply_external_constraint(gp_c)
   return(r_obj)

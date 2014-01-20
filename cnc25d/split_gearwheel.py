@@ -66,9 +66,10 @@ def inherit_gear_profile(c={}):
   gp_c = c.copy()
   gp_c['gear_type'] = 'e'
   #gp_c['gear_router_bit_radius'] = c['gear_router_bit_radius']
-  gp_c['portion_tooth_nb'] = 0
-  gp_c['portion_first_end'] = 0
-  gp_c['portion_last_end'] = 0
+  #gp_c['portion_tooth_nb'] = 0
+  #gp_c['portion_first_end'] = 0
+  #gp_c['portion_last_end'] = 0
+  gp_c['cut_portion'] = [0, 0, 0]
   r_obj = gear_profile.gear_profile()
   r_obj.apply_external_constraint(gp_c)
   return(r_obj)
@@ -309,15 +310,18 @@ def split_gearwheel_2d_construction(c):
         sys.exit(2)
       gp_c = c.copy()
       gp_c['gear_type'] = 'e'
-      gp_c['portion_tooth_nb']    = c['portion_gear_tooth_nb'][i]
-      gp_c['portion_first_end']   = c['portion_gear_first_end'][i]
-      gp_c['portion_last_end']    = c['portion_gear_last_end'][i]
+      #gp_c['portion_tooth_nb']    = c['portion_gear_tooth_nb'][i]
+      #gp_c['portion_first_end']   = c['portion_gear_first_end'][i]
+      #gp_c['portion_last_end']    = c['portion_gear_last_end'][i]
+      gp_c['cut_portion'] = [c['portion_gear_tooth_nb'][i], c['portion_gear_first_end'][i], c['portion_gear_last_end'][i]]
       gp_c['gear_initial_angle']  = c['portion_gear_tooth_angle'][i]
       #print("dbg342: gp_c:", gp_c)
       #print("dbg341: gp_c['portion_tooth_nb']: {:d}".format(gp_c['portion_tooth_nb']))
       i_gear_profile = inherit_gear_profile()
       i_gear_profile.apply_external_constraint(gp_c)
       gear_profile_B = i_gear_profile.get_A_figure('first_gear')[0] # gear_profile always return figure at B-format
+      #print("dbg321: gear_profile constraint:", i_gear_profile.get_constraint()['portion_tooth_nb'], c['portion_gear_tooth_nb'][i])
+      #cnc25d_api.figure_simple_display([gear_profile_B], [], "debug gear_profile_B")
       #print("dbg345: trash_gear_profile_parameters:", trash_gear_profile_parameters)
       #print("dbg346: trash_gear_profile_parameters['portion_tooth_nb']: {:d}".format(trash_gear_profile_parameters['portion_tooth_nb']))
       tmp_a = c['split_initial_angle'] + (i+2.0)*c['portion_angle']
@@ -528,7 +532,7 @@ def split_gearwheel_self_test():
     ["split style line"     , "--gear_tooth_nb 30 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --low_split_type line --split_nb 2"],
     ["split style addendum" , "--gear_tooth_nb 41 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --high_split_type a --split_nb 10"],
     ["split initial angle"  , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --split_initial_angle 0.1 --gear_initial_angle 0.15"],
-    ["gear simulation"      , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --simulation_enable --second_gear_tooth_nb 19"],
+    ["gear simulation"      , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --simulate_2d --second_gear_tooth_nb 19"],
     ["output file"          , "--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2 --output_file_basename test_output/split_gearwheel_self_test.dxf"],
     ["last test"            , "--gear_tooth_nb 24 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0"]]
   return(r_tests)
