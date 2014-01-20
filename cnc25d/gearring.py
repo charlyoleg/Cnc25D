@@ -330,8 +330,6 @@ def gearring_2d_construction(c):
   """
   construct the 2D-figures with outlines at the A-format for the gearring design
   """
-  ### precision
-  radian_epsilon = math.pi/1000
   ### holder outline
   if(c['holder_crenel_number']==0):
     holder_outline = (c['g1_ix'], c['g1_iy'], c['holder_radius'])

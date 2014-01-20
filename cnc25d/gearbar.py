@@ -186,8 +186,6 @@ def gearbar_2d_construction(c):
   """
   construct the 2D-figures with outlines at the A-format for the gearbar design
   """
-  ### precision
-  radian_epsilon = math.pi/1000
   ### gearbar outline
   if(c['gear_tooth_nb']>0):
     i_gear_profile = inherit_gear_profile(c) # inherit from gear_profile

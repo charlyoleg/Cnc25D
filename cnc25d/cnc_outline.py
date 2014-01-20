@@ -90,6 +90,7 @@ def check_outline_format(ai_outline):
       r_outline_type = 2
     else:
       print("ERR457: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
+      #print("dbg093: ai_outline:", ai_outline)
       sys.exit(2)
   else: # circle outline
     if(len(ai_outline)!=3):

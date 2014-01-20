@@ -730,6 +730,8 @@ def gear_profile_constraint_check(c):
   #print("dbg342: g2_param:", g2_param)
   #print("dbg343: sys_param:", sys_param)
   ## end of the construction of the high-level parameters
+  calc_low_level_gear_parameters(g1_param) # weird: calc_low_level_gear_parameters() add some parameters to g1_param that are use by split_gearwheel
+  #
   c['g1_param'] = g1_param
   c['g2_param'] = g2_param
   #c['sys_param'] = sys_param
