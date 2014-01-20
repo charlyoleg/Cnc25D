@@ -423,7 +423,7 @@ def gearwheel_2d_construction(c):
           (c['g1_ix']+c['crenel_radius']+0*c['crenel_height']-0*tmp_l, c['g1_iy']-1*c['crenel_width']/2.0+1*tmp_l, 0*c['crenel_rbr'])]
       template_crenel = cnc25d_api.outline_close(template_crenel)
       for i in range(c['crenel_number']):
-        crenel_A = cnc25d_api.outline_rotate(template_crenel, c['g1_ix'], c['g1_iy'], crenel_angle+i*c['crenel_portion_angle'])
+        crenel_A = cnc25d_api.outline_rotate(template_crenel, c['g1_ix'], c['g1_iy'], c['crenel_angle']+i*c['crenel_portion_angle'])
         axle_figure.append(cnc25d_api.cnc_cut_outline(crenel_A, "crenel_A"))
         axle_figure_overlay.append(cnc25d_api.ideal_outline(crenel_A, "crenel_A"))
     elif(c['crenel_type']=='circle'):
@@ -488,13 +488,12 @@ def gearwheel_2d_construction(c):
       wheel_hollow_figure.append(cnc25d_api.outline_rotate(wh_outline_B, c['g1_ix'], c['g1_iy'], i*wh_angle))
       wheel_hollow_figure_overlay.append(cnc25d_api.outline_rotate(wh_outline_B_ideal, c['g1_ix'], c['g1_iy'], i*wh_angle))
 
-  # inherit from gear_profile
-  i_gear_profile = inherit_gear_profile(c)
 
   ### design output
   gw_figure = []
   if(c['gear_tooth_nb']>0):
-    gw_figure.extend(i_gear_profile.get_A_figure(['first_gear']))
+    i_gear_profile = inherit_gear_profile(c) # inherit from gear_profile
+    gw_figure.extend(i_gear_profile.get_A_figure('first_gear'))
   else:
     gw_figure.append((c['g1_ix'], c['g1_iy'], float(c['gear_primitive_diameter'])/2))
   gw_figure.extend(axle_figure)
@@ -614,7 +613,7 @@ def gearwheel_self_test():
     ["with gearwheel hollow 1 leg"    , "--gear_tooth_nb 25 --gear_module 10.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 20 --axle_router_bit_radius 4.0 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 1 --wheel_hollow_leg_width 20.0 --wheel_hollow_leg_angle 0.9 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 200.0 --wheel_hollow_router_bit_radius 15.0"],
     ["with gearwheel hollow 3 legs"   , "--gear_tooth_nb 24 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 3 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 40.0 --wheel_hollow_external_diameter 180.0 --wheel_hollow_router_bit_radius 15.0"],
     ["with gearwheel hollow 7 legs"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 30.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0"],
-    ["with gear_profile simulation"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --simulation_2d"],
+    ["with gear_profile simulation"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --simulate_2d"],
     ["output files"   , "--gear_tooth_nb 23 --gear_module 10.0 --axle_type circle --axle_x_width 20 --cnc_router_bit_radius 3.0 --wheel_hollow_leg_number 7 --wheel_hollow_leg_width 20.0 --wheel_hollow_internal_diameter 60.0 --wheel_hollow_external_diameter 160.0 --wheel_hollow_router_bit_radius 15.0 --second_gear_tooth_nb 18 --output_file_basename test_output/gearwheel_self_test.dxf"],
     ["no tooth"                       , "--gear_tooth_nb 0 --gear_primitive_diameter 100.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 20 --axle_router_bit_radius 3.0 --wheel_hollow_leg_number 4 --wheel_hollow_leg_width 10.0 --wheel_hollow_internal_diameter 40.0  --wheel_hollow_external_diameter 80.0 --wheel_hollow_router_bit_radius 8.0"],
     ["default value with wheel_hollow"     , "--gear_tooth_nb 35 --gear_module 10.0 --axle_type circle --axle_x_width 30 --wheel_hollow_leg_number 6 --wheel_hollow_leg_width 10.0"],

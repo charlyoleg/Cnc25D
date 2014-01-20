@@ -226,30 +226,26 @@ class bare_design:
     #print("dbg191: self.A_figures.keys():", self.A_figures.keys())
     return((self.A_figures, self.figure_heights))
 
-  def get_A_figure(self, figure_names=[]):
-    """ generate the figures listed by figure_names and return a merge of these figures
-        figure_names is a list of strings that must correspond to the design figure dictionary
-        if figure_names is empty, all figures are generated and merged
+  def get_A_figure(self, figure_id=""):
+    """ generate the figure figure_id and return it at the A-format
+        if figure_id is empty, the first figure of the figure dictionary is selected
     """
     self.apply_2d_constructor()
-    if(figure_names==[]):
-      figure_names = self.A_figures.keys()
-    #print("dbg194: figure_names:", figure_names)
-    r_fig = []
-    for f in figure_names:
-      if(not f in self.A_figures.keys()):
-        print("ERR156: Error, f {:s} is not in the figure list [{:s}]".format(f, ' '.join(self.A_figures.keys())))
-        sys.exit(2)
-      r_fig.extend(self.A_figures[f])
+    if(figure_id==''):
+      figure_id = self.A_figures.keys()[0]
+    #print("dbg194: figure_id:", figure_id)
+    if(not figure_id in self.A_figures.keys()):
+      print("ERR156: Error, figure_id {:s} is not in the figure list [{:s}]".format(figure_id, ' '.join(self.A_figures.keys())))
+      sys.exit(2)
+    r_fig = self.A_figures[figure_id]
     return(r_fig)
       
-  def get_B_figure(self, figure_names=[]):
-    """ generate the figures listed by figure_names, then merge and cnc_cut_ouline before returning the final figure
-        figure_names is a list of strings that must correspond to the design figure dictionary
-        if figure_names is empty, all figures are generated and merged
+  def get_B_figure(self, figure_id=""):
+    """ generate the figure figure_id and return it at the B-format
+        if figure_id is empty, the first figure of the figure dictionary is selected
     """
-    A_fig = self.get_A_figure(figure_names)
-    r_fig = design_output.cnc_cut_figure(A_fig, "get_B_figure_{:s}".format('_'.join(figure_names)))
+    A_fig = self.get_A_figure(figure_id)
+    r_fig = design_output.cnc_cut_figure(A_fig, "get_B_figure_{:s}".format(figure_id))
     return(r_fig)
 
   def outline_display(self):
@@ -383,15 +379,16 @@ class bare_design:
     if(not sim_id in self.simulation_2d_pts.keys()):
       print("ERR382: Error, the simulation id {:s} does not exist in the list {:s}".format(sim_id, ' '.join(self.simulation_2d_pts.keys())))
       sys.exit(2)
-    #print("dbg386: run simulation:", sim_id)
+    print("SIMULATION: {:s} runs simulation: {:s}".format(self.design_name, sim_id))
     #self.simulation_2d_pts[sim_id](self.constraint) # writing correct but too compact for my eyes ;)
     f_simulation = self.simulation_2d_pts[sim_id]
     f_simulation(self.constraint)
     #print("dbg390: f_simulation:", f_simulation)
 
-  def list_2d_figures(self):
-    """ list the IDs of the 2D-figures
+  def view_design_configuration(self):
+    """ View the design configuration (2D-figures, 2D-simulations, assembly_3dconfs, displayed_figures ...)
     """
+    # 2D-figures
     (figs, height) = self.apply_2d_constructor()
     fig_ids = figs.keys()
     print("{:s} 2D-figures:".format(self.design_name))
@@ -400,11 +397,7 @@ class bare_design:
     else:
       for i in range(len(fig_ids)):
         print("{:02d} : {:s}".format(i, fig_ids[i]))
-    return(fig_ids)
-
-  def list_2d_simulations(self):
-    """ list the IDs of the 2D-simulations
-    """
+    # 2D-simulations
     sim_ids = self.simulation_2d_pts.keys()
     print("{:s} 2D-simulations:".format(self.design_name))
     if(len(sim_ids)==0):
@@ -412,11 +405,7 @@ class bare_design:
     else:
       for i in range(len(sim_ids)):
         print("{:02d} : {:s}".format(i, sim_ids[i]))
-    return(sim_ids)
-
-  def list_assembly_3dconf(self):
-    """ list the IDs of the assembly_3dconf
-    """
+    # assembly_3d_configurations
     self.apply_3d_constructor()
     assembly_ids = self.assembly_configurations.keys()
     print("{:s} assembly_3dconf:".format(self.design_name))
@@ -425,7 +414,26 @@ class bare_design:
     else:
       for i in range(len(assembly_ids)):
         print("{:02d} : {:s}".format(i, assembly_ids[i]))
-    return(assembly_ids)
+    # display_2d_figure_list
+    print("{:s} display_2d_figure_list:".format(self.design_name))
+    for i in range(len(self.display_2d_figure_list)):
+      print("{:02d} : {:s}".format(i, self.display_2d_figure_list[i]))
+    # default_simulation
+    print("{:s} default_simulation: {:s}".format(self.design_name, self.default_simulation))
+    # file_2d_figure_file_list
+    print("{:s} svg-dxf-file_2d_figure_list:".format(self.design_name))
+    for i in range(len(self.write_2d_figure_list)):
+      print("{:02d} : {:s}".format(i, self.write_2d_figure_list[i]))
+    # file_3d_figure_file_list
+    print("{:s} brep-file_3d_figure_list:".format(self.design_name))
+    for i in range(len(self.write_3d_figure_list)):
+      print("{:02d} : {:s}".format(i, self.write_3d_figure_list[i]))
+    # file_3d_conf_file_list
+    print("{:s} brep-file_3d_conf_list:".format(self.design_name))
+    for i in range(len(self.write_3d_conf_list)):
+      print("{:02d} : {:s}".format(i, self.write_3d_conf_list[i]))
+    # return (not yet used)
+    return(fig_ids)
 
   def apply_cli_with_output_options(self, cli_str=""):
     """ check the argument-output-options and then call apply_cli()
@@ -441,19 +449,15 @@ class bare_design:
     effective_args_in_txt = "{:s} cli_with_output_file_basename string: ".format(self.design_name) + ' '.join(effective_args)
     cwoo_parser = argparse.ArgumentParser(description='Command Line Interface of {:s} with output_file_basename'.format(self.design_name))
     cwoo_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
-      help="If not  the empty_string (the default value), it outputs the (first) gear in file(s) depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, no-extension uses FreeCAD and you get .brep and .dxf")
+      help="Outputs files depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, no-extension uses FreeCAD and you get .brep and .dxf")
     cwoo_parser.add_argument('--simulate_2d','--s2d', action='store', nargs='?', const=default_sim_id, default='', dest='sw_simulate_2d',
-      help="run a 2D-simualtion in a Tk-window")
+      help="Run a 2D-simualtion in a Tk-window")
     cwoo_parser.add_argument('--display_2d_figures','--d2f', action='store_true', default=False, dest='sw_display_2d_figures',
-      help="display in Tk-window all the 2D-figures of the design")
+      help="Display in Tk-window all the 2D-figures of the design")
     cwoo_parser.add_argument('--return_type', '--rt', action='store', default='', dest='sw_return_type',
-      help="select the object to be returned by the function allinone. Depreciated! Use rather the appropriate methods")
-    cwoo_parser.add_argument('--list_2d_figures','--l2f', action='store_true', default=False, dest='sw_list_2d_figures',
-      help="List the 2D-figures of the design")
-    cwoo_parser.add_argument('--list_2d_simulation','--l2s', action='store_true', default=False, dest='sw_list_2d_simulations',
-      help="List the 2D-simulations of the design")
-    cwoo_parser.add_argument('--list_assembly_3dconf','--la3c', action='store_true', default=False, dest='sw_list_assembly_3dconf',
-      help="List the assembly_3dconf of the design")
+      help="Select the object to be returned by the function allinone. Depreciated! Use rather the appropriate methods")
+    cwoo_parser.add_argument('--view_design_configuration','--vdc', action='store_true', default=False, dest='sw_view_design_configuration',
+      help="View the design configuration (2D-figures, 2D-simulations, assembly_3dconfs, displayed_figures ...)")
     #print("dbg363: effective_args:", effective_args)
     if(('-h' in effective_args)or('--help' in effective_args)):
       cwoo_parser.print_help()
@@ -485,14 +489,10 @@ class bare_design:
     if(oo_args.sw_display_2d_figures):
       self.outline_display()
     # list IDs
-    if(oo_args.sw_list_2d_figures):
-      self.list_2d_figures()
-    if(oo_args.sw_list_2d_simulations):
-      self.list_2d_simulations()
-    if(oo_args.sw_list_assembly_3dconf):
-      self.list_assembly_3dconf()
+    if(oo_args.sw_view_design_configuration):
+      self.view_design_configuration()
     # default action
-    if((not oo_args.sw_display_2d_figures)and(oo_args.sw_output_file_basename=='')and(oo_args.sw_simulate_2d=='')and(not oo_args.sw_list_2d_figures)and(not oo_args.sw_list_2d_simulations)and(not oo_args.sw_list_assembly_3dconf)): # nothing done
+    if((not oo_args.sw_display_2d_figures)and(oo_args.sw_output_file_basename=='')and(oo_args.sw_simulate_2d=='')and(not oo_args.sw_view_design_configuration)): # nothing done
       #print("dbg434: default action. self.default_simulation:", self.default_simulation)
       if(self.default_simulation!=''):
         self.run_simulation(self.default_simulation)
@@ -741,8 +741,8 @@ cube volume:    \t{:0.3f} (mm3)
   # 1: display the outline
   my_cube.outline_display() # display the outline in a Tk-window
   # 2: alternative to my_cube.outline_display()
-  mc_olA = my_cube.get_A_figure([]) # get the outline at the A-format
-  mc_olB = my_cube.get_B_figure(['cube_base']) # get the outline at the B-format
+  mc_olA = my_cube.get_A_figure('') # get the outline at the A-format
+  mc_olB = my_cube.get_B_figure('cube_base') # get the outline at the B-format
   (mc_figs, mc_heights) = my_cube.apply_2d_constructor() # get dictionaries for 2d-figures and heights
   (mc_assembly, mc_slice_xyz) = my_cube.apply_3d_constructor() # get dictionaries for 3d-assembly-configuration and slice_xyz
   mc_info = my_cube.get_info() # get the text info
@@ -770,6 +770,7 @@ cube volume:    \t{:0.3f} (mm3)
   (mc_figs, mc_heights) = my_cube.apply_2d_constructor()
   (mc_assembly, mc_slice_xyz) = my_cube.apply_3d_constructor()
   mc_info = my_cube.get_info()
+  my_cube.allinone("--view_design_configuration")
   
 ################################################################
 # bare_desin test command line interface
