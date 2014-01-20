@@ -123,11 +123,14 @@ def gearbar_constraint_check(c):
     gear_profile_parameters = i_gear_profile.get_constraint()
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
-    gear_profile_for_length = i_gear_profile.get_A_figure('first_gear')[0]
-    c['gearbar_length'] = gear_profile_for_length[-1][0] - gear_profile_for_length[0][0]
     c['g1_ix'] = gear_profile_parameters['g1_param']['center_ox']
     c['g1_iy'] = gear_profile_parameters['g1_param']['center_oy']
     c['g1_inclination'] = gear_profile_parameters['g1_param']['gearbar_inclination']
+    gear_profile_for_length = i_gear_profile.get_A_figure('first_gear')[0]
+    gear_profile_for_length = cnc25d_api.outline_rotate(gear_profile_for_length, c['g1_ix'], c['g1_iy'], -1*c['g1_inclination'] + math.pi/2)
+    gear_profile_for_length = cnc25d_api.outline_shift_xy(gear_profile_for_length, -1*gear_profile_for_length[0][0], 1, -1*c['g1_iy'] + c['gearbar_height'], 1)
+    #print("dbg127: gear_profile_for_length:", gear_profile_for_length)
+    c['gearbar_length'] = gear_profile_for_length[-1][0] - gear_profile_for_length[0][0]
     ## get some parameters
     c['minimal_gear_profile_height'] = c['gearbar_height'] - (gear_profile_parameters['g1_param']['hollow_height'] + gear_profile_parameters['g1_param']['dedendum_height'])
     c['pi_module'] = gear_profile_parameters['g1_param']['pi_module']
@@ -190,7 +193,7 @@ def gearbar_2d_construction(c):
     i_gear_profile = inherit_gear_profile(c) # inherit from gear_profile
     gear_profile_A = i_gear_profile.get_A_figure('first_gear')[0] # Warning: gear_profile provide only B-format outline currently
     gear_profile_A = cnc25d_api.outline_rotate(gear_profile_A, c['g1_ix'], c['g1_iy'], -1*c['g1_inclination'] + math.pi/2)
-    gear_profile_A = cnc25d_api.outline_shift_xy(gear_profile_A, -1*gear_profile_A[0][0], 1, -1*c['g1_iy'] + c['gearbar_height'], 1)
+    gear_profile_A = cnc25d_api.outline_shift_xy(gear_profile_A, -1*gear_profile_A[0][0], 1, -1*c['g1_iy'] + c['gearbar_height'], 1) # gearbar_fig inclinatiion is always zero. Inclination only visible in simulation
   else:
     gear_profile_A = [(0, c['gearbar_height']),(c['gearbar_length'], c['gearbar_height'])]
   gearbar_outline = gear_profile_A
@@ -255,7 +258,7 @@ def gearbar_3d_construction(c):
 
   r_assembly['gearbar_3dconf1'] = gearbar_3dconf1
   hh = c['gear_profile_height']/2.0 # half-height
-  r_slice['gearbar_3dconf1'] = (c['gearbar_length'],c['gearbar_height'],c['gear_profile_height'], c['center_position_x'],c['center_position_y']-c['gearbar_height'],0.0, [hh], [], [])
+  r_slice['gearbar_3dconf1'] = (c['gearbar_length'],c['gearbar_height'],c['gear_profile_height'], c['center_position_x'],c['center_position_y'],0.0, [hh], [], [])
   #
   return((r_assembly, r_slice))
 
