@@ -323,7 +323,7 @@ def make_holder_crenel(ai_holder_maximal_height_plus, ai_holder_crenel_height, a
   return(r_holder_crenel[1:])
 
 ################################################################
-# gearwheel 2D-figures construction
+# gearring 2D-figures construction
 ################################################################
 
 def gearring_2d_construction(c):
@@ -437,7 +437,7 @@ def gearring_3d_construction(c):
 
 
 ################################################################
-# gearwheel_info
+# gearring_info
 ################################################################
 
 def gearring_info(c):

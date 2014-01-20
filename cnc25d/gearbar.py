@@ -56,266 +56,239 @@ import Part
 import gear_profile
 
 ################################################################
-# gearbar dictionary-constraint-arguments default values
+# inheritance from gear_profile
 ################################################################
 
-def gearbar_dictionary_init():
-  """ create and initiate a gearbar_dictionary with the default value
+def inherit_gear_profile(c={}):
+  """ generate the gear_profile with the construct c
   """
-  r_gbd = {}
-  #### inherit dictionary entries from gear_profile
-  r_gbd.update(gear_profile.gear_profile_dictionary_init())
-  #### gearbar dictionary entries
-  ### gearbar
-  r_gbd['gearbar_height']                 = 20.0
-  ### gearbar-hole
-  r_gbd['gearbar_hole_height_position']   = 10.0
-  r_gbd['gearbar_hole_diameter']          = 10.0
-  r_gbd['gearbar_hole_offset']            = 0
-  r_gbd['gearbar_hole_increment']         = 1
-  ### view the gearbar with tkinter
-  r_gbd['tkinter_view'] = False
-  r_gbd['output_file_basename'] = ''
-  ### optional
-  r_gbd['args_in_txt'] = ''
-  r_gbd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
-  #### return
-  return(r_gbd)
+  gp_c = c.copy()
+  gp_c['gear_type'] = 'l'
+  gp_c['second_gear_type'] = 'e'
+  gp_c['gearbar_slope'] = 0.3
+  #gp_c['gear_router_bit_radius'] = c['gear_router_bit_radius']
+  r_obj = gear_profile.gear_profile()
+  r_obj.apply_external_constraint(gp_c)
+  return(r_obj)
 
 ################################################################
-# gearbar argparse
+# gearbar constraint_constructor
 ################################################################
 
-def gearbar_add_argument(ai_parser):
+def gearbar_constraint_constructor(ai_parser, ai_variant = 0):
   """
-  Add arguments relative to the gearbar in addition to the argument of gear_profile_add_argument()
-  This function intends to be used by the gearbar_cli and gearbar_self_test
+  Add arguments relative to the gearbar design
   """
   r_parser = ai_parser
   ### inherit arguments from gear_profile
-  r_parser = gear_profile.gear_profile_add_argument(r_parser, 3)
+  i_gear_profile = inherit_gear_profile()
+  r_parser = i_gear_profile.get_constraint_constructor()(r_parser, 3)
   ### gearbar
-  r_parser.add_argument('--gearbar_height','--gbh', action='store', type=float, default=20.0, dest='sw_gearbar_height',
+  r_parser.add_argument('--gearbar_height','--gbh', action='store', type=float, default=20.0,
     help="Set the height of the gearbar (from the bottom to the gear-profile primitive line). Default: 20.0")
   ### gearbar-hole
-  r_parser.add_argument('--gearbar_hole_height_position','--gbhhp', action='store', type=float, default=10.0, dest='sw_gearbar_hole_height_position',
+  r_parser.add_argument('--gearbar_hole_height_position','--gbhhp', action='store', type=float, default=10.0,
     help="Set the height from the bottom of the gearbar to the center of the gearbar-hole. Default: 10.0")
-  r_parser.add_argument('--gearbar_hole_diameter','--gbhd', action='store', type=float, default=10.0, dest='sw_gearbar_hole_diameter',
+  r_parser.add_argument('--gearbar_hole_diameter','--gbhd', action='store', type=float, default=10.0,
     help="Set the diameter of the gearbar-hole. If equal to 0.0, there are no gearbar-hole. Default: 10.0")
-  r_parser.add_argument('--gearbar_hole_offset','--gbho', action='store', type=int, default=0, dest='sw_gearbar_hole_offset',
+  r_parser.add_argument('--gearbar_hole_offset','--gbho', action='store', type=int, default=0,
     help="Set the initial number of teeth to position the first gearbar-hole. Default: 0")
-  r_parser.add_argument('--gearbar_hole_increment','--gbhi', action='store', type=int, default=1, dest='sw_gearbar_hole_increment',
+  r_parser.add_argument('--gearbar_hole_increment','--gbhi', action='store', type=int, default=1,
     help="Set the number of teeth between two gearbar-holes. Default: 1")
   # return
   return(r_parser)
 
 ################################################################
-# sub-function
+# gearbar constraint_check
 ################################################################
 
-
-################################################################
-# the most important function to be used in other scripts
-################################################################
-
-def gearbar(ai_constraints):
+def gearbar_constraint_check(c):
+  """ check the gearbar constraint c and set the dynamic default values
   """
-  The main function of the script.
-  It generates a gearbar according to the function arguments
-  """
-  ### check the dictionary-arguments ai_constraints
-  gbdi = gearbar_dictionary_init()
-  gb_c = gbdi.copy()
-  gb_c.update(ai_constraints)
-  #print("dbg155: gb_c:", gb_c)
-  if(len(gb_c.viewkeys() & gbdi.viewkeys()) != len(gb_c.viewkeys() | gbdi.viewkeys())): # check if the dictionary gb_c has exactly all the keys compare to gearbar_dictionary_init()
-    print("ERR157: Error, gb_c has too much entries as {:s} or missing entries as {:s}".format(gb_c.viewkeys() - gbdi.viewkeys(), gbdi.viewkeys() - gb_c.viewkeys()))
-    sys.exit(2)
-  #print("dbg164: new gearbar constraints:")
-  #for k in gb_c.viewkeys():
-  #  if(gb_c[k] != gbdi[k]):
-  #    print("dbg166: for k {:s}, gb_c[k] {:s} != gbdi[k] {:s}".format(k, str(gb_c[k]), str(gbdi[k])))
   ### precision
   radian_epsilon = math.pi/1000
   ### check parameter coherence (part 1)
-  gearbar_hole_radius = float(gb_c['gearbar_hole_diameter'])/2
-  # gb_c['gearbar_hole_height_position']
-  if((gb_c['gearbar_hole_height_position']+gearbar_hole_radius)>gb_c['gearbar_height']):
-    print("ERR215: Error, gearbar_hole_height_position {:0.3} and gearbar_hole_radius {:0.3f} are too big compare to gearbar_height {:0.3f} !".format(gb_c['gearbar_hole_height_position'], gearbar_hole_radius, gb_c['gearbar_height']))
+  c['gearbar_hole_radius'] = float(c['gearbar_hole_diameter'])/2
+  # c['gearbar_hole_height_position']
+  if((c['gearbar_hole_height_position']+c['gearbar_hole_radius'])>c['gearbar_height']):
+    print("ERR215: Error, gearbar_hole_height_position {:0.3} and gearbar_hole_radius {:0.3f} are too big compare to gearbar_height {:0.3f} !".format(c['gearbar_hole_height_position'], c['gearbar_hole_radius'], c['gearbar_height']))
     sys.exit(2)
-  # gb_c['gearbar_hole_increment']
-  if(gb_c['gearbar_hole_increment']==0):
+  # c['gearbar_hole_increment']
+  if(c['gearbar_hole_increment']==0):
     print("ERR183: Error gearbar_hole_increment must be bigger than zero!")
     sys.exit(2)
-  # gb_c['gear_tooth_nb']
-  if(gb_c['gear_tooth_nb']>0): # create a gear_profile
-    ### get the gear_profile
-    gp_ci = gear_profile.gear_profile_dictionary_init()
-    gp_c = dict([ (k, gb_c[k]) for k in gp_ci.keys() ]) # extract only the entries of the gear_profile
-    gp_c['gear_type'] = 'l'
-    gp_c['second_gear_type'] = 'e'
-    gp_c['output_file_basename'] = ''
-    gp_c['args_in_txt'] = ''
-    gp_c['return_type'] = 'figure_param_info'
-    (gear_profile_B, gear_profile_parameters, gear_profile_info) = gear_profile.gear_profile(gp_c)
+  # c['gear_tooth_nb']
+  if(c['gear_tooth_nb']>0): # create a gear_profile
+    i_gear_profile = inherit_gear_profile(c)
+    gear_profile_parameters = i_gear_profile.get_constraint()
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
-    ## gear_profile_B rotation / translation transformation
-    g1_ix = gear_profile_parameters['center_ox']
-    g1_iy = gear_profile_parameters['center_oy']
-    g1_inclination = gear_profile_parameters['gearbar_inclination']
-    gear_profile_B = cnc25d_api.outline_rotate(gear_profile_B, g1_ix, g1_iy, -1*g1_inclination + math.pi/2)
-    gear_profile_B = cnc25d_api.outline_shift_xy(gear_profile_B, -1*gear_profile_B[0][0], 1, -1*g1_iy + gb_c['gearbar_height'], 1)
+    gear_profile_for_length = i_gear_profile.get_A_figure('first_gear')[0]
+    c['gearbar_length'] = gear_profile_for_length[-1][0] - gear_profile_for_length[0][0]
+    c['g1_ix'] = gear_profile_parameters['g1_param']['center_ox']
+    c['g1_iy'] = gear_profile_parameters['g1_param']['center_oy']
+    c['g1_inclination'] = gear_profile_parameters['g1_param']['gearbar_inclination']
     ## get some parameters
-    minimal_gear_profile_height = gb_c['gearbar_height'] - (gear_profile_parameters['hollow_height'] + gear_profile_parameters['dedendum_height'])
-    gearbar_length = gear_profile_B[-1][0] - gear_profile_B[0][0]
-    pi_module = gear_profile_parameters['pi_module']
-    pfe = gear_profile_parameters['portion_first_end']
-    full_positive_slope = gear_profile_parameters['full_positive_slope']
-    full_negative_slope = gear_profile_parameters['full_negative_slope']
-    bottom_land = gear_profile_parameters['bottom_land']
-    top_land = gear_profile_parameters['top_land']
-    if((top_land + full_positive_slope + bottom_land + full_negative_slope)!=pi_module):
-      print("ERR269: Error with top_land {:0.3f}  full_positive_slope {:0.3f}  bottom_land {:0.3f}  full_negative_slope {:0.3f} and pi_module  {:0.3f}".format(top_land, full_positive_slope, bottom_land, full_negative_slope, pi_module))
+    c['minimal_gear_profile_height'] = c['gearbar_height'] - (gear_profile_parameters['g1_param']['hollow_height'] + gear_profile_parameters['g1_param']['dedendum_height'])
+    c['pi_module'] = gear_profile_parameters['g1_param']['pi_module']
+    pfe = gear_profile_parameters['g1_param']['portion_first_end']
+    full_positive_slope = gear_profile_parameters['g1_param']['full_positive_slope']
+    full_negative_slope = gear_profile_parameters['g1_param']['full_negative_slope']
+    bottom_land = gear_profile_parameters['g1_param']['bottom_land']
+    top_land = gear_profile_parameters['g1_param']['top_land']
+    if((top_land + full_positive_slope + bottom_land + full_negative_slope)!=c['pi_module']):
+      print("ERR269: Error with top_land {:0.3f}  full_positive_slope {:0.3f}  bottom_land {:0.3f}  full_negative_slope {:0.3f} and pi_module  {:0.3f}".format(top_land, full_positive_slope, bottom_land, full_negative_slope, c['pi_module']))
       sys.exit(2)
     if(pfe==0):
-      first_tooth_position = full_positive_slope + bottom_land + full_negative_slope + float(top_land)/2
+      c['first_tooth_position'] = full_positive_slope + bottom_land + full_negative_slope + float(top_land)/2
     elif(pfe==1):
-      first_tooth_position = full_positive_slope + bottom_land + full_negative_slope + top_land
+      c['first_tooth_position'] = full_positive_slope + bottom_land + full_negative_slope + top_land
     elif(pfe==2):
-      first_tooth_position = full_negative_slope + float(top_land)/2
+      c['first_tooth_position'] = full_negative_slope + float(top_land)/2
     elif(pfe==3):
-      first_tooth_position = float(bottom_land)/2 + full_negative_slope + float(top_land)/2
+      c['first_tooth_position'] = float(bottom_land)/2 + full_negative_slope + float(top_land)/2
   else: # no gear_profile, just a circle
-    if(gb_c['gear_primitive_diameter']<radian_epsilon):
-      print("ERR885: Error, the no-gear-profile line outline length gear_primitive_diameter {:0.2f} is too small!".format(gb_c['gear_primitive_diameter']))
+    if(c['gear_primitive_diameter']<radian_epsilon):
+      print("ERR885: Error, the no-gear-profile line outline length gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter']))
       sys.exit(2)
-    #g1_ix = gb_c['center_position_x
-    #g1_iy = gb_c['center_position_y
-    gearbar_length = gb_c['gear_primitive_diameter']
-    gear_profile_B = [(0, gb_c['gearbar_height']),(gearbar_length, gb_c['gearbar_height'])]
-    gear_profile_info = "\nSimple line (no-gear-profile):\n"
-    gear_profile_info += "outline line length: \t{:0.3f}\n".format(gearbar_length)
-    minimal_gear_profile_height = gb_c['gearbar_height']
-    pi_module = gb_c['gear_module'] * math.pi
-    first_tooth_position = float(pi_module)/2
+    #c['g1_ix'] = c['center_position_x
+    #c['g1_iy'] = c['center_position_y
+    c['gearbar_length'] = c['gear_primitive_diameter']
+    c['minimal_gear_profile_height'] = c['gearbar_height']
+    c['pi_module'] = c['gear_module'] * math.pi
+    c['first_tooth_position'] = float(c['pi_module'])/2
 
   ### check parameter coherence (part 2)
   # minimal_gear_profile_height
-  if(minimal_gear_profile_height<radian_epsilon):
-    print("ERR265: Error, minimal_gear_profile_height {:0.3f} is too small".format(minimal_gear_profile_height))
+  if(c['minimal_gear_profile_height']<radian_epsilon):
+    print("ERR265: Error, minimal_gear_profile_height {:0.3f} is too small".format(c['minimal_gear_profile_height']))
     sys.exit(2)
   # gearbar_hole_diameter
-  if((gb_c['gearbar_hole_height_position']+gearbar_hole_radius)>minimal_gear_profile_height):
-    print("ERR269: Error, gearbar_hole_height_position {:0.3f} and gearbar_hole_radius {:0.3f} are too big compare to minimal_gear_profile_height {:0.3f}".format(gb_c['gearbar_hole_height_position'], gearbar_hole_radius, minimal_gear_profile_height))
+  if((c['gearbar_hole_height_position']+c['gearbar_hole_radius'])>c['minimal_gear_profile_height']):
+    print("ERR269: Error, gearbar_hole_height_position {:0.3f} and gearbar_hole_radius {:0.3f} are too big compare to minimal_gear_profile_height {:0.3f}".format(c['gearbar_hole_height_position'], c['gearbar_hole_radius'], c['minimal_gear_profile_height']))
     sys.exit(2)
   # pi_module
-  if(gearbar_hole_radius>0):
-    if(pi_module==0):
+  if(c['gearbar_hole_radius']>0):
+    if(c['pi_module']==0):
       print("ERR277: Error, pi_module is null. You might need to use --gear_module")
       sys.exit(2)
+  ###
+  return(c)
 
+################################################################
+# gearbar 2D-figures construction
+################################################################
+
+def gearbar_2d_construction(c):
+  """
+  construct the 2D-figures with outlines at the A-format for the gearbar design
+  """
+  ### precision
+  radian_epsilon = math.pi/1000
   ### gearbar outline
-  gearbar_outline = gear_profile_B
+  if(c['gear_tooth_nb']>0):
+    i_gear_profile = inherit_gear_profile(c) # inherit from gear_profile
+    gear_profile_A = i_gear_profile.get_A_figure('first_gear')[0] # Warning: gear_profile provide only B-format outline currently
+    gear_profile_A = cnc25d_api.outline_rotate(gear_profile_A, c['g1_ix'], c['g1_iy'], -1*c['g1_inclination'] + math.pi/2)
+    gear_profile_A = cnc25d_api.outline_shift_xy(gear_profile_A, -1*gear_profile_A[0][0], 1, -1*c['g1_iy'] + c['gearbar_height'], 1)
+  else:
+    gear_profile_A = [(0, c['gearbar_height']),(c['gearbar_length'], c['gearbar_height'])]
+  gearbar_outline = gear_profile_A
   gearbar_outline.append((gearbar_outline[-1][0], 0))
   gearbar_outline.append((0, 0))
   gearbar_outline.append((0, gearbar_outline[0][1]))
+  #print("dbg200: gearbar_outline:", gearbar_outline)
   ### gearbar-hole figure
   gearbar_hole_figure = []
-  if((gearbar_hole_radius>0)and(pi_module>0)):
-    hole_x = first_tooth_position + gb_c['gearbar_hole_offset'] * pi_module
-    while(hole_x<(gearbar_length-gearbar_hole_radius)):
+  if((c['gearbar_hole_radius']>0)and(c['pi_module']>0)):
+    hole_x = c['first_tooth_position'] + c['gearbar_hole_offset'] * c['pi_module']
+    while(hole_x<(c['gearbar_length']-c['gearbar_hole_radius'])):
       #print("dbg312: hole_x {:0.3f}".format(hole_x))
-      gearbar_hole_figure.append([hole_x, gb_c['gearbar_hole_height_position'], gearbar_hole_radius])
-      hole_x += gb_c['gearbar_hole_increment'] * pi_module
+      gearbar_hole_figure.append([hole_x, c['gearbar_hole_height_position'], c['gearbar_hole_radius']])
+      hole_x += c['gearbar_hole_increment'] * c['pi_module']
 
   ### design output
   gb_figure = [gearbar_outline]
   gb_figure.extend(gearbar_hole_figure)
-  # ideal_outline in overlay
-  gb_figure_overlay = []
-  # gearbar_parameter_info
-  gearbar_parameter_info = "\nGearbar parameter info:\n"
-  gearbar_parameter_info += "\n" + gb_c['args_in_txt'] + "\n\n"
-  gearbar_parameter_info += gear_profile_info
-  gearbar_parameter_info += """
+  ###
+  r_figures = {}
+  r_height = {}
+  #
+  r_figures['gearbar_fig'] = gb_figure
+  r_height['gearbar_fig'] = c['gear_profile_height']
+  ###
+  return((r_figures, r_height))
+
+################################################################
+# gearbar simulation
+################################################################
+
+def gearbar_simulation_A(c):
+  """ define the gearbar simulation
+  """
+  # inherit from gear_profile
+  i_gear_profile = inherit_gear_profile(c)
+  i_gear_profile.run_simulation('gear_profile_simulation_A')
+  return(1)
+
+def gearbar_2d_simulations():
+  """ return the dictionary defining the available simulation for gearbar
+  """
+  r_sim = {}
+  r_sim['gearbar_simulation_A'] = gearbar_simulation_A
+  return(r_sim)
+
+
+################################################################
+# gearbar 3D assembly-configuration construction
+################################################################
+
+def gearbar_3d_construction(c):
+  """ construct the 3D-assembly-configurations of the gearbar
+  """
+  # conf1
+  gearbar_3dconf1 = []
+  gearbar_3dconf1.append(('gearbar_fig',  0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xy', 0.0, 0.0, 0.0))
+  #
+  r_assembly = {}
+  r_slice = {}
+
+  r_assembly['gearbar_3dconf1'] = gearbar_3dconf1
+  hh = c['gear_profile_height']/2.0 # half-height
+  r_slice['gearbar_3dconf1'] = (c['gearbar_length'],c['gearbar_height'],c['gear_profile_height'], c['center_position_x'],c['center_position_y']-c['gearbar_height'],0.0, [hh], [], [])
+  #
+  return((r_assembly, r_slice))
+
+
+################################################################
+# gearbar_info
+################################################################
+
+def gearbar_info(c):
+  """ create the text info related to the gearbar
+  """
+  r_info = ""
+  if(c['gear_tooth_nb']>0): # with gear-profile (normal case)
+    i_gear_profile = inherit_gear_profile(c) # inherit from gear_profile
+    r_info += i_gear_profile.get_info()
+  else: # when no gear-profile
+    r_info += "\nSimple line (no-gear-profile):\n"
+    r_info += "outline line length: \t{:0.3f}\n".format(c['gearbar_length'])
+  r_info += """
 gearbar_length: \t{:0.3f}
 gearbar_height: \t{:0.3f}
 minimal_gear_profile_height: \t{:0.3f}
-""".format(gearbar_length, gb_c['gearbar_height'], minimal_gear_profile_height)
-  gearbar_parameter_info += """
+""".format(c['gearbar_length'], c['gearbar_height'], c['minimal_gear_profile_height'])
+  r_info += """
 gearbar_hole_height_position: \t{:0.3f}
 gearbar_hole_diameter: \t{:0.3f}
 gearbar_hole_offset: \t{:d}
 gearbar_hole_increment: \t{:d}
 pi_module: \t{:0.3f}
-""".format(gb_c['gearbar_hole_height_position'], gb_c['gearbar_hole_diameter'], gb_c['gearbar_hole_offset'], gb_c['gearbar_hole_increment'], pi_module)
+""".format(c['gearbar_hole_height_position'], c['gearbar_hole_diameter'], c['gearbar_hole_offset'], c['gearbar_hole_increment'], c['pi_module'])
   #print(gearbar_parameter_info)
+  return(r_info)
 
-  # display with Tkinter
-  if(gb_c['tkinter_view']):
-    print(gearbar_parameter_info)
-    cnc25d_api.figure_simple_display(gb_figure, gb_figure_overlay, gearbar_parameter_info)
-  # generate output file
-  cnc25d_api.generate_output_file(gb_figure, gb_c['output_file_basename'], gb_c['gear_profile_height'], gearbar_parameter_info)
-
-  ### return the gearbar as FreeCAD Part object
-  #r_gb = cnc25d_api.figure_to_freecad_25d_part(gb_figure, gb_c['gear_profile_height'])
-  r_gb = 1 # this is to spare the freecad computation time during debuging
-  #### return
-  if(gb_c['return_type']=='int_status'):
-    r_gb = 1
-  elif(gb_c['return_type']=='cnc25d_figure'):
-    r_gb = gb_figure
-  elif(gb_c['return_type']=='freecad_object'):
-    r_gb = cnc25d_api.figure_to_freecad_25d_part(gb_figure, gb_c['gear_profile_height'])
-  else:
-    print("ERR508: Error the return_type {:s} is unknown".format(gb_c['return_type']))
-    sys.exit(2)
-  return(r_gb)
-
-################################################################
-# gearbar wrapper dance
-################################################################
-
-def gearbar_argparse_to_dictionary(ai_gb_args):
-  """ convert a gearbar_argparse into a gearbar_dictionary
-  """
-  r_gbd = {}
-  r_gbd.update(gear_profile.gear_profile_argparse_to_dictionary(ai_gb_args, 3))
-  ##### from gearbar
-  ### gearbar
-  r_gbd['gearbar_height']                = ai_gb_args.sw_gearbar_height
-  ### gearbar-hole
-  r_gbd['gearbar_hole_height_position']  = ai_gb_args.sw_gearbar_hole_height_position
-  r_gbd['gearbar_hole_diameter']         = ai_gb_args.sw_gearbar_hole_diameter
-  r_gbd['gearbar_hole_offset']           = ai_gb_args.sw_gearbar_hole_offset
-  r_gbd['gearbar_hole_increment']        = ai_gb_args.sw_gearbar_hole_increment
-  ### design output : view the gearbar with tkinter or write files
-  #r_gbd['tkinter_view'] = tkinter_view
-  r_gbd['output_file_basename'] = ai_gb_args.sw_output_file_basename
-  r_gbd['return_type'] = ai_gb_args.sw_return_type
-  ### optional
-  #r_gbd['args_in_txt'] = ''
-  #### return
-  return(r_gbd)
-
-def gearbar_argparse_wrapper(ai_gb_args, ai_args_in_txt=""):
-  """
-  wrapper function of gearbar() to call it using the gearbar_parser.
-  gearbar_parser is mostly used for debug and non-regression tests.
-  """
-  # view the gearbar with Tkinter as default action
-  tkinter_view = True
-  if(ai_gb_args.sw_simulation_enable or (ai_gb_args.sw_output_file_basename!='')):
-    tkinter_view = False
-  # wrapper
-  gbd = gearbar_argparse_to_dictionary(ai_gb_args)
-  gbd['args_in_txt'] = ai_args_in_txt
-  gbd['tkinter_view'] = tkinter_view
-  #gbd['return_type'] = 'int_status'
-  r_gb = gearbar(gbd)
-  return(r_gb)
 
 ################################################################
 # self test
@@ -326,7 +299,7 @@ def gearbar_self_test():
   This is the non-regression test of gearbar.
   Look at the simulation Tk window to check errors.
   """
-  test_case_switch = [
+  r_tests = [
     ["simplest test"    , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0"],
     ["no tooth"         , "--gear_tooth_nb 0 --gear_primitive_diameter 500.0 --gearbar_height 30.0 --gearbar_hole_height_position 15.0 --gear_module 10.0"],
     ["no gearbar-hole"  , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --gearbar_hole_diameter 0"],
@@ -336,43 +309,34 @@ def gearbar_self_test():
     [" gearbar-hole"    , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --cut_portion 17 3 3 --gearbar_hole_offset 1 --gearbar_hole_increment 3"],
     ["output dxf"       , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --output_file_basename test_output/gearbar_self_test.dxf"],
     ["last test"        , "--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0"]]
-  #print("dbg741: len(test_case_switch):", len(test_case_switch))
-  gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
-  gearbar_parser = gearbar_add_argument(gearbar_parser)
-  gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser, 1)
-  for i in range(len(test_case_switch)):
-    l_test_switch = test_case_switch[i][1]
-    print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
-    l_args = l_test_switch.split()
-    #print("dbg414: l_args:", l_args)
-    st_args = gearbar_parser.parse_args(l_args)
-    r_gbst = gearbar_argparse_wrapper(st_args)
-  return(r_gbst)
+  return(r_tests)
 
 ################################################################
-# gearbar command line interface
+# gearbar design declaration
 ################################################################
 
-def gearbar_cli(ai_args=""):
-  """ command line interface of gearbar.py when it is used in standalone
+class gearbar(cnc25d_api.bare_design):
+  """ gearbar design
   """
-  # gearbar parser
-  gearbar_parser = argparse.ArgumentParser(description='Command line interface for the function gearbar().')
-  gearbar_parser = gearbar_add_argument(gearbar_parser)
-  gearbar_parser = cnc25d_api.generate_output_file_add_argument(gearbar_parser, 1)
-  # switch for self_test
-  gearbar_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
-  help='Generate several corner cases of parameter sets and display the Tk window where you should check the gear running.')
-  effective_args = cnc25d_api.get_effective_args(ai_args)
-  effective_args_in_txt = "gearbar arguments: " + ' '.join(effective_args)
-  gb_args = gearbar_parser.parse_args(effective_args)
-  print("dbg111: start making gearbar")
-  if(gb_args.sw_run_self_test):
-    r_gb = gearbar_self_test()
-  else:
-    r_gb = gearbar_argparse_wrapper(gb_args, effective_args_in_txt)
-  print("dbg999: end of script")
-  return(r_gb)
+  def __init__(self, constraint={}):
+    """ configure the gearbar design
+    """
+    self.set_design_name("gearbar")
+    self.set_constraint_constructor(gearbar_constraint_constructor)
+    self.set_constraint_check(gearbar_constraint_check)
+    self.set_2d_constructor(gearbar_2d_construction)
+    self.set_2d_simulation(gearbar_2d_simulations())
+    self.set_3d_constructor(gearbar_3d_construction)
+    self.set_info(gearbar_info)
+    self.set_display_figure_list(['gearbar_fig'])
+    self.set_default_simulation()
+    self.set_2d_figure_file_list(['gearbar_fig'])
+    self.set_3d_figure_file_list(['gearbar_fig'])
+    self.set_3d_conf_file_list(['gearbar_3dconf1'])
+    self.set_allinone_return_type()
+    self.set_self_test(gearbar_self_test())
+    self.apply_constraint(constraint)
+
 
 ################################################################
 # main
@@ -381,13 +345,11 @@ def gearbar_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearbar.py says hello!\n")
-  #my_gb = gearbar_cli()
-  #my_gb = gearbar_cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --return_type freecad_object")
-  my_gb = gearbar_cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0")
-  try: # depending on gb_c['return_type'] it might be or not a freecad_object
-    Part.show(my_gb)
-    print("freecad_object returned")
-  except:
-    pass
-    #print("return_type is not a freecad-object")
+  my_gb = gearbar()
+  #my_gb.allinone()
+  #my_gb.allinone("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --return_type freecad_object")
+  my_gb.allinone("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0")
+  if(cnc25d_api.interpretor_is_freecad()):
+    Part.show(my_gb.get_fc_obj('gearbar_3dconf1'))
+  
 
