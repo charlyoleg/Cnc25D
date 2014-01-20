@@ -412,7 +412,7 @@ def split_gearwheel_2d_construction(c):
   #
   for i in range(len(aligned_part_figure_list)):
     r_figures['sgw_aligned_part_{:02d}'.format(i)] = aligned_part_figure_list[i]
-    r_height['sgw_part_{:02d}'.format(i)] = c['gear_profile_height']
+    r_height['sgw_aligned_part_{:02d}'.format(i)] = c['gear_profile_height']
   #
   r_figures['sgw_list_of_parts'] = sgw_list_of_parts
   r_height['sgw_list_of_parts'] = c['gear_profile_height']
