@@ -94,15 +94,15 @@ def gearring_constraint_constructor(ai_parser, ai_variant = 0):
   ### holder
   r_parser.add_argument('--holder_diameter','--hd', action='store', type=float, default=0.0,
     help="Set the holder diameter of the gearring. This is a mandatory input.")
-  r_parser.add_argument('--holder_crenel_number','--hcn', action='store', type=int, default=3,
-    help="Set the number of holder crenels (associated with a hole) arround the gearring holder. Default: 3")
+  r_parser.add_argument('--holder_crenel_number','--hcn', action='store', type=int, default=4,
+    help="Set the number of holder crenels (associated with a hole) arround the gearring holder. Default: 4")
   r_parser.add_argument('--holder_position_angle','--hpa', action='store', type=float, default=0.0,
     help="Set the holder position angle of the first holder-crenel (associated with a hole). Default: 0.0")
   ### holder-hole
   r_parser.add_argument('--holder_hole_position_radius','--hhpr', action='store', type=float, default=0.0,
     help="Set the length between the center of the holder-hole and the center of the gearring. If it is equal to 0.0, the holder_diameter value is used. Default: 0.0")
-  r_parser.add_argument('--holder_hole_diameter','--hhd', action='store', type=float, default=10.0,
-    help="Set the diameter of the holder-hole. If equal to 0.0, there are no holder-hole. Default: 10.0")
+  r_parser.add_argument('--holder_hole_diameter','--hhd', action='store', type=float, default=5.0,
+    help="Set the diameter of the holder-hole. If equal to 0.0, there are no holder-hole. Default: 5.0")
   r_parser.add_argument('--holder_hole_mark_nb','--hhmn', action='store', type=int, default=0,
     help="Set the number of holder-hole that must be marked. Default: 0")
   r_parser.add_argument('--holder_double_hole_diameter','--hdhd', action='store', type=float, default=0.0,
@@ -173,7 +173,7 @@ def gearring_constraint_check(c):
     gear_module = gear_profile_parameters['g1_param']['module']
   else: # no gear_profile, just a circle
     if(c['gear_primitive_diameter']<radian_epsilon):
-      print("ERR885: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter']))
+      print("ERR176: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter']))
       sys.exit(2)
     c['g1_ix'] = c['center_position_x']
     c['g1_iy'] = c['center_position_y']
@@ -186,8 +186,8 @@ def gearring_constraint_check(c):
   if(c['holder_hole_position_radius']==0):
     c['holder_hole_position_radius'] = c['holder_radius']
   c['holder_hole_radius'] = float(c['holder_hole_diameter'])/2
-  holder_maximal_radius = c['holder_hole_position_radius'] + c['holder_crenel_position'] + c['holder_crenel_height']
-  holder_maximal_height = holder_maximal_radius - c['holder_radius']
+  c['holder_maximal_radius'] = c['holder_hole_position_radius'] + c['holder_crenel_position'] + c['holder_crenel_height']
+  holder_maximal_height = c['holder_maximal_radius'] - c['holder_radius']
   c['holder_crenel_half_width'] = float(c['holder_crenel_width'])/2
   holder_crenel_with_wall_half_width = c['holder_crenel_half_width'] + c['holder_crenel_skin_width']
   if(c['holder_radius']<holder_crenel_with_wall_half_width):
@@ -197,8 +197,8 @@ def gearring_constraint_check(c):
   c['holder_crenel_x_position'] = math.sqrt((c['holder_radius'])**2 - (holder_crenel_with_wall_half_width)**2)
   additional_holder_maximal_height = c['holder_radius'] - c['holder_crenel_x_position']
   c['holder_maximal_height_plus'] = holder_maximal_height + additional_holder_maximal_height
-  holder_side_outer_smoothing_radius = min(0.8*c['holder_crenel_skin_width'], float(c['holder_maximal_height_plus'])/4)
-  holder_side_straigth_length = c['holder_maximal_height_plus'] - holder_side_outer_smoothing_radius
+  c['holder_side_outer_smoothing_radius'] = min(0.8*c['holder_crenel_skin_width'], float(c['holder_maximal_height_plus'])/4)
+  holder_side_straigth_length = c['holder_maximal_height_plus'] - c['holder_side_outer_smoothing_radius']
   # check
   if(c['holder_smoothing_radius']==0):
     c['holder_sr'] = 0.9*holder_side_straigth_length
@@ -272,7 +272,7 @@ def gearring_constraint_check(c):
     holder_smoothing_radius_B = c['cnc_router_bit_radius']
   #
   c['holder_hole_radius_list'] = [ c['holder_hole_radius'] for i in range(len(c['holder_hole_B_crenel_list_bis'])) ]
-  c['holder_side_outer_smoothing_radius_list'] = [ holder_side_outer_smoothing_radius for i in range(len(c['holder_hole_B_crenel_list_bis'])) ]
+  c['holder_side_outer_smoothing_radius_list'] = [ c['holder_side_outer_smoothing_radius'] for i in range(len(c['holder_hole_B_crenel_list_bis'])) ]
   c['holder_smoothing_radius_list'] = [ c['holder_sr'] for i in range(len(c['holder_hole_B_crenel_list_bis'])+1) ] # generate n+1 values to simplify code in the loop
   for i in range(len(c['holder_hole_B_crenel_list_bis'])):
     if(c['holder_hole_B_crenel_list_bis'][i]==1):
