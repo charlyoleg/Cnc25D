@@ -165,6 +165,7 @@ def split_gearwheel_constraint_check(c):
     c['minimal_gear_profile_radius'] = gear_profile_parameters['g1_param']['hollow_radius']
     c['g1_ix'] = gear_profile_parameters['g1_param']['center_ox']
     c['g1_iy'] = gear_profile_parameters['g1_param']['center_oy']
+    c['addendum_radius'] = gear_profile_parameters['g1_param']['addendum_radius'] # for slice_xyz
     # high_split_radius
     g1_m = gear_profile_parameters['g1_param']['module']
     c['high_split_radius'] = c['high_split_diameter']/2.0
@@ -240,6 +241,7 @@ def split_gearwheel_constraint_check(c):
     c['minimal_gear_profile_radius'] = float(c['gear_primitive_diameter'])/2
     c['g1_ix'] = c['center_position_x']
     c['g1_iy'] = c['center_position_y']
+    c['addendum_radius'] = float(c['gear_primitive_diameter'])/2 # for slice_xyz
     if(c['high_split_diameter']!=0):
       print("WARN221: Warning, the setting high_split_diameter {:0.3f} should not be used when gear_tooth_nb=0".format(c['high_split_diameter']))
     c['high_split_radius'] = c['minimal_gear_profile_radius']
@@ -382,7 +384,7 @@ def split_gearwheel_2d_construction(c):
   sgw_assembly_B_figure = []
   aligned_part_figure_list = []
   sgw_list_of_parts = []
-  for i in range(len(part_figure_list)):
+  for i in range(2*c['split_nb']):
     sgw_assembly_figure.extend(part_figure_list[i])
     if((i%2)==0):
       sgw_assembly_A_figure.extend(part_figure_list[i])
@@ -397,7 +399,7 @@ def split_gearwheel_2d_construction(c):
   r_figures = {}
   r_height = {}
   #
-  for i in range(len(part_figure_list)):
+  for i in range(2*c['split_nb']):
     r_figures['sgw_part_{:02d}'.format(i)] = part_figure_list[i]
     r_height['sgw_part_{:02d}'.format(i)] = c['gear_profile_height']
   #
@@ -410,7 +412,7 @@ def split_gearwheel_2d_construction(c):
   r_figures['sgw_odd_assembly_fig'] = sgw_assembly_B_figure
   r_height['sgw_odd_assembly_fig'] = c['gear_profile_height']
   #
-  for i in range(len(aligned_part_figure_list)):
+  for i in range(2*c['split_nb']):
     r_figures['sgw_aligned_part_{:02d}'.format(i)] = aligned_part_figure_list[i]
     r_height['sgw_aligned_part_{:02d}'.format(i)] = c['gear_profile_height']
   #
@@ -449,16 +451,16 @@ def split_gearwheel_3d_construction(c):
   """
   # conf1
   split_gearwheel_3dconf1 = []
-  for i in range(len(part_figure_list)):
+  for i in range(2*c['split_nb']):
     split_gearwheel_3dconf1.append(('sgw_part_{:02d}'.format(i),  0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xy', 0.0, 0.0, (i%2)*c['gear_profile_height']))
   #
   r_assembly = {}
   r_slice = {}
 
-  r_assembly['split_gearwheel_3dconf1'] = qplit_gearwheel_3dconf1
-  hr = c['gear_module']*(c['gear_tooth_nb']+2)/2.0
+  r_assembly['split_gearwheel_3dconf1'] = split_gearwheel_3dconf1
+  hr = c['addendum_radius']
   hh = c['gear_profile_height']/2.0 # half-height
-  r_slice['split_gearwheel_3dconf1'] = (2*hr,2*hr,2*c['gear_profile_height'], c['center_position_x']-hr,c['center_position_y']-hr,0.0, [hh, 3*hh], [], [])
+  r_slice['split_gearwheel_3dconf1'] = (2*hr,2*hr,4*hh, c['center_position_x']-hr,c['center_position_y']-hr,0.0, [hh, 3*hh], [], [])
   #
   return((r_assembly, r_slice))
 

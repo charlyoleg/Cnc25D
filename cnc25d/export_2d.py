@@ -64,6 +64,7 @@ def draw_rectangle(ai_position_x, ai_position_y, ai_size_x, ai_size_y):
 
 def draw_gauge(ai_drawing_length, ai_drawing_height, ai_representation_max, ai_representation_value, ai_position_x, ai_position_y):
   l_gauge_value = ai_drawing_length*ai_representation_value/float(ai_representation_max)
+  #print("dbg067: l_gauge_value:", l_gauge_value)
   r_gauge = []
   r_gauge.extend(draw_rectangle(ai_position_x-ai_drawing_height/2.0, ai_position_y, ai_drawing_length+ai_drawing_height, ai_drawing_height))
   r_gauge.extend(draw_rectangle(ai_position_x, ai_position_y+ai_drawing_height/4.0, l_gauge_value, ai_drawing_height/2.0))

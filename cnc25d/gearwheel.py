@@ -217,6 +217,7 @@ def gearwheel_constraint_check(c):
     c['g1_ix'] = gear_profile_parameters['g1_param']['center_ox']
     c['g1_iy'] = gear_profile_parameters['g1_param']['center_oy']
     g1_m = gear_profile_parameters['g1_param']['module']
+    c['addendum_radius'] = gear_profile_parameters['g1_param']['addendum_radius'] # for slice_xyz
   else: # no gear_profile, just a circle
     if(c['gear_primitive_diameter']<radian_epsilon):
       print("ERR885: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter']))
@@ -225,6 +226,7 @@ def gearwheel_constraint_check(c):
     c['g1_iy'] = c['center_position_y']
     minimal_gear_profile_radius = float(c['gear_primitive_diameter'])/2
     g1_m = 10.0
+    c['addendum_radius'] = float(c['gear_primitive_diameter'])/2 # for slice_xyz
   ### default value for wheel_hollow
   c['axle_radius'] = axle_diameter/2.0
   if(c['axle_radius'] == 0): # if axle = none
@@ -537,7 +539,7 @@ def gearwheel_3d_construction(c):
   r_slice = {}
 
   r_assembly['gearwheel_3dconf1'] = gearwheel_3dconf1
-  fgr = c['gear_module']*(c['gear_tooth_nb']+2)/2.0 # first gear radius
+  fgr = c['addendum_radius'] # first gear addendum radius
   hh = c['gear_profile_height']/2.0 # half-height
   r_slice['gearwheel_3dconf1'] = (2*fgr,2*fgr,c['gear_profile_height'], c['center_position_x']-fgr,c['center_position_y']-fgr,0.0, [hh], [], [])
   #
