@@ -815,14 +815,16 @@ def gear_profile_3d_construction(c):
   # conf1
   gp_assembly_conf1 = []
   gp_assembly_conf1.append(('first_gear',  0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xy', 0.0, 0.0, 0.0))
-  gp_assembly_conf1.append(('second_gear', 0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xy', 0.0, 0.0, 0.0))
+  if(c['g2_exist']):
+    gp_assembly_conf1.append(('second_gear', 0.0, 0.0, 0.0, 0.0, c['gear_profile_height'], 'i', 'xy', 0.0, 0.0, 0.0))
   #
   r_assembly = {}
   r_slice = {}
 
   r_assembly['gp_assembly_conf1'] = gp_assembly_conf1
-  fgr = c['gear_module']*(c['gear_tooth_nb']+2)/2.0 # first gear radius
+  fgr = c['g1_param']['module']*(c['gear_tooth_nb']+2)/2.0 # first gear radius
   hh = c['gear_profile_height']/2.0 # half-height
+  #print("dbg827: fgr:", fgr)
   r_slice['gp_assembly_conf1'] = (2*fgr,2*fgr,c['gear_profile_height'], c['center_position_x']-fgr,c['center_position_y']-fgr,0.0, [hh], [], [])
   #
   return((r_assembly, r_slice))
@@ -1124,8 +1126,8 @@ class gear_profile(cnc25d_api.bare_design):
     self.set_info(gear_profile_info)
     self.set_display_figure_list(['both_gear'])
     self.set_default_simulation('gear_profile_simulation_A')
-    self.set_2d_figure_file_list(['first_gear', 'second_gear', 'both_gear'])
-    self.set_3d_figure_file_list(['first_gear', 'second_gear'])
+    self.set_2d_figure_file_list([]) # all figures
+    self.set_3d_figure_file_list(['first_gear'])
     self.set_3d_conf_file_list(['gp_assembly_conf1'])
     self.set_allinone_return_type()
     self.set_self_test(gear_profile_self_test())
