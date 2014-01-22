@@ -746,6 +746,22 @@ def gear_profile_constraint_check(c):
     c['real_force_info'] = real_force_info
   #
   c['g2_exist'] = g2_exist
+  # prepare data for epicyclic_gearing
+  (g1_make_low_param, g1_info_low) = calc_low_level_gear_parameters(c['g1_param'])
+  if(c['g2_exist']):
+    (g2_make_low_param, g2_info_low) = calc_low_level_gear_parameters(c['g2_param']) # be careful c['g2_param'] is modified by calc_low_level_gear_parameters()
+    (place_low_parameters, place_info) = pre_g2_position_calculation(c['g1_param'], c['g2_param'], c['second_gear_additional_axis_length'], c['second_gear_position_angle'], g1_rotation_speed, speed_scale)
+    (g2_iap, g2_rotation_speed_p, tmp_tangential_friction, tmp_c1_speed_outline, tmp_c2_speed_outline) = g2_position_calculation(place_low_parameters, 1, c['gear_initial_angle'])
+    (g2_ian, g2_rotation_speed_n, tmp_tangential_friction, tmp_c1_speed_outline, tmp_c2_speed_outline) = g2_position_calculation(place_low_parameters,-1, c['gear_initial_angle'])
+    if((c['second_gear_type']=='e')or(c['second_gear_type']=='i')):
+      g2_ia_modulo = c['g2_pi_module_angle']
+    elif(c['second_gear_type']=='l'):
+      g2_ia_modulo = c['g2_pi_module']
+    g2_iap_ox = math.fmod(g2_iap+2*math.pi+0.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
+    g2_ian_ox = math.fmod(g2_ian+2*math.pi+0.5*g2_ia_modulo, g2_ia_modulo) - 0.5*g2_ia_modulo
+    c['second_positive_initial_angle'] = g2_iap_ox     # hack for epicyclic_gearing
+    c['second_negative_initial_angle'] = g2_ian_ox     # hack for epicyclic_gearing
+    c['second_pi_module_angle'] = g2_ia_modulo #g2_pi_module_angle   # hack for epicyclic_gearing
   #
   return(c)
 
@@ -870,9 +886,6 @@ def gear_profile_simulation_info(c):
       initial_position_info_txt += "g2_ia_slack: {:0.5f} (mm)\n".format(g2_ia_slack)
       initial_speed_info_txt += "g2_initial_speed: positive:  {:0.3f} (mm/s)  negative: {:0.3f} (mm/s)\n".format(g2_rotation_speed_p, g2_rotation_speed_n)
     c['g2_param']['initial_angle'] = g2_iap
-    c['g1_param']['second_positive_initial_angle'] = g2_iap_ox     # hack for epicyclic_gearing
-    c['g1_param']['second_negative_initial_angle'] = g2_ian_ox     # hack for epicyclic_gearing
-    c['g1_param']['second_pi_module_angle'] = g2_ia_modulo #g2_pi_module_angle   # hack for epicyclic_gearing
     # output info
     sys_info_txt = "\nGear system: ratio: {:0.3f}\n g1g2_a: {:0.3f}  \tadditional inter-axis length: {:0.3f}\n".format(float(c['gear_tooth_nb'])/c['second_gear_tooth_nb'], c['second_gear_position_angle'], c['second_gear_additional_axis_length'])
     sys_info_txt += c['real_force_info']
