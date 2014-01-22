@@ -869,11 +869,11 @@ bell_extra_cut_thickness:    {:0.3f}
   return(b_parameter_info)
 
 ################################################################
-# bell allinone_return_type
+# bell cli_return_type
 ################################################################
 
-def bell_allinone_return_type(return_type, c):
-  """ generate the allinone return value of the bell design
+def bell_cli_return_type(return_type, c):
+  """ generate the cli return value of the bell design
   """
   (figures, height) = bell_2d_construction(c)
   (assembly_conf, slice_xyz) = bell_3d_construction(c)
@@ -937,21 +937,23 @@ class bell(cnc25d_api.bare_design):
   def __init__(self, constraint={}):
     """ configure the bell design
     """
-    self.set_design_name("bell_design")
-    self.set_constraint_constructor(bell_constraint_constructor)
-    self.set_constraint_check(bell_constraint_check)
-    self.set_2d_constructor(bell_2d_construction)
-    self.set_2d_simulation()
-    self.set_3d_constructor(bell_3d_construction)
-    self.set_info(bell_info)
-    self.set_display_figure_list(['bell_part_overview', 'external_buttress_assembly', 'internal_buttress_assembly'])
     figs = ['bell_face', 'bell_side', 'bell_base', 'bell_internal_buttress', 'bell_external_face_buttress', 'bell_external_side_buttress', 'part_list', 'internal_buttress_assembly', 'external_buttress_assembly', 'bell_part_overview']
-    #self.set_2d_figure_file_list()
-    self.set_2d_figure_file_list(figs)
-    self.set_3d_figure_file_list(figs)
-    self.set_3d_conf_file_list(['bell_assembly_conf1'])
-    self.set_allinone_return_type(bell_allinone_return_type)
-    self.set_self_test(bell_self_test())
+    self.design_setup(
+      s_design_name             = "bell_design",
+      f_constraint_constructor  = bell_constraint_constructor,
+      f_constraint_check        = bell_constraint_check,
+      f_2d_constructor          = bell_2d_construction,
+      d_2d_simulation           = {},
+      f_3d_constructor          = bell_3d_construction,
+      f_info                    = bell_info,
+      l_display_figure_list     = ['bell_part_overview', 'external_buttress_assembly', 'internal_buttress_assembly'],
+      s_default_simulation      = "",
+      #l_2d_figure_file_list     = [],
+      l_2d_figure_file_list     = figs,
+      l_3d_figure_file_list     = figs,
+      l_3d_conf_file_list       = ['bell_assembly_conf1'],
+      f_cli_return_type         = bell_cli_return_type,
+      l_self_test_list          = bell_self_test())
     self.apply_constraint(constraint)
 
 ################################################################
@@ -962,15 +964,15 @@ class bell(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bell.py says hello!\n")
   my_b = bell()
-  my_b.allinone()
+  my_b.cli()
   if(cnc25d_api.interpretor_is_freecad()):
-    #b_value = my_b.allinone("--bell_extra_cut_thickness 1.0 --return_type freecad_object") # old fashion
+    #b_value = my_b.cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object") # old fashion
     #Part.show(b_value)
     my_b.apply_cli("--bell_extra_cut_thickness 1.0")      # new fashion
     Part.show(my_b.get_fc_obj('bell_assembly_conf2'))
 
   ### very old fashion
-  #b_value = my_b.allinone("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
+  #b_value = my_b.cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")
   #try: # depending on c['return_type'] it might be or not a freecad_object
   #  Part.show(b_value)
   #  print("freecad_object returned")

@@ -919,20 +919,21 @@ class axle_lid(cnc25d_api.bare_design):
   def __init__(self, constraint={}):
     """ configure the axle_lid design
     """
-    self.set_design_name("axle_lid")
-    self.set_constraint_constructor(axle_lid_constraint_constructor)
-    self.set_constraint_check(axle_lid_constraint_check)
-    self.set_2d_constructor(axle_lid_2d_construction)
-    self.set_2d_simulation()
-    self.set_3d_constructor(axle_lid_3d_construction)
-    self.set_info(axle_lid_info)
-    self.set_display_figure_list(['al_assembly_fig'])
-    self.set_default_simulation()
-    self.set_2d_figure_file_list([]) # all figures
-    self.set_3d_figure_file_list(['main_annulus_holder_fig', 'main_top_lid_fig'])
-    self.set_3d_conf_file_list(['axle_lid_3dconf1'])
-    self.set_allinone_return_type()
-    self.set_self_test(axle_lid_self_test())
+    self.design_setup(
+      s_design_name             = "axle_lid",
+      f_constraint_constructor  = axle_lid_constraint_constructor,
+      f_constraint_check        = axle_lid_constraint_check,
+      f_2d_constructor          = axle_lid_2d_construction,
+      #d_2d_simulation           = {},
+      f_3d_constructor          = axle_lid_3d_construction,
+      f_info                    = axle_lid_info,
+      l_display_figure_list     = ['al_assembly_fig'],
+      s_default_simulation      = '',
+      l_2d_figure_file_list     = [], # all figures
+      l_3d_figure_file_list     = ['main_annulus_holder_fig', 'main_top_lid_fig'],
+      l_3d_conf_file_list       = ['axle_lid_3dconf1'],
+      f_cli_return_type         = None,
+      l_self_test_list          = axle_lid_self_test())
     self.apply_constraint(constraint)
 
 
@@ -944,9 +945,9 @@ class axle_lid(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("axle_lid.py says hello!\n")
   my_al = axle_lid()
-  #my_al.allinone()
-  #my_al.allinone("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object")
-  my_al.allinone("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6")
+  #my_al.cli()
+  #my_al.cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object")
+  my_al.cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6")
   if(cnc25d_api.interpretor_is_freecad()):
     Part.show(my_al.get_fc_obj('axle_lid_3dconf1'))
   

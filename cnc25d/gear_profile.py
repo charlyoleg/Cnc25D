@@ -1117,20 +1117,21 @@ class gear_profile(cnc25d_api.bare_design):
   def __init__(self, constraint={}):
     """ configure the gear_profile design
     """
-    self.set_design_name("gear_profile")
-    self.set_constraint_constructor(gear_profile_constraint_constructor)
-    self.set_constraint_check(gear_profile_constraint_check)
-    self.set_2d_constructor(gear_profile_2d_construction)
-    self.set_2d_simulation(gear_profile_2d_simulations())
-    self.set_3d_constructor(gear_profile_3d_construction)
-    self.set_info(gear_profile_info)
-    self.set_display_figure_list(['both_gear'])
-    self.set_default_simulation('gear_profile_simulation_A')
-    self.set_2d_figure_file_list([]) # all figures
-    self.set_3d_figure_file_list(['first_gear'])
-    self.set_3d_conf_file_list(['gp_assembly_conf1'])
-    self.set_allinone_return_type()
-    self.set_self_test(gear_profile_self_test())
+    self.design_setup(
+      s_design_name             = "gear_profile",
+      f_constraint_constructor  = gear_profile_constraint_constructor,
+      f_constraint_check        = gear_profile_constraint_check,
+      f_2d_constructor          = gear_profile_2d_construction,
+      d_2d_simulation           = gear_profile_2d_simulations(),
+      f_3d_constructor          = gear_profile_3d_construction,
+      f_info                    = gear_profile_info,
+      l_display_figure_list     = ['both_gear'],
+      s_default_simulation      = 'gear_profile_simulation_A',
+      l_2d_figure_file_list     = [], # all figures
+      l_3d_figure_file_list     = ['first_gear'],
+      l_3d_conf_file_list       = ['gp_assembly_conf1'],
+      f_cli_return_type         = None,
+      l_self_test_list          = gear_profile_self_test())
     self.apply_constraint(constraint)
 
 
@@ -1143,14 +1144,14 @@ class gear_profile(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gear_profile.py says hello!\n")
   my_gp = gear_profile()
-  #my_gp.allinone("")
-  #my_gp.allinone("--gear_tooth_nb 17")
-  #my_gp.allinone("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0")
-  my_gp.allinone("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20")
-  #my_gp.allinone("--gear_tooth_nb 17 --output_file_basename test_output/toto1")
-  #my_gp.allinone("--gear_tooth_nb 17 --output_file_basename gear_profile_example_1.svg")
-  #my_gp.allinone("--gear_tooth_nb 17 --cut_portion 7 3 3 --output_file_basename gear_profile_example_2.svg")
-  #my_gp.allinone("--gear_tooth_nb 20 --gear_force_angle {:0.3f} --gear_force_angle_n {:0.3f} --output_file_basename gear_profile_example_3.svg".format(25*math.pi/180, 35*math.pi/180,))
+  #my_gp.cli("")
+  #my_gp.cli("--gear_tooth_nb 17")
+  #my_gp.cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0")
+  my_gp.cli("--gear_tooth_nb 17 --gear_module 10 --gear_router_bit_radius 3.0 --second_gear_tooth_nb 20")
+  #my_gp.cli("--gear_tooth_nb 17 --output_file_basename test_output/toto1")
+  #my_gp.cli("--gear_tooth_nb 17 --output_file_basename gear_profile_example_1.svg")
+  #my_gp.cli("--gear_tooth_nb 17 --cut_portion 7 3 3 --output_file_basename gear_profile_example_2.svg")
+  #my_gp.cli("--gear_tooth_nb 20 --gear_force_angle {:0.3f} --gear_force_angle_n {:0.3f} --output_file_basename gear_profile_example_3.svg".format(25*math.pi/180, 35*math.pi/180,))
   if(cnc25d_api.interpretor_is_freecad()):
     Part.show(my_gp.get_fc_obj('gp_assembly_conf1'))
 

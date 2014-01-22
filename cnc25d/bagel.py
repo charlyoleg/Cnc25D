@@ -348,21 +348,23 @@ class bagel(cnc25d_api.bare_design):
   def __init__(self, constraint={}):
     """ configure the bagel design
     """
-    self.set_design_name("bagel_design")
-    self.set_constraint_constructor(bagel_constraint_constructor)
-    self.set_constraint_check(bagel_constraint_check)
-    self.set_2d_constructor(bagel_2d_construction)
-    self.set_2d_simulation()
-    self.set_3d_constructor(bagel_3d_construction)
-    self.set_info(bagel_info)
-    self.set_display_figure_list(['bagel_assembly'])
     figs = []
-    #self.set_2d_figure_file_list()
-    self.set_2d_figure_file_list(figs)
-    self.set_3d_figure_file_list(figs)
-    self.set_3d_conf_file_list(['bagel_assembly_conf1'])
-    self.set_allinone_return_type()
-    self.set_self_test(bagel_self_test())
+    self.design_setup(
+      s_design_name             = "bagel_design",
+      f_constraint_constructor  = bagel_constraint_constructor,
+      f_constraint_check        = bagel_constraint_check,
+      f_2d_constructor          = bagel_2d_construction,
+      d_2d_simulation           = {},
+      f_3d_constructor          = bagel_3d_construction,
+      f_info                    = bagel_info,
+      l_display_figure_list     = ['bagel_assembly'],
+      s_default_simulation      = "",
+      #l_2d_figure_file_list     = [],
+      l_2d_figure_file_list     = figs,
+      l_3d_figure_file_list     = figs,
+      l_3d_conf_file_list       = ['bagel_assembly_conf1'],
+      f_cli_return_type         = None,
+      l_self_test_list          = bagel_self_test())
     self.apply_constraint(constraint)
 
 
@@ -374,7 +376,7 @@ class bagel(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("bagel.py says hello!\n")
   my_bagel = bagel()
-  my_bagel.allinone()
+  my_bagel.cli()
   if(cnc25d_api.interpretor_is_freecad()):
     my_bagel.apply_cli("--bagel_extra_cut_thickness 1.0")
     #my_bagel.outline_display()

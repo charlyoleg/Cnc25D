@@ -322,20 +322,21 @@ class gearbar(cnc25d_api.bare_design):
   def __init__(self, constraint={}):
     """ configure the gearbar design
     """
-    self.set_design_name("gearbar")
-    self.set_constraint_constructor(gearbar_constraint_constructor)
-    self.set_constraint_check(gearbar_constraint_check)
-    self.set_2d_constructor(gearbar_2d_construction)
-    self.set_2d_simulation(gearbar_2d_simulations())
-    self.set_3d_constructor(gearbar_3d_construction)
-    self.set_info(gearbar_info)
-    self.set_display_figure_list(['gearbar_fig'])
-    self.set_default_simulation()
-    self.set_2d_figure_file_list(['gearbar_fig'])
-    self.set_3d_figure_file_list(['gearbar_fig'])
-    self.set_3d_conf_file_list(['gearbar_3dconf1'])
-    self.set_allinone_return_type()
-    self.set_self_test(gearbar_self_test())
+    self.design_setup(
+      s_design_name             = "gearbar",
+      f_constraint_constructor  = gearbar_constraint_constructor,
+      f_constraint_check        = gearbar_constraint_check,
+      f_2d_constructor          = gearbar_2d_construction,
+      d_2d_simulation           = gearbar_2d_simulations(),
+      f_3d_constructor          = gearbar_3d_construction,
+      f_info                    = gearbar_info,
+      l_display_figure_list     = ['gearbar_fig'],
+      s_default_simulation      = '',
+      l_2d_figure_file_list     = ['gearbar_fig'],
+      l_3d_figure_file_list     = ['gearbar_fig'],
+      l_3d_conf_file_list       = ['gearbar_3dconf1'],
+      f_cli_return_type         = None,
+      l_self_test_list          = gearbar_self_test())
     self.apply_constraint(constraint)
 
 
@@ -347,9 +348,9 @@ class gearbar(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearbar.py says hello!\n")
   my_gb = gearbar()
-  #my_gb.allinone()
-  #my_gb.allinone("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --return_type freecad_object")
-  my_gb.allinone("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0")
+  #my_gb.cli()
+  #my_gb.cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --return_type freecad_object")
+  my_gb.cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0")
   if(cnc25d_api.interpretor_is_freecad()):
     Part.show(my_gb.get_fc_obj('gearbar_3dconf1'))
   

@@ -136,8 +136,8 @@ class bare_design:
     """
     self.write_3d_conf_list = assembly_conf_list
 
-  def set_allinone_return_type(self, f_return_type=None):
-    """ bind the function f_return_type that generate the return value of the method allinone()
+  def set_cli_return_type(self, f_return_type=None):
+    """ bind the function f_return_type that generate the return value of the method cli()
     """
     self.f_return_type = f_return_type
 
@@ -188,6 +188,25 @@ class bare_design:
     r_constraint = self.apply_constraint(c)
     self.cli_str = effective_args_in_txt # must be set after apply_constraint()
     return(r_constraint)
+
+  def design_setup(self, s_design_name="no_name", f_constraint_constructor=None, f_constraint_check=None, f_2d_constructor=None, d_2d_simulation={}, f_3d_constructor=None, f_info=None,
+    l_display_figure_list=[], s_default_simulation="", l_2d_figure_file_list=[], l_3d_figure_file_list=[], l_3d_conf_file_list=[], f_cli_return_type=None, l_self_test_list=[]):
+    """ enhance the initial setup of a new design script
+    """
+    self.set_design_name(s_design_name)
+    self.set_constraint_constructor(f_constraint_constructor)
+    self.set_constraint_check(f_constraint_check)
+    self.set_2d_constructor(f_2d_constructor)
+    self.set_2d_simulation(d_2d_simulation)
+    self.set_3d_constructor(f_3d_constructor)
+    self.set_info(f_info)
+    self.set_display_figure_list(l_display_figure_list)
+    self.set_default_simulation(s_default_simulation)
+    self.set_2d_figure_file_list(l_2d_figure_file_list)
+    self.set_3d_figure_file_list(l_3d_figure_file_list)
+    self.set_3d_conf_file_list(l_3d_conf_file_list)
+    self.set_cli_return_type(f_cli_return_type)
+    self.set_self_test(l_self_test_list)
 
   def __init__(self):
     """ bare_design constructor
@@ -371,7 +390,7 @@ class bare_design:
   def run_simulation(self, sim_id=''):
     """ run the simulation sim_id
     """
-    if(self.simulation_2d_pts=={}):
+    if(len(self.simulation_2d_pts)==0):
       print("ERR268: Error, no simulation function is provided. Can't run 2d-simulate {:s}".format(sim_id))
       sys.exit(2)
     if(sim_id==''):
@@ -432,6 +451,11 @@ class bare_design:
     print("{:s} brep-file_3d_conf_list:".format(self.design_name))
     for i in range(len(self.write_3d_conf_list)):
       print("{:02d} : {:s}".format(i, self.write_3d_conf_list[i]))
+    # self-test-list
+    test_ids = []
+    for i in range(len(self.self_tests)):
+      test_ids.append(self.self_tests[i][0])
+    print("design_self-test_list: {:s}".format(', '.join(test_ids)))
     # return (not yet used)
     return(fig_ids)
 
@@ -440,7 +464,7 @@ class bare_design:
         The argument-output-options are: output_file_basename, simulate_2d, display_2d_figures, return_type
     """
     # default simulation ID
-    default_sim_id = ''
+    default_sim_id = None
     if(len(self.simulation_2d_pts)>0):
       default_sim_id = self.simulation_2d_pts.keys()[0]
       #print("dbg438: default_sim_id:", default_sim_id)
@@ -455,7 +479,7 @@ class bare_design:
     cwoo_parser.add_argument('--display_2d_figures','--d2f', action='store_true', default=False, dest='sw_display_2d_figures',
       help="Display in Tk-window all the 2D-figures of the design")
     cwoo_parser.add_argument('--return_type', '--rt', action='store', default='', dest='sw_return_type',
-      help="Select the object to be returned by the function allinone. Depreciated! Use rather the appropriate methods")
+      help="Select the object to be returned by the method cli. Depreciated! Use rather the appropriate methods")
     cwoo_parser.add_argument('--view_design_configuration','--vdc', action='store_true', default=False, dest='sw_view_design_configuration',
       help="View the design configuration (2D-figures, 2D-simulations, assembly_3dconfs, displayed_figures ...)")
     #print("dbg363: effective_args:", effective_args)
@@ -482,7 +506,10 @@ class bare_design:
         if(self.f_3d_constructor!=None):
           self.write_assembly_brep(output_file_basename)
     # run simulation
-    if(oo_args.sw_simulate_2d!=''):
+    if(oo_args.sw_simulate_2d==None):
+      print("ERR510: no simualtion has been set")
+      sys.exit(2)
+    elif(oo_args.sw_simulate_2d!=''):
       #print("dbg482: oo_args.sw_simulate_2d:", oo_args.sw_simulate_2d)
       self.run_simulation(oo_args.sw_simulate_2d)
     # display 2D-figures (the default action)
@@ -498,24 +525,45 @@ class bare_design:
         self.run_simulation(self.default_simulation)
       else:
         self.outline_display()
-    # select the return value of the function allinone
-    r_allinone = 1
+    # select the return value of the method cli
+    r_cli = 1
     if(oo_args.sw_return_type!=''):
       if(self.f_return_type==None):
         print("ERR277: Error, no return_type function is provided. Can't apply return_type {:s}".format(oo_args.sw_return_type))
         sys.exit(2)
-      r_allinone = self.f_return_type(oo_args.sw_return_type, self.constraint)
-    return(r_allinone)
+      r_cli = self.f_return_type(oo_args.sw_return_type, self.constraint)
+    return(r_cli)
 
-  def run_self_test(self):
-    """ run the design-self-test
+  def run_self_test(self, test_id=''):
+    """ run the design-self-test test_id.
+        If test_id=='', all design-self-test are executed
     """
     if(self.self_tests==[]):
       print("ERR322: Error, the self_tests list has not been set!")
       sys.exit(2)
+    test_ids = []
     for i in range(len(self.self_tests)):
-      print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i+1, self.self_tests[i][0], self.self_tests[i][1]))
-      self.apply_cli_with_output_options(self.self_tests[i][1])
+      test_ids.append(self.self_tests[i][0])
+    test_list = []
+    if(test_id==''):
+      test_list.extend(test_ids)
+    else:
+      if(not test_id in test_ids):
+        print("ERR541: Error, test_id {:s} is not in the test-list {:s}".format(test_id, ', '.join(test_ids)))
+        sys.exit(2)
+      test_list.append(test_id)
+    print("dbg555: test_list:", test_list)
+    for i in range(len(test_list)):
+      tn=-1
+      for j in range(len(test_ids)):
+        if(test_ids[j]==test_list[i]):
+          tn=j
+      if(tn==-1):
+        print("ERR562: the test {:s} has not been found".format(test_list[i]))
+        sys.exit(2)
+      else:
+        print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(tn+1, self.self_tests[tn][0], self.self_tests[tn][1]))
+        self.apply_cli_with_output_options(self.self_tests[tn][1])
     return(1)
 
   def dump_constraint_file(self, snippet_filename):
@@ -535,13 +583,13 @@ class bare_design:
     ofh.close()
     return(1)
 
-  def allinone(self, cli_str=""):
+  def cli(self, cli_str=""):
     """ it emulates partially the previous behavior of the design functions
         partially depreciated: use it only to run the self-test or dump the constraint-file
     """
     effective_args = design_help.get_effective_args(cli_str)
     aio_parser = argparse.ArgumentParser(description='AllInOne command Line Interface of {:s}'.format(self.design_name))
-    aio_parser.add_argument('--run_self_test','--rst', action='store_true', default=False, dest='sw_run_self_test',
+    aio_parser.add_argument('--run_self_test','--rst', action='store', nargs='?', const='', default=None, dest='sw_run_self_test',
       help="run the design self-test used usually as non-regression-test")
     aio_parser.add_argument('--dump_constraint_file', '--dcf', action='store', default='', dest='sw_dump_constraint_file',
       help="write a python file containing the list of the design constraint. The file can be used as design constraint example")
@@ -552,15 +600,16 @@ class bare_design:
     else:
       (aio_args, remaining_args) = aio_parser.parse_known_args(effective_args)
     print("dbg111: start a design")
-    r_allinone = 1
-    if(aio_args.sw_run_self_test):
-      self.run_self_test()
+    r_cli = 1
+    if(aio_args.sw_run_self_test!=None):
+      #print("dbg596: aio_args.sw_run_self_test:", aio_args.sw_run_self_test)
+      self.run_self_test(aio_args.sw_run_self_test)
     elif(aio_args.sw_dump_constraint_file!=''):
       self.dump_constraint_file(aio_args.sw_dump_constraint_file)
     else:
-      r_allinone = self.apply_cli_with_output_options(' '.join(remaining_args))
+      r_cli = self.apply_cli_with_output_options(' '.join(remaining_args))
     print("dbg999: end of design")
-    return(r_allinone)
+    return(r_cli)
   
 ################################################################
 # Tests of the bare_design class
@@ -710,20 +759,21 @@ cube volume:    \t{:0.3f} (mm3)
     def __init__(self, constraint={}):
       """ configure the cube design
       """
-      self.set_design_name("cube design")
-      self.set_constraint_constructor(cube_constraint_constructor)
-      self.set_constraint_check(cube_constraint_check)
-      self.set_2d_constructor(cube_figures)
-      self.set_2d_simulation(cube_simulations())
-      self.set_3d_constructor(cube_3d)
-      self.set_info(cube_info)
-      self.set_display_figure_list()
-      self.set_default_simulation()
-      self.set_2d_figure_file_list()
-      self.set_3d_figure_file_list()
-      self.set_3d_conf_file_list()
-      self.set_allinone_return_type()
-      self.set_self_test(cube_self_test())
+      self.design_setup(
+        s_design_name             = "cube_design",
+        f_constraint_constructor  = cube_constraint_constructor,
+        f_constraint_check        = cube_constraint_check,
+        f_2d_constructor          = cube_figures,
+        d_2d_simulation           = cube_simulations(),
+        f_3d_constructor          = cube_3d,
+        f_info                    = cube_info,
+        l_display_figure_list     = [],
+        s_default_simulation      = "",
+        l_2d_figure_file_list     = [],
+        l_3d_figure_file_list     = [],
+        l_3d_conf_file_list       = [],
+        f_cli_return_type         = None,
+        l_self_test_list          = cube_self_test())
       self.apply_constraint(constraint)
 
   # my_cube_constraint
@@ -763,14 +813,14 @@ cube volume:    \t{:0.3f} (mm3)
   # 7: dump constraint-file
   my_cube.dump_constraint_file("test_output/bd_constraint.py")
   # 8: backward compatibility
-  my_old_cube = my_cube.allinone("--length 15.0 --width 10.0 --smooth_radius 3.0 --output_file_basename test_output/bd_allinone.dxf")
+  my_old_cube = my_cube.cli("--length 15.0 --width 10.0 --smooth_radius 3.0 --output_file_basename test_output/bd_self_test.dxf")
   # 9: convenient for inheritance
   my_cube.get_constraint_constructor()
   ic = my_cube.apply_external_constraint(mcc)
   (mc_figs, mc_heights) = my_cube.apply_2d_constructor()
   (mc_assembly, mc_slice_xyz) = my_cube.apply_3d_constructor()
   mc_info = my_cube.get_info()
-  my_cube.allinone("--view_design_configuration")
+  my_cube.cli("--view_design_configuration")
   
 ################################################################
 # bare_desin test command line interface

@@ -1281,20 +1281,21 @@ class epicyclic_gearing(cnc25d_api.bare_design):
   def __init__(self, constraint={}):
     """ configure the epicyclic_gearing design
     """
-    self.set_design_name("epicyclic_gearing")
-    self.set_constraint_constructor(epicyclic_gearing_constraint_constructor)
-    self.set_constraint_check(epicyclic_gearing_constraint_check)
-    self.set_2d_constructor(epicyclic_gearing_2d_construction)
-    self.set_2d_simulation(epicyclic_gearing_2d_simulations())
-    self.set_3d_constructor(epicyclic_gearing_3d_construction)
-    self.set_info(epicyclic_gearing_info)
-    self.set_display_figure_list(['eg_assembly_fig'])
-    self.set_default_simulation()
-    self.set_2d_figure_file_list([])
-    self.set_3d_figure_file_list(['eg_gear_assembly_fig'])
-    self.set_3d_conf_file_list(['epicyclic_gearing_3dconf1'])
-    self.set_allinone_return_type()
-    self.set_self_test(epicyclic_gearing_self_test())
+    self.design_setup(
+      s_design_name             = "epicyclic_gearing",
+      f_constraint_constructor  = epicyclic_gearing_constraint_constructor,
+      f_constraint_check        = epicyclic_gearing_constraint_check,
+      f_2d_constructor          = epicyclic_gearing_2d_construction,
+      d_2d_simulation           = epicyclic_gearing_2d_simulations(),
+      f_3d_constructor          = epicyclic_gearing_3d_construction,
+      f_info                    = epicyclic_gearing_info,
+      l_display_figure_list     = ['eg_assembly_fig'],
+      s_default_simulation      = '',
+      l_2d_figure_file_list     = [], # all figures
+      l_3d_figure_file_list     = ['eg_gear_assembly_fig'],
+      l_3d_conf_file_list       = ['epicyclic_gearing_3dconf1'],
+      f_cli_return_type         = None,
+      l_self_test_list          = epicyclic_gearing_self_test())
     self.apply_constraint(constraint)
 
 
@@ -1306,10 +1307,10 @@ class epicyclic_gearing(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("epicyclic_gearing.py says hello!\n")
   my_eg = epicyclic_gearing()
-  #my_eg.allinone()
-  #my_eg.allinone("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --return_type freecad_object")
-  #my_eg.allinone("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0")
-  my_eg.allinone("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 10 --sun_crenel_nb 4 --sun_crenel_height 1.0 --sun_crenel_width 3.0")
+  #my_eg.cli()
+  #my_eg.cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --return_type freecad_object")
+  #my_eg.cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0")
+  my_eg.cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 10 --sun_crenel_nb 4 --sun_crenel_height 1.0 --sun_crenel_width 3.0")
   if(cnc25d_api.interpretor_is_freecad()):
     Part.show(my_eg.get_fc_obj('epicyclic_gearing_3dconf1'))
 

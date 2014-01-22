@@ -519,20 +519,21 @@ class gearring(cnc25d_api.bare_design):
   def __init__(self, constraint={}):
     """ configure the gearring design
     """
-    self.set_design_name("gearring")
-    self.set_constraint_constructor(gearring_constraint_constructor)
-    self.set_constraint_check(gearring_constraint_check)
-    self.set_2d_constructor(gearring_2d_construction)
-    self.set_2d_simulation(gearring_2d_simulations())
-    self.set_3d_constructor(gearring_3d_construction)
-    self.set_info(gearring_info)
-    self.set_display_figure_list(['gearring_fig'])
-    self.set_default_simulation()
-    self.set_2d_figure_file_list(['gearring_fig'])
-    self.set_3d_figure_file_list(['gearring_fig'])
-    self.set_3d_conf_file_list(['gearring_3dconf1'])
-    self.set_allinone_return_type()
-    self.set_self_test(gearring_self_test())
+    self.design_setup(
+      s_design_name             = "gearring",
+      f_constraint_constructor  = gearring_constraint_constructor,
+      f_constraint_check        = gearring_constraint_check,
+      f_2d_constructor          = gearring_2d_construction,
+      d_2d_simulation           = gearring_2d_simulations(),
+      f_3d_constructor          = gearring_3d_construction,
+      f_info                    = gearring_info,
+      l_display_figure_list     = ['gearring_fig'],
+      s_default_simulation      = '',
+      l_2d_figure_file_list     = ['gearring_fig'],
+      l_3d_figure_file_list     = ['gearring_fig'],
+      l_3d_conf_file_list       = ['gearring_3dconf1'],
+      f_cli_return_type         = None,
+      l_self_test_list          = gearring_self_test())
     self.apply_constraint(constraint)
 
 
@@ -544,9 +545,9 @@ class gearring(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gearring.py says hello!\n")
   my_gr = gearring()
-  #my_gr.allinone()
-  #my_gr.allinone("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0")
-  my_gr.allinone("--gear_tooth_nb 25 --gear_module 10 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0")
+  #my_gr.cli()
+  #my_gr.cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0")
+  my_gr.cli("--gear_tooth_nb 25 --gear_module 10 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0")
   if(cnc25d_api.interpretor_is_freecad()):
     Part.show(my_gr.get_fc_obj('gearring_3dconf1'))
 
