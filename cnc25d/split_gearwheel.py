@@ -549,20 +549,21 @@ class split_gearwheel(cnc25d_api.bare_design):
   def __init__(self, constraint={}):
     """ configure the split_gearwheel design
     """
-    self.set_design_name("split_gearwheel")
-    self.set_constraint_constructor(split_gearwheel_constraint_constructor)
-    self.set_constraint_check(split_gearwheel_constraint_check)
-    self.set_2d_constructor(split_gearwheel_2d_construction)
-    self.set_2d_simulation(split_gearwheel_2d_simulations())
-    self.set_3d_constructor(split_gearwheel_3d_construction)
-    self.set_info(split_gearwheel_info)
-    self.set_display_figure_list(['sgw_assembly_fig', 'sgw_even_assembly_fig', 'sgw_odd_assembly_fig', 'sgw_list_of_parts'])
-    self.set_default_simulation()
-    self.set_2d_figure_file_list([]) # all figures
-    self.set_3d_figure_file_list(['sgw_even_assembly_fig', 'sgw_odd_assembly_fig'])
-    self.set_3d_conf_file_list(['split_gearwheel_3dconf1'])
-    self.set_allinone_return_type()
-    self.set_self_test(split_gearwheel_self_test())
+    self.design_setup(
+      s_design_name             = "split_gearwheel",
+      f_constraint_constructor  = split_gearwheel_constraint_constructor,
+      f_constraint_check        = split_gearwheel_constraint_check,
+      f_2d_constructor          = split_gearwheel_2d_construction,
+      d_2d_simulation           = split_gearwheel_2d_simulations(),
+      f_3d_constructor          = split_gearwheel_3d_construction,
+      f_info                    = split_gearwheel_info,
+      l_display_figure_list     = ['sgw_assembly_fig', 'sgw_even_assembly_fig', 'sgw_odd_assembly_fig', 'sgw_list_of_parts'],
+      s_default_simulation      = '',
+      l_2d_figure_file_list     = [], # all figures
+      l_3d_figure_file_list     = ['sgw_even_assembly_fig', 'sgw_odd_assembly_fig'],
+      l_3d_conf_file_list       = ['split_gearwheel_3dconf1'],
+      f_cli_return_type         = None,
+      l_self_test_list          = split_gearwheel_self_test())
     self.apply_constraint(constraint)
 
 
@@ -574,9 +575,9 @@ class split_gearwheel(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("split_gearwheel.py says hello!\n")
   my_sgw = split_gearwheel()
-  #my_sgw.allinone()
-  my_sgw.allinone("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2")
-  #my_sgw.allinone("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0")
+  #my_sgw.cli()
+  my_sgw.cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2")
+  #my_sgw.cli("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0")
   if(cnc25d_api.interpretor_is_freecad()):
     Part.show(my_sgw.get_fc_obj('split_gearwheel_3dconf1'))
 
