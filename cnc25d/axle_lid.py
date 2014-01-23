@@ -795,29 +795,29 @@ def axle_lid_2d_construction(c):
   r_figures['part_list_fig'] = al_list_of_parts
   r_height['part_list_fig'] = 1.0
   #
-  r_figures['annulus_holder_figure'] = annulus_holder_figure
-  r_height['annulus_holder_figure'] = c['extrusion_height']
+  r_figures['annulus_holder_fig'] = annulus_holder_figure
+  r_height['annulus_holder_fig'] = c['extrusion_height']
   #
-  r_figures['top_lid_figure'] = top_lid_figure
-  r_height['top_lid_figure'] = c['extrusion_height']
+  r_figures['top_lid_fig'] = top_lid_figure
+  r_height['top_lid_fig'] = c['extrusion_height']
   #
-  r_figures['annulus_holder_simple_figure'] = annulus_holder_simple_figure
-  r_height['annulus_holder_simple_figure'] = c['extrusion_height']
+  r_figures['annulus_holder_simple_fig'] = annulus_holder_simple_figure
+  r_height['annulus_holder_simple_fig'] = c['extrusion_height']
   #
-  r_figures['top_lid_simple_figure'] = top_lid_simple_figure
-  r_height['top_lid_simple_figure'] = c['extrusion_height']
+  r_figures['top_lid_simple_fig'] = top_lid_simple_figure
+  r_height['top_lid_simple_fig'] = c['extrusion_height']
   #
-  r_figures['annulus_holder_with_axle_B_figure'] = annulus_holder_with_axle_B_figure
-  r_height['annulus_holder_with_axle_B_figure'] = c['extrusion_height']
+  r_figures['annulus_holder_with_axle_B_fig'] = annulus_holder_with_axle_B_figure
+  r_height['annulus_holder_with_axle_B_fig'] = c['extrusion_height']
   #
-  r_figures['top_lid_with_axle_B_figure'] = top_lid_with_axle_B_figure
-  r_height['top_lid_with_axle_B_figure'] = c['extrusion_height']
+  r_figures['top_lid_with_axle_B_fig'] = top_lid_with_axle_B_figure
+  r_height['top_lid_with_axle_B_fig'] = c['extrusion_height']
   #
-  r_figures['annulus_holder_with_leg_figure'] = annulus_holder_with_leg_figure
-  r_height['annulus_holder_with_leg_figure'] = c['extrusion_height']
+  r_figures['annulus_holder_with_leg_fig'] = annulus_holder_with_leg_figure
+  r_height['annulus_holder_with_leg_fig'] = c['extrusion_height']
   #
-  r_figures['top_lid_with_leg_figure'] = top_lid_with_leg_figure
-  r_height['top_lid_with_leg_figure'] = c['extrusion_height']
+  r_figures['top_lid_with_leg_fig'] = top_lid_with_leg_figure
+  r_height['top_lid_with_leg_fig'] = c['extrusion_height']
   ###
   return((r_figures, r_height))
 
