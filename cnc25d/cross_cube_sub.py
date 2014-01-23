@@ -54,78 +54,14 @@ import Part
 #from dxfwrite import DXFEngine
 # cnc25d
 
-################################################################
-# cross_cube dictionary-arguments default values
-################################################################
-
-def cross_cube_sub_dictionary_init(ai_variant=0):
-  """ create and initiate a cross_cube_sub dictionary with the default value
-  ai_variant = 1 : for cross_cube directly
-  ai_variant = 2 : for crest and then cross_cube
-  """
-  r_cc = {}
-  ### face A1, A2, B1 and B2
-  # height
-  if(ai_variant==2):
-    r_cc['axle_diameter']       = 10.0
-    r_cc['inter_axle_length']   = 15.0
-    r_cc['height_margin']       = 10.0
-    r_cc['top_thickness']       = 5.0
-  # width
-  if(ai_variant==2):
-    r_cc['cube_width']          = 60.0
-  if(ai_variant==2): # not used by crest, but anyway already settable to simplify the parameter check
-    r_cc['face_A1_thickness']   = 9.0
-    r_cc['face_A2_thickness']   = 7.0
-  if(ai_variant==2):
-    r_cc['face_B1_thickness']   = 8.0
-    r_cc['face_B2_thickness']   = 6.0
-  ### threaded rod
-  # face
-  if(ai_variant==2):
-    r_cc['face_rod_hole_diameter']    = 4.0
-    r_cc['face_rod_hole_h_position']  = 5.0
-    r_cc['face_rod_hole_v_distance']  = 5.0
-    r_cc['face_rod_hole_v_position']  = 5.0
-  # top
-  if(ai_variant==1):
-    r_cc['top_rod_hole_diameter']     = 4.0
-    r_cc['top_rod_hole_h_position']   = 10.0
-  ### hollow
-  # face hollow
-  if(ai_variant==2):
-    r_cc['face_hollow_leg_nb']            = 1 # possible values: 1 (filled), 4, 8
-    r_cc['face_hollow_border_width']      = 0.0
-    r_cc['face_hollow_axle_width']        = 0.0
-    r_cc['face_hollow_leg_width']         = 0.0
-    r_cc['face_hollow_smoothing_radius']  = 0.0
-  # top hollow
-  if(ai_variant==1):
-    r_cc['top_hollow_leg_nb']             = 0 # possible values: 0 (empty), 1 (filled), 4, 8
-    r_cc['top_hollow_border_width']       = 0.0
-    r_cc['top_hollow_leg_width']          = 0.0
-    r_cc['top_hollow_smoothing_radius']   = 0.0
-  ### axle
-  if(ai_variant==1):
-    r_cc['axle_length']                   = 0.0
-    r_cc['spacer_diameter']               = 0.0
-    r_cc['spacer_length']                 = 0.0
-  ### manufacturing
-  if(ai_variant==2):
-    r_cc['cross_cube_cnc_router_bit_radius']  = 1.0
-    r_cc['cross_cube_extra_cut_thickness']  = 0.0
-  ### output
-  #### return
-  return(r_cc)
 
 ################################################################
-# cross_cube_sub argparse
+# cross_cube_sub constraint_constructor
 ################################################################
 
-def cross_cube_sub_add_argument(ai_parser, ai_variant=0):
+def cross_cube_sub_constraint_constructor(ai_parser, ai_variant=0):
   """
   Add arguments relative to the cross_cube_sub
-  This function intends to be inherited by crest.py and cross_cube.py
   ai_variant = 1 : for cross_cube directly
   ai_variant = 2 : for crest and then cross_cube
   """
@@ -133,91 +69,91 @@ def cross_cube_sub_add_argument(ai_parser, ai_variant=0):
   ### face A1, A2, B1 and B2
   # height
   if(ai_variant==2):
-    r_parser.add_argument('--axle_diameter','--ad', action='store', type=float, default=10.0, dest='sw_axle_diameter',
+    r_parser.add_argument('--axle_diameter','--ad', action='store', type=float, default=10.0,
       help="Set the diameter of the two axles. Default: 10.0")
-    r_parser.add_argument('--inter_axle_length','--ial', action='store', type=float, default=15.0, dest='sw_inter_axle_length',
+    r_parser.add_argument('--inter_axle_length','--ial', action='store', type=float, default=15.0,
       help="Set the length length betwen the two axle centers. Default: 15.0")
-    r_parser.add_argument('--height_margin','--hm', action='store', type=float, default=10.0, dest='sw_height_margin',
+    r_parser.add_argument('--height_margin','--hm', action='store', type=float, default=10.0,
       help="Set the length betwen the axle peripheral and the inner edge of the top. Default: 10.0")
-    r_parser.add_argument('--top_thickness','--tt', action='store', type=float, default=5.0, dest='sw_top_thickness',
+    r_parser.add_argument('--top_thickness','--tt', action='store', type=float, default=5.0,
       help="Set the thickness of the top part. Default: 5.0")
   # width
   if(ai_variant==2):
-    r_parser.add_argument('--cube_width','--cw', action='store', type=float, default=60.0, dest='sw_cube_width',
+    r_parser.add_argument('--cube_width','--cw', action='store', type=float, default=60.0,
       help="Set the outer width of the cube (for x and y). Default: 60.0")
   if(ai_variant==2):
-    r_parser.add_argument('--face_A1_thickness','--fa1t', action='store', type=float, default=9.0, dest='sw_face_A1_thickness',
+    r_parser.add_argument('--face_A1_thickness','--fa1t', action='store', type=float, default=9.0,
       help="Set the thickness of the face_A1 part. If equal to 0.0, set to top_thickness. Default: 9.0")
-    r_parser.add_argument('--face_A2_thickness','--fa2t', action='store', type=float, default=7.0, dest='sw_face_A2_thickness',
+    r_parser.add_argument('--face_A2_thickness','--fa2t', action='store', type=float, default=7.0,
       help="Set the thickness of the face_A2 part. If equal to 0.0, set to top_thickness. Default: 7.0")
   if(ai_variant==2):
-    r_parser.add_argument('--face_B1_thickness','--fb1t', action='store', type=float, default=8.0, dest='sw_face_B1_thickness',
+    r_parser.add_argument('--face_B1_thickness','--fb1t', action='store', type=float, default=8.0,
       help="Set the thickness of the face_B1 part. If equal to 0.0, set to top_thickness. Default: 8.0")
-    r_parser.add_argument('--face_B2_thickness','--fb2t', action='store', type=float, default=6.0, dest='sw_face_B2_thickness',
+    r_parser.add_argument('--face_B2_thickness','--fb2t', action='store', type=float, default=6.0,
       help="Set the thickness of the face_B2 part. If equal to 0.0, set to top_thickness. Default: 6.0")
   ### threaded rod
   # face
   if(ai_variant==2):
-    r_parser.add_argument('--face_rod_hole_diameter','--frhd', action='store', type=float, default=4.0, dest='sw_face_rod_hole_diameter',
+    r_parser.add_argument('--face_rod_hole_diameter','--frhd', action='store', type=float, default=4.0,
       help="Set the diameter of the holes for threaded rod on the faces. Default: 4.0")
-    r_parser.add_argument('--face_rod_hole_h_position','--frhhp', action='store', type=float, default=5.0, dest='sw_face_rod_hole_h_position',
+    r_parser.add_argument('--face_rod_hole_h_position','--frhhp', action='store', type=float, default=5.0,
       help="Set the horizontal position of the threaded rod center from the inner edge. Default: 5.0")
-    r_parser.add_argument('--face_rod_hole_v_distance','--frhvd', action='store', type=float, default=5.0, dest='sw_face_rod_hole_v_distance',
+    r_parser.add_argument('--face_rod_hole_v_distance','--frhvd', action='store', type=float, default=5.0,
       help="Set the vertical distance between the axis of the x-face-rod and the y-face-rod. Default: 5.0")
-    r_parser.add_argument('--face_rod_hole_v_position','--frhvp', action='store', type=float, default=5.0, dest='sw_face_rod_hole_v_position',
+    r_parser.add_argument('--face_rod_hole_v_position','--frhvp', action='store', type=float, default=5.0,
       help="Set the vertical position of the threaded rod center from the inner edge. Default: 5.0")
   # top
   if(ai_variant==1):
-    r_parser.add_argument('--top_rod_hole_diameter','--trhd', action='store', type=float, default=4.0, dest='sw_top_rod_hole_diameter',
+    r_parser.add_argument('--top_rod_hole_diameter','--trhd', action='store', type=float, default=4.0,
       help="Set the diameter of the holes for the vertical threaded rods. Default: 4.0")
-    r_parser.add_argument('--top_rod_hole_h_position','--trhhp', action='store', type=float, default=10.0, dest='sw_top_rod_hole_h_position',
+    r_parser.add_argument('--top_rod_hole_h_position','--trhhp', action='store', type=float, default=10.0,
       help="Set the horizontal position of the vertical threaded rod center from the inner edge. Default: 10.0")
   ### hollow
   # face hollow
   if(ai_variant==2):
-    r_parser.add_argument('--face_hollow_leg_nb','--fhln', action='store', type=int, default=1, dest='sw_face_hollow_leg_nb',
+    r_parser.add_argument('--face_hollow_leg_nb','--fhln', action='store', type=int, default=1,
       help="Set the number of legs (equivalent number of hollows) on the faces. Possible values: 1 (filled), 4, 8. Default: 1")
-    r_parser.add_argument('--face_hollow_border_width','--fhbw', action='store', type=float, default=0.0, dest='sw_face_hollow_border_width',
+    r_parser.add_argument('--face_hollow_border_width','--fhbw', action='store', type=float, default=0.0,
       help="Set the width around the face-inner-border. If equal to 0.0, set to max_face_top_thickness. Default: 0.0")
-    r_parser.add_argument('--face_hollow_axle_width','--fhaw', action='store', type=float, default=0.0, dest='sw_face_hollow_axle_width',
+    r_parser.add_argument('--face_hollow_axle_width','--fhaw', action='store', type=float, default=0.0,
       help="Set the width around the axle. If equal to 0.0, set to axle_radius. Default: 0.0")
-    r_parser.add_argument('--face_hollow_leg_width','--fhlw', action='store', type=float, default=0.0, dest='sw_face_hollow_leg_width',
+    r_parser.add_argument('--face_hollow_leg_width','--fhlw', action='store', type=float, default=0.0,
       help="Set the width of the legs. If equal to 0.0, set to max(max_face_top_thickness, axle_radius). Default: 0.0")
-    r_parser.add_argument('--face_hollow_smoothing_radius','--fhsr', action='store', type=float, default=0.0, dest='sw_face_hollow_smoothing_radius',
+    r_parser.add_argument('--face_hollow_smoothing_radius','--fhsr', action='store', type=float, default=0.0,
       help="Set the radius for smoothing the face-hollow corners. If equal to 0.0, set to cube_width/10. Default: 0.0")
   # top hollow
   if(ai_variant==1):
-    r_parser.add_argument('--top_hollow_leg_nb','--thln', action='store', type=int, default=0, dest='sw_top_hollow_leg_nb',
+    r_parser.add_argument('--top_hollow_leg_nb','--thln', action='store', type=int, default=0,
       help="Set the number of legs (equivalent number of hollows) on the top. Possible values: 0 (empty), 1 (filled), 4, 8. Default: 0")
-    r_parser.add_argument('--top_hollow_border_width','--thbw', action='store', type=float, default=0.0, dest='sw_top_hollow_border_width',
+    r_parser.add_argument('--top_hollow_border_width','--thbw', action='store', type=float, default=0.0,
       help="Set the width around the top-inner-border. If equal to 0.0, set to max_face_thickness. Default: 0.0")
-    r_parser.add_argument('--top_hollow_leg_width','--thlw', action='store', type=float, default=0.0, dest='sw_top_hollow_leg_width',
+    r_parser.add_argument('--top_hollow_leg_width','--thlw', action='store', type=float, default=0.0,
       help="Set the width of the legs. If equal to 0.0, set to max_face_thickness. Default: 0.0")
-    r_parser.add_argument('--top_hollow_smoothing_radius','--thsr', action='store', type=float, default=0.0, dest='sw_top_hollow_smoothing_radius',
+    r_parser.add_argument('--top_hollow_smoothing_radius','--thsr', action='store', type=float, default=0.0,
       help="Set the radius for smoothing the top-hollow corners. If equal to 0.0, set to cube_width/10. Default: 0.0")
   ### axle
   if(ai_variant==1):
-    r_parser.add_argument('--axle_length','--al', action='store', type=float, default=0.0, dest='sw_axle_length',
+    r_parser.add_argument('--axle_length','--al', action='store', type=float, default=0.0,
       help="Set the total length of the axles. If equal to 0.0, set to 2*cube_width. Default: 0.0")
-    r_parser.add_argument('--spacer_diameter','--sd', action='store', type=float, default=0.0, dest='sw_spacer_diameter',
+    r_parser.add_argument('--spacer_diameter','--sd', action='store', type=float, default=0.0,
       help="Set the external diameter of the spacer. If equal to 0.0, set to 1.2*axle_diameter. Default: 0.0")
-    r_parser.add_argument('--spacer_length','--sl', action='store', type=float, default=0.0, dest='sw_spacer_length',
+    r_parser.add_argument('--spacer_length','--sl', action='store', type=float, default=0.0,
       help="Set the length of the spacers. If equal to 0.0, set to (axle_length-cube_width)/4. Default: 0.0")
   ### manufacturing
   if(ai_variant==2):
-    r_parser.add_argument('--cross_cube_cnc_router_bit_radius','--cccrbr', action='store', type=float, default=1.0, dest='sw_cross_cube_cnc_router_bit_radius',
+    r_parser.add_argument('--cross_cube_cnc_router_bit_radius','--cccrbr', action='store', type=float, default=1.0,
       help="Set the minimal cnc_router_bit radius of the design. Default: 1.0")
-    r_parser.add_argument('--cross_cube_extra_cut_thickness','--ccect', action='store', type=float, default=0.0, dest='sw_cross_cube_extra_cut_thickness',
+    r_parser.add_argument('--cross_cube_extra_cut_thickness','--ccect', action='store', type=float, default=0.0,
       help="Set the extra-cut-thickness for the internal cross_cube cuts. It can be used to compensate the manufacturing process or to check the 3D assembly with FreeCAD. Default: 0.0")
   ### output
   # return
   return(r_parser)
 
 ################################################################
-# parameter check functions
+# cross_cube_sub constraint_check
 ################################################################
 
-def check_cross_cube_face_parameters(ai_constraints):
+def cross_cube_sub_face_check(ai_constraints):
   """ check and complete the parameters relative to the cross_cube-face
   """
   cc_c = ai_constraints
@@ -342,7 +278,7 @@ def check_cross_cube_face_parameters(ai_constraints):
   # return
   return(cc_c)
 
-def check_cross_cube_top_parameters(ai_constraints):
+def cross_cube_sub_top_check(ai_constraints):
   """ check and complete the parameters relative to the cross_cube-top
   """
   cc_c = ai_constraints
@@ -420,7 +356,7 @@ def cross_cube_face_bottom_outline(ai_constraints, ai_left_thickness, ai_right_t
   """ Generate the bottom-portion of the face external-outline
   """
   # alias
-  cc_c = check_cross_cube_face_parameters(ai_constraints)
+  cc_c = cross_cube_sub_face_check(ai_constraints)
   lt = ai_left_thickness
   rt = ai_right_thickness
   cccrbr = cc_c['cross_cube_cnc_router_bit_radius']
@@ -445,7 +381,7 @@ def cross_cube_face_top_outline(ai_constraints, ai_left_thickness, ai_right_thic
   """ Generate the top-portion of the face external-outline
   """
   # alias
-  cc_c = check_cross_cube_face_parameters(ai_constraints)
+  cc_c = cross_cube_sub_face_check(ai_constraints)
   lt = ai_left_thickness
   rt = ai_right_thickness
   cccrbr = cc_c['cross_cube_cnc_router_bit_radius']
@@ -485,7 +421,7 @@ def cross_cube_face_holes(ai_constraints, ai_left_thickness, ai_right_thickness)
   """ Generate the hole-outlines of the face figures
   """
   # alias
-  cc_c = check_cross_cube_face_parameters(ai_constraints)
+  cc_c = cross_cube_sub_face_check(ai_constraints)
   lt = ai_left_thickness
   rt = ai_right_thickness
   tt = cc_c['top_thickness']
@@ -525,7 +461,7 @@ def cross_cube_top(ai_constraints):
   """ Generate the whole top figure
   """
   # alias
-  cc_c = check_cross_cube_top_parameters(ai_constraints)
+  cc_c = cross_cube_sub_top_check(ai_constraints)
   cccrbr = cc_c['cross_cube_cnc_router_bit_radius']
   ccect = cc_c['cross_cube_extra_cut_thickness']
   cw5 = cc_c['cube_width']/5.0
@@ -583,7 +519,7 @@ def cross_cube_top(ai_constraints):
 def cross_cube_face_parameter_info(ai_constraints):
   """ generate a text string parameter_info for crest
   """
-  cc_c = check_cross_cube_face_parameters(ai_constraints)
+  cc_c = cross_cube_sub_face_check(ai_constraints)
   # cc_parameter_info
   cc_parameter_info = "cross_cube parameter info for crest:"
   cc_parameter_info += """
@@ -628,7 +564,7 @@ cross_cube_extra_cut_thickness:   {:0.3f}
 def cross_cube_top_parameter_info(ai_constraints):
   """ generate a text string parameter_info for the rest of cross_cube
   """
-  cc_c = check_cross_cube_top_parameters(ai_constraints)
+  cc_c = cross_cube_sub_top_check(ai_constraints)
   # cc_parameter_info
   cc_parameter_info = "cross_cube parameter info for top:"
   cc_parameter_info += """
@@ -652,65 +588,4 @@ spacer_length:  {:0.3f}
   #print("dbg552: cc_parameter_info: {:s}".format(cc_parameter_info))
   return(cc_parameter_info)
 
-################################################################
-# cross_cube wrapper dance
-################################################################
-
-def cross_cube_sub_argparse_to_dictionary(ai_cc_args, ai_variant=0):
-  """ convert a cross_cube_sub_argparse into a cross_cube_sub_dictionary
-  """
-  r_ccd = {}
-  ### face A1, A2, B1 and B2
-  # height
-  if(ai_variant==2):
-    r_ccd['axle_diameter']       = ai_cc_args.sw_axle_diameter
-    r_ccd['inter_axle_length']   = ai_cc_args.sw_inter_axle_length
-    r_ccd['height_margin']       = ai_cc_args.sw_height_margin
-    r_ccd['top_thickness']       = ai_cc_args.sw_top_thickness
-  # width
-  if(ai_variant==2):
-    r_ccd['cube_width']          = ai_cc_args.sw_cube_width
-  if(ai_variant==2):
-    r_ccd['face_A1_thickness']   = ai_cc_args.sw_face_A1_thickness
-    r_ccd['face_A2_thickness']   = ai_cc_args.sw_face_A2_thickness
-  if(ai_variant==2):
-    r_ccd['face_B1_thickness']   = ai_cc_args.sw_face_B1_thickness
-    r_ccd['face_B2_thickness']   = ai_cc_args.sw_face_B2_thickness
-  ### threaded rod
-  # face
-  if(ai_variant==2):
-    r_ccd['face_rod_hole_diameter']    = ai_cc_args.sw_face_rod_hole_diameter
-    r_ccd['face_rod_hole_h_position']  = ai_cc_args.sw_face_rod_hole_h_position
-    r_ccd['face_rod_hole_v_distance']  = ai_cc_args.sw_face_rod_hole_v_distance
-    r_ccd['face_rod_hole_v_position']  = ai_cc_args.sw_face_rod_hole_v_position
-  # top
-  if(ai_variant==1):
-    r_ccd['top_rod_hole_diameter']     = ai_cc_args.sw_top_rod_hole_diameter
-    r_ccd['top_rod_hole_h_position']   = ai_cc_args.sw_top_rod_hole_h_position
-  ### hollow
-  # face hollow
-  if(ai_variant==2):
-    r_ccd['face_hollow_leg_nb']            = ai_cc_args.sw_face_hollow_leg_nb
-    r_ccd['face_hollow_border_width']      = ai_cc_args.sw_face_hollow_border_width
-    r_ccd['face_hollow_axle_width']        = ai_cc_args.sw_face_hollow_axle_width
-    r_ccd['face_hollow_leg_width']         = ai_cc_args.sw_face_hollow_leg_width
-    r_ccd['face_hollow_smoothing_radius']  = ai_cc_args.sw_face_hollow_smoothing_radius
-  # top hollow
-  if(ai_variant==1):
-    r_ccd['top_hollow_leg_nb']             = ai_cc_args.sw_top_hollow_leg_nb
-    r_ccd['top_hollow_border_width']       = ai_cc_args.sw_top_hollow_border_width
-    r_ccd['top_hollow_leg_width']          = ai_cc_args.sw_top_hollow_leg_width
-    r_ccd['top_hollow_smoothing_radius']   = ai_cc_args.sw_top_hollow_smoothing_radius
-  ### axle
-  if(ai_variant==1):
-    r_ccd['axle_length']                   = ai_cc_args.sw_axle_length
-    r_ccd['spacer_diameter']               = ai_cc_args.sw_spacer_diameter
-    r_ccd['spacer_length']                 = ai_cc_args.sw_spacer_length
-  ### manufacturing
-  if(ai_variant==2):
-    r_ccd['cross_cube_cnc_router_bit_radius']  = ai_cc_args.sw_cross_cube_cnc_router_bit_radius
-    r_ccd['cross_cube_extra_cut_thickness']  = ai_cc_args.sw_cross_cube_extra_cut_thickness
-  ### output
-  #### return
-  return(r_ccd)
   
