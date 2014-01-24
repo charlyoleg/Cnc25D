@@ -56,6 +56,7 @@ class bare_design:
     # optional attributes
     self.f_constraint_check = None # highly recommended
     self.f_3d_constructor = None
+    self.f_3d_freecad_constructor = None
     self.simulation_2d_pts = {}
     self.f_return_type = None
     self.self_tests = []
@@ -64,6 +65,7 @@ class bare_design:
     self.write_2d_figure_list = []
     self.write_3d_figure_list = []
     self.write_3d_conf_list = []
+    self.write_3d_freecad_list = []
     # self-generated attributes
     self.reference_constraint = None
     self.constraint = None
@@ -72,6 +74,8 @@ class bare_design:
     self.figure_heights = None
     self.assembly_configurations = None
     self.slice3d_configurations = None
+    self.freecad_function_pts = None
+    self.fc_obj_slice3d_conf = None
 
   def set_constraint_constructor(self, f_constraint_constructor):
     """ create the design constraint list
@@ -102,6 +106,11 @@ class bare_design:
     """
     self.f_3d_constructor = f_3d_constructor
 
+  def set_3d_freecad_constructor(self, f_3d_freecad_constructor):
+    """ bind the function f_3d_freecad_constructor that generates the 3D FreeCAD objects and returns them in a dictionary
+    """
+    self.f_3d_freecad_constructor = f_3d_freecad_constructor
+
   def set_info(self, f_info):
     """ bind the function f_info that generates the design text info
     """
@@ -121,20 +130,30 @@ class bare_design:
   def set_2d_figure_file_list(self, figure_list=[]):
     """ set the list of figures to be written in SVG or DXF files
         If the list is empty, all 2D-figures will be written in files
+        If the list is set to None, no 2d-figures is written in file
     """
     self.write_2d_figure_list = figure_list
 
   def set_3d_figure_file_list(self, figure_list=[]):
     """ set the list of 2d-figures to be written in BREP files
         If the list is empty, all 2d-figures will be written in files
+        If the list is set to None, no 2d-figures is written in file
     """
     self.write_3d_figure_list = figure_list
 
   def set_3d_conf_file_list(self, assembly_conf_list=[]):
     """ set the list of 3d-assembly-configurations to be written in BREP files
         If the list is empty, all 3D-assembly-configurations will be written in files
+        If the list is set to None, no 3D-assembly-configurations is written in file
     """
     self.write_3d_conf_list = assembly_conf_list
+
+  def set_3d_freecad_file_list(self, freecad_list=[]):
+    """ set the list of 3d-freecad-list to be written in BREP files
+        If the list is empty, all 3D-freecad_objects will be written in files
+        If the list is set to None, no 3D-freecad_object is written in file
+    """
+    self.write_3d_freecad_list = freecad_list
 
   def set_cli_return_type(self, f_return_type=None):
     """ bind the function f_return_type that generate the return value of the method cli()
@@ -189,8 +208,8 @@ class bare_design:
     self.cli_str = effective_args_in_txt # must be set after apply_constraint()
     return(r_constraint)
 
-  def design_setup(self, s_design_name="no_name", f_constraint_constructor=None, f_constraint_check=None, f_2d_constructor=None, d_2d_simulation={}, f_3d_constructor=None, f_info=None,
-    l_display_figure_list=[], s_default_simulation="", l_2d_figure_file_list=[], l_3d_figure_file_list=[], l_3d_conf_file_list=[], f_cli_return_type=None, l_self_test_list=[]):
+  def design_setup(self, s_design_name="no_name", f_constraint_constructor=None, f_constraint_check=None, f_2d_constructor=None, d_2d_simulation={}, f_3d_constructor=None, f_3d_freecad_constructor=None, f_info=None,
+    l_display_figure_list=[], s_default_simulation="", l_2d_figure_file_list=[], l_3d_figure_file_list=[], l_3d_conf_file_list=[], l_3d_freecad_file_list=[], f_cli_return_type=None, l_self_test_list=[]):
     """ enhance the initial setup of a new design script
     """
     self.set_design_name(s_design_name)
@@ -199,12 +218,14 @@ class bare_design:
     self.set_2d_constructor(f_2d_constructor)
     self.set_2d_simulation(d_2d_simulation)
     self.set_3d_constructor(f_3d_constructor)
+    self.set_3d_freecad_constructor(f_3d_freecad_constructor)
     self.set_info(f_info)
     self.set_display_figure_list(l_display_figure_list)
     self.set_default_simulation(s_default_simulation)
     self.set_2d_figure_file_list(l_2d_figure_file_list)
     self.set_3d_figure_file_list(l_3d_figure_file_list)
     self.set_3d_conf_file_list(l_3d_conf_file_list)
+    self.set_3d_freecad_file_list(l_3d_freecad_file_list)
     self.set_cli_return_type(f_cli_return_type)
     self.set_self_test(l_self_test_list)
 
@@ -296,6 +317,17 @@ class bare_design:
     self.slice3d_configurations = slice3d_conf
     return((self.assembly_configurations, self.slice3d_configurations))
 
+  def apply_3d_freecad_constructor(self):
+    """ internal method that execute the f_3d_freecad_constructor function
+    """
+    if(self.f_3d_freecad_constructor==None):
+      print("ERR315: Error, the function f_3d_freecad_constructor has not been set!")
+      sys.exit(2)
+    (freecad_function_pts, fc_obj_slice3d_conf) = self.f_3d_freecad_constructor(self.constraint)
+    self.freecad_function_pts = freecad_function_pts
+    self.fc_obj_slice3d_conf = fc_obj_slice3d_conf
+    return((self.freecad_function_pts, self.fc_obj_slice3d_conf))
+
   def complete_assembly_conf(self, partial_conf):
     """ prepare an assembly_conf and in particular generate the required outline-figures
     """
@@ -310,7 +342,7 @@ class bare_design:
       r_assembly_conf.append(one_figure_conf)
     return(r_assembly_conf)
 
-  def get_fc_obj(self, assembly_name=""):
+  def get_fc_obj_3dconf(self, assembly_name=""):
     """ generate on freecad-object according to the 3d-assembly-configuration
         assembly_name selects the 3d-assembly-configuration
         if assembly_name is empty, the first 3d-assembly-configuration is selected
@@ -326,66 +358,134 @@ class bare_design:
     r_fc_obj = design_output.figures_to_freecad_assembly(self.complete_assembly_conf(self.assembly_configurations[assembly_name]))
     return(r_fc_obj)
 
+  def get_fc_obj_function(self, function_id=""):
+    """ generate on freecad-object according to the 3d-freecad_function_pts
+        function_id selects the 3d-freecad_function
+        if function_id is empty, the first 3d-freecad_function is selected
+    """
+    self.apply_3d_freecad_constructor()
+    if(function_id==""):
+      function_id = self.freecad_function_pts.keys()[0] # set the first 3d-freecad_function_pts per default
+    if(not function_id in self.freecad_function_pts.keys()):
+      print("ERR370: Error, the function_id {:s} is not in the possible 3d-freecad_function_pts".format(function_id))
+      sys.exit(2)
+    r_fc_obj = self.freecad_function_pts[function_id](self.constraint) # execute the function that generate a freecad object
+    return(r_fc_obj)
+
+  def get_write_2d_figure_list(self):
+    """ generate the list of 2d_figures to be written according to self.write_2d_figure_list
+    """
+    figs = self.write_2d_figure_list
+    r_list = []
+    if(figs != None):
+      self.apply_2d_constructor() # create the A-figures
+      if(len(figs)==0):
+        r_list = self.A_figures.keys()
+      else:
+        r_list = figs
+      for f in r_list:
+        if(not f in self.A_figures.keys()):
+          print("ERR291: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
+          sys.exit(2)
+    return(r_list)
+
   def write_figure_svg(self, output_file_basename):
     """ write all 2d-figures in svg files
         output_file_basename contains the directory path and the file-basename
     """
-    self.get_A_figure() # create the A-figures
     txt_info = self.get_info()
-    figs = self.write_2d_figure_list
-    if(len(figs)==0):
-      figs = self.A_figures.keys()
+    figs = self.get_write_2d_figure_list()
     for f in figs:
-      if(not f in self.A_figures.keys()):
-        print("ERR291: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
-        sys.exit(2)
       design_output.generate_output_file(design_output.cnc_cut_figure(self.A_figures[f], "generate_svg_{:s}".format(f)), "{:s}_{:s}.svg".format(output_file_basename, f), self.figure_heights[f], txt_info)
 
   def write_figure_dxf(self, output_file_basename):
     """ write all 2d-figures in dxf files
         output_file_basename contains the directory path and the file-basename
     """
-    self.get_A_figure() # create the A-figures
     txt_info = self.get_info()
-    figs = self.write_2d_figure_list
-    if(len(figs)==0):
-      figs = self.A_figures.keys()
+    figs = self.get_write_2d_figure_list()
     for f in figs:
-      if(not f in self.A_figures.keys()):
-        print("ERR306: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
-        sys.exit(2)
       design_output.generate_output_file(design_output.cnc_cut_figure(self.A_figures[f], "generate_dxf_{:s}".format(f)), "{:s}_{:s}.dxf".format(output_file_basename, f), self.figure_heights[f], txt_info)
+
+  def get_write_3d_figure_list(self):
+    """ generate the list of 2d_figures to be written according to self.write_3d_figure_list
+    """
+    figs = self.write_3d_figure_list
+    r_list = []
+    if(figs != None):
+      self.apply_2d_constructor() # create the A-figures
+      if(len(figs)==0):
+        r_list = self.A_figures.keys()
+      else:
+        r_list = figs
+      for f in r_list:
+        if(not f in self.A_figures.keys()):
+          print("ERR380: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
+          sys.exit(2)
+    return(r_list)
 
   def write_figure_brep(self, output_file_basename):
     """ write all 2d-figures in brep files
         output_file_basename contains the directory path and the file-basename
     """
-    self.get_A_figure() # create the A-figures
     txt_info = self.get_info()
-    figs = self.write_3d_figure_list
-    if(len(figs)==0):
-      figs = self.A_figures.keys()
+    figs = self.get_write_3d_figure_list()
     for f in figs:
-      if(not f in self.A_figures.keys()):
-        print("ERR321: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
-        sys.exit(2)
       design_output.generate_output_file(design_output.cnc_cut_figure(self.A_figures[f], "generate_brep_{:s}".format(f)), "{:s}_{:s}".format(output_file_basename, f), self.figure_heights[f], txt_info)
+
+  def get_write_3d_conf_list(self):
+    """ generate the list of 3d-assembly-configurations to be written according to self.write_3d_conf_list
+    """
+    confs = self.write_3d_conf_list
+    r_list = []
+    if(confs != None):
+      self.apply_3d_constructor() # create the 3d-conf-dictionary
+      if(len(confs)==0):
+        r_list = self.assembly_configurations.keys()
+      else:
+        r_list = confs
+      for f in r_list:
+        if(not f in self.assembly_configurations.keys()):
+          print("ERR406: Error, f {:s} is not an existing 3d-assembly-configurations {:s}".format(f, ' '.join(self.assembly_configurations.keys())))
+          sys.exit(2)
+    return(r_list)
 
   def write_assembly_brep(self, output_file_basename):
     """ write all 3d-assembly-configurations in brep files
         output_file_basename contains the directory path and the file-basename
     """
-    self.apply_3d_constructor()
     txt_info = self.get_info()
-    confs = self.write_3d_conf_list
-    if(len(confs)==0):
-      confs = self.assembly_configurations.keys()
+    confs = self.get_write_3d_conf_list()
     for a in confs:
-      if(not a in self.assembly_configurations.keys()):
-        print("ERR336: Error, a {:s} is not an existing 3d-assembly-configurations {:s}".format(a, ' '.join(self.assembly_configurations.keys())))
-        sys.exit(2)
       # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
       design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=False, ai_slice_xyz=self.slice3d_configurations[a]) 
+
+  def get_write_3d_freecad_list(self):
+    """ generate the list of 3d-freecad_objects to be written according to self.write_3d_freecad_list
+    """
+    l = self.write_3d_freecad_list
+    r_list = []
+    if(l != None):
+      self.apply_3d_freecad_constructor() # create the 3d-freecad_objects
+      if(len(l)==0):
+        r_list = self.freecad_function_pts.keys()
+      else:
+        r_list = l
+      for f in r_list:
+        if(not f in self.freecad_function_pts.keys()):
+          print("ERR460: Error, f {:s} is not an existing 3d-freecad_function_pts {:s}".format(f, ' '.join(self.freecad_function_pts.keys())))
+          sys.exit(2)
+    return(r_list)
+
+  def write_freecad_brep(self, output_file_basename):
+    """ write all 3d-freecad_list in brep files
+        output_file_basename contains the directory path and the file-basename
+    """
+    txt_info = self.get_info()
+    l = self.get_write_3d_freecad_list()
+    for a in l:
+      # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
+      design_output.freecad_object_output_file(self.get_fc_obj_function(a), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=False, ai_slice_xyz=self.fc_obj_slice3d_conf[a]) 
 
   def run_simulation(self, sim_id=''):
     """ run the simulation sim_id
@@ -425,14 +525,23 @@ class bare_design:
       for i in range(len(sim_ids)):
         print("{:02d} : {:s}".format(i, sim_ids[i]))
     # assembly_3d_configurations
-    self.apply_3d_constructor()
-    assembly_ids = self.assembly_configurations.keys()
-    print("{:s} assembly_3dconf:".format(self.design_name))
-    if(len(assembly_ids)==0):
+    if(self.f_3d_constructor==None):
       print("No assembly_3dconf")
     else:
+      self.apply_3d_constructor()
+      assembly_ids = self.assembly_configurations.keys()
+      print("{:s} assembly_3dconf:".format(self.design_name))
       for i in range(len(assembly_ids)):
         print("{:02d} : {:s}".format(i, assembly_ids[i]))
+    # assembly_3d_freecad_configurations
+    if(self.f_3d_freecad_constructor==None):
+      print("No freecad_3dconf")
+    else:
+      self.apply_3d_freecad_constructor()
+      fc_ids = self.freecad_function_pts.keys()
+      print("{:s} freecad_function_pts:".format(self.design_name))
+      for i in range(len(fc_ids)):
+        print("{:02d} : {:s}".format(i, fc_ids[i]))
     # display_2d_figure_list
     print("{:s} display_2d_figure_list:".format(self.design_name))
     for i in range(len(self.display_2d_figure_list)):
@@ -441,16 +550,24 @@ class bare_design:
     print("{:s} default_simulation: {:s}".format(self.design_name, self.default_simulation))
     # file_2d_figure_file_list
     print("{:s} svg-dxf-file_2d_figure_list:".format(self.design_name))
-    for i in range(len(self.write_2d_figure_list)):
-      print("{:02d} : {:s}".format(i, self.write_2d_figure_list[i]))
+    figs = self.get_write_2d_figure_list()
+    for i in range(len(figs)):
+      print("{:02d} : {:s}".format(i, figs[i]))
     # file_3d_figure_file_list
     print("{:s} brep-file_3d_figure_list:".format(self.design_name))
-    for i in range(len(self.write_3d_figure_list)):
-      print("{:02d} : {:s}".format(i, self.write_3d_figure_list[i]))
+    figs = self.get_write_3d_figure_list()
+    for i in range(len(figs)):
+      print("{:02d} : {:s}".format(i, figs[i]))
     # file_3d_conf_file_list
     print("{:s} brep-file_3d_conf_list:".format(self.design_name))
-    for i in range(len(self.write_3d_conf_list)):
-      print("{:02d} : {:s}".format(i, self.write_3d_conf_list[i]))
+    confs = self.get_write_3d_conf_list()
+    for i in range(len(confs)):
+      print("{:02d} : {:s}".format(i, confs[i]))
+    # file_3d_freecad_file_list
+    print("{:s} brep-file_3d_freecad_list:".format(self.design_name))
+    fc_l = self.get_write_3d_freecad_list()
+    for i in range(len(fc_l)):
+      print("{:02d} : {:s}".format(i, fc_l[i]))
     # self-test-list
     test_ids = []
     for i in range(len(self.self_tests)):
@@ -503,8 +620,8 @@ class bare_design:
       else:
         output_file_basename = oo_args.sw_output_file_basename
         self.write_figure_brep(output_file_basename)
-        if(self.f_3d_constructor!=None):
-          self.write_assembly_brep(output_file_basename)
+        self.write_assembly_brep(output_file_basename)
+        self.write_freecad_brep(output_file_basename)
     # run simulation
     if(oo_args.sw_simulate_2d==None):
       print("ERR510: no simualtion has been set")
@@ -766,12 +883,14 @@ cube volume:    \t{:0.3f} (mm3)
         f_2d_constructor          = cube_figures,
         d_2d_simulation           = cube_simulations(),
         f_3d_constructor          = cube_3d,
+        f_3d_freecad_constructor  = None,
         f_info                    = cube_info,
         l_display_figure_list     = [],
         s_default_simulation      = "",
         l_2d_figure_file_list     = [],
         l_3d_figure_file_list     = [],
         l_3d_conf_file_list       = [],
+        l_3d_freecad_file_list    = None,
         f_cli_return_type         = None,
         l_self_test_list          = cube_self_test())
       self.apply_constraint(constraint)
@@ -798,7 +917,7 @@ cube volume:    \t{:0.3f} (mm3)
   mc_info = my_cube.get_info() # get the text info
   outline_backends.figure_simple_display(mc_olB, design_output.ideal_figure(mc_olA,"cube_overlay"), mc_info) # display the outline in a Tk-window
   # 3: get the freecad-object
-  mc_3d = my_cube.get_fc_obj()
+  mc_3d = my_cube.get_fc_obj_3dconf()
   Part.show(mc_3d)
   # 4: output file
   my_cube.write_figure_svg("test_output/bdt1")

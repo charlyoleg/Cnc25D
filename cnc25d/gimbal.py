@@ -56,168 +56,263 @@ import bell_bagel_assembly
 import cross_cube
 import angles
 
-################################################################
-# gimbal dictionary-arguments default values
-################################################################
-
-def gimbal_dictionary_init(ai_variant=0):
-  """ create and initiate a gimbal_dictionary with the default value
-  """
-  r_gd = {}
-  ### inheritance from bell_bagel_assembly
-  r_gd.update(bell_bagel_assembly.bba_dictionary_init(1))
-  ### inheritance from cross_cube
-  r_gd.update(cross_cube.cross_cube_dictionary_init(1))
-  ### roll-pitch angles
-  r_gd['bottom_angle']    = 0.0
-  r_gd['top_angle']       = 0.0
-  ### pan_tilt angles # can be set only if roll-pitch angles are left to 0.0
-  r_gd['pan_angle']    = 0.0
-  r_gd['tilt_angle']       = 0.0
-  ### output
-  if(ai_variant==0):
-    r_gd['tkinter_view']           = False
-    r_gd['output_file_basename']   = ''
-    r_gd['args_in_txt'] = ""
-    r_gd['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
-  #### return
-  return(r_gd)
 
 ################################################################
-# gimbal argparse
+# gimbal constraint_constructor
 ################################################################
 
-def gimbal_add_argument(ai_parser, ai_variant=0):
+def gimbal_constraint_constructor(ai_parser, ai_variant=0):
   """
   Add arguments relative to the gimbal
-  This function intends to be used by the gimbal_cli and gimbal_self_test
   """
   r_parser = ai_parser
   ### inheritance from bell_bagel_assembly
-  r_parser = bell_bagel_assembly.bba_add_argument(r_parser, 1)
+  i_bell_bagel_assembly = bell_bagel_assembly.bba()
+  r_parser = i_bell_bagel_assembly.get_constraint_constructor()(r_parser, 1)
   ### inheritance from cross_cube
-  r_parser = cross_cube.cross_cube_add_argument(r_parser, 1)
+  i_cross_cube = cross_cube.cross_cube()
+  r_parser = i_cross_cube.get_constraint_constructor()(r_parser, 1)
   ### roll-pitch angles
-  r_parser.add_argument('--bottom_angle','--ba', action='store', type=float, default=0.0, dest='sw_bottom_angle',
-    help="Set the bottom angle. Default: 0.0")
-  r_parser.add_argument('--top_angle','--ta', action='store', type=float, default=0.0, dest='sw_top_angle',
-    help="Set the top angle. Default: 0.0")
+  r_parser.add_argument('--bottom_angle','--ba', action='store', type=float, default=0.0,
+    help="Set the bottom angle (in radians). Default: 0.0")
+  r_parser.add_argument('--top_angle','--ta', action='store', type=float, default=0.0,
+    help="Set the top angle (in radians). Default: 0.0")
   ### pan_tilt angles # can be set only if roll-pitch angles are left to 0.0
-  r_parser.add_argument('--pan_angle','--pan', action='store', type=float, default=0.0, dest='sw_pan_angle',
-    help="Set the pan angle. Use the pan-tilt angles only if roll-pitch angles are left to 0.0. Default: 0.0")
-  r_parser.add_argument('--tilt_angle','--tilt', action='store', type=float, default=0.0, dest='sw_tilt_angle',
-    help="Set the tilt angle. Default: 0.0")
+  r_parser.add_argument('--pan_angle','--pan', action='store', type=float, default=0.0,
+    help="Set the pan angle (in radians). Use the pan-tilt angles only if roll-pitch angles are left to 0.0. Default: 0.0")
+  r_parser.add_argument('--tilt_angle','--tilt', action='store', type=float, default=0.0,
+    help="Set the tilt angle (in radians). Default: 0.0")
   ### output
   # return
   return(r_parser)
 
     
 ################################################################
-# the most important function to be used in other scripts
+# constraint conversion
 ################################################################
 
-def gimbal(ai_constraints):
+def cross_cube_constraint(c):
+  """ convert gimbal constraint into cross_cube constraint
   """
-  The main function of the script.
-  It generates a gimbal assembly according to the constraint-arguments
-  """
-  ### check the dictionary-arguments ai_constraints
-  gdi = gimbal_dictionary_init()
-  g_c = gdi.copy()
-  g_c.update(ai_constraints)
-  #print("dbg155: g_c:", g_c)
-  if(len(g_c.viewkeys() & gdi.viewkeys()) != len(g_c.viewkeys() | gdi.viewkeys())): # check if the dictionary g_c has exactly all the keys compare to gimbal_dictionary_init()
-    print("ERR148: Error, g_c has too much entries as {:s} or missing entries as {:s}".format(g_c.viewkeys() - gdi.viewkeys(), gdi.viewkeys() - g_c.viewkeys()))
-    sys.exit(2)
-  #print("dbg164: gimbal constraints:")
-  #for k in g_c.viewkeys():
-  #  if(g_c[k] != gdi[k]):
-  #    print("dbg166: for k {:s}, g_c[k] {:s} != gdi[k] {:s}".format(k, str(g_c[k]), str(gdi[k])))
+  cc_c = c.copy()
+  cc_c['crest_cnc_router_bit_radius'] = c['cross_cube_cnc_router_bit_radius'] # crest_cnc_router_bit_radius must be removed because to similar to cross_cube_cnc_router_bit_radius
+  return(cc_c)
 
+################################################################
+# gimbal constraint_check
+################################################################
+
+def gimbal_constraint_check(c):
+  """ check the gimbal constraint c and set the dynamic default values
+  """
   ### precision
   radian_epsilon = math.pi/1000
-
-  ################################################################
-  # parameter check and dynamic-default values
-  ################################################################
-  if((g_c['bottom_angle']!=0)or(g_c['top_angle']!=0)):
-    if((g_c['pan_angle']!=0)or(g_c['tilt_angle']!=0)):
-      print("ERR145: Error, roll-pitch angles {:0.3f} {:0.3f} and pan-tilt angles {:0.3f} {:0.3f} are set together".format(g_c['bottom_angle'], g_c['top_angle'], g_c['pan_angle'], g_c['tilt_angle']))
+  ###
+  if((c['bottom_angle']!=0)or(c['top_angle']!=0)):
+    if((c['pan_angle']!=0)or(c['tilt_angle']!=0)):
+      print("ERR145: Error, roll-pitch angles {:0.3f} {:0.3f} and pan-tilt angles {:0.3f} {:0.3f} are set together".format(c['bottom_angle'], c['top_angle'], c['pan_angle'], c['tilt_angle']))
       sys.exit(2)
-  if((g_c['pan_angle']!=0)or(g_c['tilt_angle']!=0)):
-    (a1, a2) = angles.pan_tilt_to_roll_pitch(g_c['pan_angle'], g_c['tilt_angle'])
-    g_c['bottom_angle'] = a1
-    g_c['top_angle'] = a2
-  (b1, b2) = angles.roll_pitch_to_pan_tilt(g_c['bottom_angle'], g_c['top_angle'])
+  if((c['pan_angle']!=0)or(c['tilt_angle']!=0)):
+    (a1, a2) = angles.pan_tilt_to_roll_pitch(c['pan_angle'], c['tilt_angle'])
+    c['bottom_angle'] = a1
+    c['top_angle'] = a2
+  (b1, b2) = angles.roll_pitch_to_pan_tilt(c['bottom_angle'], c['top_angle'])
   (a1, a2) = angles.pan_tilt_to_roll_pitch(b1, b2)
-  if((abs(g_c['bottom_angle']-a1)>radian_epsilon)or(abs(g_c['top_angle']-a2)>radian_epsilon)):
-    print("ERR154: Internal error in angle conversion: a1 {:0.3f} {:0.3f}  a2 {:0.3f} {:0.3f}".format(g_c['bottom_angle'], a1, g_c['top_angle'], a2))
+  if((abs(c['bottom_angle']-a1)>radian_epsilon)or(abs(c['top_angle']-a2)>radian_epsilon)):
+    print("ERR154: Internal error in angle conversion: a1 {:0.3f} {:0.3f}  a2 {:0.3f} {:0.3f}".format(c['bottom_angle'], a1, c['top_angle'], a2))
     sys.exit(2)
-  b3 = angles.roll_pitch_pan_tilt_drift_angle(g_c['bottom_angle'], g_c['top_angle'])
+  c['b3'] = angles.roll_pitch_pan_tilt_drift_angle(c['bottom_angle'], c['top_angle'])
   #
-  if(abs(g_c['bottom_angle'])>0.7*math.pi):
-    print("ERR133: Error, bottom_angle {:0.3f} absolute value is too big".format(g_c['bottom_angle']))
+  if(abs(c['bottom_angle'])>0.7*math.pi):
+    print("ERR133: Error, bottom_angle {:0.3f} absolute value is too big".format(c['bottom_angle']))
     sys.exit(2)
-  if(abs(g_c['top_angle'])>0.7*math.pi):
-    print("ERR136: Error, top_angle {:0.3f} absolute value is too big".format(g_c['top_angle']))
+  if(abs(c['top_angle'])>0.7*math.pi):
+    print("ERR136: Error, top_angle {:0.3f} absolute value is too big".format(c['top_angle']))
     sys.exit(2)
-  if(abs(g_c['bottom_angle'])+abs(g_c['top_angle'])>1.1*math.pi):
-    print("ERR139: Error, bottom_angle {:0.3f} and top_angle {:0.3f} absolute values can not be so large at the same time".format(g_c['bottom_angle'], g_c['top_angle']))
+  if(abs(c['bottom_angle'])+abs(c['top_angle'])>1.1*math.pi):
+    print("ERR139: Error, bottom_angle {:0.3f} and top_angle {:0.3f} absolute values can not be so large at the same time".format(c['bottom_angle'], c['top_angle']))
     sys.exit(2)
   # pan-tilt
-  g_c['pan_angle'] = b1
-  g_c['tilt_angle'] = b2
-  if(g_c['tilt_angle']>0.6*math.pi):
-    print("ERR147: Error, tilt_angle {:0.3f} is to big".format(g_c['tilt_angle']))
+  c['pan_angle'] = b1
+  c['tilt_angle'] = b2
+  if(c['tilt_angle']>0.6*math.pi):
+    print("ERR147: Error, tilt_angle {:0.3f} is to big".format(c['tilt_angle']))
     sys.exit(2)
+  return(c)
 
-  ################################################################
-  # outline construction
-  ################################################################
-  
+################################################################
+# gimbal 2D-figures construction
+################################################################
+
+def gimbal_2d_construction(c):
+  """ construct the 2D-figures with outlines at the A-format for the gimbal design
+  """
   # bell_bagel_assembly
-  bb_ci = bell_bagel_assembly.bba_dictionary_init(1)
-  bb_c = dict([ (k, g_c[k]) for k in bb_ci.viewkeys() & gdi.viewkeys() ]) # extract only the entries of the intersection of bell_bagel_assembly and gimbal
-  bb_c['tkinter_view'] = False
-  bb_c['output_file_basename'] = ''
-  bb_c['args_in_txt'] = "bell_bagel for gimbal"
-  bb_c['return_type'] = 'figures_3dconf_info' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
-  (bell_bagel_parts, bell_bagel_3d_conf,  bell_bagel_parameter_info) = bell_bagel_assembly.bba(bb_c)
-  bell_face = bell_bagel_parts[0]
+  i_bba = bell_bagel_assembly.bba()
+  i_bba.apply_external_constraint(c)
+  bell_face = i_bba.get_A_figure('bell_face')
 
   # cross_cube
-  cc_ci = cross_cube.cross_cube_dictionary_init(1)
-  cc_c = dict([ (k, g_c[k]) for k in cc_ci.viewkeys() & gdi.viewkeys() ]) # extract only the entries of the intersection of cross_cube and gimbal
-  cc_c['crest_cnc_router_bit_radius'] = cc_c['cross_cube_cnc_router_bit_radius'] # crest_cnc_router_bit_radius must be removed because to similar to cross_cube_cnc_router_bit_radius
-  cc_c['tkinter_view'] = False
-  cc_c['output_file_basename'] = ''
-  cc_c['args_in_txt'] = "cross_cube for gimbal"
-  cc_c['return_type'] = 'figures_3dconf_info' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
-  (cross_cube_parts, cross_cube_3d_conf,  cross_cube_parameter_info) = cross_cube.cross_cube(cc_c)
-  crest_A = cross_cube_parts[1]
-  crest_B = cross_cube_parts[3]
+  i_cross_cube = cross_cube.cross_cube()
+  i_cross_cube.apply_external_constraint(cross_cube_constraint(c))
+  crest_A = i_cross_cube.get_A_figure('crest_A_fig')
+  crest_B = i_cross_cube.get_A_figure('crest_B_fig')
 
   ## gimbal 2D sketch
   # intermediate parameters
-  bagel_z = g_c['base_thickness'] + g_c['bell_face_height'] + g_c['leg_length']
-  crest_A_axle_z = g_c['top_thickness'] + g_c['height_margin'] + g_c['axle_diameter']/2.0
-  crest_B_axle_z = crest_A_axle_z + g_c['inter_axle_length']
+  bagel_z = c['base_thickness'] + c['bell_face_height'] + c['leg_length']
+  crest_A_axle_z = c['top_thickness'] + c['height_margin'] + c['axle_diameter']/2.0
+  crest_B_axle_z = crest_A_axle_z + c['inter_axle_length']
   #
   bottom_bell_face = cnc25d_api.rotate_and_translate_figure(bell_face, 0, bagel_z, 0.0, 0.0, 0.0)
-  top_bell_face = cnc25d_api.rotate_and_translate_figure(bell_face, 0, bagel_z, math.pi+g_c['top_angle'], 0.0, crest_B_axle_z-bagel_z)
-  bottom_crest_A = cnc25d_api.rotate_and_translate_figure(crest_A, g_c['cube_width']/2.0, crest_A_axle_z, g_c['bottom_angle'], -1*g_c['cube_width']/2.0, bagel_z-crest_A_axle_z)
-  top_crest_B = cnc25d_api.rotate_and_translate_figure(crest_B, g_c['cube_width']/2.0, crest_B_axle_z, 0.0, -1*g_c['cube_width']/2.0, 0.0)
+  top_bell_face = cnc25d_api.rotate_and_translate_figure(bell_face, 0, bagel_z, math.pi+c['top_angle'], 0.0, crest_B_axle_z-bagel_z)
+  bottom_crest_A = cnc25d_api.rotate_and_translate_figure(crest_A, c['cube_width']/2.0, crest_A_axle_z, c['bottom_angle'], -1*c['cube_width']/2.0, bagel_z-crest_A_axle_z)
+  top_crest_B = cnc25d_api.rotate_and_translate_figure(crest_B, c['cube_width']/2.0, crest_B_axle_z, 0.0, -1*c['cube_width']/2.0, 0.0)
 
-  ################################################################
-  # output
-  ################################################################
+  ### figures output
+  x_space = 1.2*max(c['gear_module']*c['virtual_tooth_nb'], c['base_diameter'])
+  ## gimbal_sketch
+  gimbal_sketch_figure = []
+  gimbal_sketch_figure.extend(cnc25d_api.rotate_and_translate_figure(bottom_bell_face, 0.0, 0.0, 0.0,   0*x_space, 0))
+  gimbal_sketch_figure.extend(cnc25d_api.rotate_and_translate_figure(bottom_crest_A, 0.0, 0.0, 0.0,     0*x_space, 0))
+  gimbal_sketch_figure.extend(cnc25d_api.rotate_and_translate_figure(top_bell_face, 0.0, 0.0, 0.0,      1*x_space, 0))
+  gimbal_sketch_figure.extend(cnc25d_api.rotate_and_translate_figure(top_crest_B, 0.0, 0.0, 0.0,        1*x_space, 0))
+  ###
+  r_figures = {}
+  r_height = {}
+  # get figures and heights from bell_bagel_assembly
+  (bba_figs, bba_heights) = i_bba.apply_2d_constructor()
+  r_figures.update(bba_figs)
+  r_height.update(bba_heights)
+  # get figures and heights from cross_cube
+  (cc_figs, cc_heights) = i_cross_cube.apply_2d_constructor()
+  r_figures.update(cc_figs)
+  r_height.update(cc_heights)
+  #
+  r_figures['gimbal_sketch'] = gimbal_sketch_figure
+  r_height['gimbal_sketch'] = 1.0
+  ###
+  return((r_figures, r_height))
 
-  # g_parameter_info
-  g_parameter_info = "\ngimbal parameter info:\n"
-  g_parameter_info += "\n" + g_c['args_in_txt'] + "\n"
-  g_parameter_info += bell_bagel_parameter_info
-  g_parameter_info += cross_cube_parameter_info
-  g_parameter_info += """
+################################################################
+# gimbal simulation
+################################################################
+
+def crest_simulation_A(c):
+  """ define the crest simulation
+  """
+  # inherit from gear_profile
+  i_cross_cube = cross_cube.cross_cube()
+  i_cross_cube.apply_external_constraint(c)
+  i_cross_cube.run_simulation('crest_simulation_A')
+  return(1)
+
+def gimbal_2d_simulations():
+  """ return the dictionary defining the available simulation for gimbal
+  """
+  r_sim = {}
+  r_sim['crest_simulation_A'] = crest_simulation_A
+  return(r_sim)
+
+################################################################
+# gimbal 3D FreeCAD construction
+################################################################
+
+### gimbal freecad construction
+def sub_gimbal_freecad_construction(c, ai_bottom_angle, ai_top_angle):
+  """ generate the the freecad-object gimbal
+  """
+  # intermediate parameters
+  z1 = c['base_thickness'] + c['bell_face_height'] + c['leg_length']
+  z2 = c['inter_axle_length']
+  # make the freecad-objects from bell_bagel_assembly and cross_cube
+  i_bba = bell_bagel_assembly.bba()
+  i_bba.apply_external_constraint(c)
+  fc_bb_bottom = i_bba.get_fc_obj_3dconf('bell_bagel_assembly_conf1')
+  fc_bb_top = fc_bb_bottom.copy()
+  i_cross_cube = cross_cube.cross_cube()
+  i_cross_cube.apply_external_constraint(cross_cube_constraint(c))
+  fc_cc = i_cross_cube.get_fc_obj_3dconf('cross_cube_assembly_with_rods_and_axles')
+  # place
+  fc_bb_bottom.rotate(Base.Vector(0,0,0),Base.Vector(0,0,1),90)
+  fc_bb_top.rotate(Base.Vector(0,0,z1),Base.Vector(0,1,0),180)
+  fc_bb_top.translate(Base.Vector(0,0,z2))
+  fc_cc.translate(Base.Vector(-1*c['cube_width']/2.0, -1*c['cube_width']/2.0, z1-(c['top_thickness'] + c['height_margin'] + c['axle_diameter']/2.0)))
+  fc_cc.rotate(Base.Vector(0,0,0),Base.Vector(0,0,1),90)
+  # apply the rotation
+  fc_bb_top.rotate(Base.Vector(0,0,z1+z2),Base.Vector(0,1,0),ai_top_angle*180/math.pi)
+  fc_top = Part.makeCompound([fc_bb_top, fc_cc])
+  fc_top.rotate(Base.Vector(0,0,z1),Base.Vector(1,0,0),ai_bottom_angle*180/math.pi)
+  r_fc_gimbal = Part.makeCompound([fc_bb_bottom, fc_top])
+  return(r_fc_gimbal)
+
+def sub_gfc_gimbal(c):
+  return(sub_gimbal_freecad_construction(c, c['bottom_angle'], c['top_angle']))
+
+def sub_gfc_gimbal_00_00(c):
+  return(sub_gimbal_freecad_construction(c, 0, 0))
+
+def sub_gfc_gimbal_90_00(c):
+  return(sub_gimbal_freecad_construction(c, math.pi/2, 0))
+
+def sub_gfc_gimbal_00_90(c):
+  return(sub_gimbal_freecad_construction(c, 0, math.pi/2))
+
+def sub_gfc_gimbal_45_45(c):
+  return(sub_gimbal_freecad_construction(c, math.pi/4, math.pi/4))
+
+def sub_gfc_gimbal_15_30(c):
+  return(sub_gimbal_freecad_construction(c, math.pi/12, math.pi/6))
+
+def sub_gfc_gimbal_60_20(c):
+  return(sub_gimbal_freecad_construction(c, math.pi/3, math.pi/9))
+
+def gimbal_3d_freecad_construction(c):
+  """ construct 3D-FreeCAD objects of the gimbal
+  """
+  ###
+  r_fc_obj_f = {}
+  r_slice = {}
+  #
+  r_fc_obj_f['gimbal'] = sub_gfc_gimbal
+  r_slice['gimbal'] = []
+  #
+  r_fc_obj_f['gimbal_00_00'] = sub_gfc_gimbal_00_00
+  r_slice['gimbal_00_00'] = []
+  #
+  r_fc_obj_f['gimbal_90_00'] = sub_gfc_gimbal_90_00
+  r_slice['gimbal_90_00'] = []
+  #
+  r_fc_obj_f['gimbal_00_90'] = sub_gfc_gimbal_00_90
+  r_slice['gimbal_00_90'] = []
+  #
+  r_fc_obj_f['gimbal_45_45'] = sub_gfc_gimbal_45_45
+  r_slice['gimbal_45_45'] = []
+  #
+  r_fc_obj_f['gimbal_15_30'] = sub_gfc_gimbal_15_30
+  r_slice['gimbal_15_30'] = []
+  #
+  r_fc_obj_f['gimbal_60_20'] = sub_gfc_gimbal_60_20
+  r_slice['gimbal_60_20'] = []
+  ###
+  return((r_fc_obj_f, r_slice))
+
+
+################################################################
+# gimbal_info
+################################################################
+
+def gimbal_info(c):
+  """ create the text info related to the bagel design
+  """
+  r_info = ""
+  i_bell_bagel = bell_bagel_assembly.bba()
+  i_bell_bagel.apply_external_constraint(c)
+  r_info += i_bell_bagel.get_info()
+  i_cross_cube = cross_cube.cross_cube()
+  i_cross_cube.apply_external_constraint(c)
+  r_info += i_cross_cube.get_info()
+  r_info += """
 roll-pitch angles:
 bottom_angle:   {:0.3f} (radian)    {:0.3f} (degree)
 top_angle:      {:0.3f} (radian)    {:0.3f} (degree)
@@ -225,135 +320,9 @@ pan-tilt conversion:
 pan_angle:      {:0.3f} (radian)    {:0.3f} (degree)
 tilt_angle:     {:0.3f} (radian)    {:0.3f} (degree)
 roll-pitch pan-tilt drit angle: {:0.3f} (radian)    {:0.3f} (degree)
-""".format(g_c['bottom_angle'], g_c['bottom_angle']*180/math.pi, g_c['top_angle'], g_c['top_angle']*180/math.pi, g_c['pan_angle'], g_c['pan_angle']*180/math.pi, g_c['tilt_angle'], g_c['tilt_angle']*180/math.pi, b3, b3*180/math.pi)
-  #print(g_parameter_info)
-
-  ### figures output
-  # part_list
-  part_list = []
-  part_list.extend(bell_bagel_parts)
-  part_list.extend(cross_cube_parts)
-  # part_list_figure
-  x_space = 1.2*max(g_c['gear_module']*g_c['virtual_tooth_nb'], g_c['base_diameter'])
-  part_list_figure = []
-  for i in range(len(part_list)):
-    part_list_figure.extend(cnc25d_api.rotate_and_translate_figure(part_list[i], 0.0, 0.0, 0.0, i*x_space, 0.0))
-  ## gimbal_sketch
-  gimbal_sketch_figure = []
-  gimbal_sketch_figure.extend(cnc25d_api.rotate_and_translate_figure(bottom_bell_face, 0.0, 0.0, 0.0,   0*x_space, 0))
-  gimbal_sketch_figure.extend(cnc25d_api.rotate_and_translate_figure(bottom_crest_A, 0.0, 0.0, 0.0,     0*x_space, 0))
-  gimbal_sketch_figure.extend(cnc25d_api.rotate_and_translate_figure(top_bell_face, 0.0, 0.0, 0.0,      1*x_space, 0))
-  gimbal_sketch_figure.extend(cnc25d_api.rotate_and_translate_figure(top_crest_B, 0.0, 0.0, 0.0,        1*x_space, 0))
-
-  ### gimbal freecad construction
-  def gimbal_freecad_construction(ai_bell_bagel_3d_conf, ai_cross_cube_3d_conf, ai_bottom_angle, ai_top_angle):
-    """ generate the the freecad-object gimbal
-    """
-    # intermediate parameters
-    z1 = g_c['base_thickness'] + g_c['bell_face_height'] + g_c['leg_length']
-    z2 = g_c['inter_axle_length']
-    # make the freecad-objects
-    fc_bb_bottom = cnc25d_api.figures_to_freecad_assembly(ai_bell_bagel_3d_conf)
-    fc_bb_top = fc_bb_bottom.copy()
-    fc_cc = cnc25d_api.figures_to_freecad_assembly(ai_cross_cube_3d_conf)
-    # place
-    fc_bb_bottom.rotate(Base.Vector(0,0,0),Base.Vector(0,0,1),90)
-    fc_bb_top.rotate(Base.Vector(0,0,z1),Base.Vector(0,1,0),180)
-    fc_bb_top.translate(Base.Vector(0,0,z2))
-    fc_cc.translate(Base.Vector(-1*g_c['cube_width']/2.0, -1*g_c['cube_width']/2.0, z1-(g_c['top_thickness'] + g_c['height_margin'] + g_c['axle_diameter']/2.0)))
-    fc_cc.rotate(Base.Vector(0,0,0),Base.Vector(0,0,1),90)
-    # apply the rotation
-    fc_bb_top.rotate(Base.Vector(0,0,z1+z2),Base.Vector(0,1,0),ai_top_angle*180/math.pi)
-    fc_top = Part.makeCompound([fc_bb_top, fc_cc])
-    fc_top.rotate(Base.Vector(0,0,z1),Base.Vector(1,0,0),ai_bottom_angle*180/math.pi)
-    r_fc_gimbal = Part.makeCompound([fc_bb_bottom, fc_top])
-    return(r_fc_gimbal)
-
-  ### display with Tkinter
-  if(g_c['tkinter_view']):
-    print(g_parameter_info)
-    cnc25d_api.figure_simple_display(gimbal_sketch_figure, [], g_parameter_info)
-
-  ### generate output file
-  if(g_c['output_file_basename']!=''):
-    (output_file_basename, output_file_suffix) = cnc25d_api.get_output_file_suffix(g_c['output_file_basename'])
-    # bell_bagel parts 
-    bb_c['output_file_basename'] = g_c['output_file_basename']
-    bb_c['return_type'] = 'int_status'
-    bell_bagel_assembly.bba(bb_c)
-    # cross_cube parts 
-    cc_c['output_file_basename'] = g_c['output_file_basename']
-    cc_c['return_type'] = 'int_status'
-    cross_cube.cross_cube(cc_c)
-    # assembly
-    if((output_file_suffix=='.svg')or(output_file_suffix=='.dxf')):
-      cnc25d_api.generate_output_file(part_list_figure, output_file_basename + "_gimbal_part_list" + output_file_suffix, 1.0, g_parameter_info)
-      cnc25d_api.generate_output_file(gimbal_sketch_figure, output_file_basename + "_gimbal_sketch" + output_file_suffix, 1.0, g_parameter_info)
-    else:
-      cnc25d_api.freecad_object_output_file(gimbal_freecad_construction(bell_bagel_3d_conf, cross_cube_3d_conf, g_c['bottom_angle'], g_c['top_angle']), output_file_basename + "_gimbal", True, False, [])
-      cnc25d_api.freecad_object_output_file(gimbal_freecad_construction(bell_bagel_3d_conf, cross_cube_3d_conf, 0, 0), output_file_basename + "_gimbal_00_00", True, False, [])
-      cnc25d_api.freecad_object_output_file(gimbal_freecad_construction(bell_bagel_3d_conf, cross_cube_3d_conf, math.pi/2, 0), output_file_basename + "_gimbal_90_00", True, False, [])
-      cnc25d_api.freecad_object_output_file(gimbal_freecad_construction(bell_bagel_3d_conf, cross_cube_3d_conf, 0, math.pi/2), output_file_basename + "_gimbal_00_90", True, False, [])
-      cnc25d_api.freecad_object_output_file(gimbal_freecad_construction(bell_bagel_3d_conf, cross_cube_3d_conf, math.pi/4, math.pi/4), output_file_basename + "_gimbal_45_45", True, False, [])
-      cnc25d_api.freecad_object_output_file(gimbal_freecad_construction(bell_bagel_3d_conf, cross_cube_3d_conf, math.pi/12, math.pi/6), output_file_basename + "_gimbal_15_30", True, False, [])
-      cnc25d_api.freecad_object_output_file(gimbal_freecad_construction(bell_bagel_3d_conf, cross_cube_3d_conf, math.pi/3, math.pi/9), output_file_basename + "_gimbal_60_20", True, False, [])
-
-  #### return
-  if(g_c['return_type']=='int_status'):
-    r_g = 1
-  elif(g_c['return_type']=='cnc25d_figure'):
-    r_g = part_list
-  elif(g_c['return_type']=='freecad_object'):
-    r_g = gimbal_freecad_construction(bell_bagel_3d_conf, cross_cube_3d_conf, g_c['bottom_angle'], g_c['top_angle'])
-  elif(g_c['return_type']=='figures_3dconf_info'):
-    r_g = (part_list, [], g_parameter_info)
-  else:
-    print("ERR508: Error the return_type {:s} is unknown".format(g_c['return_type']))
-    sys.exit(2)
-  return(r_g)
-
-################################################################
-# gimbal wrapper dance
-################################################################
-
-def gimbal_argparse_to_dictionary(ai_g_args, ai_variant=0):
-  """ convert a gimbal_argparse into a gimbal_dictionary
-  """
-  r_gd = {}
-  ### inheritance from bell_bagel_assembly
-  r_gd.update(bell_bagel_assembly.bba_argparse_to_dictionary(ai_g_args, 1))
-  ### inheritance from cross_cube
-  r_gd.update(cross_cube.cross_cube_argparse_to_dictionary(ai_g_args, 1))
-  ### roll-pitch angles
-  r_gd['bottom_angle']    = ai_g_args.sw_bottom_angle
-  r_gd['top_angle']       = ai_g_args.sw_top_angle
-  r_gd['pan_angle']       = ai_g_args.sw_pan_angle
-  r_gd['tilt_angle']      = ai_g_args.sw_tilt_angle
-  ### output
-  if(ai_variant==0):
-    #r_gd['tkinter_view']           = False
-    r_gd['output_file_basename']   = ai_g_args.sw_output_file_basename
-    #r_gd['args_in_txt'] = ""
-    r_gd['return_type'] = ai_g_args.sw_return_type
-  #### return
-  return(r_gd)
-  
-def gimbal_argparse_wrapper(ai_g_args, ai_args_in_txt=""):
-  """
-  wrapper function of gimbal() to call it using the gimbal_parser.
-  gimbal_parser is mostly used for debug and non-regression tests.
-  """
-  # view the gimbal with Tkinter as default action
-  tkinter_view = True
-  if(ai_g_args.sw_output_file_basename!=''):
-    tkinter_view = False
-  # wrapper
-  gd = gimbal_argparse_to_dictionary(ai_g_args)
-  gd['args_in_txt'] = ai_args_in_txt
-  gd['tkinter_view'] = tkinter_view
-  #gd['return_type'] = 'int_status'
-  r_g = gimbal(gd)
-  return(r_g)
+""".format(c['bottom_angle'], c['bottom_angle']*180/math.pi, c['top_angle'], c['top_angle']*180/math.pi, c['pan_angle'], c['pan_angle']*180/math.pi, c['tilt_angle'], c['tilt_angle']*180/math.pi, c['b3'], c['b3']*180/math.pi)
+  #print(r_info)
+  return(r_info)
 
 ################################################################
 # self test
@@ -364,7 +333,7 @@ def gimbal_self_test():
   This is the non-regression test of gimbal.
   Look at the Tk window to check errors.
   """
-  test_case_switch = [
+  r_tests = [
     ["simplest test"        , ""],
     ["bottom angle"        , "--bottom_angle 0.3"],
     ["top angle"        , "--top_angle -0.4"],
@@ -372,43 +341,38 @@ def gimbal_self_test():
     ["pan-tilt"        , "--pan_angle 2.1 --tilt_angle 0.4"],
     ["outputfile" , "--output_file_basename test_output/gimbal_self_test.dxf"],
     ["last test"            , "--bottom_angle 0.1 --top_angle 0.2"]]
-  #print("dbg741: len(test_case_switch):", len(test_case_switch))
-  gimbal_parser = argparse.ArgumentParser(description='Command line interface for the function gimbal().')
-  gimbal_parser = gimbal_add_argument(gimbal_parser)
-  gimbal_parser = cnc25d_api.generate_output_file_add_argument(gimbal_parser, 1)
-  for i in range(len(test_case_switch)):
-    l_test_switch = test_case_switch[i][1]
-    print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
-    l_args = l_test_switch.split()
-    #print("dbg414: l_args:", l_args)
-    st_args = gimbal_parser.parse_args(l_args)
-    r_gst = gimbal_argparse_wrapper(st_args)
-  return(r_gst)
+  return(r_tests)
 
 ################################################################
-# gimbal command line interface
+# gimbal design declaration
 ################################################################
 
-def gimbal_cli(ai_args=""):
-  """ command line interface of gimbal.py when it is used in standalone
+class gimbal(cnc25d_api.bare_design):
+  """ gimbal design
   """
-  # gimbal parser
-  gimbal_parser = argparse.ArgumentParser(description='Command line interface for the function gimbal().')
-  gimbal_parser = gimbal_add_argument(gimbal_parser)
-  gimbal_parser = cnc25d_api.generate_output_file_add_argument(gimbal_parser, 1)
-  # switch for self_test
-  gimbal_parser.add_argument('--run_test_enable','--rst', action='store_true', default=False, dest='sw_run_self_test',
-    help='Generate several corner cases of parameter sets and display them in a Tk window.')
-  effective_args = cnc25d_api.get_effective_args(ai_args)
-  effective_args_in_txt = "gimbal arguments: " + ' '.join(effective_args)
-  g_args = gimbal_parser.parse_args(effective_args)
-  print("dbg111: start making gimbal")
-  if(g_args.sw_run_self_test):
-    r_g = gimbal_self_test()
-  else:
-    r_g = gimbal_argparse_wrapper(g_args, effective_args_in_txt)
-  print("dbg999: end of script")
-  return(r_g)
+  def __init__(self, constraint={}):
+    """ configure the gimbal design
+    """
+    self.design_setup(
+      s_design_name             = "gimbal_design",
+      f_constraint_constructor  = gimbal_constraint_constructor,
+      f_constraint_check        = gimbal_constraint_check,
+      f_2d_constructor          = gimbal_2d_construction,
+      d_2d_simulation           = gimbal_2d_simulations(),
+      f_3d_constructor          = None,
+      f_3d_freecad_constructor  = gimbal_3d_freecad_construction,
+      f_info                    = gimbal_info,
+      l_display_figure_list     = ['gimbal_sketch'],
+      s_default_simulation      = "",
+      l_2d_figure_file_list     = [], # all figures
+      l_3d_figure_file_list     = None, # no file
+      l_3d_conf_file_list       = None, # no file
+      #l_3d_freecad_file_list    = [], # all freecad objects
+      l_3d_freecad_file_list    = ['gimbal'],
+      f_cli_return_type         = None,
+      l_self_test_list          = gimbal_self_test())
+    self.apply_constraint(constraint)
+
 
 ################################################################
 # main
@@ -417,14 +381,11 @@ def gimbal_cli(ai_args=""):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gimbal.py says hello!\n")
-  my_g = gimbal_cli()
-  #my_g = gimbal_cli("--bagel_extra_cut_thickness 1.0 --return_type freecad_object")
-  #my_g = gimbal_cli("--bottom_angle 0.1 --top_angle 0.2 --return_type freecad_object")
-  try: # depending on g_c['return_type'] it might be or not a freecad_object
-    Part.show(my_g)
-    print("freecad_object returned")
-  except:
-    pass
-    #print("return_type is not a freecad-object")
+  my_g = gimbal()
+  my_g.cli()
+  #my_g.cli("--bagel_extra_cut_thickness 1.0")
+  #my_g.cli("--bottom_angle 0.1 --top_angle 0.2")
+  if(cnc25d_api.interpretor_is_freecad()):
+    Part.show(my_g.get_fc_obj(''))
 
 
