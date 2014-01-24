@@ -382,10 +382,11 @@ class gimbal(cnc25d_api.bare_design):
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("gimbal.py says hello!\n")
   my_g = gimbal()
-  my_g.cli()
+  #my_g.cli()
   #my_g.cli("--bagel_extra_cut_thickness 1.0")
   #my_g.cli("--bottom_angle 0.1 --top_angle 0.2")
+  my_g.cli("--face_A1_crest --face_B1_crest --bottom_angle 0.1 --top_angle 0.2")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_g.get_fc_obj(''))
+    Part.show(my_g.get_fc_obj_function('gimbal'))
 
 
