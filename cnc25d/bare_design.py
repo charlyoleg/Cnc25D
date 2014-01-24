@@ -209,7 +209,7 @@ class bare_design:
     return(r_constraint)
 
   def design_setup(self, s_design_name="no_name", f_constraint_constructor=None, f_constraint_check=None, f_2d_constructor=None, d_2d_simulation={}, f_3d_constructor=None, f_3d_freecad_constructor=None, f_info=None,
-    l_display_figure_list=[], s_default_simulation="", l_2d_figure_file_list=[], l_3d_figure_file_list=[], l_3d_conf_file_list=[], l_3d_freecad_file_list=[], f_cli_return_type=None, l_self_test_list=[]):
+    l_display_figure_list=[], s_default_simulation="", l_2d_figure_file_list=None, l_3d_figure_file_list=None, l_3d_conf_file_list=None, l_3d_freecad_file_list=None, f_cli_return_type=None, l_self_test_list=[]):
     """ enhance the initial setup of a new design script
     """
     self.set_design_name(s_design_name)
@@ -465,6 +465,7 @@ class bare_design:
     """
     l = self.write_3d_freecad_list
     r_list = []
+    #print("dbg537: f_3d_freecad_constructor:", self.f_3d_freecad_constructor, l)
     if(l != None):
       self.apply_3d_freecad_constructor() # create the 3d-freecad_objects
       if(len(l)==0):
@@ -887,9 +888,9 @@ cube volume:    \t{:0.3f} (mm3)
         f_info                    = cube_info,
         l_display_figure_list     = [],
         s_default_simulation      = "",
-        l_2d_figure_file_list     = [],
-        l_3d_figure_file_list     = [],
-        l_3d_conf_file_list       = [],
+        l_2d_figure_file_list     = None,
+        l_3d_figure_file_list     = None,
+        l_3d_conf_file_list       = None,
         l_3d_freecad_file_list    = None,
         f_cli_return_type         = None,
         l_self_test_list          = cube_self_test())
