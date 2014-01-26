@@ -562,6 +562,6 @@ if __name__ == "__main__":
   my_ml.cli("--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place small --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 10.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_hole_diameter 20.0 --axle_B_external_diameter 15.0")
   #my_ml.cli("--holder_diameter 140.0 --clearance_diameter 110.0 --central_diameter 30.0 --axle_hole_diameter 6.0  --holder_crenel_number 7 --axle_B_distance 75.0 --axle_C_distance 30.0 --axle_C_hole_diameter 10.0 --axle_B_diameter 3.0 --axle_B_place small --axle_B_angle 0.2 --axle_C_angle -0.4 --motor_screw1_diameter 2.0 --motor_screw1_x_length 10.0 --fastening_BC_hole_diameter 2.0 --fastening_BC_bottom_position_diameter 50.0 --fastening_BC_bottom_angle 0.5 --fastening_BC_top_position_diameter 45.0 --fastening_BC_top_angle 0.3 --smoothing_radius 3.0 --axle_B_hole_diameter 20.0 --axle_B_external_diameter 15.0 --return_type freecad_object")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_ml.get_fc_obj('motor_lid_3dconf1'))
+    Part.show(my_ml.get_fc_obj_3dconf('motor_lid_3dconf1'))
 
 

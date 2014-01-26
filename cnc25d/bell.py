@@ -969,7 +969,7 @@ if __name__ == "__main__":
     #b_value = my_b.cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object") # old fashion
     #Part.show(b_value)
     my_b.apply_cli("--bell_extra_cut_thickness 1.0")      # new fashion
-    Part.show(my_b.get_fc_obj('bell_assembly_conf2'))
+    Part.show(my_b.get_fc_obj_3dconf('bell_assembly_conf2'))
 
   ### very old fashion
   #b_value = my_b.cli("--bell_extra_cut_thickness 1.0 --return_type freecad_object")

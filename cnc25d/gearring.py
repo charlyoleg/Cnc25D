@@ -549,6 +549,6 @@ if __name__ == "__main__":
   #my_gr.cli("--gear_tooth_nb 25 --gear_module 10 --holder_diameter 300.0 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0")
   my_gr.cli("--gear_tooth_nb 25 --gear_module 10 --holder_crenel_width 20.0 --holder_crenel_skin_width 10.0 --cnc_router_bit_radius 2.0")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_gr.get_fc_obj('gearring_3dconf1'))
+    Part.show(my_gr.get_fc_obj_3dconf('gearring_3dconf1'))
 
 

@@ -671,5 +671,5 @@ if __name__ == "__main__":
   #my_gw.cli("--gear_primitive_diameter 140.0 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type rectangle --axle_x_width 20 --axle_y_width 25 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 3 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 120.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0 --output_file_basename gw2.svg")
   #my_gw.cli("--gear_tooth_nb 23 --gear_module 10 --gear_router_bit_radius 3.0 --axle_type circle --axle_x_width 20 --axle_router_bit_radius 5.0 --wheel_hollow_leg_number 1 --wheel_hollow_leg_width 8.0 --wheel_hollow_leg_angle 0.0 --wheel_hollow_internal_diameter 50.0 --wheel_hollow_external_diameter 180.0 --wheel_hollow_router_bit_radius 10.0 --gear_profile_height 15.0 --output_file_basename gw3.svg")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_gw.get_fc_obj('gearwheel_3dconf1'))
+    Part.show(my_gw.get_fc_obj_3dconf('gearwheel_3dconf1'))
 

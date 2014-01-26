@@ -949,7 +949,7 @@ if __name__ == "__main__":
   #my_al.cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6 --return_type freecad_object")
   my_al.cli("--holder_diameter 100.0 --clearance_diameter 80.0 --central_diameter 30.0 --axle_hole_diameter 22.0 --holder_crenel_number 6")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_al.get_fc_obj('axle_lid_3dconf1'))
+    Part.show(my_al.get_fc_obj_3dconf('axle_lid_3dconf1'))
   
 
 

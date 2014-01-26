@@ -340,6 +340,6 @@ if __name__ == "__main__":
   if(cnc25d_api.interpretor_is_freecad()):
     #my_bba.apply_cli("--bell_extra_cut_thickness 1.0 --bagel_extra_cut_thickness 1.0")
     #my_bba.outline_display()
-    Part.show(my_bba.get_fc_obj('bell_bagel_assembly_conf1'))
+    Part.show(my_bba.get_fc_obj_3dconf('bell_bagel_assembly_conf1'))
 
 

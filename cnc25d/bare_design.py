@@ -683,7 +683,7 @@ class bare_design:
         print("ERR541: Error, test_id {:s} is not in the test-list {:s}".format(test_id, ', '.join(test_ids)))
         sys.exit(2)
       test_list.append(test_id)
-    print("dbg555: test_list:", test_list)
+    print("\nInfo: test_list: {:s}\n".format(', '.join(test_list)))
     for i in range(len(test_list)):
       tn=-1
       for j in range(len(test_ids)):

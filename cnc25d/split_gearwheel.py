@@ -579,5 +579,5 @@ if __name__ == "__main__":
   my_sgw.cli("--gear_tooth_nb 25 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0 --high_hole_nb 2")
   #my_sgw.cli("--gear_tooth_nb 17 --gear_module 10.0 --low_split_diameter 50.0 --cnc_router_bit_radius 3.0")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_sgw.get_fc_obj('split_gearwheel_3dconf1'))
+    Part.show(my_sgw.get_fc_obj_3dconf('split_gearwheel_3dconf1'))
 

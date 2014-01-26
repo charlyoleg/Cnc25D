@@ -547,7 +547,7 @@ def bwf_self_test():
 # box_wood_frame design declaration
 ################################################################
 
-class bwf(cnc25d_api.bare_design):
+class box_wood_frame(cnc25d_api.bare_design):
   """ box_wood_frame design
   """
   def __init__(self, constraint={}):
@@ -581,7 +581,7 @@ class bwf(cnc25d_api.bare_design):
 # this works with python and freecad :)
 if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("box_wood_frame says hello!\n")
-  my_bwf = bwf()
+  my_bwf = box_wood_frame()
   #my_bwf.cli()
   #my_bwf.cli("--box_height 600.0")
   my_bwf.cli("--module_width 1")

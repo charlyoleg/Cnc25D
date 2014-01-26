@@ -1312,6 +1312,6 @@ if __name__ == "__main__":
   #my_eg.cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0")
   my_eg.cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0 --sun_axle_x_width 10 --sun_crenel_nb 4 --sun_crenel_height 1.0 --sun_crenel_width 3.0")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_eg.get_fc_obj('epicyclic_gearing_3dconf1'))
+    Part.show(my_eg.get_fc_obj_3dconf('epicyclic_gearing_3dconf1'))
 
 

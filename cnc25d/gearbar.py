@@ -352,6 +352,6 @@ if __name__ == "__main__":
   #my_gb.cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0 --return_type freecad_object")
   my_gb.cli("--gear_tooth_nb 12 --gear_module 10 --gearbar_slope 0.3 --gear_router_bit_radius 3.0 --gearbar_height 40.0 --gearbar_hole_height_position 20.0")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_gb.get_fc_obj('gearbar_3dconf1'))
+    Part.show(my_gb.get_fc_obj_3dconf('gearbar_3dconf1'))
   
 

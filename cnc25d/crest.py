@@ -560,6 +560,6 @@ if __name__ == "__main__":
   my_c.cli()
   #my_c.cli("--cross_cube_extra_cut_thickness 1.0")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_c.get_fc_obj('crest_3dconf1'))
+    Part.show(my_c.get_fc_obj_3dconf('crest_3dconf1'))
 
 
