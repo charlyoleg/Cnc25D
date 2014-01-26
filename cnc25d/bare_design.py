@@ -119,6 +119,7 @@ class bare_design:
   def set_display_figure_list(self, figure_list=[]):
     """ set the list of figures to be displayed
         If the list is empty, all 2D-figures will be display in Tk-windows
+        If set to None, no figure is display
     """
     self.display_2d_figure_list = figure_list
 
@@ -288,18 +289,29 @@ class bare_design:
     r_fig = design_output.cnc_cut_figure(A_fig, "get_B_figure_{:s}".format(figure_id))
     return(r_fig)
 
+  def get_display_2d_figure_list(self):
+    """ return the list of figures to be displayed according to self.display_2d_figure_list
+    """
+    figs = self.display_2d_figure_list
+    r_list = []
+    if(figs != None):
+      self.apply_2d_constructor() # create the A-figures
+      if(len(figs)==0):
+        r_list = self.A_figures.keys()
+      else:
+        r_list = figs
+      for f in r_list:
+        if(not f in self.A_figures.keys()):
+          print("ERR304: Error, f {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
+          sys.exit(2)
+    return(r_list)
+
   def outline_display(self):
     """ display in one or several Tk windows the design outline figures
     """
-    self.get_A_figure() # create the A-figures
     print("{:s}".format(self.get_info()))
-    figs = self.display_2d_figure_list
-    if(len(figs)==0):
-      figs = self.A_figures.keys()
-    for f in figs:
-      if(not f in self.A_figures.keys()):
-        print("ERR232: Error, fig {:s} is not an existing 2d-figures {:s}".format(f, ' '.join(self.A_figures.keys())))
-        sys.exit(2)
+    fig_ids = self.get_display_2d_figure_list()
+    for f in fig_ids:
       fig = self.A_figures[f]
       d_info = "display_{:s}".format(f)
       #print("dbg218: fig:", fig)
@@ -545,8 +557,9 @@ class bare_design:
         print("{:02d} : {:s}".format(i, fc_ids[i]))
     # display_2d_figure_list
     print("{:s} display_2d_figure_list:".format(self.design_name))
-    for i in range(len(self.display_2d_figure_list)):
-      print("{:02d} : {:s}".format(i, self.display_2d_figure_list[i]))
+    figs = self.get_display_2d_figure_list()
+    for i in range(len(figs)):
+      print("{:02d} : {:s}".format(i, figs[i]))
     # default_simulation
     print("{:s} default_simulation: {:s}".format(self.design_name, self.default_simulation))
     # file_2d_figure_file_list

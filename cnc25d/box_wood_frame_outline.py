@@ -217,7 +217,7 @@ def jonction_slab_side_with_wall_diagonal_vertical(c):
 
 ## hole sub   
 # plank_xz_hole plank_yz_hole
-def plank_xz_yz_hole(c, nai_box_size):
+def plank_xz_yz_hole(c, nai_box_size, nai_module_width):
   hdx = (c['d_plank_width']*math.sqrt(2)-(1+1.5)*c['tobo_diag_depth'])
   hdy = c['d_plank_height']
   hpx = c['tobo_diagonal_size'] + c['tobo_diag_depth'] + 0*c['plank_height']
@@ -237,38 +237,34 @@ def plank_xz_yz_hole(c, nai_box_size):
   r_plank_xz_hole_fig = []
   ## place the holes
   r_plank_xz_hole_fig.append(cnc25d_api.outline_shift_x(plank_xz_hole_A, 0*nai_box_size+c['plank_height'], 1))
-  for i in range(c['module_width']-1):
+  for i in range(nai_module_width-1):
     r_plank_xz_hole_fig.append(cnc25d_api.outline_shift_x(plank_xz_hole_A, (i+1)*nai_box_size-1.0/2*c['plank_height']-hdx-2*hpx, 1))
     r_plank_xz_hole_fig.append(cnc25d_api.outline_shift_x(plank_xz_hole_A, (i+1)*nai_box_size+1.0/2*c['plank_height'], 1))
-  r_plank_xz_hole_fig.append(cnc25d_api.outline_shift_x(plank_xz_hole_A, c['module_width']*nai_box_size-c['plank_height']-hdx-2*hpx, 1))
+  r_plank_xz_hole_fig.append(cnc25d_api.outline_shift_x(plank_xz_hole_A, nai_module_width*nai_box_size-c['plank_height']-hdx-2*hpx, 1))
   return(r_plank_xz_hole_fig)
 
 def plank_xz_top_hole(c):
   r_fig = []
-  r_fig.extend(cnc25d_api.rotate_and_translate_figure(plank_xz_yz_hole(c, c['box_width']), 0,0,0, 0, c['diagonal_lining_top_height']))
+  r_fig.extend(cnc25d_api.rotate_and_translate_figure(plank_xz_yz_hole(c, c['box_width'], c['module_width']), 0,0,0, 0, c['diagonal_lining_top_height']))
   for i in range(c['module_width']-1):
     r_fig.extend(hole_in_plank_top_xz_for_yz(c, (i+1)*c['box_width']))
   return(r_fig)
 
 def plank_xz_bottom_hole(c):
   r_fig = []
-  r_fig.extend(cnc25d_api.rotate_and_translate_figure(plank_xz_yz_hole(c, c['box_width']), 0,0,0, 0, c['h_plank_width']+c['fitting_height']-c['d_plank_height']-c['diagonal_lining_bottom_height']))
+  r_fig.extend(cnc25d_api.rotate_and_translate_figure(plank_xz_yz_hole(c, c['box_width'], c['module_width']), 0,0,0, 0, c['h_plank_width']+c['fitting_height']-c['d_plank_height']-c['diagonal_lining_bottom_height']))
   for i in range(c['module_width']-1):
     r_fig.extend(hole_in_plank_bot_xz_for_yz(c, (i+1)*c['box_width']))
   return(r_fig)
 
 def plank_yz_top_hole(c):
   r_fig = []
-  r_fig.extend(cnc25d_api.rotate_and_translate_figure(plank_xz_yz_hole(c, c['box_depth']), 0,0,0, 0, c['diagonal_lining_top_height']))
-  for i in range(c['module_width']-1):
-    r_fig.extend(hole_in_plank_top_xz_for_yz(c, (i+1)*c['box_width']))
+  r_fig.extend(cnc25d_api.rotate_and_translate_figure(plank_xz_yz_hole(c, c['box_depth'], 1), 0,0,0, 0, c['diagonal_lining_top_height']))
   return(r_fig)
 
 def plank_yz_bottom_hole(c):
   r_fig = []
-  r_fig.extend(cnc25d_api.rotate_and_translate_figure(plank_xz_yz_hole(c, c['box_depth']), 0,0,0, 0, c['h_plank_width']+c['fitting_height']-c['d_plank_height']-c['diagonal_lining_bottom_height']))
-  for i in range(c['module_width']-1):
-    r_fig.extend(hole_in_plank_bot_xz_for_yz(c, (i+1)*c['box_width']))
+  r_fig.extend(cnc25d_api.rotate_and_translate_figure(plank_xz_yz_hole(c, c['box_depth'], 1), 0,0,0, 0, c['h_plank_width']+c['fitting_height']-c['d_plank_height']-c['diagonal_lining_bottom_height']))
   return(r_fig)
 
 ##

@@ -217,8 +217,15 @@ def bwf_2d_construction(c):
   r_figures['plank_wall_diagonal'] = plank_wall_diagonal(c)
   r_height['plank_wall_diagonal'] = c['d_plank_height']
   #
+  l = c['crenel_depth']*math.sqrt(2)/2 # crenel_depth * cos(pi/4)
+  r_figures['plank_wall_diag_cuboid'] = cnc25d_api.rotate_and_translate_figure(plank_wall_diagonal(c), l,0,math.pi/4, -l,0)
+  r_height['plank_wall_diag_cuboid'] = c['d_plank_height']
+  #
   r_figures['plank_tobo_diagonal'] = plank_tobo_diagonal(c)
   r_height['plank_tobo_diagonal'] = c['d_plank_height']
+  #
+  r_figures['plank_tobo_diag_cuboid'] =  cnc25d_api.rotate_and_translate_figure(plank_tobo_diagonal(c), 0,0,math.pi/4, 0,0)
+  r_height['plank_tobo_diag_cuboid'] = c['d_plank_height']
   #
   r_figures['plank_zx_middle'] = plank_zx_middle(c)
   r_height['plank_zx_middle'] = c['plank_height']
@@ -250,10 +257,56 @@ def bwf_2d_construction(c):
   r_figures['slab_front'] = slab_front(c)
   r_height['slab_front'] = c['slab_thickness']
   ###
-  bwf_face = r_figures['plank_xz_top']
+  bwf_face = []
+  bwf_face.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_xz_top'], 0,0,0, 0, c['box_height']-c['h_plank_width']))
+  bwf_face.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_xz_bottom'], 0,0,0, 0,0))
+  bwf_face.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_z_side'], 0,0,-math.pi/2, 0.0, c['fitting_height']+c['h_plank_width']-c['crenel_depth']+c['plank_z_length']))
+  bwf_face.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_z_side'], 0,0,math.pi/2, c['module_width']*c['box_width'], c['fitting_height']+c['h_plank_width']-c['crenel_depth']))
+  bwf_face.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+    1, -1, 0.0, c['v_plank_width'], c['fitting_height']+c['h_plank_width']+c['wall_diagonal_size']))
+  bwf_face.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+    1, 1, 0.0, c['v_plank_width'], c['box_height']-c['h_plank_width']-c['wall_diagonal_size']-c['plank_wall_diagonal_in_cuboid_y_width']))
+  bwf_face.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+    -1, -1, 0.0, c['module_width']*c['box_width']-c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length'], c['fitting_height']+c['h_plank_width']+c['wall_diagonal_size']))
+  bwf_face.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+    -1, 1, 0.0, c['module_width']*c['box_width']-c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length'], c['box_height']-c['h_plank_width']-c['wall_diagonal_size']-c['plank_wall_diagonal_in_cuboid_y_width']))
+  for i in range(c['module_width']-1):
+    bwf_face.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_zx_middle'], 0,0,math.pi/2, (i+1)*c['box_width']+0.5*c['v_plank_width'], c['fitting_height']+c['h_plank_width']-c['crenel_depth']))
+    bwf_face.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+      1, -1, 0.0, (i+1)*c['box_width']+0.5*c['v_plank_width'], c['fitting_height']+c['h_plank_width']+c['wall_diagonal_size']))
+    bwf_face.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+      1, 1, 0.0, (i+1)*c['box_width']+0.5*c['v_plank_width'], c['box_height']-c['h_plank_width']-c['wall_diagonal_size']-c['plank_wall_diagonal_in_cuboid_y_width']))
+    bwf_face.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+      -1, -1, 0.0, (i+1)*c['box_width']-0.5*c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length'], c['fitting_height']+c['h_plank_width']+c['wall_diagonal_size']))
+    bwf_face.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+      -1, 1, 0.0, (i+1)*c['box_width']-0.5*c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length'], c['box_height']-c['h_plank_width']-c['wall_diagonal_size']-c['plank_wall_diagonal_in_cuboid_y_width']))
+  #
+  bwf_side = []
+  bwf_side.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_yz_top'], 0,0,0, 0, c['box_height']-c['h_plank_width']))
+  bwf_side.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_yz_bottom'], 0,0,0, 0, 0))
+  bwf_side.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_z_side'], 0,0,-math.pi/2, c['plank_height'], c['fitting_height']+c['h_plank_width']-c['crenel_depth']+c['plank_z_length']))
+  bwf_side.extend(cnc25d_api.rotate_and_translate_figure(r_figures['plank_z_side'], 0,0,math.pi/2, c['box_depth']-c['plank_height'], c['fitting_height']+c['h_plank_width']-c['crenel_depth']))
+  bwf_side.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+    1, -1, 0.0, c['plank_height']+c['v_plank_width'], c['fitting_height']+c['h_plank_width']+c['wall_diagonal_size']))
+  bwf_side.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+    1, 1, 0.0, c['plank_height']+c['v_plank_width'], c['box_height']-c['h_plank_width']-c['wall_diagonal_size']-c['plank_wall_diagonal_in_cuboid_y_width']))
+  bwf_side.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+    -1, -1, 0.0, c['box_depth']-c['plank_height']-c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length'], c['fitting_height']+c['h_plank_width']+c['wall_diagonal_size']))
+  bwf_side.extend(cnc25d_api.flip_rotate_and_translate_figure(r_figures['plank_wall_diag_cuboid'], 0,0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'],
+    -1, 1, 0.0, c['box_depth']-c['plank_height']-c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length'], c['box_height']-c['h_plank_width']-c['wall_diagonal_size']-c['plank_wall_diagonal_in_cuboid_y_width']))
+  #
+  bwf_overview = []
+  bwf_overview.extend(cnc25d_api.rotate_and_translate_figure(bwf_face, 0,0,0, 0,0))
+  bwf_overview.extend(cnc25d_api.rotate_and_translate_figure(bwf_side, 0,0,0, (c['module_width']+0.2)*c['box_width'],0))
   #
   r_figures['bwf_face'] = bwf_face
   r_height['bwf_face'] = 1.0
+  #
+  r_figures['bwf_side'] = bwf_side
+  r_height['bwf_side'] = 1.0
+  #
+  r_figures['bwf_overview'] = bwf_overview
+  r_height['bwf_overview'] = 1.0
   ###
   return((r_figures, r_height))
 
@@ -264,16 +317,175 @@ def bwf_2d_construction(c):
 def bwf_3d_construction(c):
   """ construct the 3D-assembly-configurations of the box_wood_frame
   """
-  # conf1
+  ### conf1: frame
   bwf_3dconf1 = []
-  bwf_3dconf1.append(('plank_xz_top',  0.0, 0.0, 0.0, 0.0, c['plank_height'], 'i', 'xy', 0.0, 0.0, 0.0))
+  bwf_3dconf1.append(('plank_xz_top',     0.0, 0.0, c['plank_xz_length'], c['plank_xz_width'], c['plank_height'], 'i', 'xz', 0.0, 0.0, c['box_height']-c['h_plank_width']))
+  bwf_3dconf1.append(('plank_xz_top',     0.0, 0.0, c['plank_xz_length'], c['plank_xz_width'], c['plank_height'], 'i', 'xz', 0.0, c['box_depth']-c['plank_height'], c['box_height']-c['h_plank_width']))
+  bwf_3dconf1.append(('plank_xz_bottom',  0.0, 0.0, c['plank_xz_length'], c['plank_xz_width'], c['plank_height'], 'i', 'xz', 0.0, 0.0, 0.0))
+  bwf_3dconf1.append(('plank_xz_bottom',  0.0, 0.0, c['plank_xz_length'], c['plank_xz_width'], c['plank_height'], 'i', 'xz', 0.0, c['box_depth']-c['plank_height'], 0.0))
+  bwf_3dconf1.append(('plank_yz_top',     0.0, 0.0, c['plank_yz_length'], c['plank_yz_width'], c['plank_height'], 'i', 'yz', 0.0, 0.0, c['box_height']-c['h_plank_width']))
+  bwf_3dconf1.append(('plank_yz_top',     0.0, 0.0, c['plank_yz_length'], c['plank_yz_width'], c['plank_height'], 'i', 'yz', c['module_width']*c['box_width']-c['plank_height'], 0.0, c['box_height']-c['h_plank_width']))
+  for i in range(c['module_width']-1):
+    bwf_3dconf1.append(('plank_yz_top',   0.0, 0.0, c['plank_yz_length'], c['plank_yz_width'], c['plank_height'], 'i', 'yz', (i+1)*c['box_width']-0.5*c['plank_height'], 0.0, c['box_height']-c['h_plank_width']))
+  bwf_3dconf1.append(('plank_yz_bottom',  0.0, 0.0, c['plank_yz_length'], c['plank_yz_width'], c['plank_height'], 'i', 'yz', 0.0, 0.0, 0.0))
+  bwf_3dconf1.append(('plank_yz_bottom',  0.0, 0.0, c['plank_yz_length'], c['plank_yz_width'], c['plank_height'], 'i', 'yz', c['module_width']*c['box_width']-c['plank_height'], 0.0, 0.0))
+  for i in range(c['module_width']-1):
+    bwf_3dconf1.append(('plank_yz_bottom',   0.0, 0.0, c['plank_yz_length'], c['plank_yz_width'], c['plank_height'], 'i', 'yz', (i+1)*c['box_width']-0.5*c['plank_height'], 0.0, 0.0))
+  plank_z_position_z = c['h_plank_width']+c['fitting_height']-c['crenel_depth']
+  bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'i', 'zx', 0.0, 0.0, plank_z_position_z))
+  bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'x', 'zx', c['module_width']*c['box_width']-c['v_plank_width'], 0.0, plank_z_position_z))
+  bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'i', 'zx', 0.0, c['box_depth']-c['plank_height'], plank_z_position_z))
+  bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'x', 'zx', c['module_width']*c['box_width']-c['v_plank_width'], c['box_depth']-c['plank_height'], plank_z_position_z))
+  for i in range(c['module_width']-1):
+    bwf_3dconf1.append(('plank_zx_middle',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'i', 'zx', (i+1)*c['box_width']-0.5*c['v_plank_width'], 0.0, plank_z_position_z))
+    bwf_3dconf1.append(('plank_zx_middle',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'x', 'zx', (i+1)*c['box_width']-0.5*c['v_plank_width'], c['box_depth']-c['plank_height'], plank_z_position_z))
+  bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'i', 'zy', 0.0, c['plank_height'], plank_z_position_z))
+  bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'x', 'zy', 0.0,  c['box_depth']-c['plank_height']-c['v_plank_width'],plank_z_position_z))
+  bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'i', 'zy', c['module_width']*c['box_width']-c['plank_height'], c['plank_height'], plank_z_position_z))
+  bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'x', 'zy', c['module_width']*c['box_width']-c['plank_height'],  c['box_depth']-c['plank_height']-c['v_plank_width'],plank_z_position_z))
+  for i in range(c['module_width']-1):
+    bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'i', 'zy', (i+1)*c['box_width']-0.5*c['plank_height'], c['plank_height'], plank_z_position_z))
+    bwf_3dconf1.append(('plank_z_side',     0.0, 0.0, c['plank_z_length'], c['plank_z_width'], c['plank_height'], 'x', 'zy', (i+1)*c['box_width']-0.5*c['plank_height'], c['box_depth']-c['plank_height']-c['v_plank_width'],plank_z_position_z))
+  # diagonal xz
+  z1 = c['fitting_height']+c['h_plank_width']+c['wall_diagonal_size']
+  z2 = c['box_height']-c['h_plank_width']-c['wall_diagonal_size']-c['d_plank_width']*math.sqrt(2)
+  y1 = c['plank_height']-c['d_plank_height']
+  y2 = c['box_depth']-c['plank_height']
+  x1 = c['v_plank_width']
+  x2 = c['module_width']*c['box_width']-c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length']
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'xz', x1, y1, z2))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'xz', x1, y1, z1))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'xz', x1, y2, z2))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'xz', x1, y2, z1))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'xz', x2, y1, z2))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'xz', x2, y1, z1))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'xz', x2, y2, z2))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'xz', x2, y2, z1))
+  for i in range(c['module_width']-1):
+    x1 = (i+1)*c['box_width']+0.5*c['v_plank_width']
+    x2 = (i+1)*c['box_width']-0.5*c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length']
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'xz', x1, y1, z2))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'xz', x1, y1, z1))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'xz', x1, y2, z2))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'xz', x1, y2, z1))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'xz', x2, y1, z2))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'xz', x2, y1, z1))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'xz', x2, y2, z2))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'xz', x2, y2, z1))
+  # diagonal yz
+  y1 = c['plank_height']+c['v_plank_width']
+  y2 = c['box_depth']-c['plank_height']-c['v_plank_width']-c['plank_wall_diagonal_in_cuboid_x_length']
+  x1 = c['plank_height']-c['d_plank_height']
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'yz', x1, y1, z2))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'yz', x1, y1, z1))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'yz', x1, y2, z2))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'yz', x1, y2, z1))
+  x1 = c['module_width']*c['box_width']-c['plank_height']
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'yz', x1, y1, z2))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'yz', x1, y1, z1))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'yz', x1, y2, z2))
+  bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'yz', x1, y2, z1))
+  for i in range(c['module_width']-1):
+    x1 = (i+1)*c['box_width']-0.5*c['d_plank_height']
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'yz', x1, y1, z2))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'yz', x1, y1, z1))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'yz', x1, y2, z2))
+    bwf_3dconf1.append(('plank_wall_diag_cuboid',     0.0, 0.0, c['plank_wall_diagonal_in_cuboid_x_length'], c['plank_wall_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'yz', x1, y2, z1))
+  # diagonal xy
+  x1 = c['plank_height']
+  x2 = c['module_width']*c['box_width']-c['plank_height']-c['plank_tobo_diagonal_in_cuboid_x_length']
+  y1 = c['plank_height']+c['tobo_diagonal_size']
+  y2 = c['box_depth']-c['plank_height']-c['tobo_diagonal_size']-c['plank_tobo_diagonal_in_cuboid_y_width']
+  z1 = c['fitting_height']+c['h_plank_width']-c['diagonal_lining_bottom_height']-c['d_plank_height']
+  z2 = c['box_height']-c['h_plank_width']+c['diagonal_lining_top_height']
+  bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'xy', x1, y1, z2))
+  bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'xy', x1, y1, z1))
+  bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'xy', x1, y2, z2))
+  bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'xy', x1, y2, z1))
+  bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'xy', x2, y1, z2))
+  bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'xy', x2, y1, z1))
+  bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'xy', x2, y2, z2))
+  bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'xy', x2, y2, z1))
+  for i in range(c['module_width']-1):
+    x1 = (i+1)*c['box_width']+0.5*c['plank_height']
+    x2 = (i+1)*c['box_width']-0.5*c['plank_height']-c['plank_tobo_diagonal_in_cuboid_x_length']
+    bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'xy', x1, y1, z2))
+    bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'x', 'xy', x1, y1, z1))
+    bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'xy', x1, y2, z2))
+    bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'i', 'xy', x1, y2, z1))
+    bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'xy', x2, y1, z2))
+    bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'z', 'xy', x2, y1, z1))
+    bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'xy', x2, y2, z2))
+    bwf_3dconf1.append(('plank_tobo_diag_cuboid',     0.0, 0.0, c['plank_tobo_diagonal_in_cuboid_x_length'], c['plank_tobo_diagonal_in_cuboid_y_width'], c['d_plank_height'], 'y', 'xy', x2, y2, z1))
+
+  ### conf2: frame and walls
+  bwf_3dconf2 = []
+  bwf_3dconf2.extend(bwf_3dconf1)
+  # slab side
+  z1 = c['fitting_height'] + c['h_plank_width']
+  y1 = c['plank_height'] + c['v_plank_width']
+  x1 = c['plank_height'] - c['d_plank_height'] - c['slab_thickness']
+  x2 = c['module_width']*c['box_width'] - c['plank_height'] + c['d_plank_height']
+  bwf_3dconf2.append(('slab_side_left_right',     0.0, 0.0, c['slab_side_length'], c['slab_side_left_right_width'], c['slab_thickness'], 'i', 'zy', x1, y1, z1))
+  bwf_3dconf2.append(('slab_side_left_right',     0.0, 0.0, c['slab_side_length'], c['slab_side_left_right_width'], c['slab_thickness'], 'i', 'zy', x2, y1, z1))
+  # slab rear
+  z1 = c['fitting_height'] + c['h_plank_width']
+  z2 = c['box_height'] - c['h_plank_width'] - c['slab_front_length']
+  y1 = c['plank_height'] - c['d_plank_height'] - c['slab_thickness']
+  y2 = c['box_depth'] - c['plank_height'] + c['d_plank_height']
+  x1 = c['v_plank_width']
+  x2 = c['module_width']*c['box_width'] - c['v_plank_width']
+  if(c['module_width']==1):
+    bwf_3dconf2.append(('slab_side_rear_single',     0.0, 0.0, c['slab_side_length'], c['slab_side_rear_single_width'], c['slab_thickness'], 'i', 'zx', x1, y2, z1))
+  else:
+    bwf_3dconf2.append(('slab_side_rear_side',     0.0, 0.0, c['slab_side_length'], c['slab_side_rear_side_width'], c['slab_thickness'], 'i', 'zx', x1, y2, z1))
+    bwf_3dconf2.append(('slab_side_rear_side',     0.0, 0.0, c['slab_side_length'], c['slab_side_rear_side_width'], c['slab_thickness'], 'i', 'zx', x2-c['slab_side_rear_side_width'], y2, z1))
+    for i in range(c['module_width']-2):
+      x3 = (i+1)*c['box_width'] + 0.5*c['v_plank_width']
+      bwf_3dconf2.append(('slab_side_rear_middle',     0.0, 0.0, c['slab_side_length'], c['slab_side_rear_middle_width'], c['slab_thickness'], 'i', 'zx', x3, y2, z1))
+  # slab front
+  bwf_3dconf2.append(('slab_front',     0.0, 0.0, c['slab_front_length'], c['slab_front_width'], c['slab_thickness'], 'i', 'zx', x1, y1, z1))
+  bwf_3dconf2.append(('slab_front',     0.0, 0.0, c['slab_front_length'], c['slab_front_width'], c['slab_thickness'], 'x', 'zx', x2-c['slab_front_width'], y1, z1))
+  bwf_3dconf2.append(('slab_front',     0.0, 0.0, c['slab_front_length'], c['slab_front_width'], c['slab_thickness'], 'y', 'zx', x1, y1, z2))
+  bwf_3dconf2.append(('slab_front',     0.0, 0.0, c['slab_front_length'], c['slab_front_width'], c['slab_thickness'], 'z', 'zx', x2-c['slab_front_width'], y1, z2))
+  for i in range(c['module_width']-1):
+    bwf_3dconf2.append(('slab_front',     0.0, 0.0, c['slab_front_length'], c['slab_front_width'], c['slab_thickness'], 'i', 'zx', (i+1)*c['box_width']+0.5*c['v_plank_width'], y1, z1))
+    bwf_3dconf2.append(('slab_front',     0.0, 0.0, c['slab_front_length'], c['slab_front_width'], c['slab_thickness'], 'x', 'zx', (i+1)*c['box_width']-0.5*c['v_plank_width']-c['slab_front_width'], y1, z1))
+    bwf_3dconf2.append(('slab_front',     0.0, 0.0, c['slab_front_length'], c['slab_front_width'], c['slab_thickness'], 'y', 'zx', (i+1)*c['box_width']+0.5*c['v_plank_width'], y1, z2))
+    bwf_3dconf2.append(('slab_front',     0.0, 0.0, c['slab_front_length'], c['slab_front_width'], c['slab_thickness'], 'z', 'zx', (i+1)*c['box_width']-0.5*c['v_plank_width']-c['slab_front_width'], y1, z2))
+  # slab top bottom
+  x1 = c['plank_height']
+  x2 = c['module_width']*c['box_width'] - c['plank_height'] - c['slab_top_bottom_side_length']
+  y1 = c['plank_height']
+  z1 = c['fitting_height']+c['h_plank_width']-c['diagonal_lining_bottom_height']
+  z2 = c['box_height']-c['h_plank_width']+c['diagonal_lining_top_height']+c['d_plank_height']
+  if(c['module_width']==1):
+    bwf_3dconf2.append(('slab_top_bottom_single',     0.0, 0.0, c['slab_top_bottom_single_length'], c['slab_top_bottom_width'], c['slab_thickness'], 'i', 'xy', x1, y1, z1))
+    bwf_3dconf2.append(('slab_top_bottom_single',     0.0, 0.0, c['slab_top_bottom_single_length'], c['slab_top_bottom_width'], c['slab_thickness'], 'i', 'xy', x1, y1, z2))
+  else:
+    bwf_3dconf2.append(('slab_top_bottom_side',     0.0, 0.0, c['slab_top_bottom_side_length'], c['slab_top_bottom_width'], c['slab_thickness'], 'i', 'xy', x1, y1, z1))
+    bwf_3dconf2.append(('slab_top_bottom_side',     0.0, 0.0, c['slab_top_bottom_side_length'], c['slab_top_bottom_width'], c['slab_thickness'], 'i', 'xy', x1, y1, z2))
+    bwf_3dconf2.append(('slab_top_bottom_side',     0.0, 0.0, c['slab_top_bottom_side_length'], c['slab_top_bottom_width'], c['slab_thickness'], 'i', 'xy', x2, y1, z1))
+    bwf_3dconf2.append(('slab_top_bottom_side',     0.0, 0.0, c['slab_top_bottom_side_length'], c['slab_top_bottom_width'], c['slab_thickness'], 'i', 'xy', x2, y1, z2))
+    for i in range(c['module_width']-2):
+      x3 = (i+1)*c['box_width'] + 0.5*c['plank_height']
+      bwf_3dconf2.append(('slab_top_bottom_middle',     0.0, 0.0, c['slab_top_bottom_middle_length'], c['slab_top_bottom_width'], c['slab_thickness'], 'i', 'xy', x3, y1, z1))
+      bwf_3dconf2.append(('slab_top_bottom_middle',     0.0, 0.0, c['slab_top_bottom_middle_length'], c['slab_top_bottom_width'], c['slab_thickness'], 'i', 'xy', x3, y1, z2))
   #
-  slice_xyz = ()
+  bwf_width = c['module_width']*c['box_width']
+  bwf_height = c['box_height'] + c['fitting_height']
+  slice_x = [ (i+1)/11.0*bwf_width for i in range(10) ]
+  slice_y = [ (i+1)/11.0*c['box_depth'] for i in range(10) ]
+  slice_z = [ (i+1)/11.0*bwf_height for i in range(10) ]
+  slice_xyz = (bwf_width, c['box_depth'], bwf_height, 0.0, 0.0, 0.0, slice_z, slice_y, slice_x)
   #
   r_assembly = {}
   r_slice = {}
 
-  r_assembly['bwf_3dconf1'] = bwf_3dconf1
+  r_assembly['bwf_frame_3dconf1'] = bwf_3dconf1
+  r_slice['bwf_frame_3dconf1'] = slice_xyz
+  #
+  r_assembly['bwf_3dconf1'] = bwf_3dconf2
   r_slice['bwf_3dconf1'] = slice_xyz
   #
   return((r_assembly, r_slice))
@@ -350,8 +562,8 @@ class bwf(cnc25d_api.bare_design):
       f_3d_constructor          = bwf_3d_construction,
       #f_3d_freecad_constructor  = None,
       f_info                    = bwf_info,
-      l_display_figure_list     = ['bwf_face'],
-      #l_display_figure_list     = [], # display all planks
+      #l_display_figure_list     = None, # no figure is displey in Tk-window
+      l_display_figure_list     = ['bwf_overview'],
       #s_default_simulation      = "",
       l_2d_figure_file_list     = [], # all figures
       l_3d_figure_file_list     = None, # no file
@@ -371,10 +583,10 @@ if __name__ == "__main__":
   FreeCAD.Console.PrintMessage("box_wood_frame says hello!\n")
   my_bwf = bwf()
   #my_bwf.cli()
-  #my_bwf.cli("--box_height 600.0 --return_type freecad_object")
-  my_bwf.cli("--box_height 600.0")
+  #my_bwf.cli("--box_height 600.0")
+  my_bwf.cli("--module_width 1")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_bwf.get_fc_obj_3dconf('bwf_assembly'))
+    Part.show(my_bwf.get_fc_obj_3dconf('bwf_3dconf1'))
 
 
 
