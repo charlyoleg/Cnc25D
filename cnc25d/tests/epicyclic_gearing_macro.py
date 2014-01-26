@@ -190,24 +190,25 @@ eg_constraint['top_central_diameter']       = 0.0
 ### general
 eg_constraint['cnc_router_bit_radius']   = 0.1
 eg_constraint['gear_profile_height']     = 10.0
-### design output : view the gearring with tkinter or write files
-eg_constraint['tkinter_view']                    = True
-eg_constraint['simulation_sun_planet_gear']      = False
-eg_constraint['simulation_annulus_planet_gear']  = False
-eg_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro.svg"  # to generate the SVG file with mozman svgwrite
-#eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro"      # to generate the Brep and DXF file with FreeCAD
-eg_constraint['return_type'] = 'int_status' #'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_eg = cnc25d_design.epicyclic_gearing(eg_constraint)
+my_eg.outline_display()
+my_eg.write_figure_svg("test_output/epicyclic_macro")
+my_eg.write_figure_dxf("test_output/epicyclic_macro")
+my_eg.write_figure_brep("test_output/epicyclic_macro")
+my_eg.write_assembly_brep("test_output/epicyclic_macro")
+my_eg.write_freecad_brep("test_output/epicyclic_macro")
+my_eg.run_simulation("eg_sim_planet_sun")
+my_eg.run_simulation("eg_sim_annulus_planet")
+my_eg.view_design_configuration()
+#my_eg.run_self_test("")
+#my_eg.cli("--output_file_basename test_output/egm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_eg)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_eg.get_fc_obj_3dconf('epicyclic_gearing_3dconf1'))
+
 

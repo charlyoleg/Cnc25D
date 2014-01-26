@@ -59,17 +59,15 @@ import gear_profile
 # inheritance from gear_profile
 ################################################################
 
-def inherit_gear_profile(c={}):
-  """ generate the gear_profile with the construct c
+def inherit_gear_profile():
+  """ generate a small constraint set to be able to create the gear_profile-object for gearbar
   """
-  gp_c = c.copy()
+  gp_c = {}
   gp_c['gear_type'] = 'l'
   gp_c['second_gear_type'] = 'e'
-  gp_c['gearbar_slope'] = 0.3
-  #gp_c['gear_router_bit_radius'] = c['gear_router_bit_radius']
-  r_obj = gear_profile.gear_profile()
-  r_obj.apply_external_constraint(gp_c)
-  return(r_obj)
+  gp_c['gearbar_slope'] = 0.3 #hack the default value of gear_profile.gearbar_slope
+  i_gear_profile = gear_profile.gear_profile(gp_c)
+  return(i_gear_profile)
 
 ################################################################
 # gearbar constraint_constructor
@@ -99,12 +97,29 @@ def gearbar_constraint_constructor(ai_parser, ai_variant = 0):
   return(r_parser)
 
 ################################################################
+# constraint conversion
+################################################################
+
+def gear_profile_constraint(c={}):
+  """ generate the gear_profile conversion with the gearbar constraint c
+  """
+  gp_c = c.copy()
+  gp_c['gear_type'] = 'l'
+  gp_c['second_gear_type'] = 'e'
+  if((c['gearbar_slope']==0)and(c['gear_force_angle']==0)and(c['second_gear_base_diameter']==0)): # if gearbar_slope is not constraint
+    gp_c['gearbar_slope'] = 0.3 # default value
+  #gp_c['gear_router_bit_radius'] = c['gear_router_bit_radius']
+  #print("dbg097: gp_c:", gp_c)
+  return(gp_c)
+
+################################################################
 # gearbar constraint_check
 ################################################################
 
 def gearbar_constraint_check(c):
   """ check the gearbar constraint c and set the dynamic default values
   """
+  #print("dbg122: len(c)", len(c))
   ### precision
   radian_epsilon = math.pi/1000
   ### check parameter coherence (part 1)
@@ -119,7 +134,8 @@ def gearbar_constraint_check(c):
     sys.exit(2)
   # c['gear_tooth_nb']
   if(c['gear_tooth_nb']>0): # create a gear_profile
-    i_gear_profile = inherit_gear_profile(c)
+    i_gear_profile = inherit_gear_profile() # inherit from gear_profile
+    i_gear_profile.apply_external_constraint(gear_profile_constraint(c))
     gear_profile_parameters = i_gear_profile.get_constraint()
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
@@ -188,7 +204,8 @@ def gearbar_2d_construction(c):
   """
   ### gearbar outline
   if(c['gear_tooth_nb']>0):
-    i_gear_profile = inherit_gear_profile(c) # inherit from gear_profile
+    i_gear_profile = inherit_gear_profile() # inherit from gear_profile
+    i_gear_profile.apply_external_constraint(gear_profile_constraint(c))
     gear_profile_A = i_gear_profile.get_A_figure('first_gear')[0] # Warning: gear_profile provide only B-format outline currently
     gear_profile_A = cnc25d_api.outline_rotate(gear_profile_A, c['g1_ix'], c['g1_iy'], -1*c['g1_inclination'] + math.pi/2)
     gear_profile_A = cnc25d_api.outline_shift_xy(gear_profile_A, -1*gear_profile_A[0][0], 1, -1*c['g1_iy'] + c['gearbar_height'], 1) # gearbar_fig inclinatiion is always zero. Inclination only visible in simulation
@@ -227,8 +244,8 @@ def gearbar_2d_construction(c):
 def gearbar_simulation_A(c):
   """ define the gearbar simulation
   """
-  # inherit from gear_profile
-  i_gear_profile = inherit_gear_profile(c)
+  i_gear_profile = inherit_gear_profile() # inherit from gear_profile
+  i_gear_profile.apply_external_constraint(gear_profile_constraint(c))
   i_gear_profile.run_simulation('gear_profile_simulation_A')
   return(1)
 
@@ -270,7 +287,8 @@ def gearbar_info(c):
   """
   r_info = ""
   if(c['gear_tooth_nb']>0): # with gear-profile (normal case)
-    i_gear_profile = inherit_gear_profile(c) # inherit from gear_profile
+    i_gear_profile = inherit_gear_profile() # inherit from gear_profile
+    i_gear_profile.apply_external_constraint(gear_profile_constraint(c))
     r_info += i_gear_profile.get_info()
   else: # when no gear-profile
     r_info += "\nSimple line (no-gear-profile):\n"

@@ -86,10 +86,8 @@ gw_constraint['wheel_hollow_internal_diameter'] = 40.0
 #gw_constraint['wheel_hollow_router_bit_radius'] = 5.0
 ### cnc router_bit constraint
 gw_constraint['cnc_router_bit_radius']          = 2.0 #1.6 #2.0
-### design output : view the gearwheel with tkinter or write files
-gw_constraint['tkinter_view'] = False
-gw_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-gw_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
+
+####
 
 gw_c1 = gw_constraint.copy()
 gw_c1['gear_tooth_nb'] = 19
@@ -116,13 +114,13 @@ gw_c4['wheel_hollow_leg_number'] = 6
 gw_c_array = [gw_c1, gw_c2, gw_c3, gw_c4]
 
 for i in range(len(gw_c_array)):
+  my_gw = cnc25d_design.gearwheel( gw_c_array[i])
   if(sim):
-    gw_c_array[i]['simulation_enable']    = True
+    my_gw.run_simulation("")
+  elif(view):
+    my_gw.outline_display()
   else:
-    if(view):
-      gw_c_array[i]['tkinter_view'] = True
-    gw_c_array[i]['output_file_basename'] = "test_output/jh01_{:02d}.dxf".format(i+1)
-  my_gw = cnc25d_design.gearwheel(gw_c_array[i])
+    my_gw.write_figure_dxf("test_output/jh01_{:02d}.dxf".format(i+1))
   #Part.show(my_gw)
 #Part.show(my_gw)
 

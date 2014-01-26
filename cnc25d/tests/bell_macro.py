@@ -167,23 +167,24 @@ bell_constraint['z_hole_position_length']          = 15.0
 ### manufacturing
 bell_constraint['bell_cnc_router_bit_radius']      = 1.0
 bell_constraint['bell_extra_cut_thickness']        = 0.0
-### output
-bell_constraint['tkinter_view']           = True
-bell_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#bell_constraint['output_file_basename'] = "test_output/bell_macro.svg"  # to generate the SVG file with mozman svgwrite
-#bell_constraint['output_file_basename'] = "test_output/bell_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#bell_constraint['output_file_basename'] = "test_output/bell_macro"      # to generate the Brep and DXF file with FreeCAD
-bell_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_bell = cnc25d_design.bell(bell_constraint)
+my_bell.outline_display()
+my_bell.write_figure_svg("test_output/bell_macro")
+my_bell.write_figure_dxf("test_output/bell_macro")
+my_bell.write_figure_brep("test_output/bell_macro")
+my_bell.write_assembly_brep("test_output/bell_macro")
+my_bell.write_freecad_brep("test_output/bell_macro")
+#my_bell.run_simulation("") # no simulation for axle_lid
+my_bell.view_design_configuration()
+#my_bell.run_self_test("")
+#my_bell.cli("--output_file_basename test_output/bm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_bell)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_bell.get_fc_obj_3dconf('bell_assembly_conf2'))
 
 

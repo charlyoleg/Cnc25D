@@ -145,12 +145,9 @@ gb_constraint['gear_initial_angle']                   = 0.0
 gb_constraint['second_gear_position_angle']           = 0.0
 gb_constraint['second_gear_additional_axis_length']   = 0.0
 ### portion
-gb_constraint['portion_tooth_nb']     = 8
-gb_constraint['portion_first_end']    = 3
-gb_constraint['portion_last_end']     = 3
+gb_constraint['cut_portion']     = (8, 3, 3) # (portion_tooth_nb, portion_first_end, portion_last_end)
 ### output
 gb_constraint['gear_profile_height']  = 20.0
-gb_constraint['simulation_enable']    = False
 ##### from gearwheel
 ### gearbar
 gb_constraint['gearbar_height']                 = 30.0
@@ -159,19 +156,24 @@ gb_constraint['gearbar_hole_height_position']   = 10.0
 gb_constraint['gearbar_hole_diameter']          = 10.0
 gb_constraint['gearbar_hole_offset']            = 0
 gb_constraint['gearbar_hole_increment']         = 1
-### design output : view the gearbar with tkinter or write files
-gb_constraint['tkinter_view'] = True
-gb_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gb_constraint['output_file_basename'] = "test_output/gearbar_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gb_constraint['output_file_basename'] = "test_output/gearbar_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gb_constraint['output_file_basename'] = "test_output/gearbar_macro"      # to generate the Brep and DXF file with FreeCAD
-gb_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_gb = cnc25d_design.gearbar(gb_constraint)
+my_gb.outline_display()
+my_gb.write_figure_svg("test_output/gearbar_macro")
+my_gb.write_figure_dxf("test_output/gearbar_macro")
+my_gb.write_figure_brep("test_output/gearbar_macro")
+my_gb.write_assembly_brep("test_output/gearbar_macro")
+my_gb.write_freecad_brep("test_output/gearbar_macro")
+my_gb.run_simulation("")
+my_gb.view_design_configuration()
+#my_gb.run_self_test("")
+#my_gb.cli("--output_file_basename test_output/gbm.dxf") # Warning: all constraint values are reset to their default values
 
-Part.show(my_gb)
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gb.get_fc_obj_3dconf('gearbar_3dconf1'))
+
 

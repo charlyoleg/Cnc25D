@@ -150,7 +150,6 @@ gw_constraint['second_gear_additional_axis_length']   = 0.0
 #gw_constraint['portion_last_end']     = 0
 ### output
 gw_constraint['gear_profile_height']  = 20.0
-gw_constraint['simulation_enable']    = False
 ##### from gearwheel
 ### axle
 gw_constraint['axle_type']                = 'circle'
@@ -176,13 +175,6 @@ gw_constraint['wheel_hollow_external_diameter'] = 125.0
 gw_constraint['wheel_hollow_router_bit_radius'] = 5.0
 ### cnc router_bit constraint
 gw_constraint['cnc_router_bit_radius']          = 1.0
-### design output : view the gearwheel with tkinter or write files
-gw_constraint['tkinter_view'] = True
-gw_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gw_constraint['output_file_basename'] = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gw_constraint['output_file_basename'] = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gw_constraint['output_file_basename'] = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
-gw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 
 
@@ -191,10 +183,19 @@ gw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status',
 ################################################################
 
 my_gw = cnc25d_design.gearwheel(gw_constraint)
+my_gw.outline_display()
+my_gw.write_figure_svg("test_output/gearwheel_macro")
+my_gw.write_figure_dxf("test_output/gearwheel_macro")
+my_gw.write_figure_brep("test_output/gearwheel_macro")
+my_gw.write_assembly_brep("test_output/gearwheel_macro")
+my_gw.write_freecad_brep("test_output/gearwheel_macro")
+my_gw.run_simulation("")
+my_gw.view_design_configuration()
+#my_gw.run_self_test("")
+#my_gw.cli("--output_file_basename test_output/gwm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # works if gw_constraint['return_type'] = 'freecad_object'
-  Part.show(my_gw)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gw.get_fc_obj_3dconf('gearwheel_3dconf1'))
+
 
 

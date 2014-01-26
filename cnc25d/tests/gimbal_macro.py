@@ -280,8 +280,6 @@ gimbal_constraint['gearbar_slope_n'] = 0.0
 # second gear position
 gimbal_constraint['second_gear_position_angle'] = 0.0
 gimbal_constraint['second_gear_additional_axis_length'] = 0.0
-### output
-gimbal_constraint['simulation_enable'] = False
 
 ##### crest specific
 ### outline
@@ -312,23 +310,25 @@ gimbal_constraint['top_angle']       = 0.0
 gimbal_constraint['pan_angle']       = -30*math.pi/180 #0.0
 gimbal_constraint['tilt_angle']      = 45*math.pi/180 #0.0
 
-### output
-gimbal_constraint['tkinter_view']           = True
-gimbal_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro"      # to generate the Brep and DXF file with FreeCAD
-gimbal_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_gimbal = cnc25d_design.gimbal(gimbal_constraint)
+my_gimbal.outline_display()
+my_gimbal.write_figure_svg("test_output/gimbal_macro")
+my_gimbal.write_figure_dxf("test_output/gimbal_macro")
+my_gimbal.write_figure_brep("test_output/gimbal_macro")
+my_gimbal.write_assembly_brep("test_output/gimbal_macro")
+my_gimbal.write_freecad_brep("test_output/gimbal_macro")
+my_gimbal.run_simulation("")
+my_gimbal.view_design_configuration()
+#my_gimbal.run_self_test("")
+#my_gimbal.cli("--output_file_basename test_output/gm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_gimbal)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gimbal.get_fc_obj_function('gimbal')) # Your attention please: here we use get_fc_obj_function() instead of get_fc_obj_3dconf()
+
 
 

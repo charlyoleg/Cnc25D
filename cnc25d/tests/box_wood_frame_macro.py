@@ -105,16 +105,23 @@ bwf_constraint['module_width'] = 1
 bwf_constraint['router_bit_radius'] = 2.0
 bwf_constraint['cutting_extra'] = 2.0 # doesn't affect the cnc cutting plan
 bwf_constraint['slab_thickness'] = 5.0
-bwf_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#bwf_constraint['output_file_basename'] = "my_output_dir/" 
-#bwf_constraint['output_file_basename'] = "my_output_dir/my_output_basename" 
-#bwf_constraint['output_file_basename'] = "my_output_basename" 
-bwf_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
-bwf_assembly = cnc25d_design.box_wood_frame(bwf_constraint)
-Part.show(bwf_assembly)
+my_bwf = cnc25d_design.box_wood_frame(bwf_constraint)
+my_bwf.outline_display()
+my_bwf.write_figure_svg("test_output/bwf_macro")
+my_bwf.write_figure_dxf("test_output/bwf_macro")
+my_bwf.write_figure_brep("test_output/bwf_macro")
+my_bwf.write_assembly_brep("test_output/bwf_macro")
+my_bwf.write_freecad_brep("test_output/bwf_macro")
+#my_bwf.run_simulation("") # no simulation for axle_lid
+my_bwf.view_design_configuration()
+#my_bwf.run_self_test("")
+#my_bwf.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
+
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_bwf.get_fc_obj_3dconf('bwf_3dconf1'))
 

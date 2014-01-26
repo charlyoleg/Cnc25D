@@ -103,23 +103,24 @@ bagel_constraint['middle_bagel_thickness']          = 6.0
 bagel_constraint['internal_bagel_thickness']        = 2.0
 ### manufacturing
 bagel_constraint['bagel_extra_cut_thickness']       = 0.0
-### output
-bagel_constraint['tkinter_view']           = True
-bagel_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#bagel_constraint['output_file_basename'] = "test_output/bagel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#bagel_constraint['output_file_basename'] = "test_output/bagel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#bagel_constraint['output_file_basename'] = "test_output/bagel_macro"      # to generate the Brep and DXF file with FreeCAD
-bagel_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_bagel = cnc25d_design.bagel(bagel_constraint)
+my_bagel.outline_display()
+my_bagel.write_figure_svg("test_output/bagel_macro")
+my_bagel.write_figure_dxf("test_output/bagel_macro")
+my_bagel.write_figure_brep("test_output/bagel_macro")
+my_bagel.write_assembly_brep("test_output/bagel_macro")
+my_bagel.write_freecad_brep("test_output/bagel_macro")
+#my_bagel.run_simulation("") # no simulation for axle_lid
+my_bagel.view_design_configuration()
+#my_bagel.run_self_test("")
+#my_bagel.cli("--output_file_basename test_output/bm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_bagel)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_bagel.get_fc_obj_3dconf('bagel_assembly_conf1'))
 
 

@@ -184,8 +184,6 @@ cc_constraint['gearbar_slope_n'] = 0.0
 # second gear position
 cc_constraint['second_gear_position_angle'] = 0.0
 cc_constraint['second_gear_additional_axis_length'] = 0.0
-### output
-cc_constraint['simulation_enable'] = False
 
 ##### crest specific
 ### outline
@@ -212,23 +210,25 @@ cc_constraint['crest_thickness']                   = 5.0
 ### manufacturing
 cc_constraint['crest_cnc_router_bit_radius']       = 0.5
 
-##### output
-cc_constraint['tkinter_view']           = True
-cc_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#cc_constraint['output_file_basename'] = "test_output/cross_cube_macro.svg"  # to generate the SVG file with mozman svgwrite
-#cc_constraint['output_file_basename'] = "test_output/cross_cube_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#cc_constraint['output_file_basename'] = "test_output/cross_cube_macro"      # to generate the Brep and DXF file with FreeCAD
-cc_constraint['return_type'] = 'freecad_object' #'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_cc = cnc25d_design.cross_cube(cc_constraint)
+my_cc.outline_display()
+my_cc.write_figure_svg("test_output/cross_cube_macro")
+my_cc.write_figure_dxf("test_output/cross_cube_macro")
+my_cc.write_figure_brep("test_output/cross_cube_macro")
+my_cc.write_assembly_brep("test_output/cross_cube_macro")
+my_cc.write_freecad_brep("test_output/cross_cube_macro")
+my_cc.run_simulation("") 
+my_cc.view_design_configuration()
+#my_cc.run_self_test("")
+#my_cc.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_cc)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_cc.get_fc_obj_3dconf('cross_cube_bare_assembly'))
+
 
 

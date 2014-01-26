@@ -156,22 +156,26 @@ ml_constraint['leg_shift_length']     = 0.0
 ml_constraint['smoothing_radius']       = 3.0
 ml_constraint['cnc_router_bit_radius']  = 0.1
 ml_constraint['extrusion_height']     = 10.0
-### design output : view the gearring with tkinter or write files
-ml_constraint['tkinter_view']                    = True
-ml_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#ml_constraint['output_file_basename'] = "test_output/motor_lid_macro.svg"  # to generate the SVG file with mozman svgwrite
-#ml_constraint['output_file_basename'] = "test_output/motor_lid_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#ml_constraint['output_file_basename'] = "test_output/motor_lid_macro"      # to generate the Brep and DXF file with FreeCAD
-ml_constraint['return_type'] = 'int_status' #'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_ml = cnc25d_design.motor_lid(ml_constraint)
+my_ml.outline_display()
+my_ml.write_figure_svg("test_output/ml_macro")
+my_ml.write_figure_dxf("test_output/ml_macro")
+my_ml.write_figure_brep("test_output/ml_macro")
+my_ml.write_assembly_brep("test_output/ml_macro")
+my_ml.write_freecad_brep("test_output/ml_macro")
+#my_ml.run_simulation("") # no simulation for motor_lid
+my_ml.view_design_configuration()
+#my_ml.run_self_test("")
+#my_ml.cli("--output_file_basename test_output/mlm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_ml)
-except:
-  pass
+
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_ml.get_fc_obj_3dconf('motor_lid_3dconf1'))
+
+
 

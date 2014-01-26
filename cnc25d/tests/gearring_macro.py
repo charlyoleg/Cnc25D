@@ -148,9 +148,8 @@ gr_constraint['second_gear_additional_axis_length']   = 0.0
 #gr_constraint['portion_tooth_nb']     = 0
 #gr_constraint['portion_first_end']    = 0
 #gr_constraint['portion_last_end']     = 0
-### output
+### z-dimension
 gr_constraint['gear_profile_height']  = 20.0
-gr_constraint['simulation_enable']    = False
 ##### from gearring
 ### holder
 gr_constraint['holder_diameter']            = 360.0
@@ -177,19 +176,24 @@ gr_constraint['holder_crenel_B_position']        = 10.0
 gr_constraint['holder_hole_B_crenel_list']       = []
 ### cnc router_bit constraint
 gr_constraint['cnc_router_bit_radius']          = 1.0
-### design output : view the gearring with tkinter or write files
-gr_constraint['tkinter_view'] = True
-gr_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gr_constraint['output_file_basename'] = "test_output/gearring_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gr_constraint['output_file_basename'] = "test_output/gearring_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gr_constraint['output_file_basename'] = "test_output/gearring_macro"      # to generate the Brep and DXF file with FreeCAD
-gr_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_gr = cnc25d_design.gearring(gr_constraint)
+my_gr.outline_display()
+my_gr.write_figure_svg("test_output/gearring_macro")
+my_gr.write_figure_dxf("test_output/gearring_macro")
+my_gr.write_figure_brep("test_output/gearring_macro")
+my_gr.write_assembly_brep("test_output/gearring_macro")
+my_gr.write_freecad_brep("test_output/gearring_macro")
+my_gr.run_simulation("")
+my_gr.view_design_configuration()
+#my_gr.run_self_test("")
+#my_gr.cli("--output_file_basename test_output/grm.dxf") # Warning: all constraint values are reset to their default values
 
-Part.show(my_gr)
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gr.get_fc_obj_3dconf('gearring_3dconf1'))
+
 

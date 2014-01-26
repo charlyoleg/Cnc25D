@@ -148,9 +148,8 @@ sgw_constraint['second_gear_additional_axis_length']   = 0.0
 #sgw_constraint['portion_tooth_nb']     = 0
 #sgw_constraint['portion_first_end']    = 0
 #sgw_constraint['portion_last_end']     = 0
-### output
+### z-dimension
 sgw_constraint['gear_profile_height']  = 20.0
-sgw_constraint['simulation_enable']    = False
 #sgw_constraint['output_file_basename'] = "test_output/bla"
 ##### from split_gearwheel
 ### split
@@ -171,13 +170,6 @@ sgw_constraint['high_hole_diameter']         = 10.0
 sgw_constraint['high_hole_nb']               = 2
 ### cnc router_bit constraint
 sgw_constraint['cnc_router_bit_radius']          = 1.0
-### design output : view the gearwheel with tkinter or write files
-sgw_constraint['tkinter_view'] = True
-sgw_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#sgw_constraint['output_file_basename'] = "test_output/split_gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#sgw_constraint['output_file_basename'] = "test_output/split_gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#sgw_constraint['output_file_basename'] = "test_output/split_gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
-sgw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 
 
@@ -186,6 +178,18 @@ sgw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status'
 ################################################################
 
 my_sgw = cnc25d_design.split_gearwheel(sgw_constraint)
+my_sgw.outline_display()
+my_sgw.write_figure_svg("test_output/sgw_macro")
+my_sgw.write_figure_dxf("test_output/sgw_macro")
+my_sgw.write_figure_brep("test_output/sgw_macro")
+my_sgw.write_assembly_brep("test_output/sgw_macro")
+my_sgw.write_freecad_brep("test_output/sgw_macro")
+my_sgw.run_simulation("")
+my_sgw.view_design_configuration()
+#my_sgw.run_self_test("")
+#my_sgw.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
 
-Part.show(my_sgw)
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_sgw.get_fc_obj_3dconf('split_gearwheel_3dconf1'))
+
 

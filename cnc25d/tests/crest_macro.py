@@ -165,8 +165,6 @@ crest_constraint['gearbar_slope_n'] = 0.0
 # second gear position
 crest_constraint['second_gear_position_angle'] = 0.0
 crest_constraint['second_gear_additional_axis_length'] = 0.0
-### output
-crest_constraint['simulation_enable'] = False
 
 ##### crest specific
 ### outline
@@ -193,23 +191,25 @@ crest_constraint['crest_thickness']                   = 5.0
 ### manufacturing
 crest_constraint['crest_cnc_router_bit_radius']       = 0.5
 
-##### output
-crest_constraint['tkinter_view']           = True
-crest_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#crest_constraint['output_file_basename'] = "test_output/crest_macro.svg"  # to generate the SVG file with mozman svgwrite
-#crest_constraint['output_file_basename'] = "test_output/crest_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#crest_constraint['output_file_basename'] = "test_output/crest_macro"      # to generate the Brep and DXF file with FreeCAD
-crest_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_crest = cnc25d_design.crest(crest_constraint)
+my_crest.outline_display()
+my_crest.write_figure_svg("test_output/crest_macro")
+my_crest.write_figure_dxf("test_output/crest_macro")
+my_crest.write_figure_brep("test_output/crest_macro")
+my_crest.write_assembly_brep("test_output/crest_macro")
+my_crest.write_freecad_brep("test_output/crest_macro")
+my_crest.run_simulation("")
+my_crest.view_design_configuration()
+#my_crest.run_self_test("")
+#my_crest.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_crest)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_crest.get_fc_obj_3dconf('crest_3dconf1'))
+
 
 

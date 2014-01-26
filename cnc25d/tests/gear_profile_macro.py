@@ -115,7 +115,7 @@ gp_constraint['gear_skin_thickness_n']    = 0
 ### second gear
 # general
 gp_constraint['second_gear_type']                     = 'e'
-gp_constraint['second_gear_tooth_nb']                 = 0 #25
+gp_constraint['second_gear_tooth_nb']                 = 25
 gp_constraint['second_gear_primitive_diameter']       = 0
 gp_constraint['second_gear_addendum_dedendum_parity'] = 0 # 50.0
 # tooth height
@@ -144,17 +144,9 @@ gp_constraint['gear_initial_angle']                   = 0.0
 gp_constraint['second_gear_position_angle']           = 0.0
 gp_constraint['second_gear_additional_axis_length']   = 0.0
 ### portion
-gp_constraint['portion_tooth_nb']     = 10
-gp_constraint['portion_first_end']    = 3
-gp_constraint['portion_last_end']     = 3
-### output1
+gp_constraint['cut_portion']     = (10, 3, 3) # (portion_tooth_nb, portion_first_end, portion_last_end)
+### z-dimension
 gp_constraint['gear_profile_height']  = 20.0
-gp_constraint['simulation_enable']    = True
-gp_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gp_constraint['output_file_basename'] = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gp_constraint['output_file_basename'] = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gp_constraint['output_file_basename'] = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
-gp_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object', 'figure_param_info'
 
 
 
@@ -163,10 +155,18 @@ gp_constraint['return_type'] = 'freecad_object' # possible values: 'int_status',
 ################################################################
 
 my_gp = gear_profile.gear_profile(gp_constraint)
+my_gp.outline_display()
+my_gp.write_figure_svg("test_output/gear_profile_macro")
+my_gp.write_figure_dxf("test_output/gear_profile_macro")
+my_gp.write_figure_brep("test_output/gear_profile_macro")
+my_gp.write_assembly_brep("test_output/gear_profile_macro")
+my_gp.write_freecad_brep("test_output/gear_profile_macro")
+my_gp.run_simulation("")
+my_gp.view_design_configuration()
+#my_gp.run_self_test("")
+#my_gp.cli("--output_file_basename test_output/gpm.dxf") # Warning: all constraint values are reset to their default values
 
-#print("dbg339: my_gp:", my_gp)                               # if return_type = int_status
-#cnc25d_api.figure_simple_display(my_gp, [], "just display")  # if return_type = cnc25d_figure
-Part.show(my_gp)                                             # if return_type = freecad_object
-#(g1_outline_B, g1_param, exhaustive_info_txt) = my_gp        # if return_type = figure_param_info
-#cnc25d_api.figure_simple_display(g1_outline_B, [], "just display")
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gp.get_fc_obj_3dconf('gp_assembly_conf1'))
+
 
