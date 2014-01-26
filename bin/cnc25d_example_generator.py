@@ -225,18 +225,25 @@ bwf_constraint['module_width'] = 1
 bwf_constraint['router_bit_radius'] = 2.0
 bwf_constraint['cutting_extra'] = 2.0 # doesn't affect the cnc cutting plan
 bwf_constraint['slab_thickness'] = 5.0
-bwf_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#bwf_constraint['output_file_basename'] = "my_output_dir/" 
-#bwf_constraint['output_file_basename'] = "my_output_dir/my_output_basename" 
-#bwf_constraint['output_file_basename'] = "my_output_basename" 
-bwf_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
-bwf_assembly = cnc25d_design.box_wood_frame(bwf_constraint)
-Part.show(bwf_assembly)
+my_bwf = cnc25d_design.box_wood_frame(bwf_constraint)
+my_bwf.outline_display()
+my_bwf.write_figure_svg("test_output/bwf_macro")
+my_bwf.write_figure_dxf("test_output/bwf_macro")
+my_bwf.write_figure_brep("test_output/bwf_macro")
+my_bwf.write_assembly_brep("test_output/bwf_macro")
+my_bwf.write_freecad_brep("test_output/bwf_macro")
+#my_bwf.run_simulation("") # no simulation for axle_lid
+my_bwf.view_design_configuration()
+#my_bwf.run_self_test("")
+#my_bwf.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
+
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_bwf.get_fc_obj_3dconf('bwf_3dconf1'))
 
 
 '''
@@ -909,7 +916,7 @@ gp_constraint['gear_skin_thickness_n']    = 0
 ### second gear
 # general
 gp_constraint['second_gear_type']                     = 'e'
-gp_constraint['second_gear_tooth_nb']                 = 0 #25
+gp_constraint['second_gear_tooth_nb']                 = 25
 gp_constraint['second_gear_primitive_diameter']       = 0
 gp_constraint['second_gear_addendum_dedendum_parity'] = 0 # 50.0
 # tooth height
@@ -938,17 +945,9 @@ gp_constraint['gear_initial_angle']                   = 0.0
 gp_constraint['second_gear_position_angle']           = 0.0
 gp_constraint['second_gear_additional_axis_length']   = 0.0
 ### portion
-gp_constraint['portion_tooth_nb']     = 10
-gp_constraint['portion_first_end']    = 3
-gp_constraint['portion_last_end']     = 3
-### output1
+gp_constraint['cut_portion']     = (10, 3, 3) # (portion_tooth_nb, portion_first_end, portion_last_end)
+### z-dimension
 gp_constraint['gear_profile_height']  = 20.0
-gp_constraint['simulation_enable']    = True
-gp_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gp_constraint['output_file_basename'] = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gp_constraint['output_file_basename'] = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gp_constraint['output_file_basename'] = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
-gp_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object', 'figure_param_info'
 
 
 
@@ -957,12 +956,20 @@ gp_constraint['return_type'] = 'freecad_object' # possible values: 'int_status',
 ################################################################
 
 my_gp = gear_profile.gear_profile(gp_constraint)
+my_gp.outline_display()
+my_gp.write_figure_svg("test_output/gear_profile_macro")
+my_gp.write_figure_dxf("test_output/gear_profile_macro")
+my_gp.write_figure_brep("test_output/gear_profile_macro")
+my_gp.write_assembly_brep("test_output/gear_profile_macro")
+my_gp.write_freecad_brep("test_output/gear_profile_macro")
+my_gp.run_simulation("")
+my_gp.view_design_configuration()
+#my_gp.run_self_test("")
+#my_gp.cli("--output_file_basename test_output/gpm.dxf") # Warning: all constraint values are reset to their default values
 
-#print("dbg339: my_gp:", my_gp)                               # if return_type = int_status
-#cnc25d_api.figure_simple_display(my_gp, [], "just display")  # if return_type = cnc25d_figure
-Part.show(my_gp)                                             # if return_type = freecad_object
-#(g1_outline_B, g1_param, exhaustive_info_txt) = my_gp        # if return_type = figure_param_info
-#cnc25d_api.figure_simple_display(g1_outline_B, [], "just display")
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gp.get_fc_obj_3dconf('gp_assembly_conf1'))
+
 
 
 '''
@@ -1126,7 +1133,6 @@ gw_constraint['second_gear_additional_axis_length']   = 0.0
 #gw_constraint['portion_last_end']     = 0
 ### output
 gw_constraint['gear_profile_height']  = 20.0
-gw_constraint['simulation_enable']    = False
 ##### from gearwheel
 ### axle
 gw_constraint['axle_type']                = 'circle'
@@ -1152,13 +1158,6 @@ gw_constraint['wheel_hollow_external_diameter'] = 125.0
 gw_constraint['wheel_hollow_router_bit_radius'] = 5.0
 ### cnc router_bit constraint
 gw_constraint['cnc_router_bit_radius']          = 1.0
-### design output : view the gearwheel with tkinter or write files
-gw_constraint['tkinter_view'] = True
-gw_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gw_constraint['output_file_basename'] = "test_output/gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gw_constraint['output_file_basename'] = "test_output/gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gw_constraint['output_file_basename'] = "test_output/gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
-gw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 
 
@@ -1167,11 +1166,20 @@ gw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status',
 ################################################################
 
 my_gw = cnc25d_design.gearwheel(gw_constraint)
+my_gw.outline_display()
+my_gw.write_figure_svg("test_output/gearwheel_macro")
+my_gw.write_figure_dxf("test_output/gearwheel_macro")
+my_gw.write_figure_brep("test_output/gearwheel_macro")
+my_gw.write_assembly_brep("test_output/gearwheel_macro")
+my_gw.write_freecad_brep("test_output/gearwheel_macro")
+my_gw.run_simulation("")
+my_gw.view_design_configuration()
+#my_gw.run_self_test("")
+#my_gw.cli("--output_file_basename test_output/gwm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # works if gw_constraint['return_type'] = 'freecad_object'
-  Part.show(my_gw)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gw.get_fc_obj_3dconf('gearwheel_3dconf1'))
+
 
 
 
@@ -1334,9 +1342,8 @@ gr_constraint['second_gear_additional_axis_length']   = 0.0
 #gr_constraint['portion_tooth_nb']     = 0
 #gr_constraint['portion_first_end']    = 0
 #gr_constraint['portion_last_end']     = 0
-### output
+### z-dimension
 gr_constraint['gear_profile_height']  = 20.0
-gr_constraint['simulation_enable']    = False
 ##### from gearring
 ### holder
 gr_constraint['holder_diameter']            = 360.0
@@ -1363,21 +1370,26 @@ gr_constraint['holder_crenel_B_position']        = 10.0
 gr_constraint['holder_hole_B_crenel_list']       = []
 ### cnc router_bit constraint
 gr_constraint['cnc_router_bit_radius']          = 1.0
-### design output : view the gearring with tkinter or write files
-gr_constraint['tkinter_view'] = True
-gr_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gr_constraint['output_file_basename'] = "test_output/gearring_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gr_constraint['output_file_basename'] = "test_output/gearring_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gr_constraint['output_file_basename'] = "test_output/gearring_macro"      # to generate the Brep and DXF file with FreeCAD
-gr_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_gr = cnc25d_design.gearring(gr_constraint)
+my_gr.outline_display()
+my_gr.write_figure_svg("test_output/gearring_macro")
+my_gr.write_figure_dxf("test_output/gearring_macro")
+my_gr.write_figure_brep("test_output/gearring_macro")
+my_gr.write_assembly_brep("test_output/gearring_macro")
+my_gr.write_freecad_brep("test_output/gearring_macro")
+my_gr.run_simulation("")
+my_gr.view_design_configuration()
+#my_gr.run_self_test("")
+#my_gr.cli("--output_file_basename test_output/grm.dxf") # Warning: all constraint values are reset to their default values
 
-Part.show(my_gr)
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gr.get_fc_obj_3dconf('gearring_3dconf1'))
+
 
 
 '''
@@ -1536,12 +1548,9 @@ gb_constraint['gear_initial_angle']                   = 0.0
 gb_constraint['second_gear_position_angle']           = 0.0
 gb_constraint['second_gear_additional_axis_length']   = 0.0
 ### portion
-gb_constraint['portion_tooth_nb']     = 8
-gb_constraint['portion_first_end']    = 3
-gb_constraint['portion_last_end']     = 3
+gb_constraint['cut_portion']     = (8, 3, 3) # (portion_tooth_nb, portion_first_end, portion_last_end)
 ### output
 gb_constraint['gear_profile_height']  = 20.0
-gb_constraint['simulation_enable']    = False
 ##### from gearwheel
 ### gearbar
 gb_constraint['gearbar_height']                 = 30.0
@@ -1550,21 +1559,26 @@ gb_constraint['gearbar_hole_height_position']   = 10.0
 gb_constraint['gearbar_hole_diameter']          = 10.0
 gb_constraint['gearbar_hole_offset']            = 0
 gb_constraint['gearbar_hole_increment']         = 1
-### design output : view the gearbar with tkinter or write files
-gb_constraint['tkinter_view'] = True
-gb_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gb_constraint['output_file_basename'] = "test_output/gearbar_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gb_constraint['output_file_basename'] = "test_output/gearbar_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gb_constraint['output_file_basename'] = "test_output/gearbar_macro"      # to generate the Brep and DXF file with FreeCAD
-gb_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_gb = cnc25d_design.gearbar(gb_constraint)
+my_gb.outline_display()
+my_gb.write_figure_svg("test_output/gearbar_macro")
+my_gb.write_figure_dxf("test_output/gearbar_macro")
+my_gb.write_figure_brep("test_output/gearbar_macro")
+my_gb.write_assembly_brep("test_output/gearbar_macro")
+my_gb.write_freecad_brep("test_output/gearbar_macro")
+my_gb.run_simulation("")
+my_gb.view_design_configuration()
+#my_gb.run_self_test("")
+#my_gb.cli("--output_file_basename test_output/gbm.dxf") # Warning: all constraint values are reset to their default values
 
-Part.show(my_gb)
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gb.get_fc_obj_3dconf('gearbar_3dconf1'))
+
 
 
 '''
@@ -1726,9 +1740,8 @@ sgw_constraint['second_gear_additional_axis_length']   = 0.0
 #sgw_constraint['portion_tooth_nb']     = 0
 #sgw_constraint['portion_first_end']    = 0
 #sgw_constraint['portion_last_end']     = 0
-### output
+### z-dimension
 sgw_constraint['gear_profile_height']  = 20.0
-sgw_constraint['simulation_enable']    = False
 #sgw_constraint['output_file_basename'] = "test_output/bla"
 ##### from split_gearwheel
 ### split
@@ -1749,13 +1762,6 @@ sgw_constraint['high_hole_diameter']         = 10.0
 sgw_constraint['high_hole_nb']               = 2
 ### cnc router_bit constraint
 sgw_constraint['cnc_router_bit_radius']          = 1.0
-### design output : view the gearwheel with tkinter or write files
-sgw_constraint['tkinter_view'] = True
-sgw_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#sgw_constraint['output_file_basename'] = "test_output/split_gearwheel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#sgw_constraint['output_file_basename'] = "test_output/split_gearwheel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#sgw_constraint['output_file_basename'] = "test_output/split_gearwheel_macro"      # to generate the Brep and DXF file with FreeCAD
-sgw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 
 
@@ -1764,8 +1770,20 @@ sgw_constraint['return_type'] = 'freecad_object' # possible values: 'int_status'
 ################################################################
 
 my_sgw = cnc25d_design.split_gearwheel(sgw_constraint)
+my_sgw.outline_display()
+my_sgw.write_figure_svg("test_output/sgw_macro")
+my_sgw.write_figure_dxf("test_output/sgw_macro")
+my_sgw.write_figure_brep("test_output/sgw_macro")
+my_sgw.write_assembly_brep("test_output/sgw_macro")
+my_sgw.write_freecad_brep("test_output/sgw_macro")
+my_sgw.run_simulation("")
+my_sgw.view_design_configuration()
+#my_sgw.run_self_test("")
+#my_sgw.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
 
-Part.show(my_sgw)
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_sgw.get_fc_obj_3dconf('split_gearwheel_3dconf1'))
+
 
 
 '''
@@ -1969,26 +1987,27 @@ eg_constraint['top_central_diameter']       = 0.0
 ### general
 eg_constraint['cnc_router_bit_radius']   = 0.1
 eg_constraint['gear_profile_height']     = 10.0
-### design output : view the gearring with tkinter or write files
-eg_constraint['tkinter_view']                    = True
-eg_constraint['simulation_sun_planet_gear']      = False
-eg_constraint['simulation_annulus_planet_gear']  = False
-eg_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro.svg"  # to generate the SVG file with mozman svgwrite
-#eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#eg_constraint['output_file_basename'] = "test_output/epicyclic_gearing_macro"      # to generate the Brep and DXF file with FreeCAD
-eg_constraint['return_type'] = 'int_status' #'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_eg = cnc25d_design.epicyclic_gearing(eg_constraint)
+my_eg.outline_display()
+my_eg.write_figure_svg("test_output/epicyclic_macro")
+my_eg.write_figure_dxf("test_output/epicyclic_macro")
+my_eg.write_figure_brep("test_output/epicyclic_macro")
+my_eg.write_assembly_brep("test_output/epicyclic_macro")
+my_eg.write_freecad_brep("test_output/epicyclic_macro")
+my_eg.run_simulation("eg_sim_planet_sun")
+my_eg.run_simulation("eg_sim_annulus_planet")
+my_eg.view_design_configuration()
+#my_eg.run_self_test("")
+#my_eg.cli("--output_file_basename test_output/egm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_eg)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_eg.get_fc_obj_3dconf('epicyclic_gearing_3dconf1'))
+
 
 
 '''
@@ -2136,24 +2155,26 @@ al_constraint['leg_shift_length']     = 0.0
 al_constraint['smoothing_radius']       = 0.0
 al_constraint['cnc_router_bit_radius']  = 0.1
 al_constraint['extrusion_height']     = 10.0
-### design output : view the gearring with tkinter or write files
-al_constraint['tkinter_view']                    = True
-al_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#al_constraint['output_file_basename'] = "test_output/axle_lid_macro.svg"  # to generate the SVG file with mozman svgwrite
-#al_constraint['output_file_basename'] = "test_output/axle_lid_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#al_constraint['output_file_basename'] = "test_output/axle_lid_macro"      # to generate the Brep and DXF file with FreeCAD
-al_constraint['return_type'] = 'int_status' #'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_al = cnc25d_design.axle_lid(al_constraint)
+my_al.outline_display()
+my_al.write_figure_svg("test_output/axle_lid_macro")
+my_al.write_figure_dxf("test_output/axle_lid_macro")
+my_al.write_figure_brep("test_output/axle_lid_macro")
+my_al.write_assembly_brep("test_output/axle_lid_macro")
+my_al.write_freecad_brep("test_output/axle_lid_macro")
+#my_al.run_simulation("") # no simulation for axle_lid
+my_al.view_design_configuration()
+#my_al.run_self_test("")
+#my_al.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_al)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_al.get_fc_obj_3dconf('axle_lid_3dconf1'))
+
 
 
 '''
@@ -2323,24 +2344,28 @@ ml_constraint['leg_shift_length']     = 0.0
 ml_constraint['smoothing_radius']       = 3.0
 ml_constraint['cnc_router_bit_radius']  = 0.1
 ml_constraint['extrusion_height']     = 10.0
-### design output : view the gearring with tkinter or write files
-ml_constraint['tkinter_view']                    = True
-ml_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#ml_constraint['output_file_basename'] = "test_output/motor_lid_macro.svg"  # to generate the SVG file with mozman svgwrite
-#ml_constraint['output_file_basename'] = "test_output/motor_lid_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#ml_constraint['output_file_basename'] = "test_output/motor_lid_macro"      # to generate the Brep and DXF file with FreeCAD
-ml_constraint['return_type'] = 'int_status' #'freecad_object' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_ml = cnc25d_design.motor_lid(ml_constraint)
+my_ml.outline_display()
+my_ml.write_figure_svg("test_output/ml_macro")
+my_ml.write_figure_dxf("test_output/ml_macro")
+my_ml.write_figure_brep("test_output/ml_macro")
+my_ml.write_assembly_brep("test_output/ml_macro")
+my_ml.write_freecad_brep("test_output/ml_macro")
+#my_ml.run_simulation("") # no simulation for motor_lid
+my_ml.view_design_configuration()
+#my_ml.run_self_test("")
+#my_ml.cli("--output_file_basename test_output/mlm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_ml)
-except:
-  pass
+
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_ml.get_fc_obj_3dconf('motor_lid_3dconf1'))
+
+
 
 
 '''
@@ -2521,24 +2546,25 @@ bell_constraint['z_hole_position_length']          = 15.0
 ### manufacturing
 bell_constraint['bell_cnc_router_bit_radius']      = 1.0
 bell_constraint['bell_extra_cut_thickness']        = 0.0
-### output
-bell_constraint['tkinter_view']           = True
-bell_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#bell_constraint['output_file_basename'] = "test_output/bell_macro.svg"  # to generate the SVG file with mozman svgwrite
-#bell_constraint['output_file_basename'] = "test_output/bell_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#bell_constraint['output_file_basename'] = "test_output/bell_macro"      # to generate the Brep and DXF file with FreeCAD
-bell_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_bell = cnc25d_design.bell(bell_constraint)
+my_bell.outline_display()
+my_bell.write_figure_svg("test_output/bell_macro")
+my_bell.write_figure_dxf("test_output/bell_macro")
+my_bell.write_figure_brep("test_output/bell_macro")
+my_bell.write_assembly_brep("test_output/bell_macro")
+my_bell.write_freecad_brep("test_output/bell_macro")
+#my_bell.run_simulation("") # no simulation for axle_lid
+my_bell.view_design_configuration()
+#my_bell.run_self_test("")
+#my_bell.cli("--output_file_basename test_output/bm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_bell)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_bell.get_fc_obj_3dconf('bell_assembly_conf2'))
 
 
 
@@ -2656,24 +2682,25 @@ bagel_constraint['middle_bagel_thickness']          = 6.0
 bagel_constraint['internal_bagel_thickness']        = 2.0
 ### manufacturing
 bagel_constraint['bagel_extra_cut_thickness']       = 0.0
-### output
-bagel_constraint['tkinter_view']           = True
-bagel_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#bagel_constraint['output_file_basename'] = "test_output/bagel_macro.svg"  # to generate the SVG file with mozman svgwrite
-#bagel_constraint['output_file_basename'] = "test_output/bagel_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#bagel_constraint['output_file_basename'] = "test_output/bagel_macro"      # to generate the Brep and DXF file with FreeCAD
-bagel_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_bagel = cnc25d_design.bagel(bagel_constraint)
+my_bagel.outline_display()
+my_bagel.write_figure_svg("test_output/bagel_macro")
+my_bagel.write_figure_dxf("test_output/bagel_macro")
+my_bagel.write_figure_brep("test_output/bagel_macro")
+my_bagel.write_assembly_brep("test_output/bagel_macro")
+my_bagel.write_freecad_brep("test_output/bagel_macro")
+#my_bagel.run_simulation("") # no simulation for axle_lid
+my_bagel.view_design_configuration()
+#my_bagel.run_self_test("")
+#my_bagel.cli("--output_file_basename test_output/bm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_bagel)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_bagel.get_fc_obj_3dconf('bagel_assembly_conf1'))
 
 
 
@@ -2866,24 +2893,26 @@ bba_constraint['external_bagel_thickness']        = 2.0
 bba_constraint['internal_bagel_thickness']        = 2.0
 ### bagel manufacturing
 bba_constraint['bagel_extra_cut_thickness']       = 0.0
-###### output
-bba_constraint['tkinter_view']           = True
-bba_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#bba_constraint['output_file_basename'] = "test_output/bba_macro.svg"  # to generate the SVG file with mozman svgwrite
-#bba_constraint['output_file_basename'] = "test_output/bba_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#bba_constraint['output_file_basename'] = "test_output/bba_macro"      # to generate the Brep and DXF file with FreeCAD
-bba_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_bba = cnc25d_design.bba(bba_constraint)
+my_bba.outline_display()
+my_bba.write_figure_svg("test_output/bba_macro")
+my_bba.write_figure_dxf("test_output/bba_macro")
+my_bba.write_figure_brep("test_output/bba_macro")
+my_bba.write_assembly_brep("test_output/bba_macro")
+my_bba.write_freecad_brep("test_output/bba_macro")
+#my_bba.run_simulation("") # no simulation for axle_lid
+my_bba.view_design_configuration()
+#my_bba.run_self_test("")
+#my_bba.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_bba)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_bba.get_fc_obj_3dconf('bell_bagel_assembly_conf1'))
+
 
 
 
@@ -3063,8 +3092,6 @@ crest_constraint['gearbar_slope_n'] = 0.0
 # second gear position
 crest_constraint['second_gear_position_angle'] = 0.0
 crest_constraint['second_gear_additional_axis_length'] = 0.0
-### output
-crest_constraint['simulation_enable'] = False
 
 ##### crest specific
 ### outline
@@ -3091,24 +3118,26 @@ crest_constraint['crest_thickness']                   = 5.0
 ### manufacturing
 crest_constraint['crest_cnc_router_bit_radius']       = 0.5
 
-##### output
-crest_constraint['tkinter_view']           = True
-crest_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#crest_constraint['output_file_basename'] = "test_output/crest_macro.svg"  # to generate the SVG file with mozman svgwrite
-#crest_constraint['output_file_basename'] = "test_output/crest_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#crest_constraint['output_file_basename'] = "test_output/crest_macro"      # to generate the Brep and DXF file with FreeCAD
-crest_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_crest = cnc25d_design.crest(crest_constraint)
+my_crest.outline_display()
+my_crest.write_figure_svg("test_output/crest_macro")
+my_crest.write_figure_dxf("test_output/crest_macro")
+my_crest.write_figure_brep("test_output/crest_macro")
+my_crest.write_assembly_brep("test_output/crest_macro")
+my_crest.write_freecad_brep("test_output/crest_macro")
+my_crest.run_simulation("")
+my_crest.view_design_configuration()
+#my_crest.run_self_test("")
+#my_crest.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_crest)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_crest.get_fc_obj_3dconf('crest_3dconf1'))
+
 
 
 
@@ -3307,8 +3336,6 @@ cc_constraint['gearbar_slope_n'] = 0.0
 # second gear position
 cc_constraint['second_gear_position_angle'] = 0.0
 cc_constraint['second_gear_additional_axis_length'] = 0.0
-### output
-cc_constraint['simulation_enable'] = False
 
 ##### crest specific
 ### outline
@@ -3335,24 +3362,26 @@ cc_constraint['crest_thickness']                   = 5.0
 ### manufacturing
 cc_constraint['crest_cnc_router_bit_radius']       = 0.5
 
-##### output
-cc_constraint['tkinter_view']           = True
-cc_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#cc_constraint['output_file_basename'] = "test_output/cross_cube_macro.svg"  # to generate the SVG file with mozman svgwrite
-#cc_constraint['output_file_basename'] = "test_output/cross_cube_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#cc_constraint['output_file_basename'] = "test_output/cross_cube_macro"      # to generate the Brep and DXF file with FreeCAD
-cc_constraint['return_type'] = 'freecad_object' #'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_cc = cnc25d_design.cross_cube(cc_constraint)
+my_cc.outline_display()
+my_cc.write_figure_svg("test_output/cross_cube_macro")
+my_cc.write_figure_dxf("test_output/cross_cube_macro")
+my_cc.write_figure_brep("test_output/cross_cube_macro")
+my_cc.write_assembly_brep("test_output/cross_cube_macro")
+my_cc.write_freecad_brep("test_output/cross_cube_macro")
+my_cc.run_simulation("") 
+my_cc.view_design_configuration()
+#my_cc.run_self_test("")
+#my_cc.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_cc)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_cc.get_fc_obj_3dconf('cross_cube_bare_assembly'))
+
 
 
 
@@ -3647,8 +3676,6 @@ gimbal_constraint['gearbar_slope_n'] = 0.0
 # second gear position
 gimbal_constraint['second_gear_position_angle'] = 0.0
 gimbal_constraint['second_gear_additional_axis_length'] = 0.0
-### output
-gimbal_constraint['simulation_enable'] = False
 
 ##### crest specific
 ### outline
@@ -3679,24 +3706,26 @@ gimbal_constraint['top_angle']       = 0.0
 gimbal_constraint['pan_angle']       = -30*math.pi/180 #0.0
 gimbal_constraint['tilt_angle']      = 45*math.pi/180 #0.0
 
-### output
-gimbal_constraint['tkinter_view']           = True
-gimbal_constraint['output_file_basename'] = "" # set a not-empty string if you want to generate the output files
-#gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro.svg"  # to generate the SVG file with mozman svgwrite
-#gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro.dxf"  # to generate the DXF file with mozman svgwrite
-#gimbal_constraint['output_file_basename'] = "test_output/gimbal_macro"      # to generate the Brep and DXF file with FreeCAD
-gimbal_constraint['return_type'] = 'int_status' # possible values: 'int_status', 'cnc25d_figure', 'freecad_object'
 
 ################################################################
 # action
 ################################################################
 
 my_gimbal = cnc25d_design.gimbal(gimbal_constraint)
+my_gimbal.outline_display()
+my_gimbal.write_figure_svg("test_output/gimbal_macro")
+my_gimbal.write_figure_dxf("test_output/gimbal_macro")
+my_gimbal.write_figure_brep("test_output/gimbal_macro")
+my_gimbal.write_assembly_brep("test_output/gimbal_macro")
+my_gimbal.write_freecad_brep("test_output/gimbal_macro")
+my_gimbal.run_simulation("")
+my_gimbal.view_design_configuration()
+#my_gimbal.run_self_test("")
+#my_gimbal.cli("--output_file_basename test_output/gm.dxf") # Warning: all constraint values are reset to their default values
 
-try: # display if a freecad object
-  Part.show(my_gimbal)
-except:
-  pass
+if(cnc25d_api.interpretor_is_freecad()):
+  Part.show(my_gimbal.get_fc_obj_function('gimbal')) # Your attention please: here we use get_fc_obj_function() instead of get_fc_obj_3dconf()
+
 
 
 
