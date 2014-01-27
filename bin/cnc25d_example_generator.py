@@ -237,10 +237,10 @@ my_bwf.write_figure_dxf("test_output/bwf_macro")
 my_bwf.write_figure_brep("test_output/bwf_macro")
 my_bwf.write_assembly_brep("test_output/bwf_macro")
 my_bwf.write_freecad_brep("test_output/bwf_macro")
-#my_bwf.run_simulation("") # no simulation for axle_lid
+#my_bwf.run_simulation("") # no simulation for box_wood_frame
 my_bwf.view_design_configuration()
 #my_bwf.run_self_test("")
-#my_bwf.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
+#my_bwf.cli("--output_file_basename test_output/bwfm.dxf") # Warning: all constraint values are reset to their default values
 
 if(cnc25d_api.interpretor_is_freecad()):
   Part.show(my_bwf.get_fc_obj_3dconf('bwf_3dconf1'))
@@ -2558,7 +2558,7 @@ my_bell.write_figure_dxf("test_output/bell_macro")
 my_bell.write_figure_brep("test_output/bell_macro")
 my_bell.write_assembly_brep("test_output/bell_macro")
 my_bell.write_freecad_brep("test_output/bell_macro")
-#my_bell.run_simulation("") # no simulation for axle_lid
+#my_bell.run_simulation("") # no simulation for bell
 my_bell.view_design_configuration()
 #my_bell.run_self_test("")
 #my_bell.cli("--output_file_basename test_output/bm.dxf") # Warning: all constraint values are reset to their default values
@@ -2694,7 +2694,7 @@ my_bagel.write_figure_dxf("test_output/bagel_macro")
 my_bagel.write_figure_brep("test_output/bagel_macro")
 my_bagel.write_assembly_brep("test_output/bagel_macro")
 my_bagel.write_freecad_brep("test_output/bagel_macro")
-#my_bagel.run_simulation("") # no simulation for axle_lid
+#my_bagel.run_simulation("") # no simulation for bagel
 my_bagel.view_design_configuration()
 #my_bagel.run_self_test("")
 #my_bagel.cli("--output_file_basename test_output/bm.dxf") # Warning: all constraint values are reset to their default values
@@ -2905,7 +2905,7 @@ my_bba.write_figure_dxf("test_output/bba_macro")
 my_bba.write_figure_brep("test_output/bba_macro")
 my_bba.write_assembly_brep("test_output/bba_macro")
 my_bba.write_freecad_brep("test_output/bba_macro")
-#my_bba.run_simulation("") # no simulation for axle_lid
+#my_bba.run_simulation("") # no simulation for bell_bagel_assembly
 my_bba.view_design_configuration()
 #my_bba.run_self_test("")
 #my_bba.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
