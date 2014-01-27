@@ -2,13 +2,18 @@
 Cnc25D Release Notes
 ====================
 
+Release 0.1.11
+--------------
+Released on 2014-03-31
+
+* gearlever
+* epicyclic-gearing optimization for 3D printer
+
 Release 0.1.10
 --------------
 Released on 2014-01-31
 
 * refactoring/standardizing the designs with bare_design
-* gearlever
-* epicyclic-gearing optimization for 3D printer
 
 Release 0.1.9
 -------------

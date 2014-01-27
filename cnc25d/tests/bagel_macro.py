@@ -115,7 +115,7 @@ my_bagel.write_figure_dxf("test_output/bagel_macro")
 my_bagel.write_figure_brep("test_output/bagel_macro")
 my_bagel.write_assembly_brep("test_output/bagel_macro")
 my_bagel.write_freecad_brep("test_output/bagel_macro")
-#my_bagel.run_simulation("") # no simulation for axle_lid
+#my_bagel.run_simulation("") # no simulation for bagel
 my_bagel.view_design_configuration()
 #my_bagel.run_self_test("")
 #my_bagel.cli("--output_file_basename test_output/bm.dxf") # Warning: all constraint values are reset to their default values

@@ -117,10 +117,10 @@ my_bwf.write_figure_dxf("test_output/bwf_macro")
 my_bwf.write_figure_brep("test_output/bwf_macro")
 my_bwf.write_assembly_brep("test_output/bwf_macro")
 my_bwf.write_freecad_brep("test_output/bwf_macro")
-#my_bwf.run_simulation("") # no simulation for axle_lid
+#my_bwf.run_simulation("") # no simulation for box_wood_frame
 my_bwf.view_design_configuration()
 #my_bwf.run_self_test("")
-#my_bwf.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values
+#my_bwf.cli("--output_file_basename test_output/bwfm.dxf") # Warning: all constraint values are reset to their default values
 
 if(cnc25d_api.interpretor_is_freecad()):
   Part.show(my_bwf.get_fc_obj_3dconf('bwf_3dconf1'))

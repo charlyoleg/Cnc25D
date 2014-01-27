@@ -179,7 +179,7 @@ my_bell.write_figure_dxf("test_output/bell_macro")
 my_bell.write_figure_brep("test_output/bell_macro")
 my_bell.write_assembly_brep("test_output/bell_macro")
 my_bell.write_freecad_brep("test_output/bell_macro")
-#my_bell.run_simulation("") # no simulation for axle_lid
+#my_bell.run_simulation("") # no simulation for bell
 my_bell.view_design_configuration()
 #my_bell.run_self_test("")
 #my_bell.cli("--output_file_basename test_output/bm.dxf") # Warning: all constraint values are reset to their default values

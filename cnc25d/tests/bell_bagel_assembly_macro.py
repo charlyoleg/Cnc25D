@@ -190,7 +190,7 @@ my_bba.write_figure_dxf("test_output/bba_macro")
 my_bba.write_figure_brep("test_output/bba_macro")
 my_bba.write_assembly_brep("test_output/bba_macro")
 my_bba.write_freecad_brep("test_output/bba_macro")
-#my_bba.run_simulation("") # no simulation for axle_lid
+#my_bba.run_simulation("") # no simulation for bell_bagel_assembly
 my_bba.view_design_configuration()
 #my_bba.run_self_test("")
 #my_bba.cli("--output_file_basename test_output/alm.dxf") # Warning: all constraint values are reset to their default values

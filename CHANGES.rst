@@ -2,11 +2,17 @@
 Release History
 ###############
 
-0.1.10 (2014-01-31)
+
+0.1.11 (2014-03-31)
 ===================
 
 * gearlever
 * epicyclic-gearing optimization for 3D printer
+
+0.1.10 (2014-01-31)
+===================
+
+* refactoring/standardizing the designs with bare_design
 
 0.1.9 (2013-12-13)
 ==================
