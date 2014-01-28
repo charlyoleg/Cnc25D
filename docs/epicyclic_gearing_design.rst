@@ -2,7 +2,9 @@
 Epicyclic Gearing Design
 ========================
 
-Ready-to-use parametric *epicyclic-gearing* design. The *epicyclic gearing* is a system made out of several parts:
+Ready-to-use parametric *epicyclic-gearing* design. Check also the epicyclic-gearing design variants :doc:`low_torque_transmission_design` and :doc:`high_torque_transmission_design` that might better fit your requirements.
+
+The *epicyclic gearing* is a system made out of several parts:
 
   - sun-gear
   - planet-gear

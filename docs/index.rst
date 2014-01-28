@@ -50,6 +50,7 @@ Contents:
    gimbal_design
    gimbal_details
    low_torque_transmission_design
+   high_torque_transmission_design
 
 Indices and tables
 ==================

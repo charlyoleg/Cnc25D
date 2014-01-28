@@ -2,7 +2,7 @@
 Low_torque_transmission Design
 ==============================
 
-Ready-to-use parametric *low-torque-transmission* design. It is a reduction system based on a train of epicyclic-gearing. The design includes the electric-motor holder for a cylindric or square format. The output is an hexagon on which you can plug a gearwheel.
+Ready-to-use parametric *low-torque-transmission* design. It is a reduction system based on a train of epicyclic-gearing. The design includes the electric-motor holder for a cylindric or square format. The output is an hexagon on which you can plug a gearwheel. It is a variant of :doc:`epicyclic_gearing_design`
 
 low_torque_transmission design characteristics:
 
@@ -21,21 +21,42 @@ To get an overview of the possible *low_torque_transmission* designs that can be
 Low_torque_transmission Parameters
 ==================================
 
+Overview
+________
+
 The Low_torque_transmission is composed of the following parts
 
 .. image:: images/low_torque_transmission.png
 
-The *low_torque_transmission* inherits the parameters from the :doc:`epicyclic_gearing_design`. The parameter *epicyclic_step_nb* sets the number of epicyclic-steps. Most of the other parameters are related to the extrusion size in the z-direction.
+The *low_torque_transmission* inherits the parameters from the :doc:`gearring_design`. The parameter *epicyclic_step_nb* sets the number of epicyclic-steps.
+
+z-direction parameters
+______________________
+
+The parameters related to the extrusion size in the z-direction:
 
 .. image:: images/ltt_epicyclic_step_width.png
 .. image:: images/ltt_motor_side_width.png
 .. image:: images/ltt_output_side_width.png
 
+Sun and planet parameters
+_________________________
+
+.. image:: images/ltt_sun_parameters.png
+.. image:: images/ltt_planet_parameters.png
+
+Planet-carrier parameters
+_________________________
+
+.. image:: images/ltt_planet_carrier_rear.png
+.. image:: images/ltt_planet_carrier_middle.png
+.. image:: images/ltt_planet_carrier_front.png
+
 Low_torque_transmission Parameter Dependency
 ============================================
 
 hexagon_width
--------------
+_____________
 
 The *output_hexagon* must into the *output_holder*. But also the *output_front_planet_carrier_width* must be inside the *output-cover to guarantee enough slack between the *output_planet* and the *output_cover*. So we get the relations::
 
@@ -43,7 +64,7 @@ The *output_hexagon* must into the *output_holder*. But also the *output_front_p
   hexagon_width < output_holder_width
 
 input_slack
------------
+___________
 
 The *input_slack* parameter sets some play between the *motor_holder* and the first *rear_planet_carrier*. Notice that this value is affected by the length of the output axle.
 
