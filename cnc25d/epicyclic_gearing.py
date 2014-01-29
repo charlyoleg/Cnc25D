@@ -317,9 +317,11 @@ def planet_gearwheel_constraint(c):
   gp_c['second_gear_type'] = 'e'
   for i in range(c['planet_nb']):
     gp_c['second_gear_position_angle'] = i*planet_angle + c['first_planet_position_angle']
+    #print("dbg320: second_gear_position_angle:", gp_c['second_gear_position_angle'])
     i_gear_profile.apply_external_constraint(gp_c)
     gear_profile_parameters = i_gear_profile.get_constraint() # get the planet angle positions
     gw_c_list[i]['gear_initial_angle'] = gear_profile_parameters['second_positive_initial_angle']
+  #print("dbg323:  planet angle positions:", [ gw_c_list[i]['gear_initial_angle'] for i in range(c['planet_nb']) ] )
   return(gw_c_list)
 
 def sun_gearwheel_constraint(c):
@@ -368,9 +370,12 @@ def sun_gearwheel_constraint(c):
   sun_angle_position = []
   for i in range(c['planet_nb']):
     gp_c.update(pg_c_list[i])
+    #print("dbg373: gear_initial_angle, second_gear_position_angle:", gp_c['gear_initial_angle'], gp_c['second_gear_position_angle'])
     gear_profile_parameters = i_gear_profile.apply_external_constraint(gp_c) # get the sun angle positions
     sun_angle_position.append(gear_profile_parameters['second_positive_initial_angle'])
+  #print("dbg374: sun_angle_position:", sun_angle_position)
   g2_pi_module_angle = gear_profile_parameters['second_pi_module_angle']
+  #print("dbg378:", [ math.fmod(sun_angle_position[i]+0.5*g2_pi_module_angle, g2_pi_module_angle) - 0.5*g2_pi_module_angle for i in range(c['planet_nb'])])
   # check the sun angle position
   #tooth_check = (c['sun_gear_tooth_nb'] + c['annulus_gear_tooth_nb'])%c['planet_nb']
   tooth_check = (2*(c['sun_gear_tooth_nb'] + c['planet_gear_tooth_nb'])) % c['planet_nb']
@@ -424,7 +429,6 @@ def epicyclic_gearing_constraint_check(c):
   NOM = 2*math.asin(1/(1+(float(c['sun_gear_tooth_nb'])/c['planet_gear_tooth_nb'])))
   security_coef = 1.1
   c['planet_number_max'] = int(2*math.pi/(NOM*security_coef))
-  c['planet_nb'] = c['planet_nb']
   if(c['planet_nb']==0):
     c['planet_nb'] = c['planet_number_max']
   if(c['planet_nb']>c['planet_number_max']):

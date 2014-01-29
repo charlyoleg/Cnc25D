@@ -237,6 +237,137 @@ def ltt_constraint_check(c):
   """
   ### precision
   radian_epsilon = math.pi/1000
+  # planet number
+  planet_size_angle = 2*math.asin(float(c['planet_gear_tooth_nb']+2)/(c['planet_gear_tooth_nb']+c['sun_gear_tooth_nb']))
+  planet_number_max_securoty_coef = 1.0
+  c['planet_number_max'] = int(2*math.pi/(planet_size_angle*planet_number_max_securoty_coef))
+  #print("dbg244: planet_number_max:", c['planet_number_max'])
+  if(c['planet_nb']==0):
+    c['planet_nb'] = c['planet_number_max']
+  if(c['planet_nb']>c['planet_number_max']):
+    print("ERR247: Error, planet_nb {:d} is bigger than planet_number_max {:d}".format(c['planet_nb'], c['planet_number_max']))
+    sys.exit(2)
+  if(c['planet_nb']<1):
+    print("ERR251: Error, planet_nb {:d} must be bigger or equal to 1".format(c['planet_nb']))
+    sys.exit(2)
+  # epicyclic fitting
+  epicyclic_tooth_check = (2*(c['sun_gear_tooth_nb'] + c['planet_gear_tooth_nb'])) % c['planet_nb']
+  if(epicyclic_tooth_check != 0):
+    print("WARN243: Warning, not respected epicyclic-gearing-tooth-nb relation: 2*(sun_gear_tooth_nb {:d} + planet_gear_tooth_nb {:d}) % planet_nb {:d} == {:d} (should be 0)".format(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['planet_nb'], epicyclic_tooth_check))
+  c['annulus_gear_tooth_nb'] = c['sun_gear_tooth_nb'] + 2*c['planet_gear_tooth_nb']
+  c['planet_angle_inc'] = 2*math.pi/c['planet_nb']
+  c['planet_circle_radius'] = (c['sun_gear_tooth_nb'] + c['planet_gear_tooth_nb'])*c['gear_module']/2.0
+  c['planet_angle_position'] = []
+  c['planet_x_position'] = []
+  c['planet_y_position'] = []
+  for i in range(c['planet_nb']):
+    c['planet_angle_position'].append(c['planet_carrier_angle']+i*c['planet_angle_inc'])
+    c['planet_x_position'].append(0.0 + c['planet_circle_radius']*math.cos(c['planet_angle_position'][i]))
+    c['planet_y_position'].append(0.0 + c['planet_circle_radius']*math.sin(c['planet_angle_position'][i]))
+  annulus_planet_c = {}
+  annulus_planet_c['gear_type'] = 'i'
+  annulus_planet_c['second_gear_type'] = 'e'
+  annulus_planet_c['gear_tooth_nb'] = c['annulus_gear_tooth_nb']
+  annulus_planet_c['gear_module'] = c['gear_module']
+  annulus_planet_c['gear_initial_angle'] = 0.0 # just an arbitrary value
+  annulus_planet_c['second_gear_tooth_nb'] = c['planet_gear_tooth_nb']
+  #annulus_planet_c['second_gear_position_angle'] = c['planet_angle_position'][0]+math.pi # first planet angle position
+  annulus_planet_c['second_gear_additional_axis_length'] = 0.0 # in epicyclic_gearing it's difficult to imagine something else
+  i_gp = gear_profile.gear_profile(annulus_planet_c)
+  c['planet_oriantation_angles'] = [] # gear_initial_angle for planets
+  for i in range(c['planet_nb']):
+    annulus_planet_c['second_gear_position_angle'] = c['planet_angle_position'][i] + 0*math.pi
+    #print("dbg277: second_gear_position_angle:", annulus_planet_c['second_gear_position_angle'])
+    i_gp.apply_external_constraint(annulus_planet_c)
+    #i_gp.run_simulation('gear_profile_simulation_A') # dbg
+    c['planet_oriantation_angles'].append(i_gp.get_constraint()['second_positive_initial_angle'])
+  planet_sun_c = {}
+  planet_sun_c['gear_type'] = 'e'
+  planet_sun_c['second_gear_type'] = 'e'
+  planet_sun_c['gear_module'] = c['gear_module']
+  planet_sun_c['gear_tooth_nb'] = c['planet_gear_tooth_nb']
+  planet_sun_c['second_gear_tooth_nb'] = c['sun_gear_tooth_nb']
+  planet_sun_c['second_gear_additional_axis_length'] = 0.0 # in epicyclic_gearing it's difficult to imagine something else
+  sun_half_tooth_angle = math.pi/c['sun_gear_tooth_nb']
+  c['sun_oriantation_angles'] = [] # gear_initial_angle for sun
+  for i in range(c['planet_nb']):
+    planet_sun_c['center_position_x'] = c['planet_x_position'][i]
+    planet_sun_c['center_position_y'] = c['planet_y_position'][i]
+    planet_sun_c['gear_initial_angle'] = c['planet_oriantation_angles'][i]
+    planet_sun_c['second_gear_position_angle'] = c['planet_angle_position'][i] + math.pi
+    #print("dbg295: gear_initial_angle, second_gear_position_angle:", planet_sun_c['gear_initial_angle'], planet_sun_c['second_gear_position_angle'])
+    i_gp.apply_external_constraint(planet_sun_c)
+    sun_x_position = i_gp.get_constraint()['g2_ix']
+    sun_y_position = i_gp.get_constraint()['g2_iy']
+    c['sun_oriantation_angles'].append(i_gp.get_constraint()['second_positive_initial_angle'])
+    #c['sun_oriantation_angles'].append(math.fmod(i_gp.get_constraint()['second_positive_initial_angle']+sun_half_tooth_angle, 2*sun_half_tooth_angle)-sun_half_tooth_angle) # it is better to do this normaization when comparing
+    if(abs(sun_x_position - 0.0)>radian_epsilon):
+      print("ERR286: Error, sun_x_position {:0.3f} is not at the expected coordinate 0.0".format(sun_x_position))
+      sys.exit(2)
+    if(abs(sun_y_position - 0.0)>radian_epsilon):
+      print("ERR289: Error, sun_y_position {:0.3f} is not at the expected coordinate 0.0".format(sun_y_position))
+      sys.exit(2)
+  for i in range(c['planet_nb']-1):
+    #if(abs(c['sun_oriantation_angles'][i+1]-c['sun_oriantation_angles'][0])>radian_epsilon):
+    if(abs(math.fmod(c['sun_oriantation_angles'][i+1]-c['sun_oriantation_angles'][0]+sun_half_tooth_angle, 2*sun_half_tooth_angle)-sun_half_tooth_angle)>radian_epsilon):
+      print("ERR293: Error, {:d}-sun_oriantation_angles {:0.3f} is different from 0-sun_oriantation_angles {:0.3f}".format(i+1, c['sun_oriantation_angles'][i+1], c['sun_oriantation_angles'][0]))
+      #print("dbg306: sun_half_tooth_angle:", sun_half_tooth_angle, 2*sun_half_tooth_angle, i_gp.get_constraint()['second_pi_module_angle'])
+      #print("dbg307: sun_oriantation_angles:", c['sun_oriantation_angles'])
+      #print("dbg308: planet_oriantation_angles:", c['planet_oriantation_angles'])
+      sys.exit(2)
+  c['sun_oriantation_angle'] = c['sun_oriantation_angles'][0]
+  # sun axle and spacer
+  if(c['sun_axle_diameter']+2*c['sun_spacer_length']>c['gear_module']*(c['sun_gear_tooth_nb']-3)):
+    print("ERR310: Error, sun_axle_diameter {:0.3f} or sun_spacer_length {:0.3f} are too big compare to gear_module {:0.3f} and sun_gear_tooth_nb {:d}".format(c['sun_axle_diameter'], c['sun_spacer_length'], c['gear_module'], c['sun_gear_tooth_nb']))
+    sys.exit(2)
+  # planet axle and spacer
+  if(c['planet_axle_diameter']+2*c['planet_spacer_length']>c['gear_module']*(c['planet_gear_tooth_nb']-3)):
+    print("ERR311: Error, planet_axle_diameter {:0.3f} or planet_spacer_length {:0.3f} are too big compare to gear_module {:0.3f} and planet_gear_tooth_nb {:d}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['gear_module'], c['planet_gear_tooth_nb']))
+    sys.exit(2)
+  # planet_carrier axle and spacer
+  if(c['planet_carrier_axle_diameter']+2*c['planet_carrier_spacer_length']>c['gear_module']*(c['planet_gear_tooth_nb']-3)):
+    print("ERR315: Error, planet_carrier_axle_diameter {:0.3f} or planet_carrier_spacer_length {:0.3f} are too big compare to gear_module {:0.3f} and planet_gear_tooth_nb {:d}".format(c['planet_carrier_axle_diameter'], c['planet_carrier_spacer_length'], c['gear_module'], c['planet_gear_tooth_nb']))
+    sys.exit(2)
+  if(c['planet_carrier_axle_holder_diameter']>c['gear_module']*(c['planet_gear_tooth_nb']-3)):
+    print("ERR318: Error, planet_carrier_axle_holder_diameter {:0.3f} is too big compare to gear_module {:0.3f} and planet_gear_tooth_nb {:d}".format(c['planet_carrier_axle_holder_diameter'], c['gear_module'], c['planet_gear_tooth_nb']))
+    sys.exit(2)
+  if(c['planet_axle_diameter']+2*c['planet_spacer_length']>c['planet_carrier_axle_holder_diameter']):
+    print("ERR321: Error, planet_carrier_axle_holder_diameter {:0.3f} is too small compare to planet_axle_diameter {:0.3f} and planet_spacer_length {:0.3f}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['planet_carrier_axle_holder_diameter']))
+    sys.exit(2)
+  c['planet_carrier_axle_holder_radius'] = c['planet_carrier_axle_holder_diameter']/2.0
+  # planet_carrier_external_diameter
+  planet_carrier_external_diameter_max = c['gear_module']*(c['annulus_gear_tooth_nb']-4)
+  if(c['planet_carrier_external_diameter']==0):
+    c['planet_carrier_external_diameter'] = planet_carrier_external_diameter_max
+  c['planet_carrier_external_radius'] = c['planet_carrier_external_diameter']/2.0
+  if(c['planet_carrier_external_diameter']>planet_carrier_external_diameter_max):
+    print("ERR329: Error, planet_carrier_external_diameter {:0.3f} is bigger than planet_carrier_external_diameter_max {:0.3f}".format(c['planet_carrier_external_diameter'], planet_carrier_external_diameter_max))
+    sys.exit(2)
+  if(c['planet_carrier_external_radius']<c['planet_circle_radius']-c['planet_carrier_axle_holder_radius']+radian_epsilon):
+    print("ERR325: Error, planet_carrier_external_radius {:0.3f} is too small compare to planet_circle_radius {:0.3f} and planet_carrier_axle_holder_radius {:0.3f}".format(c['planet_carrier_external_radius'], c['planet_circle_radius'], c['planet_carrier_axle_holder_radius']))
+    sys.exit(2)
+  # planet_carrier_internal_diameter
+  planet_carrier_internal_diameter_min = c['gear_module']*(c['sun_gear_tooth_nb']+4)
+  planet_carrier_internal_diameter_default = 2*c['planet_circle_radius']
+  if(c['planet_carrier_internal_diameter']==0):
+    c['planet_carrier_internal_diameter'] = planet_carrier_internal_diameter_default
+  c['planet_carrier_internal_radius'] = c['planet_carrier_internal_diameter']/2.0
+  if(c['planet_carrier_internal_diameter']<planet_carrier_internal_diameter_min):
+    print("ERR342: Error, planet_carrier_internal_diameter {:0.3f} is smaller than planet_carrier_internal_diameter_min {:0.3f}".format(c['planet_carrier_internal_diameter'], planet_carrier_internal_diameter_min))
+    sys.exit(2)
+  if(c['planet_carrier_internal_diameter']>c['planet_carrier_external_diameter']-radian_epsilon):
+    print("ERR345: Error, planet_carrier_internal_diameter {:0.3f} is bigger than planet_carrier_external_diameter {:0.3f}".format(c['planet_carrier_internal_diameter'], c['planet_carrier_external_diameter']))
+    sys.exit(2)
+  # planet_carrier_rear_smooth_radius
+  if(c['planet_carrier_rear_smooth_radius']<c['cnc_router_bit_radius']):
+    c['planet_carrier_rear_smooth_radius'] = c['cnc_router_bit_radius']
+  if(c['planet_carrier_rear_smooth_radius']>min(c['planet_carrier_internal_radius'], c['planet_carrier_axle_holder_radius'])):
+    print("ERR351: Error, planet_carrier_rear_smooth_radius {:0.3f} is too big compare to planet_carrier_internal_radius {:0.3f} and planet_carrier_axle_holder_radius {:0.3f}".format(c['planet_carrier_rear_smooth_radius'], c['planet_carrier_internal_radius'],  c['planet_carrier_axle_holder_radius']))
+    sys.exit(2)
+    
+
+  
+
   return(c)
 
 ################################################################
