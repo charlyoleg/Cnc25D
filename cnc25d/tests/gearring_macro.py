@@ -155,6 +155,7 @@ gr_constraint['gear_profile_height']  = 20.0
 gr_constraint['holder_diameter']            = 360.0
 gr_constraint['holder_crenel_number']       = 6
 gr_constraint['holder_position_angle']      = 0.0
+gr_constraint['holder_crenel_number_cut']   = 0
 ### holder-hole
 gr_constraint['holder_hole_position_radius']   = 0.0
 gr_constraint['holder_hole_diameter']          = 10.0

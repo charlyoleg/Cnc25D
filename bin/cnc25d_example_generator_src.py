@@ -281,6 +281,16 @@ gimbal_script_content='''#!/usr/bin/env python
 #include "../cnc25d/tests/gimbal_macro.py"
 '''
 
+### low_torque_transmission script example
+ltt_script_name="eg18_low_torque_transmission_example.py"
+# copy from ../cnc25d/tests/low_torque_transmission_macro.py
+ltt_script_content='''#!/usr/bin/env python
+#
+# copy/paste of cnc25d/tests/low_torque_transmission_macro.py
+#
+#include "../cnc25d/tests/low_torque_transmission_macro.py"
+'''
+
 
 ### Generating the script examples
 
@@ -301,7 +311,8 @@ ceg_example_list={
   bba_script_name : bba_script_content,
   crest_script_name : crest_script_content,
   cross_cube_script_name : cross_cube_script_content,
-  gimbal_script_name : gimbal_script_content}
+  gimbal_script_name : gimbal_script_content,
+  ltt_script_name : ltt_script_content}
 
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")

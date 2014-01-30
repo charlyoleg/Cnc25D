@@ -98,6 +98,8 @@ def gearring_constraint_constructor(ai_parser, ai_variant = 0):
     help="Set the number of holder crenels (associated with a hole) arround the gearring holder. Default: 4")
   r_parser.add_argument('--holder_position_angle','--hpa', action='store', type=float, default=0.0,
     help="Set the holder position angle of the first holder-crenel (associated with a hole). Default: 0.0")
+  r_parser.add_argument('--holder_crenel_number_cut','--hcnc', action='store', type=int, default=0,
+    help="Set the number of holder crenels to be cut for input/ouput holder. If set to 0, no cut is created. Default: 0")
   ### holder-hole
   r_parser.add_argument('--holder_hole_position_radius','--hhpr', action='store', type=float, default=0.0,
     help="Set the length between the center of the holder-hole and the center of the gearring. If it is equal to 0.0, the holder_diameter value is used. Default: 0.0")
@@ -167,7 +169,7 @@ def gearring_constraint_check(c):
     gear_profile_parameters = i_gear_profile.get_constraint()
     # extract some gear_profile high-level parameter
     #print('dbg556: gear_profile_parameters:', gear_profile_parameters)
-    maximal_gear_profile_radius = gear_profile_parameters['g1_param']['hollow_radius']
+    c['maximal_gear_profile_radius'] = gear_profile_parameters['g1_param']['hollow_radius']
     c['g1_ix'] = gear_profile_parameters['g1_param']['center_ox']
     c['g1_iy'] = gear_profile_parameters['g1_param']['center_oy']
     gear_module = gear_profile_parameters['g1_param']['module']
@@ -177,12 +179,12 @@ def gearring_constraint_check(c):
       sys.exit(2)
     c['g1_ix'] = c['center_position_x']
     c['g1_iy'] = c['center_position_y']
-    maximal_gear_profile_radius = float(c['gear_primitive_diameter'])/2
+    c['maximal_gear_profile_radius'] = float(c['gear_primitive_diameter'])/2
     gear_module = 0
   ### check parameter coherence (part 2)
   c['holder_radius'] = float(c['holder_diameter'])/2
   if(c['holder_radius']==0): # dynamic default value
-    c['holder_radius'] = maximal_gear_profile_radius + 2.0*gear_module + c['holder_hole_diameter']/2.0
+    c['holder_radius'] = c['maximal_gear_profile_radius'] + 2.0*gear_module + c['holder_hole_diameter']/2.0
   if(c['holder_hole_position_radius']==0):
     c['holder_hole_position_radius'] = c['holder_radius']
   c['holder_hole_radius'] = float(c['holder_hole_diameter'])/2
@@ -218,8 +220,8 @@ def gearring_constraint_check(c):
     print("ERR215: Error, holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(c['holder_crenel_width'], c['holder_crenel_rbr']))
     sys.exit(2)
   # hollow_circle and holder-hole
-  if(maximal_gear_profile_radius>(c['holder_hole_position_radius']-c['holder_hole_radius'])):
-    print("ERR303: Error, holder-hole are too closed from the gear_hollow_circle: maximal_gear_profile_radius {:0.3f}  holder_hole_position_radius {:0.3f}  holder_hole_radius {:0.3f}".format(maximal_gear_profile_radius, c['holder_hole_position_radius'], c['holder_hole_radius']))
+  if(c['maximal_gear_profile_radius']>(c['holder_hole_position_radius']-c['holder_hole_radius'])):
+    print("ERR303: Error, holder-hole are too closed from the gear_hollow_circle: maximal_gear_profile_radius {:0.3f}  holder_hole_position_radius {:0.3f}  holder_hole_radius {:0.3f}".format(c['maximal_gear_profile_radius'], c['holder_hole_position_radius'], c['holder_hole_radius']))
     sys.exit(2)
   # holder_hole_mark_nb
   if((c['holder_hole_mark_nb']<0)or(c['holder_hole_mark_nb']>c['holder_crenel_number'])):
@@ -281,6 +283,10 @@ def gearring_constraint_check(c):
       c['holder_smoothing_radius_list'][i] = holder_smoothing_radius_B
   #print("dbg377: holder_side_outer_smoothing_radius_list:", c['holder_side_outer_smoothing_radius_list'])
   #print("dbg378: holder_smoothing_radius_list:", c['holder_smoothing_radius_list'])
+  #
+  if(c['holder_crenel_number_cut']>c['holder_crenel_number']):
+    print("ERR288: Error, holder_crenel_number_cut {:d} must be smaller than holder_crenel_number {:d}".format(c['holder_crenel_number_cut'], c['holder_crenel_number']))
+    sys.exit(2)
   ###
   return(c)
 
@@ -351,9 +357,9 @@ def gearring_2d_construction(c):
                                           c['holder_crenel_x_position'], c['holder_position_angle']+i*angle_incr, c['g1_ix'], c['g1_iy']))
       middle_angle = c['holder_position_angle'] + (i+0.5)*angle_incr
       end_angle = c['holder_position_angle'] + (i+1)*angle_incr - c['holder_crenel_half_angle']
-      holder_A.append([c['g1_ix']+c['holder_radius']*math.cos(middle_angle), c['g1_iy']+c['holder_radius']*math.sin(middle_angle),
-                        c['g1_ix']+c['holder_radius']*math.cos(end_angle), c['g1_iy']+c['holder_radius']*math.sin(end_angle), c['holder_smoothing_radius_list'][i+1]])
-    holder_A[-1] = [holder_A[-1][0], holder_A[-1][1], holder_A[0][0], holder_A[0][1], 0]
+      holder_A.append((c['g1_ix']+c['holder_radius']*math.cos(middle_angle), c['g1_iy']+c['holder_radius']*math.sin(middle_angle),
+                        c['g1_ix']+c['holder_radius']*math.cos(end_angle), c['g1_iy']+c['holder_radius']*math.sin(end_angle), c['holder_smoothing_radius_list'][i+1]))
+    holder_A[-1] = (holder_A[-1][0], holder_A[-1][1], holder_A[0][0], holder_A[0][1], 0)
     holder_outline = holder_A
   ### holder-hole outline
   holder_hole_figure = []
@@ -384,12 +390,69 @@ def gearring_2d_construction(c):
   else:
     gr_figure.append((c['g1_ix'], c['g1_iy'], float(c['gear_primitive_diameter'])/2))
   gr_figure.extend(holder_hole_figure)
+  #
+  gr_wo_hole_fig = []
+  gr_wo_hole_fig.append(holder_outline)
+  gr_wo_hole_fig.extend(holder_hole_figure)
+  # gearring_cut : added for low_torque_transmission
+  gearring_cut_fig = []
+  if(c['holder_crenel_number_cut']>0):
+    #print("dbg400: holder_crenel_number_cut:", c['holder_crenel_number_cut'])
+    holder_A = []
+    li = c['maximal_gear_profile_radius'] # alias
+    angle_incr = 2*math.pi/c['holder_crenel_number']
+    first_angle = c['holder_position_angle'] - c['holder_crenel_half_angle']
+    holder_A.append([c['g1_ix']+c['holder_radius']*math.cos(first_angle), c['g1_iy']+c['holder_radius']*math.sin(first_angle), c['holder_smoothing_radius_list'][-1]])
+    for i in range(c['holder_crenel_number_cut']):
+      holder_maximal_height_plus_sel = c['holder_maximal_height_plus']
+      if(c['holder_hole_B_crenel_list_bis'][i]==1):
+        holder_maximal_height_plus_sel = c['holder_maximal_height_plus_B']
+      holder_A .extend(make_holder_crenel(holder_maximal_height_plus_sel, c['holder_crenel_height'], c['holder_crenel_skin_width'], c['holder_crenel_half_width'], 
+                                          c['holder_crenel_rbr'], c['holder_side_outer_smoothing_radius_list'][i], c['holder_smoothing_radius_list'][i],
+                                          c['holder_crenel_x_position'], c['holder_position_angle']+i*angle_incr, c['g1_ix'], c['g1_iy']))
+      if(i!=c['holder_crenel_number_cut']-1):
+        middle_angle = c['holder_position_angle'] + (i+0.5)*angle_incr
+        end_angle = c['holder_position_angle'] + (i+1)*angle_incr - c['holder_crenel_half_angle']
+        holder_A.append((c['g1_ix']+c['holder_radius']*math.cos(middle_angle), c['g1_iy']+c['holder_radius']*math.sin(middle_angle),
+                        c['g1_ix']+c['holder_radius']*math.cos(end_angle), c['g1_iy']+c['holder_radius']*math.sin(end_angle), c['holder_smoothing_radius_list'][i+1]))
+    end_angle = c['holder_position_angle'] + (c['holder_crenel_number_cut']-1)*angle_incr + c['holder_crenel_half_angle']
+    holder_A.append((c['g1_ix']+li*math.cos(end_angle), c['g1_iy']+li*math.sin(end_angle), 0))
+    middle_angle = c['holder_position_angle'] + (c['holder_crenel_number_cut']-1)*angle_incr/2.0
+    #print("dbg421: end_angle middle_angle first_angle:", end_angle, middle_angle, first_angle)
+    holder_A.append((c['g1_ix']+li*math.cos(middle_angle), c['g1_iy']+li*math.sin(middle_angle), c['g1_ix']+li*math.cos(first_angle), c['g1_iy']+li*math.sin(first_angle), 0))
+    holder_A.append((holder_A[0][0], holder_A[0][1], 0))
+    gearring_cut_fig.append(holder_A) # external outline
+    for i in range(c['holder_crenel_number_cut']):
+      hole_angle = c['holder_position_angle']+i*angle_incr
+      if(c['holder_hole_radius_list'][i]>0):
+        if(i<c['holder_hole_mark_nb']):
+          gearring_cut_fig.append(gearwheel.marked_circle_crenel(c['g1_ix']+c['holder_hole_position_radius']*math.cos(hole_angle), c['g1_iy']+c['holder_hole_position_radius']*math.sin(hole_angle), c['holder_hole_radius_list'][i], hole_angle+math.pi/2, c['holder_crenel_rbr']))
+        else:
+          gearring_cut_fig.append([c['g1_ix']+c['holder_hole_position_radius']*math.cos(hole_angle), c['g1_iy']+c['holder_hole_position_radius']*math.sin(hole_angle), c['holder_hole_radius_list'][i]])
+    if((c['holder_crenel_number']>0)and(c['holder_double_hole_radius']>0)):
+      tmp_a2 = math.atan(c['holder_double_hole_length']/2.0/c['holder_double_hole_position_radius']) # if double carrier-crenel-hole
+      tmp_l2 = math.sqrt(c['holder_double_hole_position_radius']**2+(c['holder_double_hole_length']/2.0)**2)
+      for i in range(c['holder_crenel_number']):
+        hole_angle = c['holder_position_angle']+i*angle_incr
+        gearring_cut_fig.append([c['g1_ix']+tmp_l2*math.cos(hole_angle-tmp_a2), c['g1_iy']+tmp_l2*math.sin(hole_angle-tmp_a2), c['holder_double_hole_radius']])
+        if(i<c['holder_double_hole_mark_nb']):
+          gearring_cut_fig.append(gearwheel.marked_circle_crenel(c['g1_ix']+tmp_l2*math.cos(hole_angle+tmp_a2), c['g1_iy']+tmp_l2*math.sin(hole_angle+tmp_a2), c['holder_double_hole_radius'], hole_angle+math.pi/2, c['holder_crenel_rbr']))
+          #gearring_cut_fig.append(gearwheel.marked_circle_crenel(c['g1_ix']+tmp_l2*math.cos(hole_angle+tmp_a2), c['g1_iy']+tmp_l2*math.sin(hole_angle+tmp_a2), c['holder_double_hole_radius'], hole_angle+tmp_a2+math.pi/2, c['holder_crenel_rbr']))
+        else:
+          gearring_cut_fig.append([c['g1_ix']+tmp_l2*math.cos(hole_angle+tmp_a2), c['g1_iy']+tmp_l2*math.sin(hole_angle+tmp_a2), c['holder_double_hole_radius']])
+    
   ###
   r_figures = {}
   r_height = {}
   #
   r_figures['gearring_fig'] = gr_figure
   r_height['gearring_fig'] = c['gear_profile_height']
+  #
+  r_figures['gearring_without_hole_fig'] = gr_wo_hole_fig
+  r_height['gearring_without_hole_fig'] = c['gear_profile_height']
+  #
+  r_figures['gearring_cut'] = gearring_cut_fig
+  r_height['gearring_cut'] = c['gear_profile_height']
   ###
   return((r_figures, r_height))
 

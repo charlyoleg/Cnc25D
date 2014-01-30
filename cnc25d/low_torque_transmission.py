@@ -176,8 +176,8 @@ def ltt_constraint_constructor(ai_parser, ai_variant = 0):
   ### output_holder
   r_parser.add_argument('--output_cover_radius_slack','--ocds', action='store', type=float, default=1.0,
     help="Set the slack between the output_front_planet_carrier_radius and the output_cover_radius. Default: 1.0")
-  r_parser.add_argument('--output_holder_thickness','--oht', action='store', type=float, default=2.0,
-    help="Set the thickness of the output_holder half-cylinder. Default: 2.0")
+  r_parser.add_argument('--output_holder_thickness','--oht', action='store', type=float, default=4.0,
+    help="Set the thickness of the output_holder half-cylinder. Default: 4.0")
   r_parser.add_argument('--output_cover_width','--ocw', action='store', type=float, default=2.0,
     help="Set the z-size of the output_cover. Default: 2.0")
   r_parser.add_argument('--output_holder_width','--ohw', action='store', type=float, default=20.0,
@@ -449,7 +449,7 @@ def ltt_constraint_check(c):
     lAD = lAB/2.0
     lAE = c['planet_carrier_middle_clearance_radius']+planet_carrier_middle_smooth_radius_plus
     cos_DAE = float(lAD)/lAE
-    print("dbg401: cos_DAE", cos_DAE)
+    #print("dbg401: cos_DAE", cos_DAE)
     aDAE = math.acos(cos_DAE)
     aOAD = math.pi/2 - c['planet_angle_inc']/2.0
     aOAF = aOAD + aDAE
@@ -561,6 +561,7 @@ def ltt_constraint_check(c):
     print("ERR486: Error, hexagon_smooth_radius {:0.3f} is too big compare to hexagon_length {:0.3f}".format(c['hexagon_smooth_radius'], c['hexagon_length']))
     sys.exit(2)
   # output_cover_width, output_holder_width, hexagon_width
+  c['output_holder_width2'] = c['output_holder_width'] - c['output_cover_width']
   if(c['output_cover_width']>c['output_holder_width']):
     print("ERR490: output_cover_width {:0.3f} is too big compare to output_holder_width {:0.3f}".format(c['output_cover_width'], c['output_holder_width']))
     sys.exit(2)
@@ -595,6 +596,11 @@ def ltt_constraint_check(c):
   if(c['axle_holder_D']/2.0+c['axle_holder_B']>c['holder_radius']):
     print("ERR519: Error, axle_holder_D {:0.3f} or axle_holder_B {:0.3f} are too big compare to holder_radius {:0.3f}".format(c['axle_holder_D'], c['axle_holder_B'], c['holder_radius']))
     sys.exit(2)
+  c['output_axle_cylinder_width'] = c['axle_holder_A'] + c['axle_holder_C']
+  c['output_axle_cylinder_thickness'] = c['axle_holder_D']/2.0 - c['output_axle_radius']
+  c['axle_holder_leg_x'] = c['axle_holder_A'] + c['axle_holder_C']
+  c['axle_holder_leg_y'] = c['axle_holder_B'] + c['output_axle_cylinder_thickness']
+  c['axle_holder_leg_width'] = c['axle_holder_D']/4.0
   # input_axle_diameter
   c['input_axle_radius'] = c['input_axle_diameter']/2.0
   if(c['input_axle_radius']>c['sun_axle_radius']):
@@ -623,6 +629,8 @@ def ltt_constraint_check(c):
   if(c['motor_holder_leg_width']>motor_xy_width_min/4.0):
     print("ERR545: Error, motor_holder_leg_width {:0.3f} is too big compare to motor_xy_width_min {:0.3f}".format(c['motor_holder_leg_width'], motor_xy_width_min))
     sys.exit(2)
+  c['motor_holder_leg_x'] = c['motor_holder_A'] + c['motor_holder_C'] + c['motor_holder_D']
+  c['motor_holder_leg_y'] = c['motor_holder_B'] + c['motor_holder_E']
   #
   c['epicyclic_gearing_ratio'] = float(c['sun_gear_tooth_nb'])/(c['sun_gear_tooth_nb']+c['annulus_gear_tooth_nb'])
   c['ltt_ratio'] = c['epicyclic_gearing_ratio']**c['step_nb']
@@ -760,10 +768,10 @@ def ltt_2d_construction(c):
       ar = c['planet_angle_position'][i] # planet_carrier_angle reference
       eol.append((0.0+le*math.cos(ar+a2), 0.0+le*math.sin(ar+a2), 0.0+le*math.cos(ar+a3), 0.0+le*math.sin(ar+a3), sr))
       eol.append((0.0+lh*math.cos(ar+a4), 0.0+lh*math.sin(ar+a4), 0.0+le*math.cos(ar+a5), 0.0+le*math.sin(ar+a5), sr))
-    eol[-1] = (eol[-1][0], eol[-1][1], eol[-1][2], eol[-1][3], 0)
+    eol[-1] = (eol[-1][0], eol[-1][1], eol[0][0], eol[0][1], 0)
   else:
     eol = (0.0, 0.0, c['planet_carrier_external_radius'])
-  rear_planet_carrier_fig.append(eol)
+  rear_planet_carrier_fig.append(eol[:])
   iol = [] # internal outline of rear_planet_carrier
   if(c['rear_planet_carrier_internal_intersection']):
     li = c['planet_carrier_internal_radius']
@@ -780,10 +788,10 @@ def ltt_2d_construction(c):
       ar = c['planet_angle_position'][i] # planet_carrier_angle reference
       iol.append((0.0+li*math.cos(ar+a2), 0.0+li*math.sin(ar+a2), 0.0+li*math.cos(ar+a3), 0.0+li*math.sin(ar+a3), sr))
       iol.append((0.0+lh*math.cos(ar+a4), 0.0+lh*math.sin(ar+a4), 0.0+li*math.cos(ar+a5), 0.0+li*math.sin(ar+a5), sr))
-    iol[-1] = (iol[-1][0], iol[-1][1], iol[-1][2], iol[-1][3], 0)
+    iol[-1] = (iol[-1][0], iol[-1][1], iol[0][0], iol[0][1], 0)
   else:
     iol = (0.0, 0.0, c['planet_carrier_internal_radius'])
-  rear_planet_carrier_fig.append(iol)
+  rear_planet_carrier_fig.append(iol[:])
   for i in range(c['planet_nb']):
     rear_planet_carrier_fig.append((c['planet_x_position'][i], c['planet_y_position'][i], c['planet_carrier_axle_radius'])) # add planet_axle hole
   rear_planet_carrier_fig.extend(planet_carrier_holes) # rod holes
@@ -799,9 +807,169 @@ def ltt_2d_construction(c):
     r_figures['planet_carrier_spacer_{:d}'.format(i)] = cnc25d_api.rotate_and_translate_figure(spacer_fig, 0.0, 0.0, 0.0, c['planet_x_position'][i], c['planet_y_position'][i])
     r_height['planet_carrier_spacer_{:d}'.format(i)] = c['rear_planet_carrier_spacer_width']
   # planet_carrier_fitting_square
-  planet_carrier_fitting_square_figs = []
-
-
+  if(c['planet_carrier_fitting_square']):
+    le = c['planet_carrier_external_radius'] # alias
+    ae = c['middle_planet_carrier_fitting_square_ext_angle']
+    li = c['middle_planet_carrier_fitting_square_int_radius']
+    ai = c['middle_planet_carrier_fitting_square_int_angle']
+    for i in range(c['planet_nb']):
+      ar = c['planet_angle_position'][i] + c['planet_angle_inc']/2.0
+      ol = []
+      ol.append((0.0+le*math.cos(ar-ae), 0.0+le*math.sin(ar-ae), 0))
+      ol.append((0.0+le*math.cos(ar), 0.0+le*math.sin(ar), 0.0+le*math.cos(ar+ae), 0.0+le*math.sin(ar+ae), 0))
+      ol.append((0.0+li*math.cos(ar+ai), 0.0+li*math.sin(ar+ai), 0))
+      ol.append((0.0+li*math.cos(ar-ai), 0.0+li*math.sin(ar-ai), 0))
+      ol.append((0.0+le*math.cos(ar-ae), 0.0+le*math.sin(ar-ae), 0))
+      r_figures['planet_carrier_fitting_square_{:d}'.format(i)] = [ol[:]]
+      r_height['planet_carrier_fitting_square_{:d}'.format(i)] = c['front_planet_carrier_width']
+  # front_planet_carrier
+  front_planet_carrier_fig = []
+  ol = []
+  if(c['planet_carrier_fitting_square']): # todo: integrate the planet_carrier_axle_holder
+    le = c['planet_carrier_external_radius'] # alias
+    ae = c['front_planet_carrier_fitting_square_ext_angle']
+    li = c['front_planet_carrier_fitting_square_int_radius']
+    ai = c['front_planet_carrier_fitting_square_int_angle']
+    ainc =  c['planet_angle_inc']/2.0
+    rbr = c['cnc_router_bit_radius']
+    sr = c['cnc_router_bit_radius']
+    ol = []
+    ar = c['planet_angle_position'][0] + ainc
+    ol.append((0.0+le*math.cos(ar-ae), 0.0+le*math.sin(ar-ae), sr))
+    for i in range(c['planet_nb']):
+      ar = c['planet_angle_position'][i] + ainc
+      ol.append((0.0+li*math.cos(ar-ai), 0.0+li*math.sin(ar-ai), -rbr))
+      ol.append((0.0+li*math.cos(ar+ai), 0.0+li*math.sin(ar+ai), -rbr))
+      ol.append((0.0+le*math.cos(ar+ae), 0.0+le*math.sin(ar+ae), sr))
+      ol.append((0.0+le*math.cos(ar+ainc), 0.0+le*math.sin(ar+ainc), 0.0+le*math.cos(ar+2*ainc-ae), 0.0+le*math.sin(ar+2*ainc-ae), sr))
+    ol[-1] = (ol[-1][0], ol[-1][1], ol[0][0], ol[0][1], 0)
+  else:
+    ol = (0.0, 0.0, c['planet_carrier_external_radius'])
+  front_planet_carrier_fig.append(ol[:])
+  for i in range(c['planet_nb']):
+    front_planet_carrier_fig.append((c['planet_x_position'][i], c['planet_y_position'][i], c['planet_carrier_axle_radius'])) # add planet_axle hole
+  front_planet_carrier_fig.append((0.0, 0.0, c['sun_axle_radius'])) # add sun_axle hole
+  front_planet_carrier_fig.extend(planet_carrier_holes) # rod holes
+  r_figures['planet_carrier_front'] = front_planet_carrier_fig
+  r_height['planet_carrier_front'] = c['front_planet_carrier_width']
+  #print("dbg846: front_planet_carrier_fig:", front_planet_carrier_fig)
+  #cnc25d_api.figure_simple_display(cnc25d_api.cnc_cut_figure(front_planet_carrier_fig, "front_planet_carrier_fig"), cnc25d_api.ideal_figure(front_planet_carrier_fig, "front_planet_carrier_fig"), "debug")
+  # planet_carrier_overview
+  planet_carrier_overview_fig = []
+  planet_carrier_overview_fig.extend(r_figures['gearring_holder'])
+  planet_carrier_overview_fig.extend(r_figures['planet_carrier_rear'])
+  for i in range(c['planet_nb']):
+    planet_carrier_overview_fig.extend(r_figures['planet_carrier_spacer_{:d}'.format(i)])
+    planet_carrier_overview_fig.extend(r_figures['planet_carrier_middle_{:d}'.format(i)])
+    planet_carrier_overview_fig.extend(r_figures['planet_carrier_fitting_square_{:d}'.format(i)])
+  planet_carrier_overview_fig.extend(r_figures['planet_carrier_front'])
+  planet_carrier_overview_fig.extend(r_figures['sun_gear'])
+  planet_carrier_overview_fig.extend(r_figures['sun_spacer'])
+  r_figures['planet_carrier_overview'] = planet_carrier_overview_fig
+  r_height['planet_carrier_overview'] = 1.0
+  # output_hexagon
+  output_hexagon_fig = []
+  le = c['hexagon_radius'] # alias
+  sr = c['hexagon_smooth_radius']
+  ae = 2*math.pi/6
+  ol = []
+  for i in range(6):
+    ol.append((0.0+le*math.cos(i*ae), 0.0+le*math.sin(i*ae), sr))
+  ol.append((0.0+le*math.cos(0*ae), 0.0+le*math.sin(0*ae), 0))
+  output_hexagon_fig.append(ol)
+  output_hexagon_fig.append((0.0, 0.0, c['hexagon_hole_radius']))
+  r_figures['output_hexagon'] = output_hexagon_fig
+  r_height['output_hexagon'] = c['hexagon_width']
+  # input_sun_gear
+  gws_c = c['gp_s_c'].copy()
+  gws_c['axle_type'] = 'circle'
+  gws_c['axle_x_width'] = c['input_axle_diameter']
+  i_gws = gearwheel.gearwheel()
+  i_gws.apply_external_constraint(gws_c)
+  r_figures['input_sun_gear'] = i_gws.get_A_figure('gearwheel_fig')
+  r_height['input_sun_gear'] = c['sun_width']
+  # output_cover
+  gr_c = c['gr_c'].copy()
+  gr_c['holder_diameter'] = 2*c['holder_radius']
+  gr_c['gear_tooth_nb'] = 0
+  gr_c['gear_primitive_diameter'] = 2*c['output_cover_radius']
+  i_gr = gearring.gearring()
+  i_gr.apply_external_constraint(gr_c)
+  r_figures['output_cover'] = i_gr.get_A_figure('gearring_fig')
+  r_height['output_cover'] = c['output_cover_width']
+  #cnc25d_api.figure_simple_display(cnc25d_api.cnc_cut_figure(r_figures['output_cover'], "output_cover"), cnc25d_api.ideal_figure(r_figures['output_cover'], "output_cover"), "debug")
+  # motor_holder
+  motor_holder_fig = i_gr.get_A_figure('gearring_without_hole_fig')
+  hol = [] # motor_holder hole outline
+  if(c['motor_shape_rectangle_ncircle']):
+    hx = c['motor_x_width']/2.0
+    hy = c['motor_y_width']/2.0
+    rbr = c['cnc_router_bit_radius']
+    hol.append((hx, hy, -rbr))
+    hol.append((-hx, hy, -rbr))
+    hol.append((-hx, -hy, -rbr))
+    hol.append((hx, -hy, -rbr))
+    hol.append((hx, hy, 0))
+  else:
+    hol = (0.0, 0.0, c['motor_x_width']/2.0)
+  motor_holder_fig.append(hol[:])
+  r_figures['motor_holder'] = motor_holder_fig
+  r_height['motor_holder'] = c['motor_holder_width']
+  #cnc25d_api.figure_simple_display(cnc25d_api.cnc_cut_figure(r_figures['motor_holder'], "motor_holder"), cnc25d_api.ideal_figure(r_figures['motor_holder'], "motor_holder"), "debug")
+  # motor_holder_leg
+  x1 = 0.0 + c['motor_holder_A']
+  x2 = x1 + c['motor_holder_C']
+  x3 = x2 + c['motor_holder_D']
+  y1 = 0.0 + c['motor_holder_E']
+  y2 = y1 + c['motor_holder_B']
+  ol = []
+  ol.append((0, 0, 0)) # start point of the motor_holder_leg outline
+  ol.append((x3, 0, 0))
+  ol.append((x3, y1, 0))
+  ol.append((x2, y1, 0))
+  ol.append((x1, y2, 0))
+  ol.append((0, y2, 0))
+  ol.append((0, 0, 0))
+  r_figures['motor_holder_leg'] = [ol[:]]
+  r_height['motor_holder_leg'] = c['motor_holder_leg_width']
+  # output_axle_holder_plate
+  axle_holder_plate_fig = i_gr.get_A_figure('gearring_without_hole_fig')
+  axle_holder_plate_fig.append((0.0, 0.0, c['output_axle_radius']))
+  r_figures['output_axle_holder_plate'] = axle_holder_plate_fig
+  r_height['output_axle_holder_plate'] = c['axle_holder_width']
+  # output_axle_holder_cylinder
+  cylinder_fig = []
+  cylinder_fig.append((0.0, 0.0, c['axle_holder_D']/2.0))
+  cylinder_fig.append((0.0, 0.0, c['output_axle_radius']))
+  r_figures['output_axle_holder_cylinder'] = cylinder_fig
+  r_height['output_axle_holder_cylinder'] = c['output_axle_cylinder_width']
+  # output_axle_holder_leg
+  x1 = 0.0 + c['axle_holder_A']
+  x2 = x1 + c['axle_holder_C']
+  y1 = 0.0 + c['output_axle_cylinder_thickness']
+  y2 = y1 + c['axle_holder_B']
+  ol = []
+  ol.append((0, 0, 0)) # start point of the motor_holder_leg outline
+  ol.append((x2, 0, 0))
+  ol.append((x2, y1, 0))
+  ol.append((x1, y2, 0))
+  ol.append((0, y2, 0))
+  ol.append((0, 0, 0))
+  r_figures['output_axle_holder_leg'] = [ol[:]]
+  r_height['output_axle_holder_leg'] = c['axle_holder_leg_width']
+  # output_holder
+  gr_c = c['gr_c'].copy()
+  gr_c['holder_diameter'] = 2*c['holder_radius']
+  gr_c['gear_tooth_nb'] = 0
+  gr_c['gear_primitive_diameter'] = 2*c['output_holder_radius']
+  gr_c['holder_crenel_number_cut'] = int((c['holder_crenel_number']+1)/2)+1
+  #print("dbg962: holder_crenel_number, holder_crenel_number_cut:", c['holder_crenel_number'], gr_c['holder_crenel_number_cut'])
+  #i_gr = gearring.gearring()
+  i_gr.apply_external_constraint(gr_c)
+  output_holder_fig = i_gr.get_A_figure('gearring_cut')
+  r_figures['output_holder'] = output_holder_fig
+  r_height['output_holder'] = c['output_holder_width2']
+  #cnc25d_api.figure_simple_display(cnc25d_api.cnc_cut_figure(r_figures['output_holder'], "output_holder"), cnc25d_api.ideal_figure(r_figures['output_holder'], "output_holder"), "debug")
   ###
   return((r_figures, r_height))
 
@@ -816,6 +984,71 @@ def ltt_3d_construction(c):
   #
   r_assembly = {}
   r_slice = {}
+  # planet_gear
+  r_assembly['planet_gear'] = (
+    ('planet_gear', 0.0, 0.0, 0.0, 0.0, c['planet_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('planet_spacer', 0.0, 0.0, 0.0, 0.0, c['planet_spacer_width'], 'i', 'xy', 0.0, 0.0, c['planet_width']))
+  r_slice['planet_gear'] = ()
+  # output_planet_gear
+  r_assembly['output_planet_gear'] = (
+    ('planet_gear', 0.0, 0.0, 0.0, 0.0, c['output_planet_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('planet_spacer', 0.0, 0.0, 0.0, 0.0, c['planet_spacer_width'], 'i', 'xy', 0.0, 0.0, c['output_planet_width']))
+  r_slice['output_planet_gear'] = ()
+  # rear_planet_carrier
+  assembly = []
+  assembly.append(('planet_carrier_rear', 0.0, 0.0, 0.0, 0.0, c['rear_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, 0.0))
+  for i in range(c['planet_nb']):
+    assembly.append(('planet_carrier_middle_{:d}'.format(i), 0.0, 0.0, 0.0, 0.0, c['middle_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, c['rear_planet_carrier_width']))
+    assembly.append(('planet_carrier_spacer_{:d}'.format(i), 0.0, 0.0, 0.0, 0.0, c['rear_planet_carrier_spacer_width'], 'i', 'xy', 0.0, 0.0, c['rear_planet_carrier_width']))
+    assembly.append(('planet_carrier_fitting_square_{:d}'.format(i), 0.0, 0.0, 0.0, 0.0, c['front_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, c['rear_planet_carrier_width']+c['middle_planet_carrier_width']))
+  r_assembly['rear_planet_carrier'] = assembly[:]
+  r_slice['rear_planet_carrier'] = ()
+  # output_rear_planet_carrier
+  assembly = []
+  assembly.append(('planet_carrier_rear', 0.0, 0.0, 0.0, 0.0, c['output_rear_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, 0.0))
+  for i in range(c['planet_nb']):
+    assembly.append(('planet_carrier_middle_{:d}'.format(i), 0.0, 0.0, 0.0, 0.0, c['output_middle_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, c['output_rear_planet_carrier_width']))
+    assembly.append(('planet_carrier_spacer_{:d}'.format(i), 0.0, 0.0, 0.0, 0.0, c['rear_planet_carrier_spacer_width'], 'i', 'xy', 0.0, 0.0, c['output_rear_planet_carrier_width']))
+    assembly.append(('planet_carrier_fitting_square_{:d}'.format(i), 0.0, 0.0, 0.0, 0.0, c['output_front_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, c['output_rear_planet_carrier_width']+c['output_middle_planet_carrier_width']))
+  r_assembly['output_rear_planet_carrier'] = assembly[:]
+  r_slice['output_rear_planet_carrier'] = ()
+  # front_planet_carrier
+  r_assembly['front_planet_carrier'] = (
+    ('planet_carrier_front', 0.0, 0.0, 0.0, 0.0, c['front_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('sun_gear', 0.0, 0.0, 0.0, 0.0, c['sun_width'], 'i', 'xy', 0.0, 0.0, c['front_planet_carrier_width']),
+    ('sun_spacer', 0.0, 0.0, 0.0, 0.0, c['sun_spacer_width'], 'i', 'xy', 0.0, 0.0, c['front_planet_carrier_width']+c['sun_width']))
+  r_slice['front_planet_carrier'] = ()
+  # output_front_planet_carrier
+  r_assembly['output_front_planet_carrier'] = (
+    ('planet_carrier_front', 0.0, 0.0, 0.0, 0.0, c['output_front_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('output_hexagon', 0.0, 0.0, 0.0, 0.0, c['hexagon_width'], 'i', 'xy', 0.0, 0.0, c['output_front_planet_carrier_width']))
+  r_slice['output_front_planet_carrier'] = ()
+  # input_sun_gear
+  r_assembly['input_sun_gear'] = (
+    ('sun_gear', 0.0, 0.0, 0.0, 0.0, c['input_sun_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('sun_spacer', 0.0, 0.0, 0.0, 0.0, c['sun_spacer_width'], 'i', 'xy', 0.0, 0.0, c['input_sun_width']))
+  r_slice['input_sun_gear'] = ()
+  # motor_holder
+  r_assembly['motor_holder'] = (
+    ('motor_holder', 0.0, 0.0, 0.0, 0.0, c['motor_holder_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('motor_holder_leg', 0.0, 0.0, c['motor_holder_leg_x'], c['motor_holder_leg_y'], c['motor_holder_leg_width'], 'i', 'zx', c['motor_x_width']/2.0, -c['motor_holder_leg_width']/2.0, c['motor_holder_width']))
+
+  r_slice['motor_holder'] = ()
+  # gearring_holder
+  r_assembly['gearring_holder'] = [('gearring_holder', 0.0, 0.0, 0.0, 0.0, c['gearring_holder_width'], 'i', 'xy', 0.0, 0.0, 0.0)]
+  r_slice['gearring_holder'] = ()
+  # output_holder
+  r_assembly['output_holder'] = (
+    ('output_cover', 0.0, 0.0, 0.0, 0.0, c['output_cover_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('output_holder', 0.0, 0.0, 0.0, 0.0, c['output_holder_width2'], 'i', 'xy', 0.0, 0.0, c['output_cover_width']))
+  r_slice['output_holder'] = ()
+  # output_axle_holder
+  r_assembly['output_axle_holder'] = (
+    ('output_axle_holder_plate', 0.0, 0.0, 0.0, 0.0, c['axle_holder_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('output_axle_holder_cylinder', 0.0, 0.0, 0.0, 0.0, c['output_axle_cylinder_width'], 'i', 'xy', 0.0, 0.0, c['axle_holder_width']),
+    ('output_axle_holder_leg', 0.0, 0.0, c['axle_holder_leg_x'], c['axle_holder_leg_y'], c['axle_holder_leg_width'], 'i', 'zx', c['output_axle_radius'], -c['axle_holder_leg_width']/2.0, c['axle_holder_width']))
+
+  r_slice['output_axle_holder'] = ()
   #
   return((r_assembly, r_slice))
 
@@ -995,6 +1228,19 @@ cnc_router_bit_radius:  \t{:0.3f}
   i_gr = gearring.gearring()
   i_gr.apply_external_constraint(c['gr_c'])
   #r_info += i_gr.get_info()
+  r_info += """
+planet_gear                             Q: {:2d}
+output_planet_gear                      Q: {:2d}
+rear_planet_carrier                     Q: {:2d}
+front_planet_carrier                    Q: {:2d}
+output_rear_planet_carrier              Q: {:2d}
+output_front_planet_carrier (hexagon)   Q: {:2d}
+input_sun_gear                          Q: {:2d}
+motor_holder                            Q: {:2d}
+gearring_holder                         Q: {:2d}
+output_holder                           Q: {:2d}
+output_axle_holder                      Q: {:2d}
+  """.format((c['step_nb']-1)*c['planet_nb'], c['planet_nb'], c['step_nb']-1, c['step_nb']-1, 1, 1, 1, 1, 1, 1, 1)
   #print(r_info)
   return(r_info)
 
@@ -1031,10 +1277,10 @@ class ltt(cnc25d_api.bare_design):
       d_2d_simulation           = ltt_2d_simulations(),
       f_3d_constructor          = ltt_3d_construction,
       f_info                    = ltt_info,
-      l_display_figure_list     = ['epicyclic_middle_overview'],
+      l_display_figure_list     = ['epicyclic_middle_overview', 'planet_carrier_overview'],
       s_default_simulation      = '',
       l_2d_figure_file_list     = [], # all figures
-      l_3d_figure_file_list     = [],
+      l_3d_figure_file_list     = None, # no figure
       l_3d_conf_file_list       = [],
       f_cli_return_type         = None,
       l_self_test_list          = ltt_self_test())

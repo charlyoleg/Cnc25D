@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 
 setup(
   name='Cnc25D',
-  version='0.1.10',
+  version='0.1.11',
   author='charlyoleg',
   author_email='charlyoleg@fabfolk.com',
   #packages=['cnc25d', 'cnc25d.tests'],

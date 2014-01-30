@@ -44,6 +44,7 @@ import bell_bagel_assembly
 import crest
 import cross_cube
 import gimbal
+import low_torque_transmission
 
 ################################################################
 # Cnc25d Designs
@@ -68,6 +69,7 @@ epicyclic_gearing = epicyclic_gearing.epicyclic_gearing
 axle_lid = axle_lid.axle_lid
 motor_lid = motor_lid.motor_lid
 #gear_train = gear_train.gear_train
+ltt = low_torque_transmission.ltt
 
 ## gimbal
 bell = bell.bell
