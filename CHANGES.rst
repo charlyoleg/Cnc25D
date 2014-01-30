@@ -6,8 +6,8 @@ Release History
 0.1.11 (2014-03-31)
 ===================
 
+* low_torque_transmission
 * gearlever
-* epicyclic-gearing optimization for 3D printer
 
 0.1.10 (2014-01-31)
 ===================
