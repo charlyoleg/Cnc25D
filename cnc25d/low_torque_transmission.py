@@ -176,6 +176,8 @@ def ltt_constraint_constructor(ai_parser, ai_variant = 0):
   ### output_holder
   r_parser.add_argument('--output_cover_radius_slack','--ocds', action='store', type=float, default=1.0,
     help="Set the slack between the output_front_planet_carrier_radius and the output_cover_radius. Default: 1.0")
+  r_parser.add_argument('--output_holder_thickness','--oht', action='store', type=float, default=2.0,
+    help="Set the thickness of the output_holder half-cylinder. Default: 2.0")
   r_parser.add_argument('--output_cover_width','--ocw', action='store', type=float, default=2.0,
     help="Set the z-size of the output_cover. Default: 2.0")
   r_parser.add_argument('--output_holder_width','--ohw', action='store', type=float, default=20.0,
@@ -239,10 +241,64 @@ def ltt_constraint_check(c):
   """
   ### precision
   radian_epsilon = math.pi/1000
-  # inheritance
+  # annulus
   gr_c = c.copy()
   c['annulus_gear_tooth_nb'] = c['sun_gear_tooth_nb'] + 2*c['planet_gear_tooth_nb']
-  gr_c['gear_tooth_nb'] = c['annulus_gear_tooth_nb']
+  c['smallest_gear_tooth_nb'] = min(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['annulus_gear_tooth_nb'])
+  # gear_profile
+  gp_ap_c = {} # gear_profile annulus-planet
+  gp_ap_c['gear_type'] = 'i'
+  gp_ap_c['second_gear_type'] = 'e'
+  gp_ap_c['gear_module'] = c['gear_module']
+  gp_ap_c['gear_tooth_nb'] = c['annulus_gear_tooth_nb']
+  gp_ap_c['second_gear_tooth_nb'] = c['planet_gear_tooth_nb']
+  gp_ap_c['gear_base_diameter'] = float((c['smallest_gear_tooth_nb']-2)*c['annulus_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
+  gp_ap_c['gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
+  gp_ap_c['second_gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
+  gp_ap_c['gear_dedendum_height_pourcentage'] = 100.0 - c['gearring_dedendum_to_hollow_pourcentage']
+  gp_ap_c['gear_hollow_height_pourcentage'] = 25.0 + c['gearring_dedendum_to_hollow_pourcentage']
+  gp_ap_c['gear_addendum_height_pourcentage'] = c['gear_addendum_height_pourcentage']
+  gp_ap_c['gear_tooth_resolution'] = c['gear_tooth_resolution']
+  gp_ap_c['gear_skin_thickness'] = c['gear_skin_thickness']
+  gp_ap_c['gear_router_bit_radius'] = c['gear_router_bit_radius']
+  gp_ap_c['gear_initial_angle'] = 0.0 # just an arbitrary value
+  gp_ap_c['second_gear_additional_axis_length'] = 0.0 # in epicyclic_gearing it's difficult to imagine something else
+  #
+  gp_ps_c = {} # gear_profile planet-sun
+  gp_ps_c['gear_type'] = 'e'
+  gp_ps_c['second_gear_type'] = 'e'
+  gp_ps_c['gear_module'] = c['gear_module']
+  gp_ps_c['gear_tooth_nb'] = c['planet_gear_tooth_nb']
+  gp_ps_c['second_gear_tooth_nb'] = c['sun_gear_tooth_nb']
+  gp_ps_c['gear_base_diameter'] = float((c['smallest_gear_tooth_nb']-2)*c['planet_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
+  gp_ps_c['gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
+  gp_ps_c['second_gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
+  #gp_ps_c['gear_dedendum_height_pourcentage'] = 100 - c['gearring_dedendum_to_hollow_pourcentage']
+  #gp_ps_c['gear_hollow_height_pourcentage'] = 25 + c['gearring_dedendum_to_hollow_pourcentage']
+  gp_ps_c['gear_addendum_height_pourcentage'] = c['gear_addendum_height_pourcentage']
+  gp_ps_c['gear_tooth_resolution'] = c['gear_tooth_resolution']
+  gp_ps_c['gear_skin_thickness'] = c['gear_skin_thickness']
+  gp_ps_c['gear_router_bit_radius'] = c['gear_router_bit_radius']
+  gp_ps_c['second_gear_additional_axis_length'] = 0.0 # in epicyclic_gearing it's difficult to imagine something else
+  #
+  gp_s_c = {} # gear_profile sun
+  gp_s_c['gear_type'] = 'e'
+  gp_s_c['second_gear_type'] = 'e'
+  gp_s_c['gear_module'] = c['gear_module']
+  gp_s_c['gear_tooth_nb'] = c['sun_gear_tooth_nb']
+  gp_s_c['second_gear_tooth_nb'] = c['planet_gear_tooth_nb']
+  gp_s_c['gear_base_diameter'] = float((c['smallest_gear_tooth_nb']-2)*c['sun_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
+  gp_s_c['gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
+  gp_s_c['second_gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
+  #gp_s_c['gear_dedendum_height_pourcentage'] = 100 - c['gearring_dedendum_to_hollow_pourcentage']
+  #gp_s_c['gear_hollow_height_pourcentage'] = 25 + c['gearring_dedendum_to_hollow_pourcentage']
+  gp_s_c['gear_addendum_height_pourcentage'] = c['gear_addendum_height_pourcentage']
+  gp_s_c['gear_tooth_resolution'] = c['gear_tooth_resolution']
+  gp_s_c['gear_skin_thickness'] = c['gear_skin_thickness']
+  gp_s_c['gear_router_bit_radius'] = c['gear_router_bit_radius']
+  gp_s_c['second_gear_additional_axis_length'] = 0.0 # in epicyclic_gearing it's difficult to imagine something else
+  # inheritance from gearring
+  gr_c.update(gp_ap_c)
   i_gr = gearring.gearring()
   i_gr.apply_external_constraint(gr_c)
   # planet number
@@ -271,15 +327,7 @@ def ltt_constraint_check(c):
     c['planet_angle_position'].append(c['planet_carrier_angle']+i*c['planet_angle_inc'])
     c['planet_x_position'].append(0.0 + c['planet_circle_radius']*math.cos(c['planet_angle_position'][i]))
     c['planet_y_position'].append(0.0 + c['planet_circle_radius']*math.sin(c['planet_angle_position'][i]))
-  annulus_planet_c = {}
-  annulus_planet_c['gear_type'] = 'i'
-  annulus_planet_c['second_gear_type'] = 'e'
-  annulus_planet_c['gear_tooth_nb'] = c['annulus_gear_tooth_nb']
-  annulus_planet_c['gear_module'] = c['gear_module']
-  annulus_planet_c['gear_initial_angle'] = 0.0 # just an arbitrary value
-  annulus_planet_c['second_gear_tooth_nb'] = c['planet_gear_tooth_nb']
-  #annulus_planet_c['second_gear_position_angle'] = c['planet_angle_position'][0]+math.pi # first planet angle position
-  annulus_planet_c['second_gear_additional_axis_length'] = 0.0 # in epicyclic_gearing it's difficult to imagine something else
+  annulus_planet_c = gp_ap_c.copy()
   i_gp = gear_profile.gear_profile(annulus_planet_c)
   c['planet_oriantation_angles'] = [] # gear_initial_angle for planets
   for i in range(c['planet_nb']):
@@ -287,13 +335,7 @@ def ltt_constraint_check(c):
     i_gp.apply_external_constraint(annulus_planet_c)
     #i_gp.run_simulation('gear_profile_simulation_A') # dbg
     c['planet_oriantation_angles'].append(i_gp.get_constraint()['second_positive_initial_angle'])
-  planet_sun_c = {}
-  planet_sun_c['gear_type'] = 'e'
-  planet_sun_c['second_gear_type'] = 'e'
-  planet_sun_c['gear_module'] = c['gear_module']
-  planet_sun_c['gear_tooth_nb'] = c['planet_gear_tooth_nb']
-  planet_sun_c['second_gear_tooth_nb'] = c['sun_gear_tooth_nb']
-  planet_sun_c['second_gear_additional_axis_length'] = 0.0 # in epicyclic_gearing it's difficult to imagine something else
+  planet_sun_c = gp_ps_c.copy()
   sun_half_tooth_angle = math.pi/c['sun_gear_tooth_nb']
   c['sun_oriantation_angles'] = [] # gear_initial_angle for sun
   for i in range(c['planet_nb']):
@@ -323,19 +365,23 @@ def ltt_constraint_check(c):
   c['sun_oriantation_angle'] = c['sun_oriantation_angles'][0]
   # sun axle and spacer
   c['sun_axle_radius'] = c['sun_axle_diameter']/2.0
-  if(c['sun_axle_diameter']+2*c['sun_spacer_length']>c['gear_module']*(c['sun_gear_tooth_nb']-3)):
-    print("ERR310: Error, sun_axle_diameter {:0.3f} or sun_spacer_length {:0.3f} are too big compare to gear_module {:0.3f} and sun_gear_tooth_nb {:d}".format(c['sun_axle_diameter'], c['sun_spacer_length'], c['gear_module'], c['sun_gear_tooth_nb']))
+  c['sun_gear_hollow_diameter'] = c['gear_module']*(c['sun_gear_tooth_nb']-3)
+  if(c['sun_axle_diameter']+2*c['sun_spacer_length']>c['sun_gear_hollow_diameter']):
+    print("ERR310: Error, sun_axle_diameter {:0.3f} or sun_spacer_length {:0.3f} are too big compare to sun_gear_hollow_diameter {:0.3f}".format(c['sun_axle_diameter'], c['sun_spacer_length'], c['sun_gear_hollow_diameter']))
     sys.exit(2)
   # planet axle and spacer
-  if(c['planet_axle_diameter']+2*c['planet_spacer_length']>c['gear_module']*(c['planet_gear_tooth_nb']-3)):
-    print("ERR311: Error, planet_axle_diameter {:0.3f} or planet_spacer_length {:0.3f} are too big compare to gear_module {:0.3f} and planet_gear_tooth_nb {:d}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['gear_module'], c['planet_gear_tooth_nb']))
+  c['planet_axle_radius'] = c['planet_axle_diameter']/2.0
+  c['planet_gear_hollow_diameter'] = c['gear_module']*(c['planet_gear_tooth_nb']-3)
+  if(c['planet_axle_diameter']+2*c['planet_spacer_length']>c['planet_gear_hollow_diameter']):
+    print("ERR311: Error, planet_axle_diameter {:0.3f} or planet_spacer_length {:0.3f} are too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['planet_gear_hollow_diameter']))
     sys.exit(2)
   # planet_carrier axle and spacer
-  if(c['planet_carrier_axle_diameter']+2*c['planet_carrier_spacer_length']>c['gear_module']*(c['planet_gear_tooth_nb']-3)):
-    print("ERR315: Error, planet_carrier_axle_diameter {:0.3f} or planet_carrier_spacer_length {:0.3f} are too big compare to gear_module {:0.3f} and planet_gear_tooth_nb {:d}".format(c['planet_carrier_axle_diameter'], c['planet_carrier_spacer_length'], c['gear_module'], c['planet_gear_tooth_nb']))
+  c['planet_carrier_axle_radius'] = c['planet_carrier_axle_diameter']/2.0
+  if(c['planet_carrier_axle_diameter']+2*c['planet_carrier_spacer_length']>c['planet_gear_hollow_diameter']):
+    print("ERR315: Error, planet_carrier_axle_diameter {:0.3f} or planet_carrier_spacer_length {:0.3f} are too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_carrier_axle_diameter'], c['planet_carrier_spacer_length'], c['planet_gear_hollow_diameter']))
     sys.exit(2)
-  if(c['planet_carrier_axle_holder_diameter']>c['gear_module']*(c['planet_gear_tooth_nb']-3)):
-    print("ERR318: Error, planet_carrier_axle_holder_diameter {:0.3f} is too big compare to gear_module {:0.3f} and planet_gear_tooth_nb {:d}".format(c['planet_carrier_axle_holder_diameter'], c['gear_module'], c['planet_gear_tooth_nb']))
+  if(c['planet_carrier_axle_holder_diameter']>c['planet_gear_hollow_diameter']):
+    print("ERR318: Error, planet_carrier_axle_holder_diameter {:0.3f} is too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_carrier_axle_holder_diameter'], c['planet_gear_hollow_diameter']))
     sys.exit(2)
   if(c['planet_axle_diameter']+2*c['planet_spacer_length']>c['planet_carrier_axle_holder_diameter']):
     print("ERR321: Error, planet_carrier_axle_holder_diameter {:0.3f} is too small compare to planet_axle_diameter {:0.3f} and planet_spacer_length {:0.3f}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['planet_carrier_axle_holder_diameter']))
@@ -415,7 +461,7 @@ def ltt_constraint_check(c):
   # planet_carrier_fitting_square
   c['planet_carrier_fitting_square'] = False
   c['planet_carrier_fitting_hole_ref'] = c['planet_carrier_external_radius']
-  if((c['planet_carrier_fitting_square_l1']==0)and(c['planet_carrier_fitting_square_l2']==0)):
+  if((c['planet_carrier_fitting_square_l1']!=0)and(c['planet_carrier_fitting_square_l2']!=0)):
     c['planet_carrier_fitting_square'] = True
     def sub_fitting_square(ai_r, ai_l1, ai_l2):
       """ compute some parameter for the planet_carrier fitting_square for the middle and front (with extra_cut)
@@ -434,7 +480,7 @@ def ltt_constraint_check(c):
       r['int_angle'] = aCOB
       r['int_radius'] = lOB
       lOC = math.sqrt(lOB**2-lBC**2)
-      c['ref_radius'] = lOC
+      r['ref_radius'] = lOC
       return(r)
     middle_fs = sub_fitting_square(c['planet_carrier_external_radius'],
                   c['planet_carrier_fitting_square_l1'], c['planet_carrier_fitting_square_l2'])
@@ -508,8 +554,13 @@ def ltt_constraint_check(c):
     sys.exit(2)
   # output_cover_radius_slack
   c['holder_radius'] = i_gr.get_constraint()['holder_radius']
-  if(c['planet_carrier_external_radius']+c['output_cover_radius_slack']>c['holder_radius']-radian_epsilon):
+  c['output_cover_radius'] = c['planet_carrier_external_radius']+c['output_cover_radius_slack']
+  if(c['output_cover_radius']>c['holder_radius']-radian_epsilon):
     print("ERR508: Error, output_cover_radius_slack {:0.3f} is too big compare to planet_carrier_external_radius {:0.3f} and holder_radius {:0.3f}".format(c['output_cover_radius_slack'], c['planet_carrier_external_radius'], c['holder_radius']))
+    sys.exit(2)
+  c['output_holder_radius'] = c['holder_radius'] - c['output_holder_thickness']
+  if(c['output_holder_radius']<c['output_cover_radius']):
+    print("ERR563: Error, output_holder_thickness {:0.3} or output_cover_radius_slack {:0.3} are too big".format(c['output_holder_thickness'], c['output_cover_radius_slack']))
     sys.exit(2)
   # output_axle_holder
   c['output_axle_radius'] = c['output_axle_diameter']/2.0
@@ -550,6 +601,14 @@ def ltt_constraint_check(c):
   if(c['motor_holder_leg_width']>motor_xy_width_min/4.0):
     print("ERR545: Error, motor_holder_leg_width {:0.3f} is too big compare to motor_xy_width_min {:0.3f}".format(c['motor_holder_leg_width'], motor_xy_width_min))
     sys.exit(2)
+  #
+  c['epicyclic_gearing_ratio'] = float(c['sun_gear_tooth_nb'])/(c['sun_gear_tooth_nb']+c['annulus_gear_tooth_nb'])
+  c['ltt_ratio'] = c['epicyclic_gearing_ratio']**c['step_nb']
+  #
+  c['gr_c'] = gr_c.copy()
+  c['gp_ap_c'] = gp_ap_c.copy()
+  c['gp_ps_c'] = gp_ps_c.copy()
+  c['gp_s_c'] = gp_s_c.copy()
   return(c)
 
 ################################################################
@@ -591,25 +650,16 @@ def ltt_3d_construction(c):
 def eg_sim_planet_sun(c):
   """ define the epicyclic_gearing first simulation: planet-sun
   """
-  pg_c_list = planet_gearwheel_constraint(c)
-  sg_c = pg_c_list[0]
-  sg_c['gear_type'] = 'e'
-  sg_c['second_gear_type'] = 'e'
   # gear_profile simulation
-  i_gear_profile = gear_profile.gear_profile()
-  i_gear_profile.apply_external_constraint(sg_c)
+  i_gear_profile = gear_profile.gear_profile(c['gp_ps_c'])
   i_gear_profile.run_simulation('gear_profile_simulation_A')
   return(1)
 
 def eg_sim_annulus_planet(c):
   """ define the epicyclic_gearing second simulation: annulus-planet
   """
-  sg_c = annulus_gearring_constraint(c)
-  sg_c['gear_type'] = 'i'
-  sg_c['second_gear_type'] = 'e'
-  # gear_profile gear_profile
-  i_gear_profile = gear_profile.gear_profile()
-  i_gear_profile.apply_external_constraint(sg_c)
+  # gear_profile simulation
+  i_gear_profile = gear_profile.gear_profile(c['gp_ap_c'])
   i_gear_profile.run_simulation('gear_profile_simulation_A')
   return(1)
 
@@ -630,22 +680,144 @@ def ltt_info(c):
   """ create the text info related to the low_torque_transmission
   """
   r_info = ""
-#  r_info += """
-#sun_gear_tooth_nb:        \t{:d}
-#planet_gear_tooth_nb:     \t{:d}
-#annulus_gear_tooth_nb:    \t{:d}
-#smallest_gear_tooth_nb:   \t{:d}
-#planet_nb:                \t{:d}
-#planet_number_max:        \t{:d}
-#epicyclic_gearing_ratio:  \t{:0.3f}  1/R: {:0.3f}  1/R2: {:0.3f}  1/R3: {:0.3f}  1/R4: {:0.3f}  1/R5: {:0.3f}
-#""".format(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['annulus_gear_tooth_nb'], c['smallest_gear_tooth_nb'], c['planet_nb'], c['planet_number_max'], c['epicyclic_gearing_ratio'], 1.0/c['epicyclic_gearing_ratio'], 1.0/c['epicyclic_gearing_ratio']**2, 1.0/c['epicyclic_gearing_ratio']**3, 1.0/c['epicyclic_gearing_ratio']**4, 1.0/c['epicyclic_gearing_ratio']**5)
-#  r_info += """
-#gear_module:              \t{:0.3f}
-#gear_router_bit_radius:   \t{:0.3f}
-#gear_tooth_resolution:    \t{:d}
-#gear_skin_thickness:      \t{:0.3f}
-#gear_addendum_dedendum_parity_slack: {:0.3f}
-#""".format(c['gear_module'], c['gear_router_bit_radius'], c['gear_tooth_resolution'], c['gear_skin_thickness'], c['gear_addendum_dedendum_parity_slack'])
+  r_info += """
+sun_gear_tooth_nb:        \t{:d}
+planet_gear_tooth_nb:     \t{:d}
+annulus_gear_tooth_nb:    \t{:d}
+smallest_gear_tooth_nb:   \t{:d}
+planet_nb:                \t{:d}
+planet_number_max:        \t{:d}
+step_nb:                  \t{:d}
+epicyclic_gearing_ratio:  \t{:0.3f}  1/R: {:0.3f}
+low_torque_transm_ratio:  \t{:0.3f}  1/R: {:0.3f}
+""".format(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['annulus_gear_tooth_nb'], c['smallest_gear_tooth_nb'], c['planet_nb'], c['planet_number_max'], c['step_nb'], c['epicyclic_gearing_ratio'], 1.0/c['epicyclic_gearing_ratio'], c['ltt_ratio'], 1.0/c['ltt_ratio'])
+  r_info += """
+gear_module:              \t{:0.3f}
+gear_router_bit_radius:   \t{:0.3f}
+gear_tooth_resolution:    \t{:d}
+gear_skin_thickness:      \t{:0.3f}
+gear_addendum_dedendum_parity_slack:      \t{:0.3f}
+gearring_dedendum_to_hollow_pourcentage:  \t{:0.3f}
+gear_addendum_height_pourcentage:         \t{:0.3f}
+""".format(c['gear_module'], c['gear_router_bit_radius'], c['gear_tooth_resolution'], c['gear_skin_thickness'], c['gear_addendum_dedendum_parity_slack'], c['gearring_dedendum_to_hollow_pourcentage'], c['gear_addendum_height_pourcentage'])
+  r_info += """
+sun_axle_radius:          \t{:0.3f}  diameter: {:0.3f}
+sun_spacer_length:        \t{:0.3f}
+sun_gear_hollow_radius:   \t{:0.3f}  diameter: {:0.3f}
+sun_spacer_width:         \t{:0.3f}
+  """.format(c['sun_axle_radius'], 2*c['sun_axle_radius'], c['sun_spacer_length'], c['sun_gear_hollow_diameter']/2.0, c['sun_gear_hollow_diameter'], c['sun_spacer_width'])
+  r_info += """
+planet_axle_radius:           \t{:0.3f}   diameter: {:0.3f}
+planet_spacer_length:         \t{:0.3f}
+planet_gear_hollow_radius:    \t{:0.3f}   diameter: {:0.3f}
+planet_spacer_width:          \t{:0.3f}
+  """.format(c['planet_axle_radius'], 2*c['planet_axle_radius'], c['planet_spacer_length'], c['planet_gear_hollow_diameter']/2.0, c['planet_gear_hollow_diameter'], c['planet_spacer_width'])
+  r_info += """
+planet_carrier_axle_radius:           \t{:0.3f}   diameter: {:0.3f}
+planet_carrier_spacer_length:         \t{:0.3f}
+planet_carrier_axle_holder_radius:    \t{:0.3f}   diameter: {:0.3f}
+rear_planet_carrier_spacer_width:     \t{:0.3f}
+  """.format(c['planet_carrier_axle_radius'], 2*c['planet_carrier_axle_radius'], c['planet_carrier_spacer_length'], c['planet_carrier_axle_holder_radius'], 2*c['planet_carrier_axle_holder_radius'], c['rear_planet_carrier_spacer_width'])
+  r_info += """
+planet_carrier_external_radius:     \t{:0.3f}   diameter: {:0.3f}
+planet_carrier_external_max_radius: \t{:0.3f}   diameter: {:0.3f}
+planet_carrier_internal_radius:     \t{:0.3f}   diameter: {:0.3f}
+planet_carrier_internal_min_radius: \t{:0.3f}   diameter: {:0.3f}
+planet_carrier_rear_smooth_radius:  \t{:0.3f}
+planet_circle_radius:               \t{:0.3f}   diameter: {:0.3f}
+  """.format(c['planet_carrier_external_radius'], 2*c['planet_carrier_external_radius'], c['planet_carrier_external_diameter_max']/2.0, c['planet_carrier_external_diameter_max'], c['planet_carrier_internal_radius'], 2*c['planet_carrier_internal_radius'], c['planet_carrier_internal_diameter_min']/2.0, c['planet_carrier_internal_diameter_min'], c['planet_carrier_rear_smooth_radius'], c['planet_circle_radius'], 2*c['planet_circle_radius'])
+  r_info += """
+planet_carrier_middle_clearance_radius:     \t{:0.3f}   diameter: {:0.3f}
+planet_carrier_middle_clearance_min_radius: \t{:0.3f}   diameter: {:0.3f}
+planet_carrier_middle_smooth_radius:        \t{:0.3f}
+middle_planet_carrier_internal_radius:      \t{:0.3f}   diameter: {:0.3f}
+  """.format(c['planet_carrier_middle_clearance_radius'], 2*c['planet_carrier_middle_clearance_radius'], c['planet_carrier_middle_clearance_diameter_min'], c['planet_carrier_middle_clearance_diameter_min']/2.0, c['planet_carrier_middle_smooth_radius'], c['middle_planet_carrier_internal_radius'], 2*c['middle_planet_carrier_internal_radius'])
+  r_info += """
+planet_carrier_fitting_square_l1:             \t{:0.3f}
+planet_carrier_fitting_square_l2:             \t{:0.3f}
+planet_carrier_fitting_square_extra_cut:      \t{:0.3f}
+planet_carrier_fitting_square:                \t{:d}
+planet_carrier_fitting_hole_radius:           \t{:0.3f}   diameter: {:0.3f}
+planet_carrier_fitting_hole_position:         \t{:0.3f}
+planet_carrier_fitting_double_hole_distance:  \t{:0.3f}
+  """.format(c['planet_carrier_fitting_square_l1'], c['planet_carrier_fitting_square_l2'], c['planet_carrier_fitting_square_extra_cut'], c['planet_carrier_fitting_square'], c['planet_carrier_fitting_hole_radius'], 2*c['planet_carrier_fitting_hole_radius'], c['planet_carrier_fitting_hole_position'], c['planet_carrier_fitting_double_hole_distance'])
+  r_info += """
+planet_carrier_angle:   \t{:0.3f} (radian)      {:0.3f} (degree)
+  """.format(c['planet_carrier_angle'], c['planet_carrier_angle']*180/math.pi)
+  r_info += """
+planet_width:                 \t{:0.3f}
+front_planet_carrier_width:   \t{:0.3f}
+rear_planet_carrier_width:    \t{:0.3f}
+rear_planet_carrier_spacer_width: \t{:0.3f}
+planet_spacer_width:          \t{:0.3f}
+sun_spacer_width:             \t{:0.3f}
+planet_slack:                 \t{:0.3f}
+step_slack:                   \t{:0.3f}
+middle_planet_carrier_width:  \t{:0.3f}
+sun_width:                    \t{:0.3f}
+step_width:                   \t{:0.3f}
+  """.format(c['planet_width'], c['front_planet_carrier_width'], c['rear_planet_carrier_width'], c['rear_planet_carrier_spacer_width'], c['planet_spacer_width'], c['sun_spacer_width'], c['planet_slack'], c['step_slack'], c['middle_planet_carrier_width'], c['sun_width'], c['step_width'])
+  r_info += """
+output_planet_width:                \t{:0.3f}
+output_front_planet_carrier_width:  \t{:0.3f}
+output_rear_planet_carrier_width:   \t{:0.3f}
+output_middle_planet_carrier_width: \t{:0.3f}
+output_sun_width:                   \t{:0.3f}
+output_step_width:                  \t{:0.3f}
+  """.format(c['output_planet_width'], c['output_front_planet_carrier_width'], c['output_rear_planet_carrier_width'], c['output_middle_planet_carrier_width'], c['output_sun_width'], c['output_step_width'])
+  r_info += """
+input_slack:            \t{:0.3f}
+gearring_holder_width:  \t{:0.3f}
+  """.format(c['input_slack'], c['gearring_holder_width'])
+  r_info += """
+hexagon_hole_radius:    \t{:0.3f}   diameter: {:0.3f}
+hexagon_length:         \t{:0.3f}
+hexagon_smooth_radius:  \t{:0.3f}
+hexagon_width:          \t{:0.3f}
+  """.format(c['hexagon_hole_radius'], 2*c['hexagon_hole_radius'], c['hexagon_length'], c['hexagon_smooth_radius'], c['hexagon_width'])
+  r_info += """
+output_cover_radius_slack:  \t{:0.3f}
+output_cover_radius:        \t{:0.3f}   diameter: {:0.3f}
+output_holder_thickness:    \t{:0.3f}
+output_holder_radius:       \t{:0.3f}   diameter: {:0.3f}
+output_cover_width:         \t{:0.3f}
+output_holder_width:        \t{:0.3f}
+output_cover_depth:         \t{:0.3f}
+  """.format(c['output_cover_radius_slack'], c['output_cover_radius'], 2*c['output_cover_radius'], c['output_holder_thickness'], c['output_holder_radius'], 2*c['output_holder_radius'], c['output_cover_width'], c['output_holder_width'], c['output_cover_depth'])
+  r_info += """
+output_axle_radius:     \t{:0.3f}   diameter: {:0.3f}
+axle_holder_width:      \t{:0.3f}
+axle_holder_A:          \t{:0.3f}
+axle_holder_B:          \t{:0.3f}
+axle_holder_C:          \t{:0.3f}
+axle_holder_D:          \t{:0.3f}
+  """.format(c['output_axle_radius'], 2*c['output_axle_radius'], c['axle_holder_width'], c['axle_holder_A'], c['axle_holder_B'], c['axle_holder_C'], c['axle_holder_D'])
+  r_info += """
+input_axle_radius:    \t{:0.3f}   diameter: {:0.3f}
+input_sun_width:      \t{:0.3f}
+  """.format(c['input_axle_radius'], 2*c['input_axle_radius'], c['input_sun_width'])
+  r_info += """
+motor_x_width:                  \t{:0.3f}   radius: {:0.3f}   diameter: {:0.3f}
+motor_y_width:                  \t{:0.3f}
+motor_shape_rectangle_ncircle:  \t{:d}
+  """.format(c['motor_x_width'], c['motor_x_width']/2.0, c['motor_x_width'], c['motor_y_width'], c['motor_shape_rectangle_ncircle'])
+  r_info += """
+motor_holder_width:     \t{:0.3f}
+motor_holder_A:         \t{:0.3f}
+motor_holder_B:         \t{:0.3f}
+motor_holder_C:         \t{:0.3f}
+motor_holder_D:         \t{:0.3f}
+motor_holder_E:         \t{:0.3f}
+motor_holder_leg_width: \t{:0.3f}
+  """.format(c['motor_holder_width'], c['motor_holder_A'], c['motor_holder_B'], c['motor_holder_C'], c['motor_holder_D'], c['motor_holder_E'], c['motor_holder_leg_width'])
+  r_info += """
+holder_radius:          \t{:0.3f}   diameter: {:0.3f}
+cnc_router_bit_radius:  \t{:0.3f}
+  """.format(c['holder_radius'], 2*c['holder_radius'], c['cnc_router_bit_radius'])
+  #
+  i_gr = gearring.gearring()
+  i_gr.apply_external_constraint(c['gr_c'])
+  #r_info += i_gr.get_info()
   #print(r_info)
   return(r_info)
 
