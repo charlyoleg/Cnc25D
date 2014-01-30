@@ -1031,7 +1031,10 @@ def ltt_3d_construction(c):
   # motor_holder
   r_assembly['motor_holder'] = (
     ('motor_holder', 0.0, 0.0, 0.0, 0.0, c['motor_holder_width'], 'i', 'xy', 0.0, 0.0, 0.0),
-    ('motor_holder_leg', 0.0, 0.0, c['motor_holder_leg_x'], c['motor_holder_leg_y'], c['motor_holder_leg_width'], 'i', 'zx', c['motor_x_width']/2.0, -c['motor_holder_leg_width']/2.0, c['motor_holder_width']))
+    ('motor_holder_leg', 0.0, 0.0, c['motor_holder_leg_x'], c['motor_holder_leg_y'], c['motor_holder_leg_width'], 'i', 'zx', c['motor_x_width']/2.0, -c['motor_holder_leg_width']/2.0, c['motor_holder_width']),
+    ('motor_holder_leg', 0.0, 0.0, c['motor_holder_leg_x'], c['motor_holder_leg_y'], c['motor_holder_leg_width'], 'x', 'zx', -c['motor_x_width']/2.0-c['motor_holder_leg_y'], -c['motor_holder_leg_width']/2.0, c['motor_holder_width']),
+    ('motor_holder_leg', 0.0, 0.0, c['motor_holder_leg_x'], c['motor_holder_leg_y'], c['motor_holder_leg_width'], 'i', 'zy', -c['motor_holder_leg_width']/2.0, c['motor_x_width']/2.0, c['motor_holder_width']),
+    ('motor_holder_leg', 0.0, 0.0, c['motor_holder_leg_x'], c['motor_holder_leg_y'], c['motor_holder_leg_width'], 'x', 'zy', -c['motor_holder_leg_width']/2.0, -c['motor_x_width']/2.0-c['motor_holder_leg_y'], c['motor_holder_width']))
 
   r_slice['motor_holder'] = ()
   # gearring_holder
@@ -1046,7 +1049,10 @@ def ltt_3d_construction(c):
   r_assembly['output_axle_holder'] = (
     ('output_axle_holder_plate', 0.0, 0.0, 0.0, 0.0, c['axle_holder_width'], 'i', 'xy', 0.0, 0.0, 0.0),
     ('output_axle_holder_cylinder', 0.0, 0.0, 0.0, 0.0, c['output_axle_cylinder_width'], 'i', 'xy', 0.0, 0.0, c['axle_holder_width']),
-    ('output_axle_holder_leg', 0.0, 0.0, c['axle_holder_leg_x'], c['axle_holder_leg_y'], c['axle_holder_leg_width'], 'i', 'zx', c['output_axle_radius'], -c['axle_holder_leg_width']/2.0, c['axle_holder_width']))
+    ('output_axle_holder_leg', 0.0, 0.0, c['axle_holder_leg_x'], c['axle_holder_leg_y'], c['axle_holder_leg_width'], 'i', 'zx', c['output_axle_radius'], -c['axle_holder_leg_width']/2.0, c['axle_holder_width']),
+    ('output_axle_holder_leg', 0.0, 0.0, c['axle_holder_leg_x'], c['axle_holder_leg_y'], c['axle_holder_leg_width'], 'x', 'zx', -c['output_axle_radius']-c['axle_holder_leg_y'], -c['axle_holder_leg_width']/2.0, c['axle_holder_width']),
+    ('output_axle_holder_leg', 0.0, 0.0, c['axle_holder_leg_x'], c['axle_holder_leg_y'], c['axle_holder_leg_width'], 'i', 'zy', -c['axle_holder_leg_width']/2.0, c['output_axle_radius'], c['axle_holder_width']),
+    ('output_axle_holder_leg', 0.0, 0.0, c['axle_holder_leg_x'], c['axle_holder_leg_y'], c['axle_holder_leg_width'], 'x', 'zy', -c['axle_holder_leg_width']/2.0, -c['output_axle_radius']-c['axle_holder_leg_y'], c['axle_holder_width']))
 
   r_slice['output_axle_holder'] = ()
   #
@@ -1297,6 +1303,16 @@ if __name__ == "__main__":
   #my_ltt.cli()
   my_ltt.cli("--sun_gear_tooth_nb 19 --planet_gear_tooth_nb 31 --gear_module 1.0")
   if(cnc25d_api.interpretor_is_freecad()):
-    Part.show(my_eg.get_fc_obj_3dconf('ltt_3dconf1'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('planet_gear'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('output_planet_gear'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('rear_planet_carrier'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('front_planet_carrier'))
+    Part.show(my_ltt.get_fc_obj_3dconf('output_rear_planet_carrier'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('output_front_planet_carrier'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('input_sun_gear'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('motor_holder'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('gearring_holder'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('output_holder'))
+    #Part.show(my_ltt.get_fc_obj_3dconf('output_axle_holder'))
 
 

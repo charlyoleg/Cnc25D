@@ -98,8 +98,9 @@ def gearring_constraint_constructor(ai_parser, ai_variant = 0):
     help="Set the number of holder crenels (associated with a hole) arround the gearring holder. Default: 4")
   r_parser.add_argument('--holder_position_angle','--hpa', action='store', type=float, default=0.0,
     help="Set the holder position angle of the first holder-crenel (associated with a hole). Default: 0.0")
-  r_parser.add_argument('--holder_crenel_number_cut','--hcnc', action='store', type=int, default=0,
-    help="Set the number of holder crenels to be cut for input/ouput holder. If set to 0, no cut is created. Default: 0")
+  if(ai_variant!=1):
+    r_parser.add_argument('--holder_crenel_number_cut','--hcnc', action='store', type=int, default=0,
+      help="Set the number of holder crenels to be cut for input/ouput holder. If set to 0, no cut is created. Default: 0")
   ### holder-hole
   r_parser.add_argument('--holder_hole_position_radius','--hhpr', action='store', type=float, default=0.0,
     help="Set the length between the center of the holder-hole and the center of the gearring. If it is equal to 0.0, the holder_diameter value is used. Default: 0.0")
