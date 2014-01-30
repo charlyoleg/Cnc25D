@@ -246,6 +246,9 @@ def ltt_constraint_check(c):
   c['annulus_gear_tooth_nb'] = c['sun_gear_tooth_nb'] + 2*c['planet_gear_tooth_nb']
   c['smallest_gear_tooth_nb'] = min(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['annulus_gear_tooth_nb'])
   # gear_profile
+  if(c['gear_router_bit_radius']<c['cnc_router_bit_radius']):
+    c['gear_router_bit_radius'] = c['cnc_router_bit_radius']
+  #
   gp_ap_c = {} # gear_profile annulus-planet
   gp_ap_c['gear_type'] = 'i'
   gp_ap_c['second_gear_type'] = 'e'
@@ -432,7 +435,7 @@ def ltt_constraint_check(c):
   lAG = c['planet_carrier_middle_clearance_radius']
   lOG = c['planet_carrier_external_radius']
   lOH = c['planet_carrier_internal_radius']
-  cos_OAG = (float(lOA**2+lAG**2-lOG**2)/(2*lOA*lAG))
+  cos_OAG = float(lOA**2+lAG**2-lOG**2)/(2*lOA*lAG)
   aOAG = math.acos(cos_OAG)
   cos_OAH = (float(lOA**2+lAG**2-lOH**2)/(2*lOA*lAG))
   aOAH = math.acos(cos_OAH)
@@ -458,6 +461,25 @@ def ltt_constraint_check(c):
       lDE = math.sqrt(lAE**2-lAD**2)
       lOD = math.sqrt(lOA**2-lAD**2)
       c['middle_planet_carrier_internal_radius'] = lOD + lDE
+  # pre-calculations for rear-planet_carrier
+  c['rear_planet_carrier_external_intersection'] = False
+  if(c['planet_circle_radius']+0.8*c['planet_carrier_axle_holder_radius']>c['planet_carrier_external_radius']): # 0.8 is arbitrary and ensure a good cnc_cut
+    c['rear_planet_carrier_external_intersection'] = True
+    lOA = c['planet_circle_radius']
+    lAG = c['planet_carrier_axle_holder_radius']
+    lOG = c['planet_carrier_external_radius']
+    cos_AOG = float(lOA**2+lOG**2-lAG**2)/(2*lOA*lOG)
+    aAOG = math.acos(cos_AOG)
+    c['rear_planet_carrier_external_intersection_angle'] = aAOG
+  c['rear_planet_carrier_internal_intersection'] = False
+  if(c['planet_circle_radius']-0.8*c['planet_carrier_axle_holder_radius']<c['planet_carrier_internal_radius']): # 0.8 is arbitrary and ensure a good cnc_cut
+    c['rear_planet_carrier_internal_intersection'] = True
+    lOA = c['planet_circle_radius']
+    lAG = c['planet_carrier_axle_holder_radius']
+    lOG = c['planet_carrier_internal_radius']
+    cos_AOG = float(lOA**2+lOG**2-lAG**2)/(2*lOA*lOG)
+    aAOG = math.acos(cos_AOG)
+    c['rear_planet_carrier_internal_intersection_angle'] = aAOG
   # planet_carrier_fitting_square
   c['planet_carrier_fitting_square'] = False
   c['planet_carrier_fitting_hole_ref'] = c['planet_carrier_external_radius']
@@ -624,7 +646,162 @@ def ltt_2d_construction(c):
   ###
   r_figures = {}
   r_height = {}
-  #
+  # gearring_holder
+  i_gr = gearring.gearring()
+  i_gr.apply_external_constraint(c['gr_c'])
+  r_figures['gearring_holder'] = i_gr.get_A_figure('gearring_fig')
+  r_height['gearring_holder'] = c['gearring_holder_width']
+  # planet_gear
+  gwp_c = c['gp_ps_c'].copy()
+  gwp_c['axle_type'] = 'circle'
+  gwp_c['axle_x_width'] = c['planet_axle_diameter']
+  i_gwp = gearwheel.gearwheel()
+  i_gwp.apply_external_constraint(gwp_c)
+  r_figures['planet_gear'] = i_gwp.get_A_figure('gearwheel_fig')
+  r_height['planet_gear'] = c['planet_width']
+  # planet_spacer
+  planet_spacer_fig = []
+  planet_spacer_fig.append((0.0, 0.0, c['planet_axle_radius']+c['planet_spacer_length']))
+  planet_spacer_fig.append((0.0, 0.0, c['planet_axle_radius']))
+  r_figures['planet_spacer'] = planet_spacer_fig
+  r_height['planet_spacer'] = c['planet_spacer_width']
+  # sun_gear
+  gws_c = c['gp_s_c'].copy()
+  gws_c['axle_type'] = 'circle'
+  gws_c['axle_x_width'] = c['sun_axle_diameter']
+  i_gws = gearwheel.gearwheel()
+  i_gws.apply_external_constraint(gws_c)
+  r_figures['sun_gear'] = i_gws.get_A_figure('gearwheel_fig')
+  r_height['sun_gear'] = c['sun_width']
+  # planet_spacer
+  sun_spacer_fig = []
+  sun_spacer_fig.append((0.0, 0.0, c['sun_axle_radius']+c['sun_spacer_length']))
+  sun_spacer_fig.append((0.0, 0.0, c['sun_axle_radius']))
+  r_figures['sun_spacer'] = sun_spacer_fig
+  r_height['sun_spacer'] = c['planet_spacer_width']
+  # planet_carrier_middle_holes
+  planet_carrier_holes = []
+  planet_carrier_middle_holes = []
+  for i in range(c['planet_nb']):
+    pca = c['planet_angle_position'][i] + c['planet_angle_inc']/2.0 # planet_carrier_angle reference
+    planet_carrier_middle_holes.append([])
+    if(c['planet_carrier_fitting_hole_radius']>0): # create holes
+      a = pca - c['planet_carrier_fitting_hole_position_angle']
+      planet_carrier_middle_holes[i].append((0.0+c['planet_carrier_fitting_hole_position_radius']*math.cos(a), 0.0+c['planet_carrier_fitting_hole_position_radius']*math.sin(a), c['planet_carrier_fitting_hole_radius']))
+      if(c['planet_carrier_fitting_double_hole_distance']>0): # create two holes
+        a = pca + c['planet_carrier_fitting_hole_position_angle']
+        planet_carrier_middle_holes[i].append((0.0+c['planet_carrier_fitting_hole_position_radius']*math.cos(a), 0.0+c['planet_carrier_fitting_hole_position_radius']*math.sin(a), c['planet_carrier_fitting_hole_radius']))
+    planet_carrier_holes.extend(planet_carrier_middle_holes[i])
+  # planet_carrier_middles
+  planet_carrier_middle_figs = []
+  planet_carrier_middle_overview_fig = []
+  for i in range(c['planet_nb']):
+    pca = c['planet_angle_position'][i] + c['planet_angle_inc']/2.0 # planet_carrier_angle reference
+    ap1c = c['planet_angle_position'][i] # position angle of the previous planet center
+    ap2c = c['planet_angle_position'][i]+c['planet_angle_inc'] # position angle of the following planet center
+    p1x = 0.0 + c['planet_circle_radius']*math.cos(ap1c) # previous planet center coordinates
+    p1y = 0.0 + c['planet_circle_radius']*math.sin(ap1c)
+    p2x = 0.0 + c['planet_circle_radius']*math.cos(ap2c) # following planet center coordinates
+    p2y = 0.0 + c['planet_circle_radius']*math.sin(ap2c)
+    pcmcr = c['planet_carrier_middle_clearance_radius'] # alias
+    mpcir = c['middle_planet_carrier_internal_radius']
+    pcer = c['planet_carrier_external_radius']
+    pcmsr = c['planet_carrier_middle_smooth_radius']
+    aOAG = c['middle_planet_carrier_aOAG']
+    aOAH = c['middle_planet_carrier_aOAH']
+    a1i = ap1c + math.pi - aOAH # angle planet-1 to internal circle
+    a1m = ap1c + math.pi - (aOAH + (aOAG-aOAH)/2.0) # angle planet-1 to middle of internal-external circle
+    a1e = ap1c + math.pi - aOAG # angle planet-1 to external circle
+    a2i = ap2c + math.pi + aOAH # angle planet-2 to internal circle
+    a2m = ap2c + math.pi + (aOAH + (aOAG-aOAH)/2.0) # angle planet-2 to middle of internal-external circle
+    a2e = ap2c + math.pi + aOAG # angle planet-2 to external circle
+    ol = []
+    ol.append((p2x+pcmcr*math.cos(a2i), p2y+pcmcr*math.sin(a2i), pcmsr)) # start point: planet-2 clearance-circle intersection with internal-circle. Going CCW
+    ol.append((0.0+mpcir*math.cos(pca), 0.0+mpcir*math.sin(pca), p1x+pcmcr*math.cos(a1i), p1y+pcmcr*math.sin(a1i), pcmsr)) # internal circle arc
+    ol.append((p1x+pcmcr*math.cos(a1m), p1y+pcmcr*math.sin(a1m), p1x+pcmcr*math.cos(a1e), p1y+pcmcr*math.sin(a1e), pcmsr)) # planet-1 clearance arc
+    ol.append((0.0+pcer*math.cos(pca), 0.0+pcer*math.sin(pca), p2x+pcmcr*math.cos(a2e), p2y+pcmcr*math.sin(a2e), pcmsr)) # external circle arc
+    ol.append((p2x+pcmcr*math.cos(a2m), p2y+pcmcr*math.sin(a2m), p2x+pcmcr*math.cos(a2i), p2y+pcmcr*math.sin(a2i), 0)) # planet-2 clearance arc
+    #print("dbg705: ol:", ol)
+    #cnc25d_api.figure_simple_display([cnc25d_api.cnc_cut_outline(ol, "ol")], [cnc25d_api.ideal_outline(ol, "ol")], "debug")
+    #
+    planet_carrier_middle_figs.append([])
+    planet_carrier_middle_figs[i].append(ol)
+    planet_carrier_middle_figs[i].extend(planet_carrier_middle_holes[i])
+    planet_carrier_middle_overview_fig.extend(planet_carrier_middle_figs[i])
+    #
+    r_figures['planet_carrier_middle_{:d}'.format(i)] = planet_carrier_middle_figs[i]
+    r_height['planet_carrier_middle_{:d}'.format(i)] = c['middle_planet_carrier_width']
+  # epicyclic_middle_overview
+  epicyclic_middle_overview_fig = []
+  epicyclic_middle_overview_fig.extend(r_figures['gearring_holder'])
+  for i in range(c['planet_nb']):
+    epicyclic_middle_overview_fig.extend(cnc25d_api.rotate_and_translate_figure(r_figures['planet_gear'], 0.0, 0.0, c['planet_oriantation_angles'][i], c['planet_x_position'][i], c['planet_y_position'][i]))
+    epicyclic_middle_overview_fig.extend(cnc25d_api.rotate_and_translate_figure(r_figures['planet_spacer'], 0.0, 0.0, c['planet_oriantation_angles'][i], c['planet_x_position'][i], c['planet_y_position'][i]))
+  epicyclic_middle_overview_fig.extend(cnc25d_api.rotate_and_translate_figure(r_figures['sun_gear'], 0.0, 0.0, c['sun_oriantation_angle'], 0.0, 0.0))
+  epicyclic_middle_overview_fig.extend(cnc25d_api.rotate_and_translate_figure(r_figures['sun_spacer'], 0.0, 0.0, c['sun_oriantation_angle'], 0.0, 0.0))
+  epicyclic_middle_overview_fig.extend(planet_carrier_middle_overview_fig)
+  r_figures['epicyclic_middle_overview'] = epicyclic_middle_overview_fig
+  r_height['epicyclic_middle_overview'] = 1.0
+  # rear_planet_carrier
+  rear_planet_carrier_fig = []
+  eol = [] # external outline of rear_planet_carrier
+  if(c['rear_planet_carrier_external_intersection']):
+    le = c['planet_carrier_external_radius']
+    lh = c['planet_circle_radius'] + c['planet_carrier_axle_holder_radius']
+    a1 = c['rear_planet_carrier_external_intersection_angle']
+    a2 = c['planet_angle_inc']/2.0
+    a3 = c['planet_angle_inc'] - c['rear_planet_carrier_external_intersection_angle']
+    a4 = c['planet_angle_inc']
+    a5 = c['planet_angle_inc'] + c['rear_planet_carrier_external_intersection_angle']
+    sr = c['planet_carrier_rear_smooth_radius']
+    ar = c['planet_angle_position'][0]
+    eol.append((0.0+le*math.cos(ar+a1), 0.0+le*math.sin(ar+a1), sr)) # first point of the outline with intersections
+    for i in range(c['planet_nb']):
+      ar = c['planet_angle_position'][i] # planet_carrier_angle reference
+      eol.append((0.0+le*math.cos(ar+a2), 0.0+le*math.sin(ar+a2), 0.0+le*math.cos(ar+a3), 0.0+le*math.sin(ar+a3), sr))
+      eol.append((0.0+lh*math.cos(ar+a4), 0.0+lh*math.sin(ar+a4), 0.0+le*math.cos(ar+a5), 0.0+le*math.sin(ar+a5), sr))
+    eol[-1] = (eol[-1][0], eol[-1][1], eol[-1][2], eol[-1][3], 0)
+  else:
+    eol = (0.0, 0.0, c['planet_carrier_external_radius'])
+  rear_planet_carrier_fig.append(eol)
+  iol = [] # internal outline of rear_planet_carrier
+  if(c['rear_planet_carrier_internal_intersection']):
+    li = c['planet_carrier_internal_radius']
+    lh = c['planet_circle_radius'] - c['planet_carrier_axle_holder_radius']
+    a1 = c['rear_planet_carrier_internal_intersection_angle']
+    a2 = c['planet_angle_inc']/2.0
+    a3 = c['planet_angle_inc'] - c['rear_planet_carrier_internal_intersection_angle']
+    a4 = c['planet_angle_inc']
+    a5 = c['planet_angle_inc'] + c['rear_planet_carrier_internal_intersection_angle']
+    sr = c['planet_carrier_rear_smooth_radius']
+    ar = c['planet_angle_position'][0]
+    iol.append((0.0+li*math.cos(ar+a1), 0.0+li*math.sin(ar+a1), sr)) # first point of the outline with intersections
+    for i in range(c['planet_nb']):
+      ar = c['planet_angle_position'][i] # planet_carrier_angle reference
+      iol.append((0.0+li*math.cos(ar+a2), 0.0+li*math.sin(ar+a2), 0.0+li*math.cos(ar+a3), 0.0+li*math.sin(ar+a3), sr))
+      iol.append((0.0+lh*math.cos(ar+a4), 0.0+lh*math.sin(ar+a4), 0.0+li*math.cos(ar+a5), 0.0+li*math.sin(ar+a5), sr))
+    iol[-1] = (iol[-1][0], iol[-1][1], iol[-1][2], iol[-1][3], 0)
+  else:
+    iol = (0.0, 0.0, c['planet_carrier_internal_radius'])
+  rear_planet_carrier_fig.append(iol)
+  for i in range(c['planet_nb']):
+    rear_planet_carrier_fig.append((c['planet_x_position'][i], c['planet_y_position'][i], c['planet_carrier_axle_radius'])) # add planet_axle hole
+  rear_planet_carrier_fig.extend(planet_carrier_holes) # rod holes
+  #print("dbg790: rear_planet_carrier_fig:", rear_planet_carrier_fig)
+  #cnc25d_api.figure_simple_display(cnc25d_api.cnc_cut_figure(rear_planet_carrier_fig, "rear_planet_carrier_fig"), cnc25d_api.ideal_figure(rear_planet_carrier_fig, "rear_planet_carrier_fig"), "debug")
+  r_figures['planet_carrier_rear'] = rear_planet_carrier_fig
+  r_height['planet_carrier_rear'] = c['rear_planet_carrier_width']
+  # planet_carrier_spacer
+  spacer_fig = []
+  spacer_fig.append((0.0, 0.0, c['planet_carrier_axle_radius']+c['planet_carrier_spacer_length']))
+  spacer_fig.append((0.0, 0.0, c['planet_carrier_axle_radius']))
+  for i in range(c['planet_nb']):
+    r_figures['planet_carrier_spacer_{:d}'.format(i)] = cnc25d_api.rotate_and_translate_figure(spacer_fig, 0.0, 0.0, 0.0, c['planet_x_position'][i], c['planet_y_position'][i])
+    r_height['planet_carrier_spacer_{:d}'.format(i)] = c['rear_planet_carrier_spacer_width']
+  # planet_carrier_fitting_square
+  planet_carrier_fitting_square_figs = []
+
+
   ###
   return((r_figures, r_height))
 
@@ -854,7 +1031,7 @@ class ltt(cnc25d_api.bare_design):
       d_2d_simulation           = ltt_2d_simulations(),
       f_3d_constructor          = ltt_3d_construction,
       f_info                    = ltt_info,
-      l_display_figure_list     = [],
+      l_display_figure_list     = ['epicyclic_middle_overview'],
       s_default_simulation      = '',
       l_2d_figure_file_list     = [], # all figures
       l_3d_figure_file_list     = [],
