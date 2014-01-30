@@ -463,7 +463,7 @@ class bare_design:
           sys.exit(2)
     return(r_list)
 
-  def write_assembly_brep(self, output_file_basename):
+  def write_assembly_brep(self, output_file_basename, ai_stl=False):
     """ write all 3d-assembly-configurations in brep files
         output_file_basename contains the directory path and the file-basename
     """
@@ -472,7 +472,7 @@ class bare_design:
     for a in confs:
       print("write_assembly_brep: {:s}".format(a))
       # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
-      design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=False, ai_slice_xyz=self.slice3d_configurations[a]) 
+      design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=ai_stl, ai_slice_xyz=self.slice3d_configurations[a]) 
 
   def get_write_3d_freecad_list(self):
     """ generate the list of 3d-freecad_objects to be written according to self.write_3d_freecad_list
