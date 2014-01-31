@@ -167,12 +167,20 @@ class bare_design:
     """
     self.self_tests = self_tests
   
+  def apply_constraint_default_value(self):
+    """ reset the constraint to their default values
+    """
+    self.constraint = self.reference_constraint.copy()
+    return(self.constraint)
+
+
   def apply_constraint(self, constraint):
     """ set the dictionary constraint to the design
     """
     #print("dbg146: constraint:", constraint)
     rc = self.reference_constraint
-    c = rc.copy()
+    #c = rc.copy() # starting from default constraint
+    c = self.get_constraint() # starting from current constraint
     new_contraint_value = 0
     for k in constraint.keys():
       if(not k in rc.keys()):
@@ -181,7 +189,7 @@ class bare_design:
       if(c[k] != constraint[k]):
         new_contraint_value += 1
         c[k] = constraint[k]
-    #print("dbg184: apply_constraint: new {:d},  unchanged: {:d},  total: {:d}".format(new_contraint_value, len(constraint)-new_contraint_value, len(constraint)))
+    #print("dbg184: {:s} apply_constraint: new {:d},  unchanged: {:d},  total: {:d}".format(self.design_name, new_contraint_value, len(constraint)-new_contraint_value, len(constraint)))
     #c.update(constraint) # apply the new constraint values
     #print("dbg100: constraint:", c)
     #if(len(c.viewkeys() & rc.viewkeys()) != len(c.viewkeys() | rc.viewkeys())): # check if the dictionary c has exactly all the keys compare to self.reference_constraint
@@ -204,7 +212,7 @@ class bare_design:
     """
     key_list = self.reference_constraint.viewkeys() & constraint.viewkeys()
     c =  dict([ (k, constraint[k]) for k in key_list ])
-    #print("dbg207: apply_external_constraint: constraint_nb: {:d}".format(len(c)))
+    #print("dbg207: {:s} apply_external_constraint: constraint_nb: {:d}".format(self.design_name, len(c)))
     #print("dbg170: c:", c)
     r_constraint = self.apply_constraint(c)
     return(r_constraint)
@@ -222,7 +230,7 @@ class bare_design:
       if(arg_c[k] != rc[k]):
         c[k] = arg_c[k]
     # c = arg_c # !be careful! if a current contraint is different from the default and the cli set again the default no effect! Uncomment this line to reset all constraint
-    #print("dbg225: apply_cli: changed_contraint_nb: {:d}".format(len(c)))
+    #print("dbg225: {:s} apply_cli: changed_contraint_nb: {:d}".format(self.design_name, len(c)))
     r_constraint = self.apply_constraint(c)
     self.cli_str = effective_args_in_txt # must be set after apply_constraint()
     return(r_constraint)
@@ -725,6 +733,7 @@ class bare_design:
         sys.exit(2)
       else:
         print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(tn+1, self.self_tests[tn][0], self.self_tests[tn][1]))
+        self.apply_constraint_default_value()
         self.apply_cli_with_output_options(self.self_tests[tn][1])
     return(1)
 
