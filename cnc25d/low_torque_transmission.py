@@ -178,6 +178,8 @@ def ltt_constraint_constructor(ai_parser, ai_variant = 0):
     help="Set the slack between the output_front_planet_carrier_radius and the output_cover_radius. Default: 1.0")
   r_parser.add_argument('--output_holder_thickness','--oht', action='store', type=float, default=4.0,
     help="Set the thickness of the output_holder half-cylinder. Default: 4.0")
+  r_parser.add_argument('--output_holder_crenel_nb','--ohcn', action='store', type=int, default=0,
+    help="Set the number of crenels of the output_holder arc. If set to 0, the dynamic default value is used. Default: 0")
   r_parser.add_argument('--output_cover_width','--ocw', action='store', type=float, default=2.0,
     help="Set the z-size of the output_cover. Default: 2.0")
   r_parser.add_argument('--output_holder_width','--ohw', action='store', type=float, default=20.0,
@@ -198,8 +200,8 @@ def ltt_constraint_constructor(ai_parser, ai_variant = 0):
   ### input gearwheel
   r_parser.add_argument('--input_axle_diameter','--iad', action='store', type=float, default=2.0,
     help="Set the diameter of the motor shaft. Default: 2.0")
-  r_parser.add_argument('--input_sun_width','--isw', action='store', type=float, default=10.0,
-    help="Set the z-size of the input-gearwheel. Default: 10.0")
+  r_parser.add_argument('--input_sun_width','--isw', action='store', type=float, default=0.0,
+    help="Set the z-size of the input-gearwheel. If set to 0.0, the minimal value is used. Default: 0.0")
   r_parser.add_argument('--input_slack','--is', action='store', type=float, default=2.0,
     help="Set the maximal slack between the motor_holder and the first rear_planet_carrier. Default: 2.0")
   ### motor_holder
@@ -561,11 +563,8 @@ def ltt_constraint_check(c):
     print("ERR486: Error, hexagon_smooth_radius {:0.3f} is too big compare to hexagon_length {:0.3f}".format(c['hexagon_smooth_radius'], c['hexagon_length']))
     sys.exit(2)
   # output_cover_width, output_holder_width, hexagon_width
-  c['output_holder_width2'] = c['output_holder_width'] - c['output_cover_width']
-  if(c['output_cover_width']>c['output_holder_width']):
-    print("ERR490: output_cover_width {:0.3f} is too big compare to output_holder_width {:0.3f}".format(c['output_cover_width'], c['output_holder_width']))
-    sys.exit(2)
-  c['output_cover_depth'] = c['hexagon_width'] - (c['output_holder_width'] - c['output_cover_width'])
+  c['output_holder_width2'] = c['output_holder_width'] + c['output_cover_width']
+  c['output_cover_depth'] = c['hexagon_width'] - c['output_holder_width']
   if(c['output_cover_depth']<0):
     print("ERR494: Error, output_cover_depth {:0.3f} < 0. output_cover_width{:0.3f} or hexagon_width {:0.3f} too small or output_holder_width {:0.3f} too big".format(c['output_cover_depth'], c['output_cover_width'], c['hexagon_width'], c['output_holder_width']))
     sys.exit(2)
@@ -585,6 +584,9 @@ def ltt_constraint_check(c):
   if(c['output_holder_radius']<c['output_cover_radius']):
     print("ERR563: Error, output_holder_thickness {:0.3} or output_cover_radius_slack {:0.3} are too big".format(c['output_holder_thickness'], c['output_cover_radius_slack']))
     sys.exit(2)
+  c['output_holder_crenel_nb_default'] = int((c['holder_crenel_number']+1)/2)+1
+  if(c['output_holder_crenel_nb']==0):
+    c['output_holder_crenel_nb'] = c['output_holder_crenel_nb_default']
   # output_axle_holder
   c['output_axle_radius'] = c['output_axle_diameter']/2.0
   if(c['output_axle_radius']<radian_epsilon):
@@ -607,8 +609,11 @@ def ltt_constraint_check(c):
     print("ERR521: Error, input_axle_radius {:0.3f} is too big compare to sun_axle_radius {:0.3f}".format(c['input_axle_radius'], c['sun_axle_radius']))
     sys.exit(2)
   # input_sun_width
-  if(c['input_sun_width']<c['sun_width']):
-    print("ERR525: Error, input_sun_width {:0.3f} is too small compare to sun_width {:0.3f}".format(c['input_sun_width'], c['sun_width']))
+  c['input_sun_width_min'] = c['sun_width']
+  if(c['input_sun_width']==0):
+    c['input_sun_width'] = c['input_sun_width_min']
+  if(c['input_sun_width']<c['input_sun_width_min']):
+    print("ERR525: Error, input_sun_width {:0.3f} is too small compare to input_sun_width_min {:0.3f}".format(c['input_sun_width'], c['input_sun_width_min']))
     sys.exit(2)
   # motor_holder
   c['motor_shape_rectangle_ncircle'] = True
@@ -887,7 +892,7 @@ def ltt_2d_construction(c):
   i_gws = gearwheel.gearwheel()
   i_gws.apply_external_constraint(gws_c)
   r_figures['input_sun_gear'] = i_gws.get_A_figure('gearwheel_fig')
-  r_height['input_sun_gear'] = c['sun_width']
+  r_height['input_sun_gear'] = c['input_sun_width']
   # output_cover
   gr_c = c['gr_c'].copy()
   gr_c['holder_diameter'] = 2*c['holder_radius']
@@ -962,13 +967,13 @@ def ltt_2d_construction(c):
   gr_c['holder_diameter'] = 2*c['holder_radius']
   gr_c['gear_tooth_nb'] = 0
   gr_c['gear_primitive_diameter'] = 2*c['output_holder_radius']
-  gr_c['holder_crenel_number_cut'] = int((c['holder_crenel_number']+1)/2)+1
+  gr_c['holder_crenel_number_cut'] = c['output_holder_crenel_nb_default']
   #print("dbg962: holder_crenel_number, holder_crenel_number_cut:", c['holder_crenel_number'], gr_c['holder_crenel_number_cut'])
   #i_gr = gearring.gearring()
   i_gr.apply_external_constraint(gr_c)
   output_holder_fig = i_gr.get_A_figure('gearring_cut')
   r_figures['output_holder'] = output_holder_fig
-  r_height['output_holder'] = c['output_holder_width2']
+  r_height['output_holder'] = c['output_holder_width']
   #cnc25d_api.figure_simple_display(cnc25d_api.cnc_cut_figure(r_figures['output_holder'], "output_holder"), cnc25d_api.ideal_figure(r_figures['output_holder'], "output_holder"), "debug")
   ###
   return((r_figures, r_height))
@@ -1043,7 +1048,7 @@ def ltt_3d_construction(c):
   # output_holder
   r_assembly['output_holder'] = (
     ('output_cover', 0.0, 0.0, 0.0, 0.0, c['output_cover_width'], 'i', 'xy', 0.0, 0.0, 0.0),
-    ('output_holder', 0.0, 0.0, 0.0, 0.0, c['output_holder_width2'], 'i', 'xy', 0.0, 0.0, c['output_cover_width']))
+    ('output_holder', 0.0, 0.0, 0.0, 0.0, c['output_holder_width'], 'i', 'xy', 0.0, 0.0, c['output_cover_width']))
   r_slice['output_holder'] = ()
   # output_axle_holder
   r_assembly['output_axle_holder'] = (
@@ -1196,10 +1201,12 @@ output_cover_radius_slack:  \t{:0.3f}
 output_cover_radius:        \t{:0.3f}   diameter: {:0.3f}
 output_holder_thickness:    \t{:0.3f}
 output_holder_radius:       \t{:0.3f}   diameter: {:0.3f}
+output_holder_crenel_nb:    \t{:d}
 output_cover_width:         \t{:0.3f}
 output_holder_width:        \t{:0.3f}
 output_cover_depth:         \t{:0.3f}
-  """.format(c['output_cover_radius_slack'], c['output_cover_radius'], 2*c['output_cover_radius'], c['output_holder_thickness'], c['output_holder_radius'], 2*c['output_holder_radius'], c['output_cover_width'], c['output_holder_width'], c['output_cover_depth'])
+final_input_slack:          \t{:0.3f}
+  """.format(c['output_cover_radius_slack'], c['output_cover_radius'], 2*c['output_cover_radius'], c['output_holder_thickness'], c['output_holder_radius'], 2*c['output_holder_radius'], c['output_holder_crenel_nb'], c['output_cover_width'], c['output_holder_width'], c['output_cover_depth'], c['input_slack']-c['output_cover_depth'])
   r_info += """
 output_axle_radius:     \t{:0.3f}   diameter: {:0.3f}
 axle_holder_width:      \t{:0.3f}
@@ -1211,7 +1218,8 @@ axle_holder_D:          \t{:0.3f}
   r_info += """
 input_axle_radius:    \t{:0.3f}   diameter: {:0.3f}
 input_sun_width:      \t{:0.3f}
-  """.format(c['input_axle_radius'], 2*c['input_axle_radius'], c['input_sun_width'])
+input_sun_width_min:  \t{:0.3f}
+  """.format(c['input_axle_radius'], 2*c['input_axle_radius'], c['input_sun_width'], c['input_sun_width_min'])
   r_info += """
 motor_x_width:                  \t{:0.3f}   radius: {:0.3f}   diameter: {:0.3f}
 motor_y_width:                  \t{:0.3f}
