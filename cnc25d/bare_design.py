@@ -32,6 +32,7 @@ The goal is discharging the design script from all the convenience stuff.
 import sys, argparse
 import re # to detect .dxf or .svg
 from datetime import datetime
+import os
 #
 import outline_backends
 import design_help
@@ -418,6 +419,10 @@ class bare_design:
   def write_info_txt(self, output_file_basename):
     """ write the info text in a file
     """
+    # create the output directory if needed
+    l_output_dir = os.path.dirname(output_file_basename)
+    design_help.mkdir_p(l_output_dir)
+    #
     info_txt_filename = "{:s}_info.txt".format(output_file_basename)
     print("Generate the text info file {:s}".format(info_txt_filename))
     ofh = open(info_txt_filename, 'w')
