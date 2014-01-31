@@ -188,6 +188,7 @@ def gearring_constraint_check(c):
     c['holder_radius'] = c['maximal_gear_profile_radius'] + 2.0*gear_module + c['holder_hole_diameter']/2.0
   if(c['holder_hole_position_radius']==0):
     c['holder_hole_position_radius'] = c['holder_radius']
+  #print("dbg191: holder_hole_position_radius, holder_radius:", c['holder_hole_position_radius'], c['holder_radius'])
   c['holder_hole_radius'] = float(c['holder_hole_diameter'])/2
   c['holder_maximal_radius'] = c['holder_hole_position_radius'] + c['holder_crenel_position'] + c['holder_crenel_height']
   holder_maximal_height = c['holder_maximal_radius'] - c['holder_radius']
@@ -211,6 +212,12 @@ def gearring_constraint_check(c):
   if(c['holder_crenel_number']>0):
     if((0.9*holder_side_straigth_length)<c['holder_sr']):
       print("ERR218: Error, the holder-crenel-wall-side height is too small: holder_side_straigth_length {:0.3f}  holder_smoothing_radius {:0.3f}".format(holder_side_straigth_length, c['holder_sr']))
+      #print("dbg214: holder_radius, holder_crenel_x_position:", c['holder_radius'], c['holder_crenel_x_position'])
+      #print("dbg215: holder_maximal_height, additional_holder_maximal_height:", holder_maximal_height, additional_holder_maximal_height)
+      #print("dbg216: holder_crenel_skin_width, holder_maximal_height_plus:", c['holder_crenel_skin_width'], c['holder_maximal_height_plus'])
+      #print("dbg217: holder_maximal_height_plus, holder_side_outer_smoothing_radius:", c['holder_maximal_height_plus'], c['holder_side_outer_smoothing_radius'])
+      #print("dbg218: holder_hole_position_radius, holder_crenel_position, holder_crenel_height:", c['holder_hole_position_radius'], c['holder_crenel_position'], c['holder_crenel_height'])
+      #print("dbg219: holder_maximal_radius, holder_radius:", c['holder_maximal_radius'], c['holder_radius'])
       sys.exit(2)
   # c['holder_crenel_position']
   if(c['holder_crenel_position']<c['holder_hole_radius']):

@@ -69,6 +69,7 @@ class bare_design:
     self.write_3d_freecad_list = []
     # self-generated attributes
     self.reference_constraint = None
+    self.current_input_constraint = None
     self.constraint = None
     self.cli_str = None
     self.A_figures = None
@@ -84,6 +85,7 @@ class bare_design:
     init_parser = argparse.ArgumentParser(description='Command Line Interface of {:s}'.format(self.design_name))
     self.parser = f_constraint_constructor(init_parser)
     self.reference_constraint = vars(self.parser.parse_args([]))
+    self.current_input_constraint = self.reference_constraint.copy()
     self.constraint = self.reference_constraint.copy()
     self.f_design_constraint_constructor = f_constraint_constructor # needed for the function get_constraint_constructor()
 
@@ -170,6 +172,7 @@ class bare_design:
   def apply_constraint_default_value(self):
     """ reset the constraint to their default values
     """
+    self.current_input_constraint = self.reference_constraint.copy()
     self.constraint = self.reference_constraint.copy()
     return(self.constraint)
 
@@ -179,8 +182,8 @@ class bare_design:
     """
     #print("dbg146: constraint:", constraint)
     rc = self.reference_constraint
+    c = self.current_input_constraint.copy() # starting from current constraint
     #c = rc.copy() # starting from default constraint
-    c = self.get_constraint() # starting from current constraint
     new_contraint_value = 0
     for k in constraint.keys():
       if(not k in rc.keys()):
@@ -188,7 +191,7 @@ class bare_design:
         sys.exit(2)
       if(c[k] != constraint[k]):
         new_contraint_value += 1
-        c[k] = constraint[k]
+        c[k] = constraint[k] #equivalent to c.update(constraint)
     #print("dbg184: {:s} apply_constraint: new {:d},  unchanged: {:d},  total: {:d}".format(self.design_name, new_contraint_value, len(constraint)-new_contraint_value, len(constraint)))
     #c.update(constraint) # apply the new constraint values
     #print("dbg100: constraint:", c)
@@ -199,6 +202,7 @@ class bare_design:
     #for k in c.viewkeys():
     #  if(c[k] != rc[k]):
     #    print("dbg109: for k {:s}, c[k] {:s} != rc[k] {:s}".format(k, str(c[k]), str(rc[k])))
+    self.current_input_constraint = c.copy()
     if(self.f_constraint_check==None):
       print("WARN134: Warning, the function f_constraint_check has not been set!")
       self.constraint = c
