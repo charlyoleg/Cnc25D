@@ -641,6 +641,19 @@ def ltt_constraint_check(c):
   #
   c['epicyclic_gearing_ratio'] = float(c['sun_gear_tooth_nb'])/(c['sun_gear_tooth_nb']+c['annulus_gear_tooth_nb'])
   c['ltt_ratio'] = c['epicyclic_gearing_ratio']**c['step_nb']
+  # part quantity
+  c['planet_gear_q'] = (c['step_nb']-1)*c['planet_nb']
+  c['output_planet_gear_q'] = c['planet_nb']
+  c['rear_planet_carrier_q'] = c['step_nb']-1
+  c['front_planet_carrier_q'] = max(c['step_nb']-2, 0)
+  c['output_front_planet_carrier_q'] = 1 if(c['step_nb']>1) else 0
+  c['output_rear_planet_carrier_q'] = 1
+  c['output_shaft_q'] = 1
+  c['input_sun_gear_q'] = 1
+  c['motor_holder_q'] = 1
+  c['gearring_holder_q'] = 1
+  c['output_holder_q'] = 1
+  c['output_axle_holder_q'] = 1
   #
   c['gr_c'] = gr_c.copy()
   c['gp_ap_c'] = gp_ap_c.copy()
@@ -1027,12 +1040,18 @@ def ltt_3d_construction(c):
   r_slice['front_planet_carrier'] = ()
   # output_front_planet_carrier
   r_assembly['output_front_planet_carrier'] = (
+    ('planet_carrier_front', 0.0, 0.0, 0.0, 0.0, c['front_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('sun_gear', 0.0, 0.0, 0.0, 0.0, c['output_sun_width'], 'i', 'xy', 0.0, 0.0, c['front_planet_carrier_width']),
+    ('sun_spacer', 0.0, 0.0, 0.0, 0.0, c['sun_spacer_width'], 'i', 'xy', 0.0, 0.0, c['front_planet_carrier_width']+c['output_sun_width']))
+  r_slice['output_front_planet_carrier'] = ()
+  # output_shaft
+  r_assembly['output_shaft'] = (
     ('planet_carrier_front', 0.0, 0.0, 0.0, 0.0, c['output_front_planet_carrier_width'], 'i', 'xy', 0.0, 0.0, 0.0),
     ('output_hexagon', 0.0, 0.0, 0.0, 0.0, c['hexagon_width'], 'i', 'xy', 0.0, 0.0, c['output_front_planet_carrier_width']))
-  r_slice['output_front_planet_carrier'] = ()
+  r_slice['output_shaft'] = ()
   # input_sun_gear
   r_assembly['input_sun_gear'] = (
-    ('sun_gear', 0.0, 0.0, 0.0, 0.0, c['input_sun_width'], 'i', 'xy', 0.0, 0.0, 0.0),
+    ('input_sun_gear', 0.0, 0.0, 0.0, 0.0, c['input_sun_width'], 'i', 'xy', 0.0, 0.0, 0.0),
     ('sun_spacer', 0.0, 0.0, 0.0, 0.0, c['sun_spacer_width'], 'i', 'xy', 0.0, 0.0, c['input_sun_width']))
   r_slice['input_sun_gear'] = ()
   # motor_holder
@@ -1245,18 +1264,19 @@ cnc_router_bit_radius:  \t{:0.3f}
   i_gr.apply_external_constraint(c['gr_c'])
   #r_info += i_gr.get_info()
   r_info += """
-planet_gear                             Q: {:2d}
-output_planet_gear                      Q: {:2d}
-rear_planet_carrier                     Q: {:2d}
-front_planet_carrier                    Q: {:2d}
-output_rear_planet_carrier              Q: {:2d}
-output_front_planet_carrier (hexagon)   Q: {:2d}
-input_sun_gear                          Q: {:2d}
-motor_holder                            Q: {:2d}
-gearring_holder                         Q: {:2d}
-output_holder                           Q: {:2d}
-output_axle_holder                      Q: {:2d}
-  """.format((c['step_nb']-1)*c['planet_nb'], c['planet_nb'], c['step_nb']-1, c['step_nb']-1, 1, 1, 1, 1, 1, 1, 1)
+01 - planet_gear                   Q: {:2d}
+02 - output_planet_gear            Q: {:2d}
+03 - rear_planet_carrier           Q: {:2d}
+04 - front_planet_carrier          Q: {:2d}
+05 - output_front_planet_carrier   Q: {:2d}
+06 - output_rear_planet_carrier    Q: {:2d}
+07 - output_shaft (hexagon)        Q: {:2d}
+08 - input_sun_gear                Q: {:2d}
+09 - motor_holder                  Q: {:2d}
+10 - gearring_holder               Q: {:2d}
+11 - output_holder                 Q: {:2d}
+12 - output_axle_holder            Q: {:2d}
+  """.format(c['planet_gear_q'], c['output_planet_gear_q'], c['rear_planet_carrier_q'], c['front_planet_carrier_q'], c['output_front_planet_carrier_q'], c['output_rear_planet_carrier_q'], c['output_shaft_q'], c['input_sun_gear_q'], c['motor_holder_q'], c['gearring_holder_q'], c['output_holder_q'], c['output_axle_holder_q'])
   #print(r_info)
   return(r_info)
 
