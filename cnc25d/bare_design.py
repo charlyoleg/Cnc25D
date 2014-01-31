@@ -531,14 +531,14 @@ class bare_design:
           sys.exit(2)
     return(r_list)
 
-  def write_freecad_brep(self, output_file_basename):
+  def write_freecad_brep(self, output_file_basename, ai_stl=False):
     """ write all 3d-freecad_list in brep files
         output_file_basename contains the directory path and the file-basename
     """
     l = self.get_write_3d_freecad_list()
     for a in l:
       # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
-      design_output.freecad_object_output_file(self.get_fc_obj_function(a), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=False, ai_slice_xyz=self.fc_obj_slice3d_conf[a]) 
+      design_output.freecad_object_output_file(self.get_fc_obj_function(a), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=ai_stl, ai_slice_xyz=self.fc_obj_slice3d_conf[a]) 
 
   def run_simulation(self, sim_id=''):
     """ run the simulation sim_id
@@ -644,7 +644,7 @@ class bare_design:
     effective_args_in_txt = "{:s} cli_with_output_file_basename string: ".format(self.design_name) + ' '.join(effective_args)
     cwoo_parser = argparse.ArgumentParser(description='Command Line Interface of {:s} with output_file_basename'.format(self.design_name))
     cwoo_parser.add_argument('--output_file_basename','--ofb', action='store', default='', dest='sw_output_file_basename',
-      help="Outputs files depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, no-extension uses FreeCAD and you get .brep and .dxf")
+      help="Outputs files depending on your argument file_extension: .dxf uses mozman dxfwrite, .svg uses mozman svgwrite, .brep or .stl uses FreeCAD")
     cwoo_parser.add_argument('--simulate_2d','--s2d', action='store', nargs='?', const=default_sim_id, default='', dest='sw_simulate_2d',
       help="Run a 2D-simualtion in a Tk-window")
     cwoo_parser.add_argument('--display_2d_figures','--d2f', action='store_true', default=False, dest='sw_display_2d_figures',
@@ -673,12 +673,21 @@ class bare_design:
         output_file_basename = re.sub('\.dxf$', '', oo_args.sw_output_file_basename)
         self.write_info_txt(output_file_basename) # write info in test file
         self.write_figure_dxf(output_file_basename)
-      else:
-        output_file_basename = oo_args.sw_output_file_basename
+      elif(re.search('\.brep$', oo_args.sw_output_file_basename)):
+        output_file_basename = re.sub('\.brep$', '', oo_args.sw_output_file_basename)
         self.write_info_txt(output_file_basename) # write info in test file
         self.write_figure_brep(output_file_basename)
         self.write_assembly_brep(output_file_basename)
         self.write_freecad_brep(output_file_basename)
+      elif(re.search('\.stl$', oo_args.sw_output_file_basename)):
+        output_file_basename = re.sub('\.stl$', '', oo_args.sw_output_file_basename)
+        self.write_info_txt(output_file_basename) # write info in test file
+        self.write_figure_brep(output_file_basename)
+        self.write_assembly_brep(output_file_basename, ai_stl=True)
+        self.write_freecad_brep(output_file_basename, ai_stl=True)
+      else:
+        print("ERR698: Error, no output format extension provided! Try suffix: .dxf, .svg, .brep or .stl")
+        sys.exit(2)
     # run simulation
     if(oo_args.sw_simulate_2d==None):
       print("ERR510: no simualtion has been set")
