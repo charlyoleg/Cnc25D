@@ -3908,6 +3908,7 @@ ltt_c['hexagon_width']	= 20.0
 ### output_holder
 ltt_c['output_cover_radius_slack']	= 1.0
 ltt_c['output_holder_thickness']	= 4.0
+ltt_c['output_holder_crenel_nb']	= 0
 ltt_c['output_cover_width']	= 2.0
 ltt_c['output_holder_width']	= 20.0
 
@@ -3921,7 +3922,7 @@ ltt_c['axle_holder_width']	= 4.0
 
 ### input gearwheel
 ltt_c['input_axle_diameter']	= 2.0
-ltt_c['input_sun_width']	= 10.0
+ltt_c['input_sun_width']	= 0.0
 
 ### motor_holder
 ltt_c['motor_holder_width']	= 3.0
