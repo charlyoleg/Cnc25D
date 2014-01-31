@@ -361,10 +361,12 @@ def ltt_constraint_check(c):
       print("ERR289: Error, sun_y_position {:0.3f} is not at the expected coordinate 0.0".format(sun_y_position))
       sys.exit(2)
     #if(abs(c['sun_oriantation_angles'][i]-c['sun_oriantation_angles'][0])>radian_epsilon):
-    if(abs(math.fmod(c['sun_oriantation_angles'][i]-c['sun_oriantation_angles'][0]+sun_half_tooth_angle, 2*sun_half_tooth_angle)-sun_half_tooth_angle)>radian_epsilon):
+    angle_diff = math.fmod(c['sun_oriantation_angles'][i]-c['sun_oriantation_angles'][0]+11*sun_half_tooth_angle, 2*sun_half_tooth_angle)-sun_half_tooth_angle # might habe issue when the difference is negative
+    if(abs(angle_diff)>radian_epsilon):
       print("ERR293: Error, {:d}-sun_oriantation_angles {:0.3f} is different from 0-sun_oriantation_angles {:0.3f}".format(i, c['sun_oriantation_angles'][i], c['sun_oriantation_angles'][0]))
       #print("dbg306: sun_half_tooth_angle:", sun_half_tooth_angle, 2*sun_half_tooth_angle, i_gp.get_constraint()['second_pi_module_angle'])
       #print("dbg307: sun_oriantation_angles:", c['sun_oriantation_angles'])
+      #print("dbg369: angle_diff:", angle_diff)
       #print("dbg308: planet_oriantation_angles:", c['planet_oriantation_angles'])
       sys.exit(2)
   c['sun_oriantation_angle'] = c['sun_oriantation_angles'][0]
