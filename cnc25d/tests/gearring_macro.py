@@ -184,6 +184,7 @@ gr_constraint['cnc_router_bit_radius']          = 1.0
 
 my_gr = cnc25d_design.gearring(gr_constraint)
 my_gr.outline_display()
+my_gr.write_info_txt("test_output/gearring_macro")
 my_gr.write_figure_svg("test_output/gearring_macro")
 my_gr.write_figure_dxf("test_output/gearring_macro")
 my_gr.write_figure_brep("test_output/gearring_macro")

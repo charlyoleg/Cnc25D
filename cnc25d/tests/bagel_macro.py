@@ -110,6 +110,7 @@ bagel_constraint['bagel_extra_cut_thickness']       = 0.0
 
 my_bagel = cnc25d_design.bagel(bagel_constraint)
 my_bagel.outline_display()
+my_bagel.write_info_txt("test_output/bagel_macro")
 my_bagel.write_figure_svg("test_output/bagel_macro")
 my_bagel.write_figure_dxf("test_output/bagel_macro")
 my_bagel.write_figure_brep("test_output/bagel_macro")

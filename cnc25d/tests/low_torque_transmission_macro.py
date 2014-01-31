@@ -203,6 +203,7 @@ ltt_c['cnc_router_bit_radius']	= 0.1
 
 my_ltt = cnc25d_design.ltt(ltt_c)
 my_ltt.outline_display()
+my_ltt.write_info_txt("test_output/ltt_macro")
 my_ltt.write_figure_svg("test_output/ltt_macro")
 my_ltt.write_figure_dxf("test_output/ltt_macro")
 my_ltt.write_figure_brep("test_output/ltt_macro")

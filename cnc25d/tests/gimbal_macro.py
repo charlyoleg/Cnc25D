@@ -317,6 +317,7 @@ gimbal_constraint['tilt_angle']      = 45*math.pi/180 #0.0
 
 my_gimbal = cnc25d_design.gimbal(gimbal_constraint)
 my_gimbal.outline_display()
+my_gimbal.write_info_txt("test_output/gimbal_macro")
 my_gimbal.write_figure_svg("test_output/gimbal_macro")
 my_gimbal.write_figure_dxf("test_output/gimbal_macro")
 my_gimbal.write_figure_brep("test_output/gimbal_macro")

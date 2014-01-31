@@ -112,6 +112,7 @@ bwf_constraint['slab_thickness'] = 5.0
 
 my_bwf = cnc25d_design.box_wood_frame(bwf_constraint)
 my_bwf.outline_display()
+my_bwf.write_info_txt("test_output/bwf_macro")
 my_bwf.write_figure_svg("test_output/bwf_macro")
 my_bwf.write_figure_dxf("test_output/bwf_macro")
 my_bwf.write_figure_brep("test_output/bwf_macro")

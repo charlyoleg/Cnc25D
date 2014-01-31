@@ -197,6 +197,7 @@ eg_constraint['gear_profile_height']     = 10.0
 
 my_eg = cnc25d_design.epicyclic_gearing(eg_constraint)
 my_eg.outline_display()
+my_eg.write_info_txt("test_output/epicyclic_macro")
 my_eg.write_figure_svg("test_output/epicyclic_macro")
 my_eg.write_figure_dxf("test_output/epicyclic_macro")
 my_eg.write_figure_brep("test_output/epicyclic_macro")

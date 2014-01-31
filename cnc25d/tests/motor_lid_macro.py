@@ -163,6 +163,7 @@ ml_constraint['extrusion_height']     = 10.0
 
 my_ml = cnc25d_design.motor_lid(ml_constraint)
 my_ml.outline_display()
+my_ml.write_info_txt("test_output/ml_macro")
 my_ml.write_figure_svg("test_output/ml_macro")
 my_ml.write_figure_dxf("test_output/ml_macro")
 my_ml.write_figure_brep("test_output/ml_macro")

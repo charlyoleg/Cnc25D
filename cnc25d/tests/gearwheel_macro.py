@@ -184,6 +184,7 @@ gw_constraint['cnc_router_bit_radius']          = 1.0
 
 my_gw = cnc25d_design.gearwheel(gw_constraint)
 my_gw.outline_display()
+my_gw.write_info_txt("test_output/gearwheel_macro")
 my_gw.write_figure_svg("test_output/gearwheel_macro")
 my_gw.write_figure_dxf("test_output/gearwheel_macro")
 my_gw.write_figure_brep("test_output/gearwheel_macro")

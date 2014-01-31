@@ -232,6 +232,7 @@ bwf_constraint['slab_thickness'] = 5.0
 
 my_bwf = cnc25d_design.box_wood_frame(bwf_constraint)
 my_bwf.outline_display()
+my_bwf.write_info_txt("test_output/bwf_macro")
 my_bwf.write_figure_svg("test_output/bwf_macro")
 my_bwf.write_figure_dxf("test_output/bwf_macro")
 my_bwf.write_figure_brep("test_output/bwf_macro")
@@ -957,6 +958,7 @@ gp_constraint['gear_profile_height']  = 20.0
 
 my_gp = gear_profile.gear_profile(gp_constraint)
 my_gp.outline_display()
+my_gp.write_info_txt("test_output/gear_profile_macro")
 my_gp.write_figure_svg("test_output/gear_profile_macro")
 my_gp.write_figure_dxf("test_output/gear_profile_macro")
 my_gp.write_figure_brep("test_output/gear_profile_macro")
@@ -1167,6 +1169,7 @@ gw_constraint['cnc_router_bit_radius']          = 1.0
 
 my_gw = cnc25d_design.gearwheel(gw_constraint)
 my_gw.outline_display()
+my_gw.write_info_txt("test_output/gearwheel_macro")
 my_gw.write_figure_svg("test_output/gearwheel_macro")
 my_gw.write_figure_dxf("test_output/gearwheel_macro")
 my_gw.write_figure_brep("test_output/gearwheel_macro")
@@ -1378,6 +1381,7 @@ gr_constraint['cnc_router_bit_radius']          = 1.0
 
 my_gr = cnc25d_design.gearring(gr_constraint)
 my_gr.outline_display()
+my_gr.write_info_txt("test_output/gearring_macro")
 my_gr.write_figure_svg("test_output/gearring_macro")
 my_gr.write_figure_dxf("test_output/gearring_macro")
 my_gr.write_figure_brep("test_output/gearring_macro")
@@ -1567,6 +1571,7 @@ gb_constraint['gearbar_hole_increment']         = 1
 
 my_gb = cnc25d_design.gearbar(gb_constraint)
 my_gb.outline_display()
+my_gb.write_info_txt("test_output/gearbar_macro")
 my_gb.write_figure_svg("test_output/gearbar_macro")
 my_gb.write_figure_dxf("test_output/gearbar_macro")
 my_gb.write_figure_brep("test_output/gearbar_macro")
@@ -1772,6 +1777,7 @@ sgw_constraint['cnc_router_bit_radius']          = 1.0
 
 my_sgw = cnc25d_design.split_gearwheel(sgw_constraint)
 my_sgw.outline_display()
+my_sgw.write_info_txt("test_output/sgw_macro")
 my_sgw.write_figure_svg("test_output/sgw_macro")
 my_sgw.write_figure_dxf("test_output/sgw_macro")
 my_sgw.write_figure_brep("test_output/sgw_macro")
@@ -1995,6 +2001,7 @@ eg_constraint['gear_profile_height']     = 10.0
 
 my_eg = cnc25d_design.epicyclic_gearing(eg_constraint)
 my_eg.outline_display()
+my_eg.write_info_txt("test_output/epicyclic_macro")
 my_eg.write_figure_svg("test_output/epicyclic_macro")
 my_eg.write_figure_dxf("test_output/epicyclic_macro")
 my_eg.write_figure_brep("test_output/epicyclic_macro")
@@ -2163,6 +2170,7 @@ al_constraint['extrusion_height']     = 10.0
 
 my_al = cnc25d_design.axle_lid(al_constraint)
 my_al.outline_display()
+my_al.write_info_txt("test_output/axle_lid_macro")
 my_al.write_figure_svg("test_output/axle_lid_macro")
 my_al.write_figure_dxf("test_output/axle_lid_macro")
 my_al.write_figure_brep("test_output/axle_lid_macro")
@@ -2352,6 +2360,7 @@ ml_constraint['extrusion_height']     = 10.0
 
 my_ml = cnc25d_design.motor_lid(ml_constraint)
 my_ml.outline_display()
+my_ml.write_info_txt("test_output/ml_macro")
 my_ml.write_figure_svg("test_output/ml_macro")
 my_ml.write_figure_dxf("test_output/ml_macro")
 my_ml.write_figure_brep("test_output/ml_macro")
@@ -2554,6 +2563,7 @@ bell_constraint['bell_extra_cut_thickness']        = 0.0
 
 my_bell = cnc25d_design.bell(bell_constraint)
 my_bell.outline_display()
+my_bell.write_info_txt("test_output/bell_macro")
 my_bell.write_figure_svg("test_output/bell_macro")
 my_bell.write_figure_dxf("test_output/bell_macro")
 my_bell.write_figure_brep("test_output/bell_macro")
@@ -2690,6 +2700,7 @@ bagel_constraint['bagel_extra_cut_thickness']       = 0.0
 
 my_bagel = cnc25d_design.bagel(bagel_constraint)
 my_bagel.outline_display()
+my_bagel.write_info_txt("test_output/bagel_macro")
 my_bagel.write_figure_svg("test_output/bagel_macro")
 my_bagel.write_figure_dxf("test_output/bagel_macro")
 my_bagel.write_figure_brep("test_output/bagel_macro")
@@ -2901,6 +2912,7 @@ bba_constraint['bagel_extra_cut_thickness']       = 0.0
 
 my_bba = cnc25d_design.bba(bba_constraint)
 my_bba.outline_display()
+my_bba.write_info_txt("test_output/bba_macro")
 my_bba.write_figure_svg("test_output/bba_macro")
 my_bba.write_figure_dxf("test_output/bba_macro")
 my_bba.write_figure_brep("test_output/bba_macro")
@@ -3126,6 +3138,7 @@ crest_constraint['crest_cnc_router_bit_radius']       = 0.5
 
 my_crest = cnc25d_design.crest(crest_constraint)
 my_crest.outline_display()
+my_crest.write_info_txt("test_output/crest_macro")
 my_crest.write_figure_svg("test_output/crest_macro")
 my_crest.write_figure_dxf("test_output/crest_macro")
 my_crest.write_figure_brep("test_output/crest_macro")
@@ -3370,6 +3383,7 @@ cc_constraint['crest_cnc_router_bit_radius']       = 0.5
 
 my_cc = cnc25d_design.cross_cube(cc_constraint)
 my_cc.outline_display()
+my_cc.write_info_txt("test_output/cross_cube_macro")
 my_cc.write_figure_svg("test_output/cross_cube_macro")
 my_cc.write_figure_dxf("test_output/cross_cube_macro")
 my_cc.write_figure_brep("test_output/cross_cube_macro")
@@ -3714,6 +3728,7 @@ gimbal_constraint['tilt_angle']      = 45*math.pi/180 #0.0
 
 my_gimbal = cnc25d_design.gimbal(gimbal_constraint)
 my_gimbal.outline_display()
+my_gimbal.write_info_txt("test_output/gimbal_macro")
 my_gimbal.write_figure_svg("test_output/gimbal_macro")
 my_gimbal.write_figure_dxf("test_output/gimbal_macro")
 my_gimbal.write_figure_brep("test_output/gimbal_macro")
@@ -3944,6 +3959,7 @@ ltt_c['cnc_router_bit_radius']	= 0.1
 
 my_ltt = cnc25d_design.ltt(ltt_c)
 my_ltt.outline_display()
+my_ltt.write_info_txt("test_output/ltt_macro")
 my_ltt.write_figure_svg("test_output/ltt_macro")
 my_ltt.write_figure_dxf("test_output/ltt_macro")
 my_ltt.write_figure_brep("test_output/ltt_macro")

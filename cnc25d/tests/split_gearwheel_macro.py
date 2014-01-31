@@ -179,6 +179,7 @@ sgw_constraint['cnc_router_bit_radius']          = 1.0
 
 my_sgw = cnc25d_design.split_gearwheel(sgw_constraint)
 my_sgw.outline_display()
+my_sgw.write_info_txt("test_output/sgw_macro")
 my_sgw.write_figure_svg("test_output/sgw_macro")
 my_sgw.write_figure_dxf("test_output/sgw_macro")
 my_sgw.write_figure_brep("test_output/sgw_macro")

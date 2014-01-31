@@ -185,6 +185,7 @@ bba_constraint['bagel_extra_cut_thickness']       = 0.0
 
 my_bba = cnc25d_design.bba(bba_constraint)
 my_bba.outline_display()
+my_bba.write_info_txt("test_output/bba_macro")
 my_bba.write_figure_svg("test_output/bba_macro")
 my_bba.write_figure_dxf("test_output/bba_macro")
 my_bba.write_figure_brep("test_output/bba_macro")

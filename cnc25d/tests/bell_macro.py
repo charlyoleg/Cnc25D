@@ -174,6 +174,7 @@ bell_constraint['bell_extra_cut_thickness']        = 0.0
 
 my_bell = cnc25d_design.bell(bell_constraint)
 my_bell.outline_display()
+my_bell.write_info_txt("test_output/bell_macro")
 my_bell.write_figure_svg("test_output/bell_macro")
 my_bell.write_figure_dxf("test_output/bell_macro")
 my_bell.write_figure_brep("test_output/bell_macro")

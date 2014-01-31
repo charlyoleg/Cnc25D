@@ -156,6 +156,7 @@ gp_constraint['gear_profile_height']  = 20.0
 
 my_gp = gear_profile.gear_profile(gp_constraint)
 my_gp.outline_display()
+my_gp.write_info_txt("test_output/gear_profile_macro")
 my_gp.write_figure_svg("test_output/gear_profile_macro")
 my_gp.write_figure_dxf("test_output/gear_profile_macro")
 my_gp.write_figure_brep("test_output/gear_profile_macro")

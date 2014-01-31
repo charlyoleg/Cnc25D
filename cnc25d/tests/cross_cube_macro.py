@@ -217,6 +217,7 @@ cc_constraint['crest_cnc_router_bit_radius']       = 0.5
 
 my_cc = cnc25d_design.cross_cube(cc_constraint)
 my_cc.outline_display()
+my_cc.write_info_txt("test_output/cross_cube_macro")
 my_cc.write_figure_svg("test_output/cross_cube_macro")
 my_cc.write_figure_dxf("test_output/cross_cube_macro")
 my_cc.write_figure_brep("test_output/cross_cube_macro")

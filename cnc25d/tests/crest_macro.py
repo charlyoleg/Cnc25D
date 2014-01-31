@@ -198,6 +198,7 @@ crest_constraint['crest_cnc_router_bit_radius']       = 0.5
 
 my_crest = cnc25d_design.crest(crest_constraint)
 my_crest.outline_display()
+my_crest.write_info_txt("test_output/crest_macro")
 my_crest.write_figure_svg("test_output/crest_macro")
 my_crest.write_figure_dxf("test_output/crest_macro")
 my_crest.write_figure_brep("test_output/crest_macro")

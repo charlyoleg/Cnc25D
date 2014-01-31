@@ -163,6 +163,7 @@ gb_constraint['gearbar_hole_increment']         = 1
 
 my_gb = cnc25d_design.gearbar(gb_constraint)
 my_gb.outline_display()
+my_gb.write_info_txt("test_output/gearbar_macro")
 my_gb.write_figure_svg("test_output/gearbar_macro")
 my_gb.write_figure_dxf("test_output/gearbar_macro")
 my_gb.write_figure_brep("test_output/gearbar_macro")

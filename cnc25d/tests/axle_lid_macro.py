@@ -141,6 +141,7 @@ al_constraint['extrusion_height']     = 10.0
 
 my_al = cnc25d_design.axle_lid(al_constraint)
 my_al.outline_display()
+my_al.write_info_txt("test_output/axle_lid_macro")
 my_al.write_figure_svg("test_output/axle_lid_macro")
 my_al.write_figure_dxf("test_output/axle_lid_macro")
 my_al.write_figure_brep("test_output/axle_lid_macro")
