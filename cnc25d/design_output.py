@@ -113,13 +113,23 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height, ai_info_txt='
       #print("Generate {:s} with mozman svgwrite".format(ai_output_filename))
       outline_backends.write_figure_in_svg(ai_figure, ai_output_filename)
     # FreeCAD
-    else:
-      print("Generate with FreeCAD the BRep file {:s}.brep".format(ai_output_filename))
+    elif(re.search('\.brep$', ai_output_filename)):
+      print("Generate with FreeCAD the BRep file {:s}".format(ai_output_filename))
       freecad_part = outline_backends.figure_to_freecad_25d_part(ai_figure, ai_height)
-      freecad_part.exportBrep("{:s}.brep".format(ai_output_filename))
+      freecad_part.exportBrep("{:s}".format(ai_output_filename))
       print("Generate with FreeCAD the DXF file {:s}.dxf".format(ai_output_filename))
       # slice freecad_part  in the XY plan at a height of ai_height/2
       export_2d.export_to_dxf(freecad_part, Base.Vector(0,0,1), ai_height/2, "{:s}.dxf".format(ai_output_filename))
+    elif(re.search('\.stl$', ai_output_filename)):
+      print("Generate with FreeCAD the STL file {:s}".format(ai_output_filename))
+      freecad_part = outline_backends.figure_to_freecad_25d_part(ai_figure, ai_height)
+      freecad_part.exportStl("{:s}".format(ai_output_filename))
+      print("Generate with FreeCAD the DXF file {:s}.dxf".format(ai_output_filename))
+      # slice freecad_part  in the XY plan at a height of ai_height/2
+      export_2d.export_to_dxf(freecad_part, Base.Vector(0,0,1), ai_height/2, "{:s}.dxf".format(ai_output_filename))
+    else:
+      print("ERR124: Error: the suffix of the filename {:s} is unknown. Try with suffix: .dxf, .svg, .brep or .stl".format(ai_output_filename))
+      sys.exit(2)
     # info_txt
     #if(ai_info_txt!=''):
     #  output_basename = re.sub('(\.dxf$)|(\.svg$)', '', ai_output_filename)

@@ -424,10 +424,10 @@ def gearring_2d_construction(c):
         holder_A.append((c['g1_ix']+c['holder_radius']*math.cos(middle_angle), c['g1_iy']+c['holder_radius']*math.sin(middle_angle),
                         c['g1_ix']+c['holder_radius']*math.cos(end_angle), c['g1_iy']+c['holder_radius']*math.sin(end_angle), c['holder_smoothing_radius_list'][i+1]))
     end_angle = c['holder_position_angle'] + (c['holder_crenel_number_cut']-1)*angle_incr + c['holder_crenel_half_angle']
-    holder_A.append((c['g1_ix']+li*math.cos(end_angle), c['g1_iy']+li*math.sin(end_angle), 0))
+    holder_A.append((c['g1_ix']+li*math.cos(end_angle), c['g1_iy']+li*math.sin(end_angle), c['holder_crenel_router_bit_radius']))
     middle_angle = c['holder_position_angle'] + (c['holder_crenel_number_cut']-1)*angle_incr/2.0
     #print("dbg421: end_angle middle_angle first_angle:", end_angle, middle_angle, first_angle)
-    holder_A.append((c['g1_ix']+li*math.cos(middle_angle), c['g1_iy']+li*math.sin(middle_angle), c['g1_ix']+li*math.cos(first_angle), c['g1_iy']+li*math.sin(first_angle), 0))
+    holder_A.append((c['g1_ix']+li*math.cos(middle_angle), c['g1_iy']+li*math.sin(middle_angle), c['g1_ix']+li*math.cos(first_angle), c['g1_iy']+li*math.sin(first_angle), c['holder_crenel_router_bit_radius']))
     holder_A.append((holder_A[0][0], holder_A[0][1], 0))
     gearring_cut_fig.append(holder_A) # external outline
     for i in range(c['holder_crenel_number_cut']):

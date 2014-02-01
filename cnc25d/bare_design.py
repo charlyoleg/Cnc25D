@@ -482,14 +482,14 @@ class bare_design:
           sys.exit(2)
     return(r_list)
 
-  def write_figure_brep(self, output_file_basename):
+  def write_figure_brep(self, output_file_basename, suffix='brep'):
     """ write all 2d-figures in brep files
         output_file_basename contains the directory path and the file-basename
     """
     txt_info = self.get_info()
     figs = self.get_write_3d_figure_list()
     for f in figs:
-      design_output.generate_output_file(design_output.cnc_cut_figure(self.A_figures[f], "generate_brep_{:s}".format(f)), "{:s}_{:s}".format(output_file_basename, f), self.figure_heights[f], txt_info)
+      design_output.generate_output_file(design_output.cnc_cut_figure(self.A_figures[f], "generate_brep_{:s}".format(f)), "{:s}_{:s}.{:s}".format(output_file_basename, f, suffix), self.figure_heights[f], txt_info)
 
   def get_write_3d_conf_list(self):
     """ generate the list of 3d-assembly-configurations to be written according to self.write_3d_conf_list
@@ -508,7 +508,7 @@ class bare_design:
           sys.exit(2)
     return(r_list)
 
-  def write_assembly_brep(self, output_file_basename, ai_stl=False):
+  def write_assembly_brep(self, output_file_basename, ai_brep=True, ai_stl=False):
     """ write all 3d-assembly-configurations in brep files
         output_file_basename contains the directory path and the file-basename
     """
@@ -516,7 +516,7 @@ class bare_design:
     for a in confs:
       print("write_assembly_brep: {:s}".format(a))
       # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
-      design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=ai_stl, ai_slice_xyz=self.slice3d_configurations[a]) 
+      design_output.generate_3d_assembly_output_file(self.complete_assembly_conf(self.assembly_configurations[a]), "{:s}_{:s}".format(output_file_basename, a), ai_brep=ai_brep, ai_stl=ai_stl, ai_slice_xyz=self.slice3d_configurations[a]) 
 
   def get_write_3d_freecad_list(self):
     """ generate the list of 3d-freecad_objects to be written according to self.write_3d_freecad_list
@@ -536,14 +536,14 @@ class bare_design:
           sys.exit(2)
     return(r_list)
 
-  def write_freecad_brep(self, output_file_basename, ai_stl=False):
+  def write_freecad_brep(self, output_file_basename, ai_brep=True, ai_stl=False):
     """ write all 3d-freecad_list in brep files
         output_file_basename contains the directory path and the file-basename
     """
     l = self.get_write_3d_freecad_list()
     for a in l:
       # (ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[])
-      design_output.freecad_object_output_file(self.get_fc_obj_function(a), "{:s}_{:s}".format(output_file_basename, a), ai_brep=True, ai_stl=ai_stl, ai_slice_xyz=self.fc_obj_slice3d_conf[a]) 
+      design_output.freecad_object_output_file(self.get_fc_obj_function(a), "{:s}_{:s}".format(output_file_basename, a), ai_brep=ai_brep, ai_stl=ai_stl, ai_slice_xyz=self.fc_obj_slice3d_conf[a]) 
 
   def run_simulation(self, sim_id=''):
     """ run the simulation sim_id
@@ -687,9 +687,9 @@ class bare_design:
       elif(re.search('\.stl$', oo_args.sw_output_file_basename)):
         output_file_basename = re.sub('\.stl$', '', oo_args.sw_output_file_basename)
         self.write_info_txt(output_file_basename) # write info in test file
-        self.write_figure_brep(output_file_basename)
-        self.write_assembly_brep(output_file_basename, ai_stl=True)
-        self.write_freecad_brep(output_file_basename, ai_stl=True)
+        self.write_figure_brep(output_file_basename, suffix='stl')
+        self.write_assembly_brep(output_file_basename, ai_brep=False, ai_stl=True)
+        self.write_freecad_brep(output_file_basename, ai_brep=False, ai_stl=True)
       else:
         print("ERR698: Error, no output format extension provided! Try suffix: .dxf, .svg, .brep or .stl")
         sys.exit(2)
