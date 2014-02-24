@@ -230,8 +230,12 @@ def ideal_figure(ai_figure, ai_error_msg_id):
 def figures_to_freecad_assembly(ai_figure_assembly):
   """ Extrude figures and place them from a list of figures and 3D positioning instructions
   """
+  obj_nb = len(ai_figure_assembly)
+  if(obj_nb<1):
+    print("ERR235: the freecad assembly must contain at least one figure")
+    sys.exit(2)
   fc_obj = []
-  for i in range(len(ai_figure_assembly)):
+  for i in range(obj_nb):
     if(len(ai_figure_assembly[i])!=11):
       print("ERR219: Error len of ai_figure_assembly {:d} must be 11".format(len(ai_figure_assembly[i])))
       sys.exit(2)
@@ -240,7 +244,10 @@ def figures_to_freecad_assembly(ai_figure_assembly):
     part_extruded = outline_backends.figure_to_freecad_25d_part(part_figure_zero, size_z)
     part_placed = positioning.place_plank(part_extruded, size_x, size_y, size_z, flip, orientation, translate_x, translate_y, translate_z)
     fc_obj.append(part_placed.copy())
-  r_assembly = Part.makeCompound(fc_obj)
+  #r_assembly = Part.makeCompound(fc_obj) # common face are not fused with makeCompound
+  r_assembly = fc_obj[0]
+  for i in range(obj_nb-1):
+    r_assembly = r_assembly.fuse(fc_obj[i+1])
   return(r_assembly)
 
 ################################################################
