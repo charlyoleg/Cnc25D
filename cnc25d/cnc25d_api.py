@@ -37,6 +37,8 @@ import export_2d
 import design_output
 import design_help
 import bare_design
+import design_frontend
+import draw_2d_frontend
 
 ################################################################
 # api function alias
@@ -93,6 +95,15 @@ figures_to_freecad_assembly = design_output.figures_to_freecad_assembly
 
 # from bare_design
 bare_design = bare_design.bare_design
+
+# design_frontend
+check = design_frontend.check
+# draw_2d_frontend
+c_xy = draw_2d_frontend.c_xy
+Arc_Line_Outline = draw_2d_frontend.Arc_Line_Outline
+Circle_Outline = draw_2d_frontend.Circle_Outline
+Figure = draw_2d_frontend.Figure
+Figure_Collection = draw_2d_frontend.Figure_Collection
 
 ################################################################
 # function combinations
