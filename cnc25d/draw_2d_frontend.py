@@ -44,11 +44,13 @@ draw_2d_frontend and design_frontend complete the bare_design class.
 import math
 import sys
 import re
+import copy
 #import argparse
 #from datetime import datetime
 #import os, errno
 ## cnc25d
 import small_geometry
+import cnc_outline
 #import outline_backends
 #import export_2d
 
@@ -170,6 +172,12 @@ class Arc_Line_Outline:
     (X1, Y1) = c_xy(R, a1, CX, CY, C)
     (X2, Y2) = c_xy(R, a2, CX, CY, C)
     self.ol.append((X1, Y1, X2, Y2, rbr))
+
+  def add_piece(self, ai_piece):
+    """ Add a list of list to the outline
+        This might be convenient if you work with sub-outline than you inversed, etc
+    """
+    self.ol.extend(ai_piece)
     
   def close_with_Line(self):
     """
@@ -194,6 +202,47 @@ class Arc_Line_Outline:
     Y2 = self.ol[0][1]
     self.ol.append((X1, Y1, X2, Y2, 0)) # last point rbr must be 0
 
+  def close_insurance(self):
+    """ check if the outline is close (or close some tolerance), set the last rbr to 0
+        Use this method when it would be too tangled to use one of the method close_with_
+    """
+    # precision
+    radian_epsilon = math.pi/1000
+    #
+    if((abs(self.ol[0][0]-self.ol[-1][-3])>radian_epsilon)or(abs(self.ol[0][1]-self.ol[-1][-2])>radian_epsilon)):
+      print("ERR206: Error, outline {:s} should be closed but is not closed: first point ({:0.3f}, {:0.3f}), last point ({:0.3f}, {:0.3f})".format(self.outline_id, self.ol[0][0], self.ol[0][1], self.ol[-1][-3], self.ol[-1][-2]))
+      sys.exit(2)
+    last_segment = list(self.ol[-1])
+    last_segment[-3] = self.ol[0][0]
+    last_segment[-2] = self.ol[0][1]
+    last_segment[-1] = 0
+    self.ol[-1] = tuple(last_segment)
+
+  def rotate(self, ai_x, ai_y, ai_angle):
+    """ create a new outline from the parent one with a rotation of center (ai_x, ai_y) and angle ai_angle
+    """
+    r_ol = Arc_Line_Outline("{:s}_rotated".format(self.outline_id))
+    r_ol.add_piece(cnc_outline.outline_rotate(self.ol, ai_x, ai_y, ai_angle))
+    return(r_ol)
+
+  def shift_xy(self, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient):
+    """ Create a new outline with add an offset and multiply by coefficient the coordinates
+    """
+    r_ol = Arc_Line_Outline("{:s}_shift".format(self.outline_id))
+    r_ol.add_piece(cnc_outline.outline_shift_xy(self.ol, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_y_coefficient))
+    return(r_ol)
+
+  def flip_xy(self, ai_zero_x, ai_zero_y, ai_size_x, ai_size_y, ai_x_flip, ai_y_flip):
+    """ Create a new outline with a flip_xy
+    """
+    r_ol = Arc_Line_Outline("{:s}_flip".format(self.outline_id))
+    centered_ol = cnc_outline.outline_shift_xy(self.ol, -1*(ai_zero_x+ai_size_x/2.0), 1, -1*(ai_zero_y+ai_size_y/2.0), 1)
+    flipped_ol = cnc_outline.outline_shift_xy(centered_ol, 0.0, ai_x_flip, 0.0, ai_y_flip)
+    #flipped_ol = cnc_outline.outline_shift_xy(centered_ol, 0, ai_x_flip, 0, ai_y_flip) # what makes the most sense? re-shift or not?
+    recentered_ol = cnc_outline.outline_shift_xy(flipped_ol, ai_size_x/2.0, 1, ai_size_y/2.0, 1)
+    r_ol.add_piece(recentered_ol)
+    return(r_ol)
+
   def check(self, figure_id=""):
     """ Check the consistence of the outline for being integrated in a figure
     """
@@ -203,6 +252,13 @@ class Arc_Line_Outline:
     if(len(self.ol)<2):
       print("ERR179: Error, figure {:s}, outline {:s} with {:d} segments is too short. Add at leat two segment first.".format(figure_id, self.outline_id, len(self.ol)))
       sys.exit(2)
+    if(len(self.ol[0])!=3):
+      print("ERR222: Error, figure {:s}, outline {:s}, the StartPoint_length {:d} is not 3".format(figure_id, self.outline_id, len(self.ol[0])))
+      sys.exit(2)
+    for i in range(len(self.ol)):
+      if((len(self.ol[i])!=3)and(len(self.ol[i])!=5)):
+        print("ERR226: Error, figure {:s}, outline {:s}, segment {:d}, length {:d} is not 3 or 5".format(figure_id, self.outline_id, i, len(self.ol[i])))
+        sys.exit(2)
     if((self.ol[0][0]!=self.ol[-1][-3])or(self.ol[0][1]!=self.ol[-1][-2])):
       print("ERR182: Error, figure {:s}, outline {:s} is not closed: first point ({:0.3f}, {:0.3f}), last point ({:0.3f}, {:0.3f})".format(figure_id, self.outline_id, self.ol[0][0], self.ol[0][1], self.ol[-1][-3], self.ol[-1][-2]))
       sys.exit(2)
@@ -406,6 +462,17 @@ y_length: {:0.3f}
       print("ERR406: Error, outline {:s}, convert_from_old_format failed because last_segment length {:d} is not 3 or 5".format(self.outline_id, len(last_segment)))
       sys.exit(2)
 
+  def cnc_cut(self):
+    """ smooth and enlarged corner according to the router_bit_radius and return a B-format outline list
+    """
+    r_B_format = cnc_outline.cnc_cut_outline(self.ol, self.outline_id)
+    return(r_B_format)
+
+  def ideal(self):
+    """ untouched corner and return a B-format outline list
+    """
+    r_B_format = cnc_outline.ideal_outline(self.ol, self.outline_id)
+    return(r_B_format)
 
 
 class Circle_Outline:
@@ -594,22 +661,49 @@ class Figure:
       sys.exit(2)
     self._add_outline(outline, True)
 
-  def add_undefine_outline(self, outline):
+  def add_undefine_outline(self, outline, extrudable=False):
     """ add a undefine outline
     """
-    self.extrudable = False
+    self.extrudable = extrudable
     self._add_outline(outline, False)
 
-  def merge_figure(self, figure):
+  def merge_figure(self, figure, extrudable=False):
     """ merge a figure to the current figure
     """
     for i in range(len(figure.outlines)):
-      self.add_undefine_outline(figure.outlines[i])
+      self.add_undefine_outline(figure.outlines[i], extrudable)
 
   def set_height(self, ai_height):
     """ set the extrude height of a figure
     """
     self.height = ai_height
+
+  def rotate(self, ai_x, ai_y, ai_angle):
+    """ create a new figure from the parent one with a rotation of center (ai_x, ai_y) and angle ai_angle
+    """
+    r_fig = Figure("{:s}_rotate")
+    for i in range(len(self.outlines)):
+      r_fig.add_undefine_outline(self.outlines[i].rotate(ai_x, ai_y, ai_angle))
+    r_fig.extrudable = self.extrudable
+    return(r_fig)
+
+  def translate(self, ai_translate_x, ai_translate_y):
+    """ create a new figure from the parent one with a translation
+    """
+    r_fig = Figure("{:s}_translate")
+    for i in range(len(self.outlines)):
+      r_fig.add_undefine_outline(self.outlines[i].shift_xy(ai_translate_x, 1, ai_translate_y, 1))
+    r_fig.extrudable = self.extrudable
+    return(r_fig)
+
+  def flip_xy(self, ai_zero_x, ai_zero_y, ai_size_x, ai_size_y, ai_x_flip, ai_y_flip):
+    """ create a new figure from the parent one with a flip
+    """
+    r_fig = Figure("{:s}_flip")
+    for i in range(len(self.outlines)):
+      r_fig.add_undefine_outline(self.outlines[i].flip_xy(ai_zero_x, ai_zero_y, ai_size_x, ai_size_y, ai_x_flip, ai_y_flip))
+    r_fig.extrudable = self.extrudable
+    return(r_fig)
 
   def stat_info(self, context_msg=""):
     """ statistics information on the figure
@@ -711,6 +805,28 @@ y_length: {:0.3f}
         ol.convert_from_old_format(old_ol)
         self.add_undefine_outline(ol)
 
+  def cnc_cut(self):
+    """ smooth and enlarged corner according to the router_bit_radius and return a B-format figure list
+    """
+    r_B_format = []
+    for i in range(len(self.outlines)):
+      if(isinstance(self.outlines[i], Arc_Line_Outline)):
+        r_B_format.append(self.outlines[i].cnc_cut())
+      else:
+        r_B_format.append(self.outlines[i].convert_to_old_format())
+    return(r_B_format)
+
+  def ideal(self):
+    """ untouched corner and return a B-format figure list
+    """
+    r_B_format = []
+    for i in range(len(self.outlines)):
+      if(isinstance(self.outlines[i], Arc_Line_Outline)):
+        r_B_format.append(self.outlines[i].ideal())
+      else:
+        r_B_format.append(self.outlines[i].convert_to_old_format())
+    return(r_B_format)
+
 
 class Figure_Collection:
   """
@@ -749,7 +865,8 @@ class Figure_Collection:
     if(not isinstance(ai_figure, Figure)):
       print("ERR525: Error, figure_collection {:s}, add unexpected object {:s}".format(self.collection_id, ai_figure.figure_id))
       sys.exit(2)
-    self.figures.append(ai_figure)
+    self.figures.append(copy.deepcopy(ai_figure)) # if the reference change, the stored object doesn't change
+    #self.figures.append(copy.copy(ai_figure)) # todo: check the difference between copy() and deepcopy()
     # update statistics
     self.stat['arc_radius_min'] = min_w_init(self.stat['arc_radius_min'], ai_figure.stat['arc_radius_min'])
     self.stat['arc_radius_max'] = max_w_init(self.stat['arc_radius_max'], ai_figure.stat['arc_radius_max'])
@@ -893,8 +1010,8 @@ def test_draw_2d_1():
   extol = Arc_Line_Outline("extol")
   extol.add_StartPoint(100, 0, rbr=0)
   extol.add_ArcThrTo_radius_angles(20, -math.pi, math.pi/2, 100, 20, rbr=0)
-  extol.add_ArcThrTo(110, 40, 100, 50, rbr=0)
-  extol.close_with_ArcThr(120, 40)
+  extol.add_ArcThrTo(110, 50, 100, 60, rbr=0)
+  extol.close_with_ArcThr(110, 60)
   fig2.add_external_outline(extol)
   tfc.add_figure(fig2)
   fig3 = Figure("all_figure")
@@ -912,7 +1029,28 @@ def test_draw_2d_1():
   print(tfc2.stat_info())
   print(tfc2.get_figure_id('first_figure').stat_info("test_figure_collection_reload"))
   b_figure = design_output.cnc_cut_figure(tfc.get_figure_id('first_figure').convert_to_old_format(), "first_figure")
-  outline_backends.figure_simple_display(b_figure, (), "test")
+  #outline_backends.figure_simple_display(b_figure, (), "test")
+  outline_backends.figure_simple_display(fig1.cnc_cut(), fig1.ideal(), "test")
+  b_figure2 = design_output.cnc_cut_figure(tfc.get_figure_id('second_figure').convert_to_old_format(), "second_figure")
+  #outline_backends.figure_simple_display(b_figure2, (), "test")
+
+def test_draw_2d_2():
+  """ second complete test of the draw_2d
+  """
+  fig1 = Figure("fig_one")
+  ol1 = Arc_Line_Outline("ol1")
+  ol_piece = []
+  ol_piece.append((0.0, 0.0, 2.0))
+  ol_piece.append((20.0, -10.0, 2.0))
+  ol_piece.append((15.0, 0.0, 20.0, 10.0, -2.0))
+  ol_piece.append((10.0, 20.0, 0.0, 0.0, 0))
+  ol1.add_piece(ol_piece)
+  ol1.close_insurance()
+  fig1.add_undefine_outline(ol1)
+  fig2 = Figure("fig_one")
+  fig2.merge_figure(fig1.rotate(0.0, 0.0, 2.0).translate(-5.0, 0.0))
+  fig2.merge_figure(fig1.flip_xy(0.0, -10.0, 20.0, 30.0, -1, 1).translate(30.0, 0.0))
+  outline_backends.figure_simple_display(fig2.cnc_cut(), fig2.ideal(), "test")
 
 
 def draw_2d_frontend_self_test():
@@ -921,6 +1059,7 @@ def draw_2d_frontend_self_test():
   print("Non-regression tests of the draw_2d_frontend module")
   test_c_xy()
   test_draw_2d_1()
+  test_draw_2d_2()
 
 ################################################################
 # main
