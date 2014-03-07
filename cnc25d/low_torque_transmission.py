@@ -257,7 +257,7 @@ def ltt_constraint_check(c):
   gp_ap_c['gear_module'] = c['gear_module']
   gp_ap_c['gear_tooth_nb'] = c['annulus_gear_tooth_nb']
   gp_ap_c['second_gear_tooth_nb'] = c['planet_gear_tooth_nb']
-  gp_ap_c['gear_base_diameter'] = float((c['smallest_gear_tooth_nb']-2)*c['annulus_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
+  gp_ap_c['gear_base_diameter'] = float(c['gear_module']*(c['smallest_gear_tooth_nb']-2)*c['annulus_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
   gp_ap_c['gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
   gp_ap_c['second_gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
   gp_ap_c['gear_dedendum_height_pourcentage'] = 100.0 - c['gearring_dedendum_to_hollow_pourcentage']
@@ -275,7 +275,7 @@ def ltt_constraint_check(c):
   gp_ps_c['gear_module'] = c['gear_module']
   gp_ps_c['gear_tooth_nb'] = c['planet_gear_tooth_nb']
   gp_ps_c['second_gear_tooth_nb'] = c['sun_gear_tooth_nb']
-  gp_ps_c['gear_base_diameter'] = float((c['smallest_gear_tooth_nb']-2)*c['planet_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
+  gp_ps_c['gear_base_diameter'] = float(c['gear_module']*(c['smallest_gear_tooth_nb']-2)*c['planet_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
   gp_ps_c['gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
   gp_ps_c['second_gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
   #gp_ps_c['gear_dedendum_height_pourcentage'] = 100 - c['gearring_dedendum_to_hollow_pourcentage']
@@ -292,7 +292,7 @@ def ltt_constraint_check(c):
   gp_s_c['gear_module'] = c['gear_module']
   gp_s_c['gear_tooth_nb'] = c['sun_gear_tooth_nb']
   gp_s_c['second_gear_tooth_nb'] = c['planet_gear_tooth_nb']
-  gp_s_c['gear_base_diameter'] = float((c['smallest_gear_tooth_nb']-2)*c['sun_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
+  gp_s_c['gear_base_diameter'] = float(c['gear_module']*(c['smallest_gear_tooth_nb']-2)*c['sun_gear_tooth_nb'])/c['smallest_gear_tooth_nb']
   gp_s_c['gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
   gp_s_c['second_gear_addendum_dedendum_parity'] = 50.0 - c['gear_addendum_dedendum_parity_slack']/2.0
   #gp_s_c['gear_dedendum_height_pourcentage'] = 100 - c['gearring_dedendum_to_hollow_pourcentage']
@@ -1277,6 +1277,13 @@ cnc_router_bit_radius:  \t{:0.3f}
 11 - output_holder                 Q: {:2d}
 12 - output_axle_holder            Q: {:2d}
   """.format(c['planet_gear_q'], c['output_planet_gear_q'], c['rear_planet_carrier_q'], c['front_planet_carrier_q'], c['output_front_planet_carrier_q'], c['output_rear_planet_carrier_q'], c['output_shaft_q'], c['input_sun_gear_q'], c['motor_holder_q'], c['gearring_holder_q'], c['output_holder_q'], c['output_axle_holder_q'])
+  dbg_info = """
+debug:
+annulus_base_diameter:  {:0.3f}
+planet_base_diameter:   {:0.3f}
+sun_base_diameter:      {:0.3f}
+""".format(c['gp_ap_c']['gear_base_diameter'], c['gp_ps_c']['gear_base_diameter'], c['gp_s_c']['gear_base_diameter'])
+  #r_info += dbg_info
   #print(r_info)
   return(r_info)
 
