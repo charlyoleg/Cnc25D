@@ -85,7 +85,7 @@ This method has currently some issues because of PyQt4.
   > source env_for_cnc25d/bin/activate
   > pip install Cnc25D -U
   > pip install matplotlib -U
-  > desactive
+  > deactive
 
 * Workaround for PyQt4::
 
