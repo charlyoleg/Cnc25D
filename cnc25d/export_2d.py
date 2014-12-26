@@ -171,10 +171,11 @@ def export_xyz_to_dxf(ai_solid, ai_size_x, ai_size_y, ai_size_z, ai_xy_slice_lis
       l_slice_list.extend(l_solid.slice(vec_z_unit, ll_depth))
       l_solid.translate(Base.Vector(l_shift_x+2*l_space,0,0))
   l_slice = Part.makeCompound(l_slice_list)
-  r_dxf = Drawing.projectToDXF(l_slice, vec_z_unit)
-  #r_dxf = Drawing.projectToDXF(ai_solid, ai_vector)
-  fh_output = open(ai_output_file, 'w')
-  fh_output.write(r_dxf)
-  fh_output.close()
+  # temporary commented because of OpenCascade bug
+  #r_dxf = Drawing.projectToDXF(l_slice, vec_z_unit)
+  ##r_dxf = Drawing.projectToDXF(ai_solid, ai_vector)
+  #fh_output = open(ai_output_file, 'w')
+  #fh_output.write(r_dxf)
+  #fh_output.close()
   return(1)
     

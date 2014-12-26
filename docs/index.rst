@@ -49,6 +49,7 @@ Contents:
    cross_cube_design
    gimbal_design
    gimbal_details
+   planet_carrier_design
    low_torque_transmission_design
    low_torque_transmission_details
    high_torque_transmission_design
